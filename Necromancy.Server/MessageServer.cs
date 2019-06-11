@@ -34,22 +34,23 @@ namespace Necromancy.Server
                 }
                 case 0x3DA5: // network::proto_msg_implement_client::send_base_login
                 {
+
                     buffer.Position = 7;
                     string macAddress = buffer.ReadFixedString(17);
                     IBuffer res = new StreamBuffer();
                     res.WriteInt32(0);
+                    
+                    // TODO find proto_msg_implement_client::send_base_login
 
-                    // TODO find network::proto_msg_implement_client::recv_base_login_r
-
-                    Send(socket, 0x7d08, res);
+                   // Send(socket, 0xDDEF, res); // network::proto_msg_implement_client::recv_base_check_version_r
                     break;
                 }
                 default:
                 {
-                    _logger.Error($"OPCode: {opCode} not handled");
+                    _logger.Error($"[World]OPCode: {opCode} not handled");
                     break;
                 }
-
+                
                 // MessageServer Switch - 0x004E4210
                 // OP Codes: (all Hex 0X)
                 // 831C
@@ -57,11 +58,11 @@ namespace Necromancy.Server
                 // 1AF3
                 // 087D
                 // 0482
-
+                
                 // 082 - 019C
                 // 082 - 019C - 002A
                 // 082 - 019C - 002A - 0003
-
+                
                 // BA73
                 // 9AD1
                 // 8E0A
@@ -69,6 +70,7 @@ namespace Necromancy.Server
                 // 8D24 - 853F
                 // 8D24 - 853F - 0637
                 // 8D24 - 853F - 0637 - 003B
+                
             }
         }
     }

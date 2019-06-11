@@ -18,7 +18,7 @@ namespace Necromancy.Server
             {
                 default:
                 {
-                    _logger.Error($"OPCode: {opCode} not handled");
+                    _logger.Error($"[World]OPCode: {opCode} not handled");
                     break;
                 }
             }
