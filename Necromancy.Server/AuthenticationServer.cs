@@ -98,12 +98,12 @@ namespace Necromancy.Server
                         //res.WriteCString("nam");
                         //Data sent
                         //00 00 00 00 
-                        //00 00 00 00 01 01 01 01 01 produces world merge explaination dualogue.
+                        //00 00 00 00 01 01 01 01 01 produces world merge explaination dialogue.
                         //00 00 00 00 0A 0A 0A 0A 0A produces world selection dialogue. 
                         //00 00 00 00 00 00 00 00 01 is it the last byte being 01 that produces world merge dialgue?
                         //does nothing special: 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 0x10,
                         //00 00 00 00 00 00 00 01 00 does nothing special
-                        //
+                        //00 00 00 00 FF FF FF FF 01 produces world merge explanation dialogue.
 
                         Send(socket, 0x17B7, res); //proto_auth_implement_client::recv_base_get_worldlist_r structure is writeint32(0)+writrecstring("name")(or equvalent in bytes)
                         break;
