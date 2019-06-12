@@ -34,15 +34,38 @@ namespace Necromancy.Server
                 }
                 case 0x3DA5: // network::proto_msg_implement_client::send_base_login
                 {
-
-                    buffer.Position = 7;
-                    string macAddress = buffer.ReadFixedString(17);
+                    byte otherBytes = 0;
+                    //buffer.Position = 7;
+                    //string macAddress = buffer.ReadFixedString(17);
                     IBuffer res = new StreamBuffer();
-                    res.WriteInt32(0);
-                    
-                    // TODO find proto_msg_implement_client::send_base_login
+                    res.WriteByte(otherBytes);
+                    res.WriteByte(otherBytes);
+                    res.WriteByte(otherBytes);
+                    res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
+                    //res.WriteByte(otherBytes);
 
-                   // Send(socket, 0xDDEF, res); // network::proto_msg_implement_client::recv_base_check_version_r
+                    Send(socket, 0x1C83, res);
+                    
+                   // TODO find proto_msg_implement_client::send_base_login
                     break;
                 }
                 default:
@@ -50,27 +73,27 @@ namespace Necromancy.Server
                     _logger.Error($"[World]OPCode: {opCode} not handled");
                     break;
                 }
-                
-                // MessageServer Switch - 0x004E4210
-                // OP Codes: (all Hex 0X)
-                // 831C
-                // 4090
-                // 1AF3
-                // 087D
-                // 0482
-                
-                // 082 - 019C
-                // 082 - 019C - 002A
-                // 082 - 019C - 002A - 0003
-                
-                // BA73
-                // 9AD1
-                // 8E0A
-                // 8D24
-                // 8D24 - 853F
-                // 8D24 - 853F - 0637
-                // 8D24 - 853F - 0637 - 003B
-                
+
+                    // MessageServer Switch - 0x004E4210
+                    // OP Codes: (all Hex 0X)
+                    // 831C //unable to figure this one out 24+opcode max
+                    // 4090 proto_msg_implement_client::recv_party_notify_update_map 00 13 90 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                    // 1AF3
+                    // 087D
+                    // 0482
+
+                    // 082 - 019C
+                    // 082 - 019C - 002A
+                    // 082 - 019C - 002A - 0003
+
+                    // BA73 proto_msg_implement_client::recv_cpf_authentication 00 06 73 BA 00 00 00 00
+                    // 9AD1 proto_msg_implement_client::recv_chara_delete_r 00 06 D1 9A 00 00 00 00
+                    // 8E0A proto_msg_implement_client::recv_party_notify_kick (no structure)
+                    // 8D24
+                    // 8D24 - 853F
+                    // 8D24 - 853F - 0637
+                    // 8D24 - 853F - 0637 - 003B
+
             }
         }
     }
