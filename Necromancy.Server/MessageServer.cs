@@ -38,7 +38,7 @@ namespace Necromancy.Server
     /// D6ED - 2EA
     /// D6ED - 2EA - 48
     ///
-    /// F8B4
+    /// F8B4 // tried from 1-48 bytes nothing found
     /// F2C3
     /// F5BF
     /// F7F0
