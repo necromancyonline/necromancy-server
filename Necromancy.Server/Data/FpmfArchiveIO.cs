@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -354,73 +355,95 @@ namespace Necromancy.Server.Data
             datWriter.Flush();
             datWriter.Close();
         }
-
-        public void EncryptWoItm()
+        
+        public byte[] EncryptWoItm(byte[] decryptedCsv, byte[] key)
         {
+            //  string keys = "AABBCCDDEEFFGGHH";
+            //  string csv =
+            //      "100101,HELMET,NORMAL,,0,,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,,,0,0,0,0,0,0,0,0,1,,,40,40,20,,0,0,0,0,0,0,,,,0,0,0,0,0,0,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,0,,NONE,HEAD,,,,0,0,0,0,0,0,1,0,,100101,,,,,,,,,,,,,,,,,,,,,,,,,0,0,5,1,0";
+            //  string csv1 =
+            //      "100101, HELMET, NORMAL, , 0, , 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, , , 0, 0, 0, 0, 0, 0, 0, 0, 1, , , 40, 40, 20, , 0, 0, 0, 0, 0, 0, , , , 0, 0, 0, 0, 0, 0, , , , , , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, , , 0, , NONE, HEAD, , , , 0, 0, 0, 0, 0, 0, 1, 0, , 100101, , , , , , , , , , , , , , , , , , , , , , , , , 0, 0, 5, 1, 0";
 
-            string keys = "AABBCCDDEEFFGGHH";
-            string csv =
-                "100101,HELMET,NORMAL,,0,,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,,,0,0,0,0,0,0,0,0,1,,,40,40,20,,0,0,0,0,0,0,,,,0,0,0,0,0,0,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,0,,NONE,HEAD,,,,0,0,0,0,0,0,1,0,,100101,,,,,,,,,,,,,,,,,,,,,,,,,0,0,5,1,0";
-            string csv1 =
-                "100101, HELMET, NORMAL, , 0, , 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, , , 0, 0, 0, 0, 0, 0, 0, 0, 1, , , 40, 40, 20, , 0, 0, 0, 0, 0, 0, , , , 0, 0, 0, 0, 0, 0, , , , , , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, , , 0, , NONE, HEAD, , , , 0, 0, 0, 0, 0, 0, 1, 0, , 100101, , , , , , , , , , , , , , , , , , , , , , , , , 0, 0, 5, 1, 0";
-            Camellia c = new Camellia();
-            byte[] key = Encoding.UTF8.GetBytes(keys);
+            //      byte[] key = Encoding.UTF8.GetBytes(keys);
+            // Console.WriteLine(Util.HexDump(output));
+            // Console.WriteLine(Util.ToHexString(output));
+            // Console.WriteLine($"ActualSize:{output.Length} A:{output.Length + 4:X8} B:{inlen:X8}");
+//
+            // // 416 = actualt data suze
+            // // 420
+            // // 412
+            // bool done = true;
+
+            int blockSize = 16;
+
+            // inflate key
+            byte[][] subKey = new byte[34][];
             uint keyLength = (uint) key.Length * 8;
-            byte[][] subkey = new byte[34][];
-            byte[] oinput = Encoding.UTF8.GetBytes(csv1);
-            int inlen = oinput.Length;
-            int padding = 16 - (inlen % 16);
-            int totalLength = inlen + padding;
-            
-            byte[] input = new byte[totalLength];
-            int length = input.Length;
-            Buffer.BlockCopy(oinput, 0, input,0, inlen);
+            Util.Camellia.KeySchedule(keyLength, key, subKey);
+
+            // prepare buffer
+            int padding = blockSize - (decryptedCsv.Length % blockSize);
+            int length = decryptedCsv.Length + padding;
+            byte[] input = new byte[length];
+            // TODO could avoid copy by applying padding in last loop
+            Buffer.BlockCopy(decryptedCsv, 0, input, 0, decryptedCsv.Length);
             byte[] output = new byte[length];
 
+            // encrypt
             Span<byte> inPtr = input;
             Span<byte> outPtr = output;
-            
-            c.KeySchedule(keyLength, key, subkey);
-
             int current = 0;
             while (current < length)
             {
-                int xorLen = current + 16 < length ? 16 : length - current;
-               // for (int i = 0; i < xorLen; i++)
-              //  {
-                //    input[current + i] = (byte) (input[current + i] ^ prv[i]);
-              //  }
-              
-                c.CryptBlock(
+                Util.Camellia.CryptBlock(
                     false,
                     keyLength,
-                    inPtr.Slice(current, 16),
-                    subkey,
-                    outPtr.Slice(current, 16)
+                    inPtr.Slice(current, blockSize),
+                    subKey,
+                    outPtr.Slice(current, blockSize)
                 );
-               // for (int i = 0; i < xorLen; i++)
-              //  {
-                //    prv[i] = output[current + i];
-               // }
-                current += xorLen;
-               // Console.WriteLine($"{current} {xorLen} {length}");
+                current += blockSize;
             }
-            
-            Console.WriteLine(HexDump(output));
-            Console.WriteLine(Util.ToHexString(output));
-            Console.WriteLine($"ActualSize:{output.Length} A:{output.Length + 4 :X8} B:{inlen:X8}");
-            
-            // 416 = actualt data suze
-            // 420
-            // 412
-            bool done = true;
+
+            return output;
         }
-        
-        
+
+        public byte[] DecryptWoItm(byte[] encryptedCsv, byte[] key)
+        {
+            int blockSize = 16;
+
+            // inflate key
+            byte[][] subKey = new byte[34][];
+            uint keyLength = (uint) key.Length * 8;
+            Util.Camellia.KeySchedule(keyLength, key, subKey);
+
+            // prepare buffer
+            int length = encryptedCsv.Length;
+            byte[] output = new byte[length];
+
+            // decrypt
+            Span<byte> inPtr = encryptedCsv;
+            Span<byte> outPtr = output;
+            int current = 0;
+            while (current < length)
+            {
+                Util.Camellia.CryptBlock(
+                    true,
+                    keyLength,
+                    inPtr.Slice(current, blockSize),
+                    subKey,
+                    outPtr.Slice(current, blockSize)
+                );
+                current += blockSize;
+            }
+
+            return output;
+        }
+
         /// <summary>
         /// 0x403700
         /// </summary>
-        public void OpenWoItm(string itemPath)
+        public Dictionary<uint, string> OpenWoItm(string itemPath)
         {
             FileInfo itemFile = new FileInfo(itemPath);
             if (!itemFile.Exists)
@@ -440,110 +463,44 @@ namespace Necromancy.Server.Data
             }
 
             short version = buffer.ReadInt16(); // cmp to 1
-            List<WoItm> woItems = new List<WoItm>();
+
+            Dictionary<uint, string> items = new Dictionary<uint, string>();
             while (buffer.Position < buffer.Size)
             {
-                int itemId = buffer.ReadInt32();
+                uint itemId = buffer.ReadUInt32();
                 int chunkSize = buffer.ReadInt32();
                 int chunkLen = buffer.ReadInt32();
-                byte[] data = buffer.ReadBytes(chunkSize - 4);
-
-                WoItm woItm = new WoItm();
-                woItm.Id = itemId;
-                woItm.Size = chunkSize;
-                woItm.Size2 = chunkLen;
-                woItm.Data = data;
-                woItems.Add(woItm);
+                byte[] encryptedCsv = buffer.ReadBytes(chunkSize - 4);
+                byte[] decryptedCsv = DecryptWoItm(encryptedCsv, new byte[0x10]);
+                string csv = Encoding.UTF8.GetString(decryptedCsv);
+                items.Add(itemId, csv);
             }
 
-            foreach (WoItm woItem in woItems)
+            return items;
+        }
+
+        public void SaveWoItm(Dictionary<uint, string> items, string itemPath)
+        {
+            FileInfo itemFile = new FileInfo(itemPath);
+            if (!itemFile.Exists)
             {
-                IBuffer itemBuffer = new StreamBuffer(woItem.Data);
-                itemBuffer.SetPositionStart();
-
-                IBuffer outBuffer = new StreamBuffer();
-
-                uint[] xor =
-                {
-                    0xA522C3ED,
-                    0x482E64B9,
-                    0x0E52712B,
-                    0x3ABC1D26
-                };
-
-                for (int i = 0; i < 4; i++)
-                {
-                    uint a = itemBuffer.ReadUInt32();
-                    uint b = RotateRight(a, 8); // 00403035 | C1CE 08 | ror esi,8
-                    uint c = b & 0xFF00FF00;
-                    uint d = RotateLeft(a, 8); // 0040303E | C1C0 08 | rol eax,8
-                    uint e = d & 0xFF00FF;
-                    uint f = c | e;
-                    outBuffer.WriteUInt32(f);
-                }
-
-                Logger.Debug(outBuffer.ToHexString(" "));
-
-
-                Logger.Info("done");
-
-
-                /*              These 4 words are from the previous function after xor of xor[] above
-                                uint word1 = 0x6B9306F7;    
-                                uint word2 = 0xFE7D4F35;
-                                uint word3 = 0x406D7743;
-                                uint word4 = 0x9C07F4C0;
-
-                                uint seed = 0;
-                                uint seed1 = 0xFFFFFFFE;
-                                word1 = word1 ^ seed;
-                                uint a = ((word1 >> 16) & 0xFF) * 4;
-                                uint b = ((word1 >> 8) & 0xFF) * 4;
-                                uint c = (word1 >> 24) * 4;
-                                uint e = table1[c];
-                                uint f = table3[a];
-                                uint g = e ^ f;
-                                uint i = table3[b];
-                                uint j = g ^ i;
-
-                                uint k = (word2 & 0xFF) * 4;
-                                uint l = j ^ table2[k];
-                                uint m = (((word2 ^ seed) >> 16) & 0xFF) * 4;
-                                uint n = ((word2 >> 24) * 4;
-                                uint o = table3[n];
-                                uint p = table4[m];
-                                uint q = o ^ p;
-                                uint r = ((word2 >> 8) & 0xFF) * 4;
-                                uint s = (q ^ table2[r]);
-                                uint t = (word2 & 0xFF) * 4;
-                                uint u = table1[t] ^ s;
-                                uint v = u ^ l;
-
-                                word3 = word3 ^ v;
-                                uint w = ((l & 0xFF) << 18) | ((l >> 8) & 0x00FFFFFF);
-                                uint x = w ^ word4;
-                                uint y = u ^ x;
-                                word4 = l ^ y;
-                                uint z = (seed1 * 4) + ???? (1628EEC8);   // Missed a push earlier
-                                uint aa = word3 ^ z;
-                                uint ab = ((aa >> 16) & 0xFF) * 4;
-                                uint ac = (aa >> 24) * 4;
-                                uint ad = table1[ac];
-                                uint ae = (ad ^ table3[ab]);
-                                */
+                // TODO create
             }
 
-            Logger.Info("done");
-        }
+            IBuffer buffer = new StreamBuffer();
+            buffer.WriteBytes(MagicBytes_WOITM);
+            buffer.WriteInt16(1); // version 1
 
-        private uint RotateLeft(uint x, int n)
-        {
-            return (x << n) | (x >> (32 - n));
-        }
+            foreach (uint itemId in items.Keys)
+            {
+                string csv = items[itemId];
+                byte[] decryptedCsv = Encoding.UTF8.GetBytes(csv);
+                byte[] encryptedCsv = EncryptWoItm(decryptedCsv, new byte[0x10]);
 
-        private uint RotateRight(uint x, int n)
-        {
-            return (x >> n) | (x << (32 - n));
+                buffer.WriteUInt32(itemId);
+                buffer.WriteInt32(0);
+                buffer.WriteBytes(encryptedCsv);
+            }
         }
 
         /// <summary>
@@ -567,8 +524,8 @@ namespace Necromancy.Server.Data
             //byte sub = 0xC4;
 
             // Uncomment for JP client
-             dl = 0x67;
-             sub = 0xC7;
+            dl = 0x67;
+            sub = 0xC7;
 
             buffer.Position = 12;
             IBuffer outBuffer = new StreamBuffer();
@@ -644,8 +601,8 @@ namespace Necromancy.Server.Data
             //byte sub = 0xC4;
 
             // Uncomment for JP client
-             byte dl = 0x67;
-             byte sub = 0xC7;
+            byte dl = 0x67;
+            byte sub = 0xC7;
 
             //Uncomment for beta client
             //dl = 0x7D;
@@ -690,73 +647,6 @@ namespace Necromancy.Server.Data
             }
 
             return outBuffer;
-        }
-
-
-        public static string HexDump(byte[] bytes, int bytesPerLine = 16)
-        {
-            if (bytes == null) return "<null>";
-            int bytesLength = bytes.Length;
-
-            char[] HexChars = "0123456789ABCDEF".ToCharArray();
-
-            int firstHexColumn =
-                8 // 8 characters for the address
-                + 3; // 3 spaces
-
-            int firstCharColumn = firstHexColumn
-                                  + bytesPerLine * 3 // - 2 digit for the hexadecimal value and 1 space
-                                  + (bytesPerLine - 1) / 8 // - 1 extra space every 8 characters from the 9th
-                                  + 2; // 2 spaces 
-
-            int lineLength = firstCharColumn
-                             + bytesPerLine // - characters to show the ascii value
-                             + Environment.NewLine.Length; // Carriage return and line feed (should normally be 2)
-
-            char[] line = (new String(' ', lineLength - Environment.NewLine.Length) + Environment.NewLine)
-                .ToCharArray();
-            int expectedLines = (bytesLength + bytesPerLine - 1) / bytesPerLine;
-            StringBuilder result = new StringBuilder(expectedLines * lineLength);
-
-            for (int i = 0; i < bytesLength; i += bytesPerLine)
-            {
-                line[0] = HexChars[(i >> 28) & 0xF];
-                line[1] = HexChars[(i >> 24) & 0xF];
-                line[2] = HexChars[(i >> 20) & 0xF];
-                line[3] = HexChars[(i >> 16) & 0xF];
-                line[4] = HexChars[(i >> 12) & 0xF];
-                line[5] = HexChars[(i >> 8) & 0xF];
-                line[6] = HexChars[(i >> 4) & 0xF];
-                line[7] = HexChars[(i >> 0) & 0xF];
-
-                int hexColumn = firstHexColumn;
-                int charColumn = firstCharColumn;
-
-                for (int j = 0; j < bytesPerLine; j++)
-                {
-                    if (j > 0 && (j & 7) == 0) hexColumn++;
-                    if (i + j >= bytesLength)
-                    {
-                        line[hexColumn] = ' ';
-                        line[hexColumn + 1] = ' ';
-                        line[charColumn] = ' ';
-                    }
-                    else
-                    {
-                        byte b = bytes[i + j];
-                        line[hexColumn] = HexChars[(b >> 4) & 0xF];
-                        line[hexColumn + 1] = HexChars[b & 0xF];
-                        line[charColumn] = (b < 32 ? '·' : (char) b);
-                    }
-
-                    hexColumn += 3;
-                    charColumn++;
-                }
-
-                result.Append(line);
-            }
-
-            return result.ToString();
         }
     }
 }

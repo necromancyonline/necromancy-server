@@ -5,9 +5,9 @@ namespace Necromancy.Server.Common
     public class Camellia
     {
         /// <summary>
-        /// Dragons Dogma Online Network Encryption
+        /// https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_block_chaining_(CBC)
         /// </summary>
-        public void Encrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
+        public void EncryptCBC(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
         {
             // TODO - Modifies input value to apply XOR - make a copy
             // TODO check if input length is dividable by 16
@@ -46,9 +46,9 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Dragons Dogma Online Network Decryption
+        /// https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_block_chaining_(CBC)
         /// </summary>
-        public void Decrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
+        public void DecryptCBC(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
         {
             // TODO check if input length is dividable by 16
 
