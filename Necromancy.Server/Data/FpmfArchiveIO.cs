@@ -18,6 +18,8 @@ namespace Necromancy.Server.Data
         private static byte[] MagicBytes = {0x46, 0x50, 0x4D, 0x46};
         private static byte[] MagicBytes_WOITM = {0x57, 0x4F, 0x49, 0x54, 0x4D};
 
+        public delegate byte[] WoItmKeyResolver(uint itemId);
+
         public FpmfArchive Open(string hedFilePath)
         {
             FileInfo hedFile = new FileInfo(hedFilePath);
@@ -355,7 +357,7 @@ namespace Necromancy.Server.Data
             datWriter.Flush();
             datWriter.Close();
         }
-        
+
         public byte[] EncryptWoItm(byte[] decryptedCsv, byte[] key)
         {
             //  string keys = "AABBCCDDEEFFGGHH";
@@ -443,7 +445,7 @@ namespace Necromancy.Server.Data
         /// <summary>
         /// 0x403700
         /// </summary>
-        public Dictionary<uint, string> OpenWoItm(string itemPath)
+        public Dictionary<uint, string> OpenWoItm(string itemPath, WoItmKeyResolver keyResolver)
         {
             FileInfo itemFile = new FileInfo(itemPath);
             if (!itemFile.Exists)
@@ -471,7 +473,15 @@ namespace Necromancy.Server.Data
                 int chunkSize = buffer.ReadInt32();
                 int chunkLen = buffer.ReadInt32();
                 byte[] encryptedCsv = buffer.ReadBytes(chunkSize - 4);
-                byte[] decryptedCsv = DecryptWoItm(encryptedCsv, new byte[0x10]);
+
+                byte[] key = keyResolver(itemId);
+                if (key == null || key.Length < 16)
+                {
+                    Logger.Error($"OpenWoItm::ItemId: {itemId} skipped, key is null or to short");
+                    continue;
+                }
+
+                byte[] decryptedCsv = DecryptWoItm(encryptedCsv, key);
                 string csv = Encoding.UTF8.GetString(decryptedCsv);
                 items.Add(itemId, csv);
             }
@@ -479,7 +489,7 @@ namespace Necromancy.Server.Data
             return items;
         }
 
-        public void SaveWoItm(Dictionary<uint, string> items, string itemPath)
+        public void SaveWoItm(string itemPath, Dictionary<uint, string> items, WoItmKeyResolver keyResolver)
         {
             FileInfo itemFile = new FileInfo(itemPath);
             if (!itemFile.Exists)
@@ -495,7 +505,14 @@ namespace Necromancy.Server.Data
             {
                 string csv = items[itemId];
                 byte[] decryptedCsv = Encoding.UTF8.GetBytes(csv);
-                byte[] encryptedCsv = EncryptWoItm(decryptedCsv, new byte[0x10]);
+                byte[] key = keyResolver(itemId);
+                if (key == null || key.Length < 16)
+                {
+                    Logger.Error($"SaveWoItm::ItemId: {itemId} skipped, key is null or to short");
+                    continue;
+                }
+
+                byte[] encryptedCsv = EncryptWoItm(decryptedCsv, key);
 
                 buffer.WriteUInt32(itemId);
                 buffer.WriteInt32(0);
