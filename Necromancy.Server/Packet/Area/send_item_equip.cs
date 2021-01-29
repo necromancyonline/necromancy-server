@@ -32,10 +32,6 @@ namespace Necromancy.Server.Packet.Area
                 ItemInstance equippedItem = itemService.Equip(location, equipSlot);                
                 RecvItemUpdateEqMask recvItemUpdateEqMask = new RecvItemUpdateEqMask(client, equippedItem);
                 Router.Send(recvItemUpdateEqMask);
-                IBuffer res = BufferProvider.Provide();
-                res.WriteInt32(3);
-                res.WriteInt16(100);
-                Router.Send(client, (ushort)AreaPacketId.recv_chara_update_atk_magic_attr, res, ServerType.Area);
             }
             catch (ItemException e) { error = (int) e.ExceptionType; }
 
