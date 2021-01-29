@@ -82,8 +82,8 @@ namespace Necromancy.Cli
         private void LoadCommands()
         {
             AddCommand(new ShowCommand());
-            AddCommand(new UnpackCommand());
-            AddCommand(new PackCommand());
+            AddCommand(new HedCommand());
+            AddCommand(new ItemCommand());
             AddCommand(new StripCommand());
             AddCommand(new ConvertCommand());
             AddCommand(_serverCommand);

@@ -1,26 +1,25 @@
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
-using Buffer = System.Buffer;
 
 namespace Necromancy.Server.Data
 {
-    public class FpmfArchiveIO
+    public class FpmfArchiveIo
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(FpmfArchiveIO));
+        private static readonly ILogger Logger = LogProvider.Logger(typeof(FpmfArchiveIo));
+        private static readonly byte[] HedMagicBytes = {0x46, 0x50, 0x4D, 0x46};
 
-        private static byte[] MagicBytes = {0x46, 0x50, 0x4D, 0x46};
-        private static byte[] MagicBytes_WOITM = {0x57, 0x4F, 0x49, 0x54, 0x4D};
+        public static readonly FpmfArchiveIo Instance = new FpmfArchiveIo();
+        public static readonly byte[] HedKeyUsSteam = {0xA6, 0x21};
+        public static readonly byte[] HedKeyUsSunset = {0xEA, 0x0A};
+        public static readonly byte[] HedKeyUsBeta = {0x7D, 0xC4};
+        public static readonly byte[] HedKeyJp = {0x67, 0xC7};
 
         public delegate byte[] WoItmKeyResolver(uint itemId);
 
-        public FpmfArchive Open(string hedFilePath)
+        public FpmfArchive Open(string hedFilePath, byte[] hedKey)
         {
             FileInfo hedFile = new FileInfo(hedFilePath);
             if (!hedFile.Exists)
@@ -39,7 +38,7 @@ namespace Necromancy.Server.Data
             byte[] magicBytes = hedBuffer.ReadBytes(4);
             for (int i = 0; i < 4; i++)
             {
-                if (magicBytes[i] != MagicBytes[i])
+                if (magicBytes[i] != HedMagicBytes[i])
                 {
                     throw new Exception("Invalid File");
                 }
@@ -48,7 +47,7 @@ namespace Necromancy.Server.Data
             FpmfArchive archive = new FpmfArchive();
             archive.Size = hedBuffer.ReadUInt32();
             uint unknown0 = hedBuffer.ReadUInt32();
-            hedBuffer = DecryptHed(hedBuffer);
+            hedBuffer = DecryptHed(hedBuffer, hedKey);
             hedBuffer.SetPositionStart();
             uint unknown1 = hedBuffer.ReadUInt32();
             uint unknown2 = hedBuffer.ReadUInt32();
@@ -159,53 +158,7 @@ namespace Necromancy.Server.Data
             }
         }
 
-        public void Header(string hedFilePath, string outPath)
-        {
-            if (outPath.LastIndexOf("\\") != outPath.Length - 1)
-            {
-                outPath += "\\";
-            }
-
-            string type = hedFilePath.Substring(hedFilePath.LastIndexOf("\\") + 1,
-                (hedFilePath.LastIndexOf(".") - hedFilePath.LastIndexOf("\\")) - 1).Replace("\\data", "");
-            FileInfo hedFile = new FileInfo(hedFilePath);
-            if (!hedFile.Exists)
-            {
-                throw new FileNotFoundException($"File: {hedFilePath} not found.");
-            }
-
-            IBuffer hedBuffer = new StreamBuffer(hedFile.FullName);
-
-            if (hedBuffer.Size < 12)
-            {
-                throw new Exception("File to small");
-            }
-
-            hedBuffer.SetPositionStart();
-            byte[] magicBytes = hedBuffer.ReadBytes(4);
-            for (int i = 0; i < 4; i++)
-            {
-                if (magicBytes[i] != MagicBytes[i])
-                {
-                    throw new Exception("Invalid File");
-                }
-            }
-
-            FpmfArchive archive = new FpmfArchive();
-            archive.Size = hedBuffer.ReadUInt32();
-            uint unknown0 = hedBuffer.ReadUInt32();
-
-            hedBuffer = DecryptHed(hedBuffer);
-            BinaryWriter tmpwriter = new BinaryWriter(File.Open(outPath + type + "_header.bin", FileMode.Create));
-            tmpwriter.Write(magicBytes);
-            tmpwriter.Write(archive.Size);
-            tmpwriter.Write(unknown0);
-            tmpwriter.Write(hedBuffer.GetAllBytes());
-            tmpwriter.Flush();
-            tmpwriter.Close();
-        }
-
-        public void Pack(string inPath, string outPath, string archiveName, string archivePath = "")
+        public void Pack(string inPath, string outPath, string archiveName, byte[] hedKey, string archivePath = "")
         {
             uint fileTime = 0x506fa78e;
             string dirPath = archivePath;
@@ -272,10 +225,10 @@ namespace Necromancy.Server.Data
                 outPath = outPath + "\\" + archiveName + "\\";
             }
 
-            SavePack(archive, inPath, outPath, archiveName);
+            SavePack(archive, inPath, outPath, archiveName, hedKey);
         }
 
-        private void SavePack(FpmfArchive archive, string inPath, string outPath, string archiveName)
+        private void SavePack(FpmfArchive archive, string inPath, string outPath, string archiveName, byte[] hedKey)
         {
             Directory.CreateDirectory(outPath);
             IBuffer fileBuff = new StreamBuffer();
@@ -296,7 +249,7 @@ namespace Necromancy.Server.Data
                 fileBuff.WriteUInt32(archiveFile.Unknown1);
             }
 
-            headerBuff.WriteBytes(MagicBytes);
+            headerBuff.WriteBytes(HedMagicBytes);
             headerBuff.WriteInt32(0);
             headerBuff.WriteUInt32(archive.Unknown0);
             headerBuff.WriteUInt32(archive.Unknown1);
@@ -333,7 +286,7 @@ namespace Necromancy.Server.Data
             headerBuff.WriteUInt32(archive.NumFiles);
             headerBuff.WriteBytes(fileBuff.GetAllBytes());
 
-            headerBuff = EncryptHed(headerBuff);
+            headerBuff = EncryptHed(headerBuff, hedKey);
 
             string hedPath = outPath.Substring(0, outPath.LastIndexOf("\\")) + ".hed";
             BinaryWriter headerWriter = new BinaryWriter(File.Open(hedPath, FileMode.Create));
@@ -358,191 +311,15 @@ namespace Necromancy.Server.Data
             datWriter.Close();
         }
 
-        public byte[] EncryptWoItm(byte[] decryptedCsv, byte[] key)
-        {
-            //  string keys = "AABBCCDDEEFFGGHH";
-            //  string csv =
-            //      "100101,HELMET,NORMAL,,0,,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,,,0,0,0,0,0,0,0,0,1,,,40,40,20,,0,0,0,0,0,0,,,,0,0,0,0,0,0,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,0,,NONE,HEAD,,,,0,0,0,0,0,0,1,0,,100101,,,,,,,,,,,,,,,,,,,,,,,,,0,0,5,1,0";
-            //  string csv1 =
-            //      "100101, HELMET, NORMAL, , 0, , 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, , , 0, 0, 0, 0, 0, 0, 0, 0, 1, , , 40, 40, 20, , 0, 0, 0, 0, 0, 0, , , , 0, 0, 0, 0, 0, 0, , , , , , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, , , 0, , NONE, HEAD, , , , 0, 0, 0, 0, 0, 0, 1, 0, , 100101, , , , , , , , , , , , , , , , , , , , , , , , , 0, 0, 5, 1, 0";
-
-            //      byte[] key = Encoding.UTF8.GetBytes(keys);
-            // Console.WriteLine(Util.HexDump(output));
-            // Console.WriteLine(Util.ToHexString(output));
-            // Console.WriteLine($"ActualSize:{output.Length} A:{output.Length + 4:X8} B:{inlen:X8}");
-//
-            // // 416 = actualt data suze
-            // // 420
-            // // 412
-            // bool done = true;
-
-            int blockSize = 16;
-
-            // inflate key
-            byte[][] subKey = new byte[34][];
-            uint keyLength = (uint) key.Length * 8;
-            Util.Camellia.KeySchedule(keyLength, key, subKey);
-
-            // prepare buffer
-            int padding = blockSize - (decryptedCsv.Length % blockSize);
-            int length = decryptedCsv.Length + padding;
-            byte[] input = new byte[length];
-            // TODO could avoid copy by applying padding in last loop
-            Buffer.BlockCopy(decryptedCsv, 0, input, 0, decryptedCsv.Length);
-            byte[] output = new byte[length];
-
-            // encrypt
-            Span<byte> inPtr = input;
-            Span<byte> outPtr = output;
-            int current = 0;
-            while (current < length)
-            {
-                Util.Camellia.CryptBlock(
-                    false,
-                    keyLength,
-                    inPtr.Slice(current, blockSize),
-                    subKey,
-                    outPtr.Slice(current, blockSize)
-                );
-                current += blockSize;
-            }
-
-            return output;
-        }
-
-        public byte[] DecryptWoItm(byte[] encryptedCsv, byte[] key)
-        {
-            int blockSize = 16;
-
-            // inflate key
-            byte[][] subKey = new byte[34][];
-            uint keyLength = (uint) key.Length * 8;
-            Util.Camellia.KeySchedule(keyLength, key, subKey);
-
-            // prepare buffer
-            int length = encryptedCsv.Length;
-            byte[] output = new byte[length];
-
-            // decrypt
-            Span<byte> inPtr = encryptedCsv;
-            Span<byte> outPtr = output;
-            int current = 0;
-            while (current < length)
-            {
-                Util.Camellia.CryptBlock(
-                    true,
-                    keyLength,
-                    inPtr.Slice(current, blockSize),
-                    subKey,
-                    outPtr.Slice(current, blockSize)
-                );
-                current += blockSize;
-            }
-
-            return output;
-        }
-
-        /// <summary>
-        /// 0x403700
-        /// </summary>
-        public Dictionary<uint, string> OpenWoItm(string itemPath, WoItmKeyResolver keyResolver)
-        {
-            FileInfo itemFile = new FileInfo(itemPath);
-            if (!itemFile.Exists)
-            {
-                throw new FileNotFoundException($"File: {itemPath} not found.");
-            }
-
-            IBuffer buffer = new StreamBuffer(itemFile.FullName);
-            buffer.SetPositionStart();
-            byte[] magicBytes = buffer.ReadBytes(5);
-            for (int i = 0; i < 5; i++)
-            {
-                if (magicBytes[i] != MagicBytes_WOITM[i])
-                {
-                    throw new Exception("Invalid WOITM File");
-                }
-            }
-
-            short version = buffer.ReadInt16(); // cmp to 1
-
-            Dictionary<uint, string> items = new Dictionary<uint, string>();
-            while (buffer.Position < buffer.Size)
-            {
-                uint itemId = buffer.ReadUInt32();
-                int chunkSize = buffer.ReadInt32();
-                int chunkLen = buffer.ReadInt32();
-                byte[] encryptedCsv = buffer.ReadBytes(chunkSize - 4);
-
-                byte[] key = keyResolver(itemId);
-                if (key == null || key.Length < 16)
-                {
-                    Logger.Error($"OpenWoItm::ItemId: {itemId} skipped, key is null or to short");
-                    continue;
-                }
-
-                byte[] decryptedCsv = DecryptWoItm(encryptedCsv, key);
-                string csv = Encoding.UTF8.GetString(decryptedCsv);
-                items.Add(itemId, csv);
-            }
-
-            return items;
-        }
-
-        public void SaveWoItm(string itemPath, Dictionary<uint, string> items, WoItmKeyResolver keyResolver)
-        {
-            FileInfo itemFile = new FileInfo(itemPath);
-            if (!itemFile.Exists)
-            {
-                // TODO create
-            }
-
-            IBuffer buffer = new StreamBuffer();
-            buffer.WriteBytes(MagicBytes_WOITM);
-            buffer.WriteInt16(1); // version 1
-
-            foreach (uint itemId in items.Keys)
-            {
-                string csv = items[itemId];
-                byte[] decryptedCsv = Encoding.UTF8.GetBytes(csv);
-                byte[] key = keyResolver(itemId);
-                if (key == null || key.Length < 16)
-                {
-                    Logger.Error($"SaveWoItm::ItemId: {itemId} skipped, key is null or to short");
-                    continue;
-                }
-
-                byte[] encryptedCsv = EncryptWoItm(decryptedCsv, key);
-
-                buffer.WriteUInt32(itemId);
-                buffer.WriteInt32(0);
-                buffer.WriteBytes(encryptedCsv);
-            }
-        }
-
         /// <summary>
         /// 0xA7E480
         /// </summary>
-        private IBuffer DecryptHed(IBuffer buffer)
+        private IBuffer DecryptHed(IBuffer buffer, byte[] key)
         {
             byte bl = 0;
             byte al = 0;
-
-            //Uncomment for US Steam Client
-            byte dl = 0xA6;
-            byte sub = 0x21;
-
-            //Uncomment for US Sunset Client.
-            //byte dl = 0xEA;
-            //byte sub = 0x0A;
-
-            //Uncomment for Beta Client
-            //byte dl = 0x7D;
-            //byte sub = 0xC4;
-
-            // Uncomment for JP client
-            dl = 0x67;
-            sub = 0xC7;
+            byte dl = key[0];
+            byte sub = key[1];
 
             buffer.Position = 12;
             IBuffer outBuffer = new StreamBuffer();
@@ -555,6 +332,34 @@ namespace Necromancy.Server.Data
                 bl = (byte) (bl - sub);
                 al = (byte) (al + 1);
                 dl = cl;
+                outBuffer.WriteByte(bl);
+            }
+
+            return outBuffer;
+        }
+
+        private IBuffer EncryptHed(IBuffer inBuff, byte[] key)
+        {
+            byte bl = 0;
+            byte al = 0;
+            byte dl = key[0];
+            byte add = key[1];
+
+            inBuff.SetPositionStart();
+            IBuffer outBuffer = new StreamBuffer();
+            outBuffer.WriteBytes(inBuff.ReadBytes(4));
+            outBuffer.WriteInt32(inBuff.Size - 12);
+            inBuff.Position = 8;
+            outBuffer.WriteInt32(inBuff.ReadInt32());
+
+            while (inBuff.Position < inBuff.Size)
+            {
+                byte cl = inBuff.ReadByte();
+                cl = (byte) (cl + add);
+                bl = (byte) (dl - al);
+                bl = (byte) (bl ^ cl);
+                al = (byte) (al - 1);
+                dl = bl;
                 outBuffer.WriteByte(bl);
             }
 
@@ -595,52 +400,6 @@ namespace Necromancy.Server.Data
                 {
                     rotKeyIndex = 0;
                 }
-            }
-
-            return outBuffer;
-        }
-
-        private IBuffer EncryptHed(IBuffer inBuff)
-        {
-            byte bl = 0;
-            byte al = 0;
-
-            //Uncomment for US Steam Client
-            //byte dl = 0xA6;
-            byte add = 0x21;
-
-            //Uncomment for US Sunset Client.
-            //byte dl = 0xEA;
-            //byte sub = 0x0A;
-
-            //Uncomment for Beta Client
-            //byte dl = 0x7D;
-            //byte sub = 0xC4;
-
-            // Uncomment for JP client
-            byte dl = 0x67;
-            byte sub = 0xC7;
-
-            //Uncomment for beta client
-            //dl = 0x7D;
-            //sub = 0xC4;
-
-            inBuff.SetPositionStart();
-            IBuffer outBuffer = new StreamBuffer();
-            outBuffer.WriteBytes(inBuff.ReadBytes(4));
-            outBuffer.WriteInt32(inBuff.Size - 12);
-            inBuff.Position = 8;
-            outBuffer.WriteInt32(inBuff.ReadInt32());
-
-            while (inBuff.Position < inBuff.Size)
-            {
-                byte cl = inBuff.ReadByte();
-                cl = (byte) (cl + add);
-                bl = (byte) (dl - al);
-                bl = (byte) (bl ^ cl);
-                al = (byte) (al - 1);
-                dl = bl;
-                outBuffer.WriteByte(bl);
             }
 
             return outBuffer;
