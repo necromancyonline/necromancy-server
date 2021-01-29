@@ -4,6 +4,7 @@ namespace Necromancy.Cli.Command
     {
         Exit,
         Continue,
-        Completed
+        Completed,
+        Error
     }
 }

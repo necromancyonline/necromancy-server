@@ -14,17 +14,17 @@ namespace Necromancy.Cli.Command.Commands
             if (parameter.Arguments.Count < 1)
             {
                 Logger.Error("to few args");
-                return CommandResultType.Completed;
+                return CommandResultType.Error;
             }
 
             string command = parameter.Arguments[0].ToLower();
 
             if (command == "unpack")
             {
-                if (parameter.Arguments.Count < 2)
+                if (parameter.Arguments.Count < 3)
                 {
                     Logger.Error("to few args");
-                    return CommandResultType.Completed;
+                    return CommandResultType.Error;
                 }
 
                 byte[] hedKey = ParseKey(parameter);
@@ -53,33 +53,30 @@ namespace Necromancy.Cli.Command.Commands
             if (command == "pack")
             {
                 // TODO pack needs work
-                if (parameter.Arguments.Count < 3)
+                if (parameter.Arguments.Count < 4)
                 {
                     Logger.Error("to few args");
-                    return CommandResultType.Completed;
+                    return CommandResultType.Error;
                 }
 
                 byte[] hedKey = ParseKey(parameter);
-                if (parameter.Arguments.Count == 3)
+                if (parameter.Arguments.Count == 4)
                 {
                     FpmfArchiveIo hedFile = new FpmfArchiveIo();
-                    hedFile.Pack(parameter.Arguments[0], parameter.Arguments[1], parameter.Arguments[2], hedKey);
+                    hedFile.Pack(parameter.Arguments[1], parameter.Arguments[2], parameter.Arguments[3], hedKey);
                     return CommandResultType.Completed;
                 }
-                else if (parameter.Arguments.Count == 4)
+                else if (parameter.Arguments.Count == 5)
                 {
                     FpmfArchiveIo hedFile = new FpmfArchiveIo();
-                    hedFile.Pack(parameter.Arguments[0], parameter.Arguments[1], parameter.Arguments[2], hedKey,
-                        parameter.Arguments[3]);
+                    hedFile.Pack(parameter.Arguments[1], parameter.Arguments[2], parameter.Arguments[3], hedKey,
+                        parameter.Arguments[4]);
                     return CommandResultType.Completed;
                 }
-
-
-                return CommandResultType.Continue;
             }
 
-
-            return CommandResultType.Continue;
+            Logger.Error("Command not valid");
+            return CommandResultType.Error;
         }
 
         private byte[] ParseKey(ConsoleParameter parameter)

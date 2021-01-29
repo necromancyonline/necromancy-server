@@ -181,6 +181,12 @@ namespace Necromancy.Cli
                     Logger.Info("Command Completed");
                     continue;
                 }
+                
+                if (result == CommandResultType.Error)
+                {
+                    Logger.Info("Command Failed");
+                    continue;
+                }
             }
 
             StopReadConsoleThread();
