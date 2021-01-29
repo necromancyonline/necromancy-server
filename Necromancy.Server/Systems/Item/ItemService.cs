@@ -118,6 +118,7 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> LoadOwnedInventoryItems()
         {
             List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
+            _character.ItemManager = new ItemManager();// TODO new item manager, will probably go away if itemservice is attached to the character.
             //load bags first
             foreach (ItemInstance item in ownedItems)
             {
