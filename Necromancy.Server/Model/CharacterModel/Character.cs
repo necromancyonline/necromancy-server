@@ -120,8 +120,8 @@ namespace Necromancy.Server.Model
         public bool _characterActive { get; private set; }
 
         //Inventory
-        public ItemManager ItemManager { get; } = new ItemManager();
-        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems {get;  } = new Dictionary<ItemEquipSlots, ItemInstance>();
+        public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
+        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems {get;  } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
 
     public Character()
         {

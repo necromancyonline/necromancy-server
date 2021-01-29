@@ -430,6 +430,7 @@ CREATE TABLE "nec_item_library" (
 	"field137"	TEXT,
 	"field138"	TEXT,
 	"field139"	TEXT,
+    "field140"	TEXT,
 	"req_clown"	INTEGER NOT NULL DEFAULT 0,
 	"req_alchemist"	INTEGER NOT NULL DEFAULT 0,
 	"grade"	                        INTEGER NOT NULL DEFAULT 0,

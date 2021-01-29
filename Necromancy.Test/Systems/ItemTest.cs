@@ -76,26 +76,7 @@ namespace Necromancy.Test.Systems
         {
             _dummyCharacter = new Character();
             _itemService = new ItemService(_dummyCharacter, new DummyItemDao());
-        }
-
-        [Fact(Skip = "NYI")]
-        public void TestSpawnUnidentified()
-        {
-            const int VALID_BASE_ID = 5;
-            ItemInstance newUnidentifiedItem;
-
-            newUnidentifiedItem = _itemService.SpawnUnidentifiedItem(VALID_BASE_ID);
-
-            Assert.Equal(VALID_BASE_ID, newUnidentifiedItem.BaseID);
-        }
-
-        [Fact(Skip = "NYI")]
-        public void TestSpawnUnidentifiedItemNoItemFound()
-        {
-            const int INVALID_BASE_ID = 5;            
-            ItemException e = Assert.Throws<ItemException>(() => _itemService.SpawnUnidentifiedItem(INVALID_BASE_ID));
-            Assert.Equal(ItemExceptionType.Generic, e.ExceptionType);
-        }
+        }       
 
         [Theory]
         [InlineData(1)]
@@ -120,6 +101,35 @@ namespace Necromancy.Test.Systems
             Assert.Equal(instanceId, _dummyCharacter.ItemManager.GetItem(toLoc).InstanceID);
             Assert.Equal(itemInstance.Location, toLoc);
             Assert.Equal(quantity, itemInstance.Quantity);
+        }
+
+        [Fact]
+        public void TestItemMoveNoItemAtLocation()
+        {
+            const byte quantity = 2;
+            ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);            
+            ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, quantity));
+
+            Assert.Equal(ItemExceptionType.Generic, e.ExceptionType);
+        }
+
+        [Fact]
+        public void TestItemMovePlaceInvalidQuantity()
+        {
+            const ulong instanceId = 756366;
+            const byte startQuantity = 5;
+            const byte moveQuantity = 10;
+            ItemInstance itemInstance = new ItemInstance(instanceId);
+            itemInstance.Quantity = startQuantity;
+            ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(fromLoc, itemInstance);
+            ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, moveQuantity));
+
+            Assert.Equal(ItemExceptionType.Amount, e.ExceptionType);
         }
 
         [Fact]
@@ -218,6 +228,35 @@ namespace Necromancy.Test.Systems
         }
 
         [Fact]
+        public void TestItemMoveAddQuantityWrongItem()
+        {
+            const ulong toId = 234987915;
+            const int baseToId = 1234;
+            const ulong fromId = 34151555;
+            const int baseFromId = 5678;
+            const int fromQuantity = 10;
+            const int toQuantity = 30;
+            const int moveQuantity = fromQuantity - 1;
+
+            ItemInstance fromItem = new ItemInstance(fromId);
+            fromItem.Quantity = fromQuantity;
+            fromItem.BaseID = baseFromId;
+            ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(fromLoc, fromItem);
+
+            ItemInstance toItem = new ItemInstance(toId);
+            toItem.MaxStackSize = toQuantity + moveQuantity + 5;
+            toItem.Quantity = toQuantity;
+            toItem.BaseID = baseToId;
+            ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
+            _dummyCharacter.ItemManager.PutItem(toLoc, toItem);
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, moveQuantity));
+
+            Assert.Equal(ItemExceptionType.BagLocation, e.ExceptionType);
+        }
+
+        [Fact]
         public void TestItemMovePlaceAllQuantity()
         {
             const ulong fromId = 34151555;
@@ -295,6 +334,221 @@ namespace Necromancy.Test.Systems
             Assert.Equal(bagId, _dummyCharacter.ItemManager.GetItem(toLoc).InstanceID);
             Assert.Equal(bag.Location, toLoc);
             Assert.Equal(quantity, bag.Quantity);
+        }
+
+        [Fact]
+        public void TestItemMoveNonEmptyBagOutOfSlot()
+        {
+            const ulong bagId = 534577777;
+            const ulong itemInBagId = 5117;
+            const int quantity = 1;
+
+            ItemInstance bag = new ItemInstance(bagId);
+            bag.BagSize = 8;
+            ItemLocation bagLoc = new ItemLocation(ItemZoneType.BagSlot, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(bagLoc, bag);
+
+            ItemInstance itemInBag = new ItemInstance(itemInBagId);
+            ItemLocation itemInBagLoc = new ItemLocation(ItemZoneType.EquippedBags, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(itemInBagLoc, itemInBag);
+
+            ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(bagLoc, toLoc, quantity));
+
+            Assert.Equal(ItemExceptionType.BagLocation, e.ExceptionType);
+        }
+
+        [Fact]
+        public void TestItemRemoveAll()
+        {
+            const ulong instanceId = 756366;
+            const int quantity = 5;
+            ItemInstance itemInstance = new ItemInstance(instanceId);
+            itemInstance.Quantity = quantity;
+            ItemLocation loc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(loc, itemInstance);
+
+            ItemInstance result = _itemService.Remove(loc, quantity);
+
+            Assert.Equal(0, result.Quantity);
+            Assert.Equal(instanceId, result.InstanceID);
+            Assert.Equal(ItemLocation.InvalidLocation, result.Location);
+        }
+
+        [Fact]
+        public void TestItemRemoveSome()
+        {
+            const ulong instanceId = 756366;
+            const int quantityToRemove = 5;
+            const int quantityAvailable = quantityToRemove + 5;
+            ItemInstance itemInstance = new ItemInstance(instanceId);
+            itemInstance.Quantity = quantityAvailable;
+            ItemLocation loc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(loc, itemInstance);
+
+            ItemInstance result = _itemService.Remove(loc, quantityToRemove);
+
+            Assert.Equal(quantityAvailable - quantityToRemove, result.Quantity);
+            Assert.Equal(instanceId, result.InstanceID);
+            Assert.Equal(loc, result.Location);
+        }
+
+        [Fact]
+        public void TestItemRemoveTooMany()
+        {
+            const ulong instanceId = 756366;
+            const int quantityAvailable = 5;
+            const int quantityToRemove = quantityAvailable + 5;            
+            ItemInstance itemInstance = new ItemInstance(instanceId);
+            itemInstance.Quantity = quantityAvailable;
+            ItemLocation loc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
+            _dummyCharacter.ItemManager.PutItem(loc, itemInstance);
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Remove(loc, quantityToRemove));
+
+            Assert.Equal(ItemExceptionType.Amount, e.ExceptionType);
+        }
+
+        [Fact]
+        public void TestItemSort()
+        {
+            const ItemZoneType itemZoneType = ItemZoneType.AdventureBag;
+            const int container = 0;
+            const int numberOfItems = 10;
+            ItemInstance[] unsortedItems = new ItemInstance[numberOfItems];
+            short[] fromSlots = new short[numberOfItems];
+            short[] toSlots = new short[numberOfItems];
+            short[] quantities = new short[numberOfItems];
+            for (short i = 0; i < numberOfItems; i++)
+            {
+                unsortedItems[i] = new ItemInstance((ulong)i);
+                unsortedItems[i].Quantity = (byte)i;
+                quantities[i] = i;
+
+                fromSlots[i] = (short)(numberOfItems - i - 1);
+                toSlots[i] = i;
+
+                _dummyCharacter.ItemManager.PutItem(new ItemLocation(itemZoneType,container,fromSlots[i]), unsortedItems[i]);
+            }
+
+            ItemInstance[] sortedItems = _itemService.Sort(itemZoneType, container, fromSlots, toSlots, quantities);
+
+            Assert.Equal(numberOfItems, sortedItems.Length);
+            for (short i = 0; i < numberOfItems; i++)
+            {
+                Assert.Equal(i, (short) sortedItems[i].InstanceID);
+                Assert.Equal(i, sortedItems[i].Quantity);
+                Assert.Equal(i, sortedItems[i].Location.Slot);
+            }
+        }
+
+        [Fact]
+        public void TestItemSortNoItem()
+        {
+            const ItemZoneType itemZoneType = ItemZoneType.AdventureBag;
+            const int container = 0;
+            const int numberOfItems = 10;
+            ItemInstance[] unsortedItems = new ItemInstance[numberOfItems];
+            short[] fromSlots = new short[numberOfItems];
+            short[] toSlots = new short[numberOfItems];
+            short[] quantities = new short[numberOfItems];
+            for (short i = 0; i < numberOfItems; i++)
+            {
+                unsortedItems[i] = new ItemInstance((ulong)i);
+                unsortedItems[i].Quantity = (byte)i;
+                quantities[i] = i;
+
+                fromSlots[i] = (short)(numberOfItems - i - 1);
+                toSlots[i] = i;               
+            }
+            for (short i = 0; i < numberOfItems - 2; i++)
+            {
+                _dummyCharacter.ItemManager.PutItem(new ItemLocation(itemZoneType, container, fromSlots[i]), unsortedItems[i]);
+            }
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Sort(itemZoneType, container, fromSlots, toSlots, quantities));
+
+            Assert.Equal(ItemExceptionType.Generic, e.ExceptionType);
+        }
+
+        [Theory]
+        [InlineData(25)]
+        [InlineData(255)]
+        [InlineData(-2552)]
+        public void TestItemSortToInvalidSlot(short slot)
+        {
+            const ItemZoneType advBagZone = ItemZoneType.AdventureBag;
+            const int advBagDefaultContainer = 0;
+            const int numberOfItems = 10;
+            ItemInstance[] unsortedItems = new ItemInstance[numberOfItems];
+            short[] fromSlots = new short[numberOfItems];
+            short[] toSlots = new short[numberOfItems];
+            short[] quantities = new short[numberOfItems];
+            for (short i = 0; i < numberOfItems; i++)
+            {
+                unsortedItems[i] = new ItemInstance((ulong)i);
+                unsortedItems[i].Quantity = (byte)i;
+                quantities[i] = i;
+
+                fromSlots[i] = i;
+                toSlots[i] = (short)(i + slot);
+                _dummyCharacter.ItemManager.PutItem(new ItemLocation(advBagZone, advBagDefaultContainer, fromSlots[i]), unsortedItems[i]);
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => _itemService.Sort(advBagZone, advBagDefaultContainer, fromSlots, toSlots, quantities));
+        }
+
+        [Fact]
+        public void TestItemSortToInvalidContainer()
+        {
+            const ItemZoneType advBagZone = ItemZoneType.AdventureBag;
+            const int advBagDefaultContainer = 0;
+            const int numberOfItems = 10;
+            const byte invalidContainer = 5;
+            ItemInstance[] unsortedItems = new ItemInstance[numberOfItems];
+            short[] fromSlots = new short[numberOfItems];
+            short[] toSlots = new short[numberOfItems];
+            short[] quantities = new short[numberOfItems];
+            for (short i = 0; i < numberOfItems; i++)
+            {
+                unsortedItems[i] = new ItemInstance((ulong)i);
+                unsortedItems[i].Quantity = (byte)i;
+                quantities[i] = i;
+
+                fromSlots[i] = i;
+                toSlots[i] = (short)(numberOfItems - i - 1);
+                _dummyCharacter.ItemManager.PutItem(new ItemLocation(advBagZone, advBagDefaultContainer, fromSlots[i]), unsortedItems[i]);
+            }
+
+            Assert.Throws<IndexOutOfRangeException>(() => _itemService.Sort(advBagZone, invalidContainer, fromSlots, toSlots, quantities));
+        }
+
+        [Fact]
+        public void TestItemSortInvalidQuantity()
+        {
+            const ItemZoneType itemZoneType = ItemZoneType.AdventureBag;
+            const int container = 0;
+            const int numberOfItems = 10;
+            ItemInstance[] unsortedItems = new ItemInstance[numberOfItems];
+            short[] fromSlots = new short[numberOfItems];
+            short[] toSlots = new short[numberOfItems];
+            short[] quantities = new short[numberOfItems];
+            for (short i = 0; i < numberOfItems; i++)
+            {
+                unsortedItems[i] = new ItemInstance((ulong)i);
+                unsortedItems[i].Quantity = (byte)i;
+                quantities[i] = (short)(unsortedItems[i].Quantity + 1);
+
+                fromSlots[i] = (short)(numberOfItems - i - 1);
+                toSlots[i] = i;
+
+                _dummyCharacter.ItemManager.PutItem(new ItemLocation(itemZoneType, container, fromSlots[i]), unsortedItems[i]);
+            }
+
+            ItemException e = Assert.Throws<ItemException>(() => _itemService.Sort(itemZoneType, container, fromSlots, toSlots, quantities));
+
+            Assert.Equal(ItemExceptionType.Amount, e.ExceptionType);
         }
     }
 }

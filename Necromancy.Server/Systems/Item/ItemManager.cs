@@ -144,5 +144,10 @@ namespace Necromancy.Server.Systems.Item
         {
             return ZoneMap[itemZoneType].TotalFreeSpace;
         }
+
+        public bool IsEmptyContainer(ItemZoneType itemZoneType, int container)
+        {
+            return ZoneMap[itemZoneType].GetContainer(container).Count == 0;
+        }
     }
 }

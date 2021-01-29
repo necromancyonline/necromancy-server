@@ -151,7 +151,11 @@ namespace Necromancy.Server.Systems.Item
             ItemLocation[] itemLocations = new ItemLocation[fromSlots.Length];
             for (int i = 0; i < fromSlots.Length; i++)
             {
-                sortedItems[i] = _character.ItemManager.RemoveItem(new ItemLocation(zone, container, fromSlots[i]));
+                ItemLocation loc = new ItemLocation(zone, container, fromSlots[i]);
+                if (!_character.ItemManager.HasItem(loc)) throw new ItemException(ItemExceptionType.Generic); //make sure there is an actual item at the location
+
+                sortedItems[i] = _character.ItemManager.RemoveItem(loc);
+                if(sortedItems[i].Quantity != quantities[i]) throw new ItemException(ItemExceptionType.Amount); //should never happen as quanties arent even checked besides compromised client
                 instanceIds[i] = sortedItems[i].InstanceID;
             }
             for (int i = 0; i < fromSlots.Length; i++)
@@ -162,23 +166,24 @@ namespace Necromancy.Server.Systems.Item
             _itemDao.UpdateItemLocations(instanceIds, itemLocations);
             return sortedItems;
         }
-        public ItemInstance Drop(ItemLocation location, byte quantity)
+        public ItemInstance Remove(ItemLocation location, byte quantity)
         {
             ItemInstance item = _character.ItemManager.GetItem(location);
             ulong instanceId = item.InstanceID;
             if (item is null) throw new ItemException(ItemExceptionType.Generic);
             if (item.Quantity < quantity) throw new ItemException(ItemExceptionType.Amount);
 
-            if (item.Quantity == quantity)
+            item.Quantity -= quantity;
+            if (item.Quantity == 0)
             {
                 _itemDao.DeleteItemInstance(instanceId);
+                _character.ItemManager.RemoveItem(item);
             }
             else
             {
                 ulong[] instanceIds = new ulong[1];
                 byte[] quantities = new byte[1];
-                instanceIds[0] = instanceId;
-                item.Quantity -= quantity;
+                instanceIds[0] = instanceId;                
                 quantities[0] = item.Quantity;
                 _itemDao.UpdateItemQuantities(instanceIds, quantities);
             }
@@ -198,7 +203,8 @@ namespace Necromancy.Server.Systems.Item
             //check possible errors. these should only occur if client is compromised
             if (fromItem is null || quantity == 0) throw new ItemException(ItemExceptionType.Generic);
             if (quantity > fromItem.Quantity) throw new ItemException(ItemExceptionType.Amount);
-            if (quantity > 1 && hasToItem && toItem.BaseID != fromItem.BaseID) throw new ItemException(ItemExceptionType.BagLocation);
+            if (quantity > 1 && quantity < fromItem.Quantity && hasToItem && toItem.BaseID != fromItem.BaseID) throw new ItemException(ItemExceptionType.BagLocation);
+            if (fromItem.Location.ZoneType == ItemZoneType.BagSlot && !_character.ItemManager.IsEmptyContainer(ItemZoneType.EquippedBags, fromItem.Location.Slot)) throw new ItemException(ItemExceptionType.BagLocation);
 
             if (!hasToItem && quantity == fromItem.Quantity)
             {

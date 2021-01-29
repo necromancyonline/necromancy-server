@@ -36,7 +36,6 @@ namespace Necromancy.Server.Packet.Area
             try
             {
                 ItemInstance[] sortedItems = itemService.Sort(zoneType, container, fromSlots, toSlots, quantities);
-                PacketResponse pResp;
                 foreach(ItemInstance item in sortedItems)
                 {
                     RecvItemUpdatePlace recvItemUpdatePlace = new RecvItemUpdatePlace(client, item);

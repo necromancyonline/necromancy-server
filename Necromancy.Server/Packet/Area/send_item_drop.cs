@@ -23,7 +23,7 @@ namespace Necromancy.Server.Packet.Area
             int error = 0;
 
             try { 
-                ItemInstance item = itemService.Drop(location, quantity);
+                ItemInstance item = itemService.Remove(location, quantity);
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, item);
                 Router.Send(recvItemRemove);
             } catch(ItemException e) { error = (int) e.ExceptionType; }
