@@ -17,7 +17,7 @@ namespace Necromancy.Server.Data
         public static readonly byte[] HedKeyUsBeta = {0x7D, 0xC4};
         public static readonly byte[] HedKeyJp = {0x67, 0xC7};
 
-        public delegate byte[] WoItmKeyResolver(uint itemId);
+
 
         public FpmfArchive Open(string hedFilePath, byte[] hedKey)
         {

@@ -16,18 +16,55 @@ namespace Necromancy.Server.Data
 
         public static readonly WoItemIo Instance = new WoItemIo();
 
-        /// <summary>
-        /// 0x403700
-        /// </summary>
-        public Dictionary<uint, string> OpenWoItm(string itemPath, FpmfArchiveIo.WoItmKeyResolver keyResolver)
+        public delegate byte[] WoItmKeyResolver(uint itemId);
+
+        public delegate string WoItmStringDecoder(byte[] value);
+
+        public delegate byte[] WoItmStringEncoder(string value);
+
+        public Dictionary<uint, string> OpenWoItm(string csvPath, WoItmKeyResolver keyResolver)
         {
-            FileInfo itemFile = new FileInfo(itemPath);
+            return OpenWoItm(csvPath, keyResolver, Encoding.UTF8.GetString);
+        }
+
+        public Dictionary<uint, string> OpenWoItm(string csvPath, WoItmKeyResolver keyResolver,
+            WoItmStringDecoder stringDecoder)
+        {
+            FileInfo itemFile = new FileInfo(csvPath);
             if (!itemFile.Exists)
             {
-                throw new FileNotFoundException($"File: {itemPath} not found.");
+                throw new FileNotFoundException($"File: {csvPath} not found.");
             }
 
             IBuffer buffer = new StreamBuffer(itemFile.FullName);
+            return DecryptItemCsv(buffer.GetAllBytes(), keyResolver, stringDecoder);
+        }
+
+        public void SaveWoItm(string csvPath, Dictionary<uint, string> items, WoItmKeyResolver keyResolver)
+        {
+            SaveWoItm(csvPath, items, keyResolver, Encoding.UTF8.GetBytes);
+        }
+
+        public void SaveWoItm(string csvPath, Dictionary<uint, string> items, WoItmKeyResolver keyResolver,
+            WoItmStringEncoder stringEncoder)
+        {
+            byte[] encryptedCsv = EncryptItemCsv(items, keyResolver, stringEncoder);
+            FileInfo itemFile = new FileInfo(csvPath);
+            if (itemFile.Exists)
+            {
+                // err overwrite
+            }
+
+            // create file
+        }
+
+        /// <summary>
+        /// 0x403700
+        /// </summary>
+        public Dictionary<uint, string> DecryptItemCsv(byte[] encryptedCsv, WoItmKeyResolver keyResolver,
+            WoItmStringDecoder stringDecoder)
+        {
+            IBuffer buffer = new StreamBuffer(encryptedCsv);
             buffer.SetPositionStart();
             byte[] magicBytes = buffer.ReadBytes(5);
             for (int i = 0; i < 5; i++)
@@ -46,8 +83,7 @@ namespace Necromancy.Server.Data
                 uint itemId = buffer.ReadUInt32();
                 int chunkSize = buffer.ReadInt32();
                 int chunkLen = buffer.ReadInt32();
-                byte[] encryptedCsv = buffer.ReadBytes(chunkSize - 4);
-
+                byte[] encryptedCsvRow = buffer.ReadBytes(chunkSize - 4);
                 byte[] key = keyResolver(itemId);
                 if (key == null || key.Length < 16)
                 {
@@ -55,23 +91,17 @@ namespace Necromancy.Server.Data
                     continue;
                 }
 
-                byte[] decryptedCsv = DecryptWoItm(encryptedCsv, key);
-                string csv = Encoding.UTF8.GetString(decryptedCsv);
+                byte[] decryptedCsvRow = DecryptWoItm(encryptedCsvRow, key);
+                string csv = stringDecoder(decryptedCsvRow);
                 items.Add(itemId, csv);
             }
 
             return items;
         }
 
-        public void SaveWoItm(string itemPath, Dictionary<uint, string> items,
-            FpmfArchiveIo.WoItmKeyResolver keyResolver)
+        public byte[] EncryptItemCsv(Dictionary<uint, string> items, WoItmKeyResolver keyResolver,
+            WoItmStringEncoder stringEncoder)
         {
-            FileInfo itemFile = new FileInfo(itemPath);
-            if (!itemFile.Exists)
-            {
-                // TODO create
-            }
-
             IBuffer buffer = new StreamBuffer();
             buffer.WriteBytes(WoitmMagicBytes);
             buffer.WriteInt16(1); // version 1
@@ -79,7 +109,7 @@ namespace Necromancy.Server.Data
             foreach (uint itemId in items.Keys)
             {
                 string csv = items[itemId];
-                byte[] decryptedCsv = Encoding.UTF8.GetBytes(csv);
+                byte[] decryptedCsv = stringEncoder(csv);
                 byte[] key = keyResolver(itemId);
                 if (key == null || key.Length < 16)
                 {
@@ -91,8 +121,11 @@ namespace Necromancy.Server.Data
 
                 buffer.WriteUInt32(itemId);
                 buffer.WriteInt32(0);
+                buffer.WriteInt32(0);
                 buffer.WriteBytes(encryptedCsv);
             }
+
+            return buffer.GetAllBytes();
         }
 
         public byte[] EncryptWoItm(byte[] decryptedCsv, byte[] key)
