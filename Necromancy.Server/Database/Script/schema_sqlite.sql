@@ -471,3 +471,20 @@ CREATE TABLE "nec_item_instance" (
 	FOREIGN KEY("owner_id") REFERENCES "nec_character"("id") ON DELETE CASCADE,
 	FOREIGN KEY("base_id") REFERENCES "nec_item_library"("id") ON UPDATE RESTRICT ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS "nec_auction" (
+	"id"	        	INTEGER NOT NULL,
+	"instance_id"		INTEGER NOT NULL,
+	"quantity"			INTEGER NOT NULL,
+	"expiry_datetime"	INTEGER NOT NULL,
+	"min_bid"			INTEGER NOT NULL,
+	"buyout_price"		INTEGER NOT NULL,
+	"bidder_id"			INTEGER,
+	"current_bid"		INTEGER,
+	"comment"			TEXT,
+	"is_cancellable"	INTEGER NOT NULL DEFAULT 1,
+	FOREIGN KEY("bidder_id") REFERENCES "nec_character"("id") ON UPDATE CASCADE,
+	FOREIGN KEY("instance_id") REFERENCES "nec_item_instance"("id") ON DELETE CASCADE,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+
