@@ -19,9 +19,9 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
 
-            //Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_guard_start_self, res, ServerType.Area);
+            Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_guard_start_self, res, ServerType.Area);
 
-            res.WriteUInt32(1); //If sending a 1, guard fails. Need to come up with logic to make it so people can't block when not using shields.
+            res.WriteUInt32(0); //If sending a 1, guard fails. Need to come up with logic to make it so people can't block when not using shields.
             Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_guard_start_r, res, ServerType.Area);
             
             client.Character.AddStateBit(CharacterState.BlockPose);
