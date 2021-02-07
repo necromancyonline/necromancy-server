@@ -19,10 +19,11 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.InstanceId); //Character ID
+            Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_guard_end_self, res, ServerType.Area);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_dbg_battle_guard_end_notify, res, ServerType.Area,
-                client);
+            res.WriteUInt32(0);
+            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_guard_end_r, res, ServerType.Area);
+
             client.Character.ClearStateBit(CharacterState.BlockPose);
 
         }
