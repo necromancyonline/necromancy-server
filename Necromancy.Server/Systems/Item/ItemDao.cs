@@ -580,12 +580,12 @@ namespace Necromancy.Server.Systems.Item
             if (reader.GetBoolean("req_thief")) itemInstance.RequiredClasses |= Classes.Thief;
             if (reader.GetBoolean("req_mage")) itemInstance.RequiredClasses |= Classes.Mage;
             if (reader.GetBoolean("req_priest")) itemInstance.RequiredClasses |= Classes.Priest;
-            //if (reader.GetBoolean("req_samurai")) itemInstance.RequiredClasses |= Classes.Samurai; TODO ENABLE ONCE YOU REBUILD DATABASE
-            //if (reader.GetBoolean("req_bishop")) itemInstance.RequiredClasses |= Classes.Bishop;
-            //if (reader.GetBoolean("req_ninja")) itemInstance.RequiredClasses |= Classes.Ninja;
-            //if (reader.GetBoolean("req_lord")) itemInstance.RequiredClasses |= Classes.Lord;
-            //if (reader.GetBoolean("req_clown")) itemInstance.RequiredClasses |= Classes.Clown;
-            //if (reader.GetBoolean("req_alchemist")) itemInstance.RequiredClasses |= Classes.Alchemist;
+            if (reader.GetBoolean("req_samurai")) itemInstance.RequiredClasses |= Classes.Samurai;
+            if (reader.GetBoolean("req_bishop")) itemInstance.RequiredClasses |= Classes.Bishop;
+            if (reader.GetBoolean("req_ninja")) itemInstance.RequiredClasses |= Classes.Ninja;
+            if (reader.GetBoolean("req_lord")) itemInstance.RequiredClasses |= Classes.Lord;
+            if (reader.GetBoolean("req_clown")) itemInstance.RequiredClasses |= Classes.Clown;
+            if (reader.GetBoolean("req_alchemist")) itemInstance.RequiredClasses |= Classes.Alchemist;
 
             if (reader.GetBoolean("req_lawful")) itemInstance.RequiredAlignments |= Alignments.Lawful;
             if (reader.GetBoolean("req_neutral")) itemInstance.RequiredAlignments |= Alignments.Neutral;
@@ -668,7 +668,7 @@ namespace Necromancy.Server.Systems.Item
 
             //grade,
             //weight
-
+            itemInstance.Weight = reader.GetInt32("weight")*1000;
 
             return itemInstance;
         }

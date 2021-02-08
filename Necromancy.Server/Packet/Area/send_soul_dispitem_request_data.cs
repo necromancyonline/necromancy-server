@@ -1,6 +1,5 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -11,8 +10,10 @@ namespace Necromancy.Server.Packet.Area
 {
     public class send_soul_dispitem_request_data : ClientHandler
     {
+        private NecServer _server;
         public send_soul_dispitem_request_data(NecServer server) : base(server)
         {
+            _server = server;
         }
 
         public override ushort Id => (ushort)AreaPacketId.send_soul_dispitem_request_data;
@@ -23,16 +24,22 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(0);
             Router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_request_data_r, res, ServerType.Area);
 
+
+
+            //ToDo  find a better home for these functionalities . This send is the last stop before initial map entry.
+            LoadInventory(client, _server);
+            //LoadCloakRoom(client);
+            //LoadBattleStats(client);
+            LoadHonor(client);
+            //LoadSoulDispItem(client);
+        }
+
+        public void LoadSoulDispItem(NecClient client)
+        {
             //notify you of the soul item you got based on something above.
             IBuffer res19 = BufferProvider.Provide();
             res19.WriteInt32(Util.GetRandomNumber(62000001, 62000015)); //soul_dispitem.csv
             Router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_notify_data, res19, ServerType.Area);
-
-            //ToDo  find a better home for these functionalities . This send is the last stop before initial map entry.
-            LoadInventory(client);
-            //LoadCloakRoom(client);
-            //LoadBattleStats(client);
-            LoadHonor(client);
         }
 
         public void LoadHonor(NecClient client)
@@ -68,10 +75,10 @@ namespace Necromancy.Server.Packet.Area
             //Router.Send(client, (ushort)AreaPacketId.recv_chara_update_battle_base_param, res, ServerType.Area);
         }
 
-        public void LoadInventory(NecClient client)
+        public void LoadInventory(NecClient client, NecServer server)
         {
             ItemService itemService = new ItemService(client.Character);
-            List<ItemInstance> ownedItems = itemService.LoadOwnedInventoryItems();
+            List<ItemInstance> ownedItems = itemService.LoadOwnedInventoryItems(server);
             foreach (ItemInstance item in ownedItems)
             {
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, item);

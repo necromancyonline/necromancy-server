@@ -1,7 +1,7 @@
+using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Receive.Area;
-using Necromancy.Server.Systems.Item;
 using System;
 using System.Collections.Generic;
 
@@ -123,7 +123,7 @@ namespace Necromancy.Server.Systems.Item
         /// 
         /// </summary>
         /// <returns>A list of items in your adventure bag, equipped bags, bag slot, premium bag, and avatar inventory.</returns>
-        public List<ItemInstance> LoadOwnedInventoryItems()
+        public List<ItemInstance> LoadOwnedInventoryItems(NecServer server)
         {
             //Clear Equipped Items from send_data_get_self_chara_data_request
             _character.EquippedItems.Clear();
@@ -145,6 +145,17 @@ namespace Necromancy.Server.Systems.Item
                 {
                     ItemLocation location = item.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
                     item.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
+
+                    //Temporary ItemLibrary.CSV lookup until Item_decrypted.csv and Table are fully mapped/ populated
+                     server.SettingRepository.ItemLibrary.TryGetValue(item.BaseID, out ItemLibrarySetting itemLibrarySetting);
+                    if (itemLibrarySetting != null)
+                    {
+                        //item.MaximumDurability = itemLibrarySetting.Durability;
+                        if (item.MaximumDurability == 0) { item.MaximumDurability = 100; }
+                        item.CurrentDurability = item.MaximumDurability;
+                        if (item.Weight == 0) { item.Weight += 1234; }
+                    }
+
                     _character.ItemManager.PutItem(location, item);
                 }
                 if (item.CurrentEquipSlot != ItemEquipSlots.None)

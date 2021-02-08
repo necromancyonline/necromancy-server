@@ -51,6 +51,10 @@ namespace Necromancy.Server.Model
         public BaseStat Hp;
         public BaseStat Mp;
         public BaseStat Od;
+        public BaseStat Gp;
+        public BaseStat Weight;
+        public BaseStat Condition;
+
 
         //Model
         public int activeModel;
@@ -145,6 +149,9 @@ namespace Necromancy.Server.Model
             Hp = new BaseStat(1000, 1000);
             Mp = new BaseStat(450, 500);
             Od = new BaseStat(150, 200);
+            Gp = new BaseStat(150, 200);
+            Weight = new BaseStat(456, 1234);
+            Condition = new BaseStat(140, 200);
             takeover = false;
             skillStartCast = 0;
             battleAnim = 0;

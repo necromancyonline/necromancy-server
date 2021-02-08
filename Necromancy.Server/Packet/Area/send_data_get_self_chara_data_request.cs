@@ -66,11 +66,11 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.Character.Hp.max); // max hp
             res.WriteInt32(client.Character.Mp.max); // maxmp
             res.WriteInt32(client.Character.Od.max); // max od
-            res.WriteInt32(500); // current guard points
-            res.WriteInt32(600); // max guard points
-            res.WriteInt32(1238); // value/100 = current weight
-            res.WriteInt32(1895); // value/100 = max weight
-            res.WriteByte(200); // condition
+            res.WriteInt32(client.Character.Gp.current); // current guard points
+            res.WriteInt32(client.Character.Gp.max); // max guard points
+            res.WriteInt32(client.Character.Weight.current); // value/100 = current weight
+            res.WriteInt32(client.Character.Weight.max); // value/100 = max weight
+            res.WriteByte(client.Character.Condition.current); // condition
 
             // total stat level includes bonus'?
             res.WriteUInt16(client.Character.Strength); // str
@@ -202,11 +202,11 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt64(120);// Max soul points
             res.WriteByte(client.Character.criminalState); // 0 is white,1 yellow 2 red 3+ skull
             res.WriteByte((byte)client.Character.beginnerProtection); //Beginner protection (bool)
-            res.WriteByte(110); //Level cap
+            res.WriteByte(0); //Level cap
             res.WriteByte(1);
             res.WriteByte(2);
             res.WriteByte(3);
-            res.WriteByte(0);//new
+            res.WriteByte(1);//new
 
             res.WriteInt32(1);//new
             res.WriteInt32(2);//new
