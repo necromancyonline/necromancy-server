@@ -1,0 +1,88 @@
+0x004DE6A0 location for first opcode, 11 opcodes, 11 recv strings
+-----------------------------------------------------------------
+0x848C
+string: network::proto_auth_implement_client::recv_base_select_world_r() [ res = %d ]
+
+structure: 
+Cstring of max size 0x41;
+int16;
+byte looped 0x14 times(fixed sting of size 0x14);
+-----------------------------------------------------------------
+0x174A
+string: network::proto_auth_implement_client::recv_base_authenticate_soe_r() [ res = %d ]
+
+structure: 
+int32(error i suspect);
+int32;
+-----------------------------------------------------------------
+0xA53
+string: network::proto_auth_implement_client::recv_base_authenticate_hangame_r() [ res = %d ]
+
+structure: 
+int32(error i suspect);
+int32;
+-----------------------------------------------------------------
+0x15C7
+string: network::proto_auth_implement_client::recv_base_authenticate_r() [ res = %d ]
+
+structure: 
+int32;
+int32;
+-----------------------------------------------------------------
+0xD2D6
+string: network::proto_auth_implement_client::recv_base_ping_r()
+
+structure: 
+no structure
+-----------------------------------------------------------------
+0xB717
+string: network::proto_auth_implement_client::recv_base_get_worldlist_r()
+
+structure: 
+int32(less than or equal to 10);
+for(int i = 0; i < 10(int32 above); i++)
+{
+	int32;
+	byte looped 0x25 times(fixed string);
+	int32;
+	int16;
+	int16;
+}
+int32;
+byte(bool);
+-----------------------------------------------------------------
+0xBA73
+string: network::proto_auth_implement_client::recv_cpf_authenticate()
+
+structure: 
+int32(less than or equal to 0x80);
+byte looped 0x80 times(fixed string of size 0x80);
+-----------------------------------------------------------------
+0xEC0A
+string: network::proto_auth_implement_client::recv_base_check_version2_r() [ res = %d ]
+
+structure: 
+int32(error i suspect);
+int32;
+int32;
+int32;
+-----------------------------------------------------------------
+0xEFDD
+string: network::proto_auth_implement_client::recv_base_check_version_r() [ res = %d ]
+
+structure: 
+int32(error i suspect);
+int32;
+int32;
+-----------------------------------------------------------------
+0x73D7
+string: network::proto_auth_implement_client::recv_cpf_notify_error()
+
+structure: 
+no structure
+-----------------------------------------------------------------
+0x7EEA
+string: network::proto_auth_implement_client::recv_base_authenticate_soe_sessionid() sessionid = %s
+
+structure: 
+cstring of max size 0x11;

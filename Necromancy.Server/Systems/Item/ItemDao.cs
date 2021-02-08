@@ -28,9 +28,9 @@ namespace Necromancy.Server.Systems.Item
                     maximum_durability,
                     enhancement_level,
                     special_forge_level,
-                    nec_item_instance.physical,
-                    nec_item_instance.magical,
-                    nec_item_instance.hardness,
+                    nec_item_library.physical,
+                    nec_item_library.magical,
+                    nec_item_library.hardness,
 					gem_slot_1_type,
                     gem_slot_2_type,
                     gem_slot_3_type,
@@ -41,7 +41,7 @@ namespace Necromancy.Server.Systems.Item
                     gp,
 					item_type,
                     quality,
-                    '1',
+                    _item_name_necromancy,
                     max_stack_size,
                     '3',
                     es_hand_r,
@@ -182,7 +182,7 @@ namespace Necromancy.Server.Systems.Item
                     req_clown,
                     req_alchemist,
                     grade,
-                    nec_item_instance.hardness,
+                    nec_item_library.hardness,
                     scroll_id
                     weight 
                 FROM 

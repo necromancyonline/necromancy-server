@@ -291,7 +291,7 @@ CREATE TABLE "nec_item_library" (
 	"id"	INTEGER NOT NULL UNIQUE,
 	"item_type"	TEXT NOT NULL,
 	"quality"	TEXT NOT NULL,
-	"1"	TEXT,
+	"_item_name_necromancy"	TEXT,
 	"max_stack_size"	INTEGER,
 	"3"	TEXT,
 	"es_hand_r"	INTEGER NOT NULL DEFAULT 0,

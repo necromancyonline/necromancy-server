@@ -1,0 +1,42 @@
+
+send_skill_exec
+[Target ID]-[mouse X]-[Mouse Y]-[Mouse Z]-[unknown]				: Suspect Unknown might be an item ID when applicable. like a treasure box
+00-00-00-00]-C2-2D-11-45-9E-E1-BF-43-04-F0-DC-42-00-00-00-00	: skill 'Decoy'				recv_skill_start_cast_r
+20-2B-A6-02]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'Hide attack' 		recv_skill_start_cast_r
+20-2B-A6-02]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'Hide attack'		recv_skill_start_cast_self
+20-2B-A6-02]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'Hide attack'		recv_skill_start_cast_ex_r
+
+13-03-00-00]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: Skill 'Quick Movement'    recv_skill_start_cast_r
+D2-01-00-00]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: Skill 'Quick Movement'    recv_skill_start_cast_self
+
+13-03-00-00]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'make medicine'		recv_skill_start_cast_r
+D2-01-00-00]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'make medicine'		recv_skill_start_cast_self
+
+(18E is my client.Character.Id 398 for this session)
+8E-01-00-00]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'high medicine' 	recv_skill_start_cast_r
+
+20-2B-A6-02]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'back attack'		recv_skill_start_cast_r
+20-2B-A6-02]-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00	: skill 'back attack'		recv_skill_start_cast_self
+00-00-00-00]-[E2-D0-A8-44]-[06-FB-9F-42]-[1C-E2-17-41]-00-00-00-00	: skill 'Decoy'			recv_skill_start_cast_r
+00-00-00-00]-[EA-7D-D0-44]-[ED-29-DE-42]-[C3-84-E9-40]-00-00-00-00	: skill 'Decoy'			recv_skill_start_cast_r
+00-00-00-00]-[65-7C-BF-44]-[A2-5A-C5-42]-[F7-DB-16-41]-00-00-00-00	: Skill 'Decoy'			recv_skill_start_cast_r
+00-00-00-00]-[E1-C4-47-45]-[61-44-31-C3]-[F8-7F-9B-43]-00-00-00-00	: Skill 'Decoy'			recv_skill_start_cast_r
+
+
+
+[send_skill_start_cast]
+[Skill ID  ][Target ID]
+6D-0B-CD-06-20-2B-A6-02   	: Skill 'Hide Attack"  		Will hit enemy (Targed ID is right clicked object ID)
+55-0F-CD-06-20-2B-A6-02		: skill ' back attack"  	Will hit enemy, should combo hide attack
+CD-CB-D4-06-00-00-00-00		: Skill 'Quick Movement"  	Will self cast (Target ID overwritten by send to 0)
+55-CD-D7-06-00-00-00-00		: Skill 'Make Medicine" 	Will self cast and should make an item in inv
+95-1C-D0-06-00-00-00-00		: skill 'Spear Trap"		Will self cast should drop trap on the ground
+4D-28-D0-06-00-00-00-00		: skill 'cut parts"			Will self cast, should combo/upgrade spear trap.
+E5-C7-D4-06-20-2B-A6-02		: skill 'Decoy'				Will cast should drop decoy NPC at mouse pointer
+
+
+
+
+[send_battle_attack_exec]
+			[Target ID]
+00-00-00-00-[20-2B-A6-02]-00-00-00-00
