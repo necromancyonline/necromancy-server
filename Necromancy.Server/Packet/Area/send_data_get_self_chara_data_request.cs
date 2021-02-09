@@ -53,13 +53,13 @@ namespace Necromancy.Server.Packet.Area
             //sub_484720 - combat/leveling info
             Logger.Debug($"Character ID Loading : {client.Character.Id}");
             res.WriteUInt32(client.Character.InstanceId); // InstanceId
-            res.WriteUInt32(client.Character.ClassId); // class
             res.WriteInt32(client.Character.activeModel);//Model
+            res.WriteUInt32(client.Character.ClassId); // class
             res.WriteInt16(client.Character.Level); // current level 
-            res.WriteInt64(91978348); // current exp
+            res.WriteInt64(91234567); // current exp
             res.WriteInt64(50000000); // soul exp
-            res.WriteInt64(96978348); // exp needed to level
-            res.WriteInt64(1100); // soul exp needed to level
+            res.WriteInt64(99999999); // exp needed to level
+            res.WriteInt64(60000000); // soul exp needed to level
             res.WriteInt32(client.Character.Hp.current); // current hp
             res.WriteInt32(client.Character.Mp.current); // current mp
             res.WriteInt32(client.Character.Od.current); // current od
@@ -70,7 +70,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.Character.Gp.max); // max guard points
             res.WriteInt32(client.Character.Weight.current); // value/100 = current weight
             res.WriteInt32(client.Character.Weight.max); // value/100 = max weight
-            res.WriteByte(client.Character.Condition.current); // condition
+            res.WriteByte((byte)client.Character.Condition.current); // condition
 
             // total stat level includes bonus'?
             res.WriteUInt16(client.Character.Strength); // str
