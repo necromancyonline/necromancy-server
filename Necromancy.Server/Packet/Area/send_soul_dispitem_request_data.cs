@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Area
             //ToDo  find a better home for these functionalities . This send is the last stop before initial map entry.
             LoadInventory(client, _server);
             //LoadCloakRoom(client);
-            //LoadBattleStats(client);
+            LoadBattleStats(client);
             LoadHonor(client);
             //LoadSoulDispItem(client);
         }
@@ -56,11 +56,24 @@ namespace Necromancy.Server.Packet.Area
         }
         public void LoadBattleStats(NecClient client)
         {
-            //populate your stats.
             short PhysAttack = 0;
             short MagAttack = 0;
             short PhysDef = 0;
             short MagDef = 0;
+
+            foreach (ItemInstance inventoryItem2 in client.Character.EquippedItems.Values)
+            {
+                if ((int)inventoryItem2.CurrentEquipSlot <= 3)
+                {
+                    PhysAttack += (short)inventoryItem2.Physical;
+                    MagAttack += (short)inventoryItem2.Magical;
+                }
+                else
+                {
+                    PhysDef += (short)inventoryItem2.Physical;
+                    MagDef += (short)inventoryItem2.Magical;
+                }
+            }
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt16((short)client.Character.Strength); //base Phys Attack
@@ -68,11 +81,16 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt16((short)client.Character.Dexterity); //base Phys Def
             res.WriteInt16((short)client.Character.Piety); //base Mag Def
 
+            res.WriteInt16(1);
+
             res.WriteInt16(PhysAttack); //Equip Bonus Phys attack
             res.WriteInt16(MagAttack); //Equip Bonus Mag Attack
             res.WriteInt16(PhysDef); //Equip bonus Phys Def
             res.WriteInt16(MagDef); //Equip bonus Mag Def
-            //Router.Send(client, (ushort)AreaPacketId.recv_chara_update_battle_base_param, res, ServerType.Area);
+
+            res.WriteInt16(255);
+
+            Router.Send(client, (ushort)AreaPacketId.recv_chara_update_battle_base_param, res, ServerType.Area);
         }
 
         public void LoadInventory(NecClient client, NecServer server)
