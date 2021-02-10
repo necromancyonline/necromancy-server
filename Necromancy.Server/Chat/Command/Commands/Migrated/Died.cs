@@ -60,20 +60,18 @@ namespace Necromancy.Server.Chat.Command.Commands
                 Task.Delay(TimeSpan.FromMilliseconds((int) (5 * 1000))).ContinueWith
                 (t1 =>
                     {
-                        client.Character.HasDied =
-                            false; // quick switch to living state so your dead body loads with your gear
-                        //load your dead body on to the map for you to see in soul form. 
+                        client.Character.State = CharacterState.SoulForm;
+                        //load your dead body on the map for looting
                         RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody, client.Character, client);
                         Server.Router.Send(client, cBodyData.ToPacket());
 
-                        client.Character.HasDied = true; // back to dead so your soul appears with-out gear.
                     }
                 );
 
                 Task.Delay(TimeSpan.FromMilliseconds((int) (15 * 1000))).ContinueWith
                 (t1 =>
                     {
-                        //reload your living body with no gear
+                        //load your soul so you can run around and do soul stuff
                         RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
                         Server.Router.Send(client, cData.ToPacket());
                     }
