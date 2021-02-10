@@ -85,7 +85,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             }
 
             res.WriteInt32(_npcSpawn.ModelId); //NPC Model from file "model_common.csv"
-            res.WriteInt16(_npcSpawn.Size); //NPC Model Size
+            res.WriteInt16(100/*_npcSpawn.Size*/); //NPC Model Size  //Hardcoded to 100
             res.WriteByte(4); //Hair ID for Character models
             res.WriteByte(5); //Hair Color ID for Character models
             res.WriteByte(3); //Face ID for Character models
