@@ -1094,7 +1094,7 @@ namespace Necromancy.Server.Packet.Id
         send_event_treasurebox_select = 0x957E,
         send_event_union_storage_close = 0xA2A5,
         send_forge_check = 0x8D0A,
-        send_forge_execute = 0x95, //opcode not found
+        send_forge_execute = 0x519D,
         send_forge_sp_check = 0x96, //opcode not found
         send_forge_sp_execute = 0x97, //opcode not found
         send_gamepot_web_close = 0x98, //opcode not found

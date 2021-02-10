@@ -502,6 +502,7 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_soul_partner_status_open(this));
             _areaConsumer.AddHandler(new send_party_mentor_create(this));
             _areaConsumer.AddHandler(new send_party_mentor_remove(this));
+            _areaConsumer.AddHandler(new send_forge_execute(this));
         }
     }
 }
