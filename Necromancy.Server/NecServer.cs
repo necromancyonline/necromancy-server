@@ -230,7 +230,6 @@ namespace Necromancy.Server
             Chat.CommandHandler.AddCommand(new MobCommand(this));
             Chat.CommandHandler.AddCommand(new CharaCommand(this));
             Chat.CommandHandler.AddCommand(new ItemCommand(this));
-            // Chat.CommandHandler.AddCommand(new BagCommand(this));
             Chat.CommandHandler.AddCommand(new TeleportCommand(this));
             Chat.CommandHandler.AddCommand(new TeleportToCommand(this));
             Chat.CommandHandler.AddCommand(new GetCommand(this));

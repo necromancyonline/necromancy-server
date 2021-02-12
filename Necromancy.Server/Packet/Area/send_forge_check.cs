@@ -36,26 +36,26 @@ namespace Necromancy.Server.Packet.Area
             //TODO
 
             ItemService itemService = new ItemService(client.Character);
-            ItemInstance inventoryItem = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
-            Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.BaseID, out ItemLibrarySetting itemLibrarySetting);
+            ItemInstance itemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
+            ForgeMultiplier forgeMultiplier = itemService.ForgeMultiplier(itemInstance.EnhancementLevel + 1);
 
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0); //err check
-            res.WriteUInt64(inventoryItem.InstanceID);
-            res.WriteByte(inventoryItem.Quantity);
-            res.WriteInt32(inventoryItem.Physical*100);
-            res.WriteInt32(inventoryItem.Magical*100);
-            res.WriteInt32(itemLibrarySetting.Durability/*Max Durability*/);
-            res.WriteByte((byte)itemLibrarySetting.Hardness);
-            res.WriteInt32(inventoryItem.Physical*200);
-            res.WriteInt32(inventoryItem.Magical*200);
-            res.WriteInt32(inventoryItem.MaximumDurability + 10);
-            res.WriteByte((byte)(inventoryItem.Hardness + 1));
-            res.WriteInt32(inventoryItem.Weight - 100);
-            res.WriteInt16((short)(inventoryItem.GP + 5)); //???
-            res.WriteInt16((short)(inventoryItem.GP + 10));//??
-            res.WriteInt16((short)(inventoryItem.GP + 15));//??
+            res.WriteUInt64(itemInstance.InstanceID);
+            res.WriteByte(itemInstance.Quantity);
+            res.WriteInt32(itemInstance.Physical*100);
+            res.WriteInt32(itemInstance.Magical*100);
+            res.WriteInt32(itemInstance.MaximumDurability);
+            res.WriteByte((byte)itemInstance.Hardness);
+            res.WriteInt32((int)(itemInstance.Physical* forgeMultiplier.Factor)*100);
+            res.WriteInt32((int)(itemInstance.Magical* forgeMultiplier.Factor)*100);
+            res.WriteInt32((int)(itemInstance.MaximumDurability * forgeMultiplier.Durability));
+            res.WriteByte((byte)(itemInstance.Hardness + forgeMultiplier.Hardness));
+            res.WriteInt32(itemInstance.Weight - forgeMultiplier.Weight);
+            res.WriteInt16((short)(itemInstance.GP + 50)); //???
+            res.WriteInt16((short)(itemInstance.GP + 100));//??
+            res.WriteInt16((short)(itemInstance.GP + 150));//??
 
             Router.Send(client, (ushort)AreaPacketId.recv_forge_check_r, res, ServerType.Area);
         }

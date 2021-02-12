@@ -50,7 +50,7 @@ namespace Necromancy.Test.Systems
                 throw new NotImplementedException();
             }
 
-            public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
+            public List<ItemInstance> SelectOwneditemInstances(int ownerId)
             {
                 throw new NotImplementedException();
             }

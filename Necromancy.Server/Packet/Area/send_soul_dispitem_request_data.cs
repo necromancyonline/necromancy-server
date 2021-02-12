@@ -62,19 +62,19 @@ namespace Necromancy.Server.Packet.Area
             short MagDef = 0;
             client.Character.Weight.setCurrent(0);
 
-            foreach (ItemInstance inventoryItem2 in client.Character.EquippedItems.Values)
+            foreach (ItemInstance itemInstance2 in client.Character.EquippedItems.Values)
             {
-                if ((int)inventoryItem2.CurrentEquipSlot == 3)
+                if (itemInstance2.CurrentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance2.CurrentEquipSlot == ItemEquipSlots.Quiver)
                 {
-                    PhysAttack += (short)inventoryItem2.Physical;
-                    MagAttack += (short)inventoryItem2.Magical;
+                    PhysAttack += (short)itemInstance2.Physical;
+                    MagAttack += (short)itemInstance2.Magical;
                 }
                 else
                 {
-                    PhysDef += (short)inventoryItem2.Physical;
-                    MagDef += (short)inventoryItem2.Magical;
+                    PhysDef += (short)itemInstance2.Physical;
+                    MagDef += (short)itemInstance2.Magical;
                 }
-                client.Character.Weight.Modify(inventoryItem2.Weight);
+                client.Character.Weight.Modify(itemInstance2.Weight);
             }
 
             IBuffer res = BufferProvider.Provide();
@@ -110,7 +110,7 @@ namespace Necromancy.Server.Packet.Area
         public void LoadInventory(NecClient client, NecServer server)
         {
             ItemService itemService = new ItemService(client.Character);
-            List<ItemInstance> ownedItems = itemService.LoadOwnedInventoryItems(server);
+            List<ItemInstance> ownedItems = itemService.LoadOwneditemInstances(server);
             foreach (ItemInstance item in ownedItems)
             {
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, item);

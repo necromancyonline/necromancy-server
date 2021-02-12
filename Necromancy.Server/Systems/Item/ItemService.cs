@@ -123,11 +123,11 @@ namespace Necromancy.Server.Systems.Item
         /// 
         /// </summary>
         /// <returns>A list of items in your adventure bag, equipped bags, bag slot, premium bag, and avatar inventory.</returns>
-        public List<ItemInstance> LoadOwnedInventoryItems(NecServer server)
+        public List<ItemInstance> LoadOwneditemInstances(NecServer server)
         {
             //Clear Equipped Items from send_data_get_self_chara_data_request
             _character.EquippedItems.Clear();
-            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
+            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
             //load bags first
             foreach (ItemInstance item in ownedItems)
             {
@@ -138,29 +138,36 @@ namespace Necromancy.Server.Systems.Item
                     _character.ItemManager.PutItem(location, item);
                 }
             }
-            foreach (ItemInstance item in ownedItems)
+            foreach (ItemInstance itemInstance in ownedItems)
             {
 
-                if (item.Location.ZoneType != ItemZoneType.BagSlot)
+                if (itemInstance.Location.ZoneType != ItemZoneType.BagSlot)
                 {
-                    ItemLocation location = item.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
-                    item.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
+                    ItemLocation location = itemInstance.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
+                    itemInstance.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
 
                     //Temporary ItemLibrary.CSV lookup until Item_decrypted.csv and Table are fully mapped/ populated
-                     server.SettingRepository.ItemLibrary.TryGetValue(item.BaseID, out ItemLibrarySetting itemLibrarySetting);
+                     server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
                     if (itemLibrarySetting != null)
                     {
                         //item.MaximumDurability = itemLibrarySetting.Durability;
-                        if (item.MaximumDurability == 0) { item.MaximumDurability = 100; }
-                        item.CurrentDurability = item.MaximumDurability;
-                        if (item.Weight == 0) { item.Weight += 1234; }
+                        if (itemInstance.MaximumDurability == 0) { itemInstance.MaximumDurability = 100; }
+                        itemInstance.CurrentDurability = itemInstance.MaximumDurability;
+                        if (itemInstance.Weight == 0) { itemInstance.Weight += 1234; }
                     }
+                    //update items base stats per enchantment level.
+                    ForgeMultiplier forgeMultiplier = this.LoginLoadMultiplier(itemInstance.EnhancementLevel);
+                    itemInstance.Physical = (short)(itemInstance.Physical * forgeMultiplier.Factor);
+                    itemInstance.Magical = (short)(itemInstance.Magical * forgeMultiplier.Factor);
+                    itemInstance.MaximumDurability = (short)(itemInstance.MaximumDurability * forgeMultiplier.Durability);
+                    itemInstance.Hardness = (byte)(itemInstance.Hardness + forgeMultiplier.Hardness);
+                    itemInstance.Weight = (short)(itemInstance.Weight - forgeMultiplier.Weight);
 
-                    _character.ItemManager.PutItem(location, item);
+                    _character.ItemManager.PutItem(location, itemInstance);
                 }
-                if (item.CurrentEquipSlot != ItemEquipSlots.None)
+                if (itemInstance.CurrentEquipSlot != ItemEquipSlots.None)
                 {
-                    _character.EquippedItems.Add(item.CurrentEquipSlot, item);
+                    _character.EquippedItems.Add(itemInstance.CurrentEquipSlot, itemInstance);
                 }
             }
             return ownedItems;
@@ -169,7 +176,7 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> LoadEquipmentModels()
         {
             _character.EquippedItems.Clear();
-            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
+            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
             foreach (ItemInstance item in ownedItems)
             {
                 if (item.CurrentEquipSlot != ItemEquipSlots.None)
@@ -386,6 +393,65 @@ namespace Necromancy.Server.Systems.Item
             _itemDao.UpdateItemQuantities(instanceIds, quantities);
 
             return moveResult;
+        }
+
+        public ForgeMultiplier LoginLoadMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0:     factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1:     factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2:     factor = 1.15; durability = 1.2; hardness = 0; break;
+                case 3:     factor = 1.27; durability = 1.3; hardness = 0; break;
+                case 4:     factor = 1.39; durability = 1.4; hardness = 0; break;
+                case 5:     factor = 1.54; durability = 1.5; hardness = 1; break;
+                case 6:     factor = 1.69; durability = 1.6; hardness = 0; break;
+                case 7:     factor = 1.84; durability = 1.7; hardness = 0; break;
+                case 8:     factor = 1.99; durability = 1.8; hardness = 0; break;
+                case 9:     factor = 2.14; durability = 1.9; hardness = 0; break;
+                case 10:    factor = 2.29; durability = 2.0; hardness = 2; break;
+                default: break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+        public ForgeMultiplier ForgeMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
+                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
+                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
+                default: factor = 1.00; durability = 1.0; hardness = 0; break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+        public void UpdateEnhancementLevel(ItemInstance itemInstance)
+        {
+            _itemDao.UpdateItemEnhancementLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
         }
 
         public List<ItemInstance> Repair(List<ItemLocation> locations)

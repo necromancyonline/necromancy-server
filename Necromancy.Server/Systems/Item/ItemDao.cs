@@ -222,7 +222,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id IN ({0})";
 
-        private const string SqlSelectOwnedInventoryItems = @"
+        private const string SqlSelectOwneditemInstances = @"
             SELECT 
                 * 
             FROM 
@@ -253,6 +253,14 @@ namespace Necromancy.Server.Systems.Item
                 nec_item_instance 
             SET 
                 current_equip_slot = @current_equip_slot 
+            WHERE 
+                id = @id";
+
+        private const string SqlUpdateItemEnhancementLevel = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                enhancement_level = @enhancement_level 
             WHERE 
                 id = @id";
 
@@ -350,6 +358,16 @@ namespace Necromancy.Server.Systems.Item
                 });
         }
 
+        public void UpdateItemEnhancementLevel(ulong instanceId, int level)
+        {
+            ExecuteNonQuery(SqlUpdateItemEnhancementLevel,
+                command =>
+                {
+                    AddParameter(command, "@enhancement_level", level);
+                    AddParameter(command, "@id", instanceId);
+                });
+        }
+
         public ItemInstance SelectItemInstance(int characterId, ItemLocation itemLocation)
         {
             throw new NotImplementedException();
@@ -406,10 +424,10 @@ namespace Necromancy.Server.Systems.Item
             }            
         }
 
-        public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
+        public List<ItemInstance> SelectOwneditemInstances(int ownerId)
         {
-            List<ItemInstance> ownedInventoryItems = new List<ItemInstance>();
-            ExecuteReader(SqlSelectOwnedInventoryItems,
+            List<ItemInstance> owneditemInstances = new List<ItemInstance>();
+            ExecuteReader(SqlSelectOwneditemInstances,
                 command =>
                 {
                     AddParameter(command, "@owner_id", ownerId);
@@ -417,10 +435,10 @@ namespace Necromancy.Server.Systems.Item
                 {
                     while (reader.Read())
                     {
-                        ownedInventoryItems.Add(MakeItemInstance(reader));
+                        owneditemInstances.Add(MakeItemInstance(reader));
                     }
                 });
-            return ownedInventoryItems;
+            return owneditemInstances;
         }
 
         public List<ItemInstance> InsertItemInstances(int ownerId, ItemLocation[] locs, int[] baseId, ItemSpawnParams[] spawnParams)
