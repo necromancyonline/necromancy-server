@@ -66,8 +66,8 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.Character.Hp.max); // max hp
             res.WriteInt32(client.Character.Mp.max); // maxmp
             res.WriteInt32(client.Character.Od.max); // max od
-            res.WriteInt32(500); // current guard points
-            res.WriteInt32(600); // max guard points
+            res.WriteInt32(0); // current guard points
+            res.WriteInt32(0); // max guard points
             res.WriteInt32(1238); // value/100 = current weight
             res.WriteInt32(1895); // value/100 = max weight
             res.WriteByte(200); // condition
