@@ -137,6 +137,15 @@ namespace Necromancy.Server.Chat.Command.Commands
                     Router.Send(client.Map, recvPartyNotifyUpdateSyncLevel);
                     break;
 
+                case "ap":
+                    RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(Util.GetRandomNumber(0,200));
+                    Router.Send(client.Map, recvCharaUpdateAp);
+                    break;
+
+                case "ac":
+                    RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(Util.GetRandomNumber(0, 200));
+                    Router.Send(client.Map, recvCharaUpdateAc);
+                    break;
 
                 case "iobject":
                     //SendDataNotifyItemObjectData

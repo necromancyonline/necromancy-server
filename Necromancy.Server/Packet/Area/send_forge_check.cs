@@ -53,9 +53,9 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32((int)(itemInstance.MaximumDurability * forgeMultiplier.Durability));
             res.WriteByte((byte)(itemInstance.Hardness + forgeMultiplier.Hardness));
             res.WriteInt32(itemInstance.Weight - forgeMultiplier.Weight);
-            res.WriteInt16((short)(itemInstance.GP + 50)); //???
-            res.WriteInt16((short)(itemInstance.GP + 100));//??
-            res.WriteInt16((short)(itemInstance.GP + 150));//??
+            res.WriteInt16(1); //???
+            res.WriteInt16(1);//??
+            res.WriteInt16(1);//??
 
             Router.Send(client, (ushort)AreaPacketId.recv_forge_check_r, res, ServerType.Area);
         }

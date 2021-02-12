@@ -63,7 +63,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             }
             
             res.WriteInt32(_itemInstance.ProtectUntil);                 //PROTECT UNTIL DATE IN SECONDS
-            res.WriteInt64(0);                                          //UNKNOWN
+            res.WriteInt64(989898);                                          //UNKNOWN
             res.WriteInt16(0xff);                                       //0 = green (in shop for sale)  0xFF = normal /*item.ShopStatus*/
             res.WriteInt32(_itemInstance.EnchantId);                    //UNKNOWN - ENCHANT ID? 1 IS GUARD
             res.WriteInt16(_itemInstance.GP);                           //GP
@@ -106,7 +106,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             for (int j = 0; j < numEntries; j++)
             {
                 res.WriteInt32(j);//UNKNOWN
-                res.WriteFixedString("Ok", 0x2);
+                res.WriteFixedString("Ok", 0x2); //could be two bytes, not a fixed string. 
                 res.WriteInt16((short)1);//UNKNOWN
                 res.WriteInt16((short)1);//UNKNOWN
             }
