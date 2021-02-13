@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateMaxAc : PacketResponse
     {
-        public RecvCharaUpdateMaxAc()
+        private int _ac;
+        public RecvCharaUpdateMaxAc(int ac)
             : base((ushort) AreaPacketId.recv_chara_update_maxac, ServerType.Area)
         {
+            _ac = ac;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_ac);
             return res;
         }
     }

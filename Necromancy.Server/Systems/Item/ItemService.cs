@@ -154,6 +154,7 @@ namespace Necromancy.Server.Systems.Item
                         if (itemInstance.MaximumDurability == 0) { itemInstance.MaximumDurability = 100; }
                         itemInstance.CurrentDurability = itemInstance.MaximumDurability;
                         if (itemInstance.Weight == 0) { itemInstance.Weight += 1234; }
+                        if (itemInstance.Type.HasFlag(ItemType.SHIELD_LARGE)| itemInstance.Type.HasFlag(ItemType.SHIELD_MEDIUM)| itemInstance.Type.HasFlag(ItemType.SHIELD_SMALL)) { itemInstance.GP += 50; }
                     }
                     //update items base stats per enchantment level.
                     ForgeMultiplier forgeMultiplier = this.LoginLoadMultiplier(itemInstance.EnhancementLevel);

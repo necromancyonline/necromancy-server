@@ -83,6 +83,7 @@ namespace Necromancy.Server.Packet.Area
             short PhysDef = 0;
             short MagDef = 0;
             client.Character.Weight.setCurrent(0);
+            client.Character.Gp.setMax(0);
 
             foreach (ItemInstance itemInstance2 in client.Character.EquippedItems.Values)
             {
@@ -96,6 +97,7 @@ namespace Necromancy.Server.Packet.Area
                     PhysDef += (short)itemInstance2.Physical;
                     MagDef += (short)itemInstance2.Magical;
                 }
+                client.Character.Gp.setMax(client.Character.Gp.max + itemInstance2.GP);
                 client.Character.Weight.Modify(itemInstance2.Weight);
             }
 
@@ -108,6 +110,8 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.Character.Weight.current); //diff weight
             Router.Send(client, (ushort)AreaPacketId.recv_chara_update_weight, res, ServerType.Area);
 
+            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);
+            Router.Send(recvCharaUpdateMaxAc, client);
 
 
 
