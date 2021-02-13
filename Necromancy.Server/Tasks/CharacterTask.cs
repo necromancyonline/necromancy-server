@@ -41,6 +41,7 @@ namespace Necromancy.Server.Tasks
 
         protected override void Execute()
         {
+            Thread.Sleep(5000); //fix null ref on chara select. 
             while (_client.Character.characterActive)
             {
                 if (_logoutTime != DateTime.MinValue)

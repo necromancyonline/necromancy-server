@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Area
             //ToDo  find a better home for these functionalities . This send is the last stop before initial map entry.
             LoadInventory(client, _server);
             //LoadCloakRoom(client);
-            LoadBattleStats(client);
+            //LoadBattleStats(client);
             LoadHonor(client);
             //LoadSoulDispItem(client);
         }
@@ -54,59 +54,9 @@ namespace Necromancy.Server.Packet.Area
             }
             Router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
         }
+        //Moved to Map entry to fix null character issue
         public void LoadBattleStats(NecClient client)
         {
-            short PhysAttack = 0;
-            short MagAttack = 0;
-            short PhysDef = 0;
-            short MagDef = 0;
-            client.Character.Weight.setCurrent(0);
-            client.Character.Gp.setMax(0);
-
-            foreach (ItemInstance itemInstance2 in client.Character.EquippedItems.Values)
-            {
-                if (itemInstance2.CurrentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance2.CurrentEquipSlot == ItemEquipSlots.Quiver)
-                {
-                    PhysAttack += (short)itemInstance2.Physical;
-                    MagAttack += (short)itemInstance2.Magical;
-                }
-                else
-                {
-                    PhysDef += (short)itemInstance2.Physical;
-                    MagDef += (short)itemInstance2.Magical;
-                }
-                client.Character.Gp.setMax(client.Character.Gp.max + itemInstance2.GP);
-                client.Character.Weight.Modify(itemInstance2.Weight);
-            }
-
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(client.Character.Weight.max); //max weight
-            res.WriteInt32(client.Character.Weight.current); //diff weight
-            Router.Send(client, (ushort)AreaPacketId.recv_chara_update_maxweight, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt32(client.Character.Weight.current); //diff weight
-            Router.Send(client, (ushort)AreaPacketId.recv_chara_update_weight, res, ServerType.Area);
-
-            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);
-            Router.Send(recvCharaUpdateMaxAc, client);
-
-            res = BufferProvider.Provide();
-            res.WriteInt16((short)client.Character.Strength); //base Phys Attack
-            res.WriteInt16((short)client.Character.Dexterity); //base Phys Def
-            res.WriteInt16((short)client.Character.Intelligence); //base Mag attack
-            res.WriteInt16((short)client.Character.Piety); //base Mag Def
-
-            res.WriteInt16((short)client.Character.Luck); //Ranged physical attack
-
-            res.WriteInt16(PhysAttack); //Equip Bonus Phys attack
-            res.WriteInt16(PhysDef); //Equip bonus Phys Def
-            res.WriteInt16(MagAttack); //Equip Bonus Mag Attack
-            res.WriteInt16(MagDef); //Equip bonus Mag Def
-
-            res.WriteInt16(777); //Ranged physical attack
-
-            Router.Send(client, (ushort)AreaPacketId.recv_chara_update_battle_base_param, res, ServerType.Area);
         }
 
         public void LoadInventory(NecClient client, NecServer server)

@@ -140,6 +140,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 case "ap":
                     RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(Util.GetRandomNumber(0,200));
                     Router.Send(client.Map, recvCharaUpdateAp);
+                    client.Character.Gp.setCurrent(25);
                     break;
 
                 case "ac":

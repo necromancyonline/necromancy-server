@@ -1,5 +1,6 @@
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Receive.Area;
 using System;
@@ -504,5 +505,46 @@ namespace Necromancy.Server.Systems.Item
             }
             return responses;
         }
+
+        public List<PacketResponse>CalculateBattleStats(NecClient client)
+        {
+            List<PacketResponse> responses = new List<PacketResponse>();
+            BattleParam battleParam = new BattleParam();
+
+            client.Character.Weight.setCurrent(0);
+            client.Character.Gp.setMax(0);
+
+            foreach (ItemInstance itemInstance2 in client.Character.EquippedItems.Values)
+            {
+                if (itemInstance2.CurrentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance2.CurrentEquipSlot == ItemEquipSlots.Quiver)
+                {
+                    battleParam.PlusPhysicalAttack += (short)itemInstance2.Physical;
+                    battleParam.PlusMagicalAttack += (short)itemInstance2.Magical;
+                }
+                else
+                {
+                    battleParam.PlusPhysicalDefence += (short)itemInstance2.Physical;
+                    battleParam.PlusMagicalDefence += (short)itemInstance2.Magical;
+                }
+                client.Character.Gp.setMax(client.Character.Gp.max + itemInstance2.GP);
+                client.Character.Weight.Modify(itemInstance2.Weight);
+            }
+
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Gp.max, client.Character.Weight.current/*Weight.Diff*/);
+            responses.Add(recvCharaUpdateMaxWeight);
+
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current);
+            responses.Add(recvCharaUpdateWeight);
+
+            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);
+            responses.Add(recvCharaUpdateMaxAc);
+
+            RecvCharaUpdateBattleBaseParam recvCharaUpdateBattleBaseParam = new RecvCharaUpdateBattleBaseParam(client.Character, battleParam);
+            responses.Add(recvCharaUpdateBattleBaseParam);
+
+            return responses;
+        }
+
+
     }
 }
