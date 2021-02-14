@@ -43,6 +43,11 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(1);// anything but a 1 here is a fail condition, 1 here is a pass condition.
             Router.Send(client, (ushort) AreaPacketId.recv_forge_execute_r, res, ServerType.Area);
 
+
+
+            RecvForgeNotifyExecuteResult recvForgeNotifyExecuteResult = new RecvForgeNotifyExecuteResult(client.Character.InstanceId, 1);
+            Router.Send(client, recvForgeNotifyExecuteResult.ToPacket());
+
             ItemService itemService = new ItemService(client.Character);
             ItemInstance itemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
             ForgeMultiplier forgeMultiplier = itemService.ForgeMultiplier(itemInstance.EnhancementLevel + 1);
