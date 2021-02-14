@@ -76,9 +76,17 @@ namespace Necromancy.Test.Systems
             {
                 //ignore
             }
+            public void UpdateItemEnhancementLevel(ulong instanceId, int level)
+            {
+                //ignore
+            }
+            public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
+            {
+                //ignore
+            }
         }
 
-        public class TestMove
+            public class TestMove
         {
             private readonly Character _dummyCharacter;
             private readonly ItemService _itemService;

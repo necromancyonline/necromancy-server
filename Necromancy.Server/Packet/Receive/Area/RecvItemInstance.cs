@@ -43,7 +43,6 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(_itemInstance.Hardness);                      //HARDNESS
             res.WriteInt32(_itemInstance.Weight/10);                       //WEIGHT IN THOUSANDTHS
 
-            const int MAX_WHATEVER_SLOTS = 2;
             int numEntries = 2;
             res.WriteInt32(numEntries);                                 //less than or equal to 2?
             for (int j = 0; j < numEntries; j++)

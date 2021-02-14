@@ -39,7 +39,6 @@ namespace Necromancy.Server.Chat.Command.Commands
             res4.WriteInt32(0); // 1 = Error reported by SV,  1 = sucess
             Router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_select_r, res4, ServerType.Area);
             
-            int itemId = 200101;
             /*   IBuffer res4 = BufferProvider.Provide();
                res4.WriteByte(3);
                Router.Send(client, (ushort)AreaPacketId.recv_event_end, res4); */

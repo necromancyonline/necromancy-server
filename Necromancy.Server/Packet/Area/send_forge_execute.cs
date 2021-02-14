@@ -12,9 +12,6 @@ namespace Necromancy.Server.Packet.Area
         public send_forge_execute(NecServer server) : base(server)
         {
         }
-
-        int i = 0;
-        int j = 0;
         public override ushort Id => (ushort) AreaPacketId.send_forge_execute;
 
         public override void Handle(NecClient client, NecPacket packet)
