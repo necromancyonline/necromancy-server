@@ -41,7 +41,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt16(_itemInstance.Magical);                      //MAGICAL
             res.WriteInt32(_itemInstance.MaximumDurability);            //MAX DURABILITY
             res.WriteByte(_itemInstance.Hardness);                      //HARDNESS
-            res.WriteInt32(_itemInstance.Weight);                       //WEIGHT IN THOUSANDTHS
+            res.WriteInt32(_itemInstance.Weight/10);                       //WEIGHT IN THOUSANDTHS
 
             const int MAX_WHATEVER_SLOTS = 2;
             int numEntries = 2;
@@ -80,10 +80,10 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16((short)10);  //unknown
             }
             //Item_Update_Parameter  section
-            res.WriteInt64(Int64.MaxValue);              //unknown
+            res.WriteInt64(88888);              //Plus sale value??
             res.WriteInt16(_itemInstance.PlusPhysical);                 //+PHYSICAL
             res.WriteInt16(_itemInstance.PlusMagical);                  //+MAGICAL
-            res.WriteInt16(_itemInstance.PlusWeight);                   //+WEIGHT IN THOUSANTHS, DISPLAYS AS HUNDREDTHS
+            res.WriteInt16((short)(_itemInstance.PlusWeight/10));       //+WEIGHT IN THOUSANTHS, DISPLAYS AS HUNDREDTHS
             res.WriteInt16(_itemInstance.PlusDurability);               //+DURABILITY
             res.WriteInt16(_itemInstance.PlusGP);                       //+GP
             res.WriteInt16(_itemInstance.PlusRangedEff);                //+Ranged Efficiency

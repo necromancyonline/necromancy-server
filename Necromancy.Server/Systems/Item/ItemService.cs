@@ -1,4 +1,6 @@
+using Arrowgene.Logging;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet;
@@ -10,6 +12,8 @@ namespace Necromancy.Server.Systems.Item
 {
     public class ItemService
     {
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ItemService));
+
         private readonly Character _character;
         private readonly IItemDao _itemDao;
 
@@ -151,11 +155,16 @@ namespace Necromancy.Server.Systems.Item
                      server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
                     if (itemLibrarySetting != null)
                     {
-                        //item.MaximumDurability = itemLibrarySetting.Durability;
-                        if (itemInstance.MaximumDurability == 0) { itemInstance.MaximumDurability = 100; }
-                        itemInstance.CurrentDurability = itemInstance.MaximumDurability;
+                        itemInstance.MaximumDurability = itemLibrarySetting.Durability; //Temporary until we get durability in itemLibrary
+                        if (itemInstance.CurrentDurability > itemInstance.MaximumDurability) { itemInstance.CurrentDurability = itemInstance.MaximumDurability; }
                         if (itemInstance.Weight == 0) { itemInstance.Weight += 1234; }
-                        if (itemInstance.Type.HasFlag(ItemType.SHIELD_LARGE)| itemInstance.Type.HasFlag(ItemType.SHIELD_MEDIUM)| itemInstance.Type.HasFlag(ItemType.SHIELD_SMALL)) { itemInstance.GP += 50; }
+                        if (itemInstance.Type == ItemType.SHIELD_LARGE || itemInstance.Type == ItemType.SHIELD_MEDIUM || itemInstance.Type == ItemType.SHIELD_SMALL)
+                        {
+                            if (itemInstance.GP == 0)
+                            {
+                            itemInstance.GP += 50;
+                            }
+                        }
                     }
                     //update items base stats per enchantment level.
                     ForgeMultiplier forgeMultiplier = this.LoginLoadMultiplier(itemInstance.EnhancementLevel);
@@ -164,6 +173,7 @@ namespace Necromancy.Server.Systems.Item
                     itemInstance.MaximumDurability = (short)(itemInstance.MaximumDurability * forgeMultiplier.Durability);
                     itemInstance.Hardness = (byte)(itemInstance.Hardness + forgeMultiplier.Hardness);
                     itemInstance.Weight = (short)(itemInstance.Weight - forgeMultiplier.Weight);
+                    if (itemInstance.Weight < 0) { itemInstance.Weight = 0; } //this is lazy, fix the weight math issue.
 
                     _character.ItemManager.PutItem(location, itemInstance);
                 }
@@ -513,27 +523,38 @@ namespace Necromancy.Server.Systems.Item
 
             client.Character.Weight.setCurrent(0);
             client.Character.Gp.setMax(0);
+            bool ShieldCheck = false;
 
-            foreach (ItemInstance itemInstance2 in client.Character.EquippedItems.Values)
+            foreach (ItemInstance itemInstance in client.Character.EquippedItems.Values)
             {
-                if (itemInstance2.CurrentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance2.CurrentEquipSlot == ItemEquipSlots.Quiver)
+                if (itemInstance.CurrentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance.CurrentEquipSlot == ItemEquipSlots.Quiver)
                 {
-                    battleParam.PlusPhysicalAttack += (short)itemInstance2.Physical;
-                    battleParam.PlusMagicalAttack += (short)itemInstance2.Magical;
+                    battleParam.PlusPhysicalAttack += (short)(itemInstance.Physical + itemInstance.PlusPhysical);
+                    battleParam.PlusMagicalAttack += (short)(itemInstance.Magical + itemInstance.PlusMagical);
                 }
                 else
                 {
-                    battleParam.PlusPhysicalDefence += (short)itemInstance2.Physical;
-                    battleParam.PlusMagicalDefence += (short)itemInstance2.Magical;
+                    battleParam.PlusPhysicalDefence += (short)(itemInstance.Physical + itemInstance.PlusPhysical);
+                    battleParam.PlusMagicalDefence += (short)(itemInstance.Magical + itemInstance.PlusMagical);
                 }
-                client.Character.Gp.setMax(client.Character.Gp.max + itemInstance2.GP);
-                client.Character.Weight.Modify(itemInstance2.Weight);
+                client.Character.Gp.setMax(client.Character.Gp.max + itemInstance.GP + itemInstance.PlusGP);
+                client.Character.Weight.Modify(itemInstance.Weight + itemInstance.PlusWeight);
+                if (itemInstance.Type == ItemType.SHIELD_LARGE | itemInstance.Type == ItemType.SHIELD_MEDIUM | itemInstance.Type == ItemType.SHIELD_SMALL)
+                { ShieldCheck = true; }
             }
 
-            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Gp.max, client.Character.Weight.current/*Weight.Diff*/);
+            //if you dont have a shield on,  set your GP to 0.  no blocking for you
+            if (ShieldCheck == false) 
+            { 
+                client.Character.Gp.setMax(0);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.Character.Gp.max);
+                responses.Add(recvCharaUpdateAc);
+            }
+
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Weight.max/10, client.Character.Weight.current/10/*Weight.Diff*/);
             responses.Add(recvCharaUpdateMaxWeight);
 
-            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current);
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current/10);
             responses.Add(recvCharaUpdateWeight);
 
             RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);

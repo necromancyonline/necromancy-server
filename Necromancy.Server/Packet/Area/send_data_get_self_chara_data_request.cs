@@ -386,24 +386,5 @@ namespace Necromancy.Server.Packet.Area
             Router.Send(client, (ushort)AreaPacketId.recv_data_get_self_chara_data_r, res, ServerType.Area);
         }
 
-
-        //public void LoadInventory(NecClient client)
-        //{
-        //    //populate soul and character inventory from database.
-        //    List<InventoryItem> inventoryItems = Server.Database.SelectInventoryItemsByCharacterIdEquipped(client.Character.Id);
-        //    foreach (InventoryItem inventoryItem in inventoryItems)
-        //    {
-        //        Item item = Server.Items[inventoryItem.ItemId];
-        //        inventoryItem.Item = item;
-        //        if (inventoryItem.State > 0 & inventoryItem.State < 262145) //this is redundant. could be removed for  better performance. 
-        //        {
-        //            client.Character.Inventory.Equip(inventoryItem);
-        //            inventoryItem.CurrentEquipmentSlotType = inventoryItem.Item.EquipmentSlotType;
-        //        }
-
-        //    }
-
-        //}
-
     }
 }
