@@ -270,6 +270,15 @@ namespace Necromancy.Server.Systems.Item
             WHERE 
                 id = @id";
 
+        private const string SqlUpdateItemCurrentDurability = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                current_durability = @current_durability 
+            WHERE 
+                id = @id";
+
+
         private const string SqlDeleteItemInstance = @"
             DELETE FROM 
                 nec_item_instance 
@@ -384,6 +393,16 @@ namespace Necromancy.Server.Systems.Item
                 command =>
                 {
                     AddParameter(command, "@enhancement_level", level);
+                    AddParameter(command, "@id", instanceId);
+                });
+        }
+
+        public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
+        {
+            ExecuteNonQuery(SqlUpdateItemCurrentDurability,
+                command =>
+                {
+                    AddParameter(command, "@current_durability", currentDurability);
                     AddParameter(command, "@id", instanceId);
                 });
         }

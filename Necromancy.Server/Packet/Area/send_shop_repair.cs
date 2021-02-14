@@ -38,6 +38,7 @@ namespace Necromancy.Server.Packet.Area
                 List<ItemInstance> repairedItems = itemService.Repair(itemLocations);
                 foreach (ItemInstance repairedItem in repairedItems)
                 {
+                    repairedItem.CurrentDurability = repairedItem.MaximumDurability;
                     RecvItemUpdateDurability recvItemUpdateDurability = new RecvItemUpdateDurability(client, repairedItem);
                     Router.Send(recvItemUpdateDurability);
                 }                                

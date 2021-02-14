@@ -468,11 +468,18 @@ namespace Necromancy.Server.Systems.Item
 
         public List<ItemInstance> Repair(List<ItemLocation> locations)
         {
-            throw new NotImplementedException();
+            List<ItemInstance> ItemInstances = new List<ItemInstance>();
+            foreach (ItemLocation location in locations)
+            {
+                ItemInstance itemInstance = _character.ItemManager.GetItem(location);
+                ItemInstances.Add(itemInstance);
+                _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
+            }
+            return ItemInstances;
         }
         public long SubtractGold(long amount)
         {
-            throw new NotImplementedException();
+            return 0;//throw new NotImplementedException();
         }
         public long AddGold(long amount)
         {
