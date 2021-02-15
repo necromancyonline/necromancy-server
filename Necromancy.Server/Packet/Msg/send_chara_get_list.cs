@@ -13,8 +13,6 @@ namespace Necromancy.Server.Packet.Msg
     public class send_chara_get_list : ClientHandler
     {
         private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_chara_get_list));
-        private readonly SettingRepository _settingRepository;
-
         public send_chara_get_list(NecServer server) : base(server)
         {
         }

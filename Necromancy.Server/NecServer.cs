@@ -230,7 +230,6 @@ namespace Necromancy.Server
             Chat.CommandHandler.AddCommand(new MobCommand(this));
             Chat.CommandHandler.AddCommand(new CharaCommand(this));
             Chat.CommandHandler.AddCommand(new ItemCommand(this));
-            // Chat.CommandHandler.AddCommand(new BagCommand(this));
             Chat.CommandHandler.AddCommand(new TeleportCommand(this));
             Chat.CommandHandler.AddCommand(new TeleportToCommand(this));
             Chat.CommandHandler.AddCommand(new GetCommand(this));
@@ -502,6 +501,7 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_soul_partner_status_open(this));
             _areaConsumer.AddHandler(new send_party_mentor_create(this));
             _areaConsumer.AddHandler(new send_party_mentor_remove(this));
+            _areaConsumer.AddHandler(new send_forge_execute(this));
         }
     }
 }

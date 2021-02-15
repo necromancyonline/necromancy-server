@@ -1,0 +1,26 @@
+IBuffer res = BufferProvider.Provide();
+IBuffer res2 = BufferProvider.Provide();
+             for (int i = 0; i < 1; i++)
+             {
+                 IBuffer res = BufferProvider.Provide();
+
+                 res.WriteInt32(0xA);
+                 res.WriteInt32(0);
+                 res.WriteInt32(1);
+                 res.WriteInt32(2);
+                 res.WriteInt32(3);
+                 res.WriteInt32(4);
+                 res.WriteInt32(5);
+                 res.WriteInt32(6);
+                 res.WriteInt32(7);
+                 res.WriteInt32(8);
+                 res.WriteInt32(9);
+
+
+
+                 Router.Send(client.Map, (ushort)AreaPacketId.recv_help_new_data, res);
+             }
+            res2.WriteInt32(0);//loads help text in order of the help menu
+
+
+            Router.Send(client.Map, (ushort)recv_charabody_notify_loot_start2, res2);

@@ -56,11 +56,11 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            bool IsIdentified = true;
-            if (command.Length > 1 && command[1] == "u")
-            {
-                IsIdentified = false;
-            }
+            //bool IsIdentified = true;
+            //if (command.Length > 1 && command[1] == "u")
+            //{
+            //    IsIdentified = false;
+            //}
 
             int[] itemIds = new int[] { itemId };
             ItemSpawnParams[] spawmParams = new ItemSpawnParams[itemIds.Length];

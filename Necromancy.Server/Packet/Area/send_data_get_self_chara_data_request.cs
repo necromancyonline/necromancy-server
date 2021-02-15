@@ -45,32 +45,32 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(client.Character.HairId); //hair
             res.WriteByte(client.Character.HairColorId); //color
             res.WriteByte(client.Character.FaceId); //face
-            res.WriteByte(0);//Voice?
-            res.WriteByte(0);//skinTone?
+            res.WriteByte(0);//FaceArrange
+            res.WriteByte(0);//Voice
             for (int j = 0; j < 100; j++)
                 res.WriteInt64(0);
 
             //sub_484720 - combat/leveling info
             Logger.Debug($"Character ID Loading : {client.Character.Id}");
             res.WriteUInt32(client.Character.InstanceId); // InstanceId
-            res.WriteUInt32(client.Character.ClassId); // class
             res.WriteInt32(client.Character.activeModel);//Model
+            res.WriteUInt32(client.Character.ClassId); // class
             res.WriteInt16(client.Character.Level); // current level 
-            res.WriteInt64(91978348); // current exp
+            res.WriteInt64(91234567); // current exp
             res.WriteInt64(50000000); // soul exp
-            res.WriteInt64(96978348); // exp needed to level
-            res.WriteInt64(1100); // soul exp needed to level
+            res.WriteInt64(99999999); // exp needed to level
+            res.WriteInt64(60000000); // soul exp needed to level
             res.WriteInt32(client.Character.Hp.current); // current hp
             res.WriteInt32(client.Character.Mp.current); // current mp
             res.WriteInt32(client.Character.Od.current); // current od
             res.WriteInt32(client.Character.Hp.max); // max hp
             res.WriteInt32(client.Character.Mp.max); // maxmp
             res.WriteInt32(client.Character.Od.max); // max od
-            res.WriteInt32(0); // current guard points
-            res.WriteInt32(0); // max guard points
-            res.WriteInt32(1238); // value/100 = current weight
-            res.WriteInt32(1895); // value/100 = max weight
-            res.WriteByte(200); // condition
+            res.WriteInt32(client.Character.Gp.current); // current guard points
+            res.WriteInt32(client.Character.Gp.max); // max guard points
+            res.WriteInt32(client.Character.Weight.current); // value/100 = current weight
+            res.WriteInt32(client.Character.Weight.max); // value/100 = max weight
+            res.WriteByte((byte)client.Character.Condition.current); // condition
 
             // total stat level includes bonus'?
             res.WriteUInt16(client.Character.Strength); // str
@@ -202,11 +202,11 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt64(120);// Max soul points
             res.WriteByte(client.Character.criminalState); // 0 is white,1 yellow 2 red 3+ skull
             res.WriteByte((byte)client.Character.beginnerProtection); //Beginner protection (bool)
-            res.WriteByte(110); //Level cap
+            res.WriteByte(0); //Level cap
             res.WriteByte(1);
             res.WriteByte(2);
             res.WriteByte(3);
-            res.WriteByte(0);//new
+            res.WriteByte(1);//new
 
             res.WriteInt32(1);//new
             res.WriteInt32(2);//new
@@ -385,25 +385,6 @@ namespace Necromancy.Server.Packet.Area
 
             Router.Send(client, (ushort)AreaPacketId.recv_data_get_self_chara_data_r, res, ServerType.Area);
         }
-
-
-        //public void LoadInventory(NecClient client)
-        //{
-        //    //populate soul and character inventory from database.
-        //    List<InventoryItem> inventoryItems = Server.Database.SelectInventoryItemsByCharacterIdEquipped(client.Character.Id);
-        //    foreach (InventoryItem inventoryItem in inventoryItems)
-        //    {
-        //        Item item = Server.Items[inventoryItem.ItemId];
-        //        inventoryItem.Item = item;
-        //        if (inventoryItem.State > 0 & inventoryItem.State < 262145) //this is redundant. could be removed for  better performance. 
-        //        {
-        //            client.Character.Inventory.Equip(inventoryItem);
-        //            inventoryItem.CurrentEquipmentSlotType = inventoryItem.Item.EquipmentSlotType;
-        //        }
-
-        //    }
-
-        //}
 
     }
 }

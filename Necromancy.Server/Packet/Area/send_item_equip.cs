@@ -77,6 +77,9 @@ namespace Necromancy.Server.Packet.Area
             //tell the send if everything went well or not.  notify the client chat of any errors
             RecvItemEquip recvItemEquip = new RecvItemEquip(client, error);
             Router.Send(recvItemEquip);
+
+            //Re-do all your stats
+            Router.Send(client, itemService.CalculateBattleStats(client));
         }
     }
 }

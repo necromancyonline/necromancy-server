@@ -1,0 +1,1129 @@
+004E4268 location for first opcode, 122 opcodes, 116 recv strings
+-----------------------------------------------------------------------------------------------------------
+0x831C
+string: no string
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x4090
+string: D852D8:L"network::proto_msg_implement_client::recv_party_notify_update_map()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteCString("");// max of 0x61 (character name i think)
+-----------------------------------------------------------------------------------------------------------
+0x1AF3
+string: D85020:L"network::proto_msg_implement_client::recv_party_notify_update_mp()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xB7D
+string: D86D28:L"network::proto_msg_implement_client::recv_friend_request_load_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x482
+string: D83A18:L"network::proto_msg_implement_client::recv_chara_select_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x41); //size is 0x41
+res.WriteInt16(0);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x19C
+string: D85BA0:L"network::proto_msg_implement_client::recv_union_request_invite_target_r() result : %d, target_objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x19C+0x2A
+string: D86AB0:L"network::proto_msg_implement_client::recv_union_request_set_info_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x19C+0x2A+0x3
+string: D83BF0:L"network::proto_msg_implement_client::recv_chara_select_back_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x6FF
+string: D841A8:L"network::proto_msg_implement_client::recv_cash_buy_premium_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x6FF+0x64
+string: D83118:L"network::proto_msg_implement_client::recv_soul_create_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x6FF+0x64+0x370
+string: D84E50:L"network::proto_msg_implement_client::recv_party_notify_update_job() objectid: %d, job : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x1688
+string: D87820:L"network::proto_msg_implement_client::recv_easy_friend_notify_member_state() clientid : %d objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteByte(0);//bool
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xC87
+string: D85368:L"network::proto_msg_implement_client::recv_party_notify_update_pos()\n"
+structure:
+res.WriteInt32(0);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xE51
+string: D85980:L"network::proto_msg_implement_client::recv_party_notify_update_deadstate()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x1421
+string: D85250:L"network::proto_msg_implement_client::recv_party_notify_update_ac()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x1817
+string: D87350:L"network::proto_msg_implement_client::recv_friend_notify_add_member_r() objectid : %d clientid : %d charaname : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); // size is 0x61
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x1817+0x14
+string: D85880:L"network::proto_msg_implement_client::recv_party_notify_dead()\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x1817+0x14+0x10A
+string: D86390:L"network::proto_msg_implement_client::recv_union_request_news_r() news_qt : %u\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0x3E8); less than or equal to 0x3E8
+for(int i = 0; i < 0x3E8; i++) //limit is the int32 above
+{
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteFixedString("", 0x49);
+res.WriteFixedString("", 0x49);
+res.WriteInt32(0);
+}
+
+-----------------------------------------------------------------------------------------------------------
+0x2E98
+string: D85490:L"network::proto_msg_implement_client::recv_party_notify_attach_buff() objectid:%d, serialid:%d, time:%d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x1EC8
+string: D837B0:L"network::proto_msg_implement_client::recv_chara_get_inheritinfo_r()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0x64);//less than or equal to 0x64
+for(int i = 0; i < 0x64; i++) //limit is the int32 above
+{
+    res.WriteInt32(0);
+    res.WriteFixedString("127.0.0.1", 0x10); //size is 0x10
+}
+res.WriteInt32(0);
+res.WriteFixedString("127.0.0.1", 0x10); //size is 0x10
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x1D09
+string: D853F8:L"network::proto_msg_implement_client::recv_party_notify_update_body_pos()\n"
+structure:
+res.WriteInt32(0);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x1DC4
+string: D857F8:L"network::proto_msg_implement_client::recv_party_notify_get_money()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt64(0);
+-----------------------------------------------------------------------------------------------------------
+0x1E68
+string: D86750:L"network::proto_msg_implement_client::recv_union_request_secede_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x213A
+string: D87068:L"network::proto_msg_implement_client::recv_friend_reply_to_link_r() result : %d objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x2C1C
+string: D84B70:L"network::proto_msg_implement_client::recv_party_notify_add_member() PARTY_ADD_REASON : %d, objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); // size is 0x61
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteFloat(1);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x2D92
+string: D84F90:L"network::proto_msg_implement_client::recv_party_notify_update_maxhp()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x3784
+string: D83648:L"network::proto_msg_implement_client::recv_chara_notify_data_complete() result = %d, soul_premium_flags = %llu\n"
+structure:
+res.WriteByte(0);//bool
+res.WriteInt32(0);
+res.WriteInt64(0);
+-----------------------------------------------------------------------------------------------------------
+0x31B4
+string: D856B0:L"network::proto_msg_implement_client::recv_party_notify_update_premium_service_notify_flag()\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x31B4+0x146
+string: D847C0:L"network::proto_msg_implement_client::recv_party_notify_cancel_application()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0x31B4+0x146+0x16
+string: D83530:L"network::proto_msg_implement_client::recv_chara_get_list_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x392F
+string: D85D48:L"network::proto_msg_implement_client::recv_union_reply_to_invite_r() result : %d, objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x3B93
+string: D834A0:L"network::proto_msg_implement_client::recv_soul_update_premium_flags()\n"
+structure:
+res.WriteInt64(0);
+-----------------------------------------------------------------------------------------------------------
+0x64B5
+string: D84068:L"network::proto_msg_implement_client::recv_cash_get_url_common_steam_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteCString("");//max size is 0x801
+res.WriteCString("");//max size is 0x801
+res.WriteCString("");//max size 0x11
+-----------------------------------------------------------------------------------------------------------
+0x55FF
+string: D85138:L"network::proto_msg_implement_client::recv_party_notify_update_ap()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x5315
+string: D860F8:L"network::proto_msg_implement_client::recv_union_notify_joined_member() clientid : %d objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); //size is 0x61
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x4426
+string: D83E78:L"network::proto_msg_implement_client::recv_cash_get_url_commerce_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteCString("");//max size 0x801
+res.WriteCString("");//max size 0x801
+res.WriteCString("");//max size 0x11
+-----------------------------------------------------------------------------------------------------------
+0x4CD5
+string: D84690:L"network::proto_msg_implement_client::recv_party_notify_accept_to_apply()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0x51EB
+string: D866A8:L"network::proto_msg_implement_client::recv_union_request_detail_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x5386
+string: D878F8:L"network::proto_msg_implement_client::recv_refusallist_notify_remove_user_souldelete() ref_soulid : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x542B
+string: D84990:L"network::proto_msg_implement_client::recv_party_notify_change_leader()\n"
+		D848E0:L"network::proto_msg_implement_client::recv_party_notify_change_leader() objectid : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x557F
+string: D86B58:L"network::proto_msg_implement_client::recv_union_request_set_mantle_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x5B94
+string: D86610:L"network::proto_msg_implement_client::recv_union_notify_growth() exp : %d\n"
+structure:
+res.WriteInt16(0);
+-----------------------------------------------------------------------------------------------------------
+0x5652
+string: D83360:L"network::proto_msg_implement_client::recv_soul_authenticate_passwd_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);// bool
+-----------------------------------------------------------------------------------------------------------
+0x58F8
+string: D83B58:L"network::proto_msg_implement_client::recv_channel_select_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x41);// size is 0x41
+res.WriteInt16(0);
+res.WriteFloat(0);
+res.WriteFloat(0);
+res.WriteFloat(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x5B32
+string: D831A8:L"network::proto_msg_implement_client::recv_soul_delete_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x5D93
+string: D84AC0:L"network::proto_msg_implement_client::recv_party_notify_cancel_recruit() reason : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x5F0A
+string: D868A8:L"network::proto_msg_implement_client::recv_union_request_disband_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x5F9A
+string: D843D0:L"network::proto_msg_implement_client::recv_party_notify_disband()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0x7566
+string: D87698:L"network::proto_msg_implement_client::recv_easy_friend_notify_add_member() clientid : %d objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteByte(0);//bool
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x6C94
+string: no string
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x680C
+string: D85560:L"network::proto_msg_implement_client::recv_party_notify_detach_buff() objectid:%d, serialid:%d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x689B
+string: D83F20:L"network::proto_msg_implement_client::recv_cash_get_url_web_goods_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteCString("");//max size 0x801
+-----------------------------------------------------------------------------------------------------------
+0x6AC0
+string: D83840:L"network::proto_msg_implement_client::recv_chara_draw_bonuspoint_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x7205
+string: D875B0:L"network::proto_msg_implement_client::recv_friend_notify_member_state() objectid : %d clientid : %d charaname : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); //size is 0x61
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x73D7
+string: D85B20:L"network::proto_msg_implement_client::recv_cpf_notify_error()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0x755C
+string: D86C08:L"network::proto_msg_implement_client::recv_union_notify_info()\n"
+structure:
+res.WriteInt32(0);
+res.WriteCString("");//max size 0x196
+-----------------------------------------------------------------------------------------------------------
+0x7DB1
+string: D86308:L"network::proto_msg_implement_client::recv_union_notify_disband()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0x7A60
+string: D86430:L"network::proto_msg_implement_client::recv_union_notify_changed_role()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x7A60+0x69
+string: D86DC8:L"network::proto_msg_implement_client::recv_friend_notify_member() objectid : %d clientid : %d charaname : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //soul name?
+res.WriteFixedString("", 0x5B); //character name?
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); //size is 0x61
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x7A60+0x69+0x177
+string: D83410:L"network::proto_msg_implement_client::recv_soul_rename_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x7E3A
+string: D83410:L"network::proto_msg_implement_client::recv_soul_rename_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x7F64
+string: D86270:L"network::proto_msg_implement_client::recv_union_notify_expelled_member()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0xBA73
+string: D85AA0:L"network::proto_msg_implement_client::recv_cpf_authenticate()\n"
+structure:
+res.WriteInt32(0x80); //less than or equal to 0x80
+for(int i = 0; i < 0x80; i++)//limit is int32 above
+{
+res.WriteByte(0);
+}
+-----------------------------------------------------------------------------------------------------------
+0x9AD1
+string: D83980:L"network::proto_msg_implement_client::recv_chara_delete_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x8E0A
+string: D84860:L"network::proto_msg_implement_client::recv_party_notify_kick()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0x8D24
+string: D86028:L"network::proto_msg_implement_client::recv_union_notify_detail_member() charaname : %s objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); //size is 0x61
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x853F
+string: D86A00:L"network::proto_msg_implement_client::recv_union_request_change_role_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x853F+0x637
+string: D84458:L"network::proto_msg_implement_client::recv_party_notify_invite()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+for(int i = 0; i < 4; i++)
+{
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0); //bool
+res.WriteByte(0);
+res.WriteByte(0);
+}
+res.WriteByte(0);
+res.WriteFixedString("", 0xB5); //size is 0xB5
+-----------------------------------------------------------------------------------------------------------
+0x853F+0x637+0x3B
+string: D87128:L"network::proto_msg_implement_client::recv_friend_result_reply_link2() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x8D3A
+string: D864C0:L"network::proto_msg_implement_client::recv_union_notify_member_state() charaname : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); //size is 0x61
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x8D3A+0x18
+string: D84610:L"network::proto_msg_implement_client::recv_party_notify_apply()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0); //bool
+res.WriteByte(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x8D3A+0x18+0x22
+string: no string
+structure:
+res.WriteCString("");//max size 0x5B
+res.WriteCString("");//max size 0x3D
+res.WriteInt16(0);
+-----------------------------------------------------------------------------------------------------------
+0x95E6
+string: no string
+structure:
+res.WriteCString("");//max size 0x5B
+res.WriteCString("");//max size 0x3D
+res.WriteInt16(0);
+-----------------------------------------------------------------------------------------------------------
+0x8EEE
+string: D84728:L"network::proto_msg_implement_client::recv_party_notify_decline_to_apply()\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x8FB2
+string: D871D0:L"network::proto_msg_implement_client::recv_friend_notify_cancel_link() objectid : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x91EE
+string: D83C90:L"network::proto_msg_implement_client::recv_chara_select_back_soul_select_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x95FE
+string: D84C48:L"network::proto_msg_implement_client::recv_party_notify_remove_member() PARTY_REMOVE_REASON : %d, objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x96DB
+string: D851C0:L"network::proto_msg_implement_client::recv_party_notify_update_maxap()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x9A9B
+string: no string
+structure:
+res.WriteCString("");//max size 0x364
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x25); //size is 0x25
+res.WriteFixedString("", 0x301); //size is 0x301
+-----------------------------------------------------------------------------------------------------------
+0xA535
+string: D83AB0:L"network::proto_msg_implement_client::recv_chara_select_channel_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt16(0);
+res.WriteByte(0);
+for(int i = 0; i < 0x80; i++)
+{
+res.WriteInt32(0);
+res.WriteFixedString("", 0x61); //size is 0x61
+res.WriteByte(0);//bool
+res.WriteInt16(0);
+res.WriteInt16(0);
+res.WriteByte(0);
+res.WriteByte(0);
+}
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0x9D6A
+string: D85EB8:L"network::proto_msg_implement_client::recv_union_notify_cancel_invitat() objectid : %d, union_name : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteCString("");//max size 0x31
+-----------------------------------------------------------------------------------------------------------
+0x9AD4
+string: D85900:L"network::proto_msg_implement_client::recv_party_notify_raise()\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x9AD4+0x12A
+string: D87280:L"network::proto_msg_implement_client::recv_friend_request_delete_friend_r() result : %d clientid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x9AD4+0x12A+0x7F
+string: D84DC0:L"network::proto_msg_implement_client::recv_party_notify_update_level()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x9DE2
+string: D842D0:L"network::proto_msg_implement_client::recv_dbg_message()\n"
+structure:
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteCString("");//max size 0x601
+-----------------------------------------------------------------------------------------------------------
+0x9DE2+0x67
+string: D83D48:L"network::proto_msg_implement_client::recv_cash_buy_start_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0x9DE2+0x67+0x29F
+string: D861C0:L"network::proto_msg_implement_client::recv_union_notify_secede_member() objectid : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xAAB5
+string: D85C80:L"network::proto_msg_implement_client::recv_union_notify_invite() charaname : %s, union_name : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteCString("");//max size 0x31
+-----------------------------------------------------------------------------------------------------------
+0xA57C
+string: D835C8:L"network::proto_msg_implement_client::recv_chara_notify_data()\n"
+structure:
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0);
+for(int i = 0; i < 19; i++)
+	res.WriteInt32(0);
+for(int i = 0; i < 19; i++)
+{
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0); //bool
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+}
+for(int i = 0; i < 19; i++)
+	res.WriteInt32(0);
+for(int i = 0; i < 19; i++)
+	res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xA68E
+string: D83088:L"network::proto_msg_implement_client::recv_base_login_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+for(int i = 0; i < 2; i++)
+{
+res.WriteByte(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteByte(0);
+res.WriteByte(0);//bool
+}
+res.WriteByte(0);//bool
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xA878
+string: D86C88:L"network::proto_msg_implement_client::recv_union_notify_mantle() design : %d\n"
+structure:
+res.WriteInt16(0);
+-----------------------------------------------------------------------------------------------------------
+0xAF33
+string: D83728:L"network::proto_msg_implement_client::recv_chara_get_createinfo_r()\n"
+structure:
+res.WriteInt32(8);
+for(int i = 0; i < 8; i++)//(int32 above)
+	res.WriteByte(0);
+res.WriteInt32(8);
+for(int i = 0; i < 8; i++)//(int32 above)
+	res.WriteByte(0);
+res.WriteInt32(8);
+for(int i = 0; i < 8; i++)//(int32 above)
+	res.WriteByte(0);
+res.WriteInt32(5);
+for(int i = 0; i < 5; i++)//(int32 above)
+{
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+for(int j = 0; j < 7; j++)
+	res.WriteInt16(0);
+}
+res.WriteInt32(10);
+for(int i = 0; i < 10; i++)//(int32 above)
+{
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	for(int j = 0; j < 19; j++)
+		res.WriteInt32(0);
+	for(int k = 0; k < 19; k++)
+	{
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0); //bool
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	}
+	for(int l = 0; l < 19; l++)
+		res.WriteInt32(0);
+	res.WriteByte(0);
+}
+	res.WriteInt32(0x8C); //0x8C is too much for the packet size
+	for(int i = 0; i < 0x8C; i++)//(int32 above)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		for(int j = 0; j < 19; j++)
+			res.WriteInt32(0);
+		for(int k = 0; k < 19; k++)
+		{
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);//bool
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		}
+		for(int l = 0; l < 19; l++)
+			res.WriteInt32(0);
+		res.WriteByte(0);
+	}
+res.WriteInt32(14);
+for(int i = 0; i < 14; i++)//(int32 above)
+{
+res.WriteInt32(0);
+res.WriteByte(0);
+for(int j = 0; j < 7; j++)
+	res.WriteInt16(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+for(int j = 0; j < 7; j++)
+	res.WriteInt16(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteByte(0);
+}
+-----------------------------------------------------------------------------------------------------------
+0xB2B7
+string: D832C8:L"network::proto_msg_implement_client::recv_soul_set_passwd_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);//bool
+-----------------------------------------------------------------------------------------------------------
+0xD6AD
+string: D83FC8:L"network::proto_msg_implement_client::recv_cash_get_url_common_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteCString("");//max size 0x801
+-----------------------------------------------------------------------------------------------------------
+0xC680
+string: D838E8:L"network::proto_msg_implement_client::recv_chara_create_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xC003
+string: D84248:L"network::proto_msg_implement_client::recv_chat_notify_message()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x25); //size is 0x25
+res.WriteFixedString("", 0x301); //size is 0x301
+-----------------------------------------------------------------------------------------------------------
+0xBA8B
+string: D86F80:L"network::proto_msg_implement_client::recv_friend_notify_link_invite() objectid : %d clientid : %d charaname : %s\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xBD6B
+string: D86EA8:L"network::proto_msg_implement_client::recv_friend_request_link_target_r() result : %d target_objectid : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xBE62
+string: D83DE0:L"network::proto_msg_implement_client::recv_cash_get_url_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xC1E6
+string: D87768:L"network::proto_msg_implement_client::recv_easy_friend_notify_delete_member() clientid : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xC561
+string: D83238:L"network::proto_msg_implement_client::recv_soul_select_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);//bool
+-----------------------------------------------------------------------------------------------------------
+0xC5F1
+string: D85F88:L"network::proto_msg_implement_client::recv_union_notify_detail() unionid : %u\n"
+structure:
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt16(0);
+res.WriteFixedString("", 0x196); //size is 0x196
+for(int i = 0; i < 8; i++)
+	res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xD0AC
+string: D84348:L"network::proto_msg_implement_client::recv_party_notify_establish()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+for(int i = 0; i < 4; i++)
+{
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteByte(0);//bool
+res.WriteByte(0);
+res.WriteByte(0);
+}
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xC8D0
+string: D86570:L"network::proto_msg_implement_client::recv_union_notify_levelup() level : %d\n"
+structure:
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteByte(0);
+res.WriteByte(0);
+res.WriteInt32(0);
+res.WriteInt16(0);
+res.WriteFixedString("", 0x196); //size is 0x196
+for(int i = 0; i < 8; i++)
+	res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xC8D0+0x2
+string: D844E0:L"network::proto_msg_implement_client::recv_party_notify_decline_to_invite()\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xC8D0+0x2+0xBF
+string: no string
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0x3E8);
+for(int i = 0; i < 0x3E8; i++)//(int32 above)
+{
+res.WriteInt32(0);
+res.WriteFixedString("", 0x31); //size is 0x31
+res.WriteFixedString("", 0x5B); //size is 0x5B
+res.WriteInt32(0);
+res.WriteFixedString("", 0x49); //size is 0x49
+res.WriteFixedString("", 0x49); //size is 0x49
+res.WriteInt32(0);
+}
+-----------------------------------------------------------------------------------------------------------
+0xD1A8
+string: D84A20:L"network::proto_msg_implement_client::recv_party_notify_change_mode() mode : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xD2D6
+string: D83010:L"network::proto_msg_implement_client::recv_base_ping_r()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0xEFDD
+string: D886F0:L"network::proto_msg_implement_client::recv_base_check_version_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xE2BE
+string: D84118:L"network::proto_msg_implement_client::recv_cash_update_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xD6ED
+string: D84578:L"network::proto_msg_implement_client::recv_party_notify_cancel_invitation()\n"
+structure:
+no structure
+-----------------------------------------------------------------------------------------------------------
+0xD6ED+0x2EA
+string: D850A8:L"network::proto_msg_implement_client::recv_party_notify_update_maxmp()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xD6ED+0x2EA+0x48
+string: D87438:L"network::proto_msg_implement_client::recv_friend_notify_delete_member() clientid : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xE4DE
+string: D867F8:L"network::proto_msg_implement_client::recv_union_request_expel_member_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xEB6E
+string: D879C8:L"network::proto_msg_implement_client::recv_system_register_error_report_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xEEB6
+string: D84F08:L"network::proto_msg_implement_client::recv_party_notify_update_hp()\n"
+structure:
+res.WriteInt32(0);
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xF8B4
+string: D85A18:L"network::proto_msg_implement_client::recv_system_notify_announce()\n"
+structure:
+res.WriteCString("");//max size 0x301
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xF2C3
+string: D84D28:L"network::proto_msg_implement_client::recv_party_notify_update_soulrank()\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xF5BF
+string: D86950:L"network::proto_msg_implement_client::recv_union_request_member_priv_r() [ res = %d ]\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xF7F0
+string: D85770:L"network::proto_msg_implement_client::recv_party_notify_get_item()\n"
+structure:
+res.WriteInt32(0);
+res.WriteCString("");//max size 0x49
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------
+0xF94C
+string: D85E08:L"network::proto_msg_implement_client::recv_union_result_reply_invitat2() result : %d\n"
+structure:
+res.WriteInt32(0);
+-----------------------------------------------------------------------------------------------------------
+0xFC36
+string: D85620:L"network::proto_msg_implement_client::recv_party_notify_update_dragon()\n"
+structure:
+res.WriteInt32(0);
+res.WriteByte(0);
+-----------------------------------------------------------------------------------------------------------

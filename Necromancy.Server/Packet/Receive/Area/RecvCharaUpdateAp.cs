@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateAp : PacketResponse
     {
-        public RecvCharaUpdateAp()
+        private int _ap;
+        public RecvCharaUpdateAp(int ap)
             : base((ushort) AreaPacketId.recv_chara_update_ap, ServerType.Area)
         {
+            _ap = ap;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_ap);
             return res;
         }
     }

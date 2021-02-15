@@ -25,12 +25,12 @@ namespace Necromancy.Server.Systems.Item
                     statuses,
                     current_equip_slot,
                     current_durability,
-                    maximum_durability,
+                    plus_maximum_durability,
                     enhancement_level,
                     special_forge_level,
-                    nec_item_instance.physical,
-                    nec_item_instance.magical,
-                    nec_item_instance.hardness,
+                    nec_item_library.physical,
+                    nec_item_library.magical,
+                    nec_item_library.hardness,
 					gem_slot_1_type,
                     gem_slot_2_type,
                     gem_slot_3_type,
@@ -38,10 +38,9 @@ namespace Necromancy.Server.Systems.Item
                     gem_id_slot_2,
                     gem_id_slot_3,
                     enchant_id,
-                    gp,
 					item_type,
                     quality,
-                    '1',
+                    _item_name_necromancy,
                     max_stack_size,
                     '3',
                     es_hand_r,
@@ -182,9 +181,16 @@ namespace Necromancy.Server.Systems.Item
                     req_clown,
                     req_alchemist,
                     grade,
-                    nec_item_instance.hardness,
-                    scroll_id
-                    weight 
+                    nec_item_library.hardness,
+                    scroll_id,
+                    weight,
+                    plus_physical,
+                    plus_magical,
+                    plus_hardness,
+                    plus_gp,
+                    plus_weight,
+                    plus_ranged_eff,
+                    plus_reservoir_eff
                 FROM 
                     nec_item_instance 
                 INNER JOIN 
@@ -222,7 +228,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id IN ({0})";
 
-        private const string SqlSelectOwnedInventoryItems = @"
+        private const string SqlSelectOwneditemInstances = @"
             SELECT 
                 * 
             FROM 
@@ -256,6 +262,23 @@ namespace Necromancy.Server.Systems.Item
             WHERE 
                 id = @id";
 
+        private const string SqlUpdateItemEnhancementLevel = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                enhancement_level = @enhancement_level 
+            WHERE 
+                id = @id";
+
+        private const string SqlUpdateItemCurrentDurability = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                current_durability = @current_durability 
+            WHERE 
+                id = @id";
+
+
         private const string SqlDeleteItemInstance = @"
             DELETE FROM 
                 nec_item_instance 
@@ -278,7 +301,14 @@ namespace Necromancy.Server.Systems.Item
                     gem_slot_3_type,
                     gem_id_slot_1,
                     gem_id_slot_2,
-                    gem_id_slot_3
+                    gem_id_slot_3,
+                    plus_maximum_durability,
+                    plus_physical,
+                    plus_magical,
+                    plus_gp,
+                    plus_weight,
+                    plus_ranged_eff,
+                    plus_reservoir_eff
 		        )		
             VALUES
 	            (
@@ -294,8 +324,15 @@ namespace Necromancy.Server.Systems.Item
                     @gem_slot_3_type,
                     @gem_id_slot_1,
                     @gem_id_slot_2,
-                    @gem_id_slot_3
-                );
+                    @gem_id_slot_3,
+                    @plus_maximum_durability,
+                    @plus_physical,
+                    @plus_magical,
+                    @plus_gp,
+                    @plus_weight,
+                    @plus_ranged_eff,
+                    @plus_reservoir_eff
+                                    );
             SELECT last_insert_rowid()";
 
 
@@ -346,6 +383,26 @@ namespace Necromancy.Server.Systems.Item
                 command =>
                 {
                     AddParameter(command, "@current_equip_slot", (int)equipSlots);
+                    AddParameter(command, "@id", instanceId);
+                });
+        }
+
+        public void UpdateItemEnhancementLevel(ulong instanceId, int level)
+        {
+            ExecuteNonQuery(SqlUpdateItemEnhancementLevel,
+                command =>
+                {
+                    AddParameter(command, "@enhancement_level", level);
+                    AddParameter(command, "@id", instanceId);
+                });
+        }
+
+        public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
+        {
+            ExecuteNonQuery(SqlUpdateItemCurrentDurability,
+                command =>
+                {
+                    AddParameter(command, "@current_durability", currentDurability);
                     AddParameter(command, "@id", instanceId);
                 });
         }
@@ -406,10 +463,10 @@ namespace Necromancy.Server.Systems.Item
             }            
         }
 
-        public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
+        public List<ItemInstance> SelectOwneditemInstances(int ownerId)
         {
-            List<ItemInstance> ownedInventoryItems = new List<ItemInstance>();
-            ExecuteReader(SqlSelectOwnedInventoryItems,
+            List<ItemInstance> owneditemInstances = new List<ItemInstance>();
+            ExecuteReader(SqlSelectOwneditemInstances,
                 command =>
                 {
                     AddParameter(command, "@owner_id", ownerId);
@@ -417,10 +474,10 @@ namespace Necromancy.Server.Systems.Item
                 {
                     while (reader.Read())
                     {
-                        ownedInventoryItems.Add(MakeItemInstance(reader));
+                        owneditemInstances.Add(MakeItemInstance(reader));
                     }
                 });
-            return ownedInventoryItems;
+            return owneditemInstances;
         }
 
         public List<ItemInstance> InsertItemInstances(int ownerId, ItemLocation[] locs, int[] baseId, ItemSpawnParams[] spawnParams)
@@ -444,6 +501,13 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, "@base_id", baseId[i]);
                     AddParameter(command, "@statuses", (int)spawnParams[i].ItemStatuses);
                     AddParameter(command, "@quantity", spawnParams[i].Quantity);
+                    AddParameter(command, "@plus_maximum_durability", spawnParams[i].plus_maximum_durability);
+                    AddParameter(command, "@plus_physical", spawnParams[i].plus_physical);
+                    AddParameter(command, "@plus_magical", spawnParams[i].plus_magical);
+                    AddParameter(command, "@plus_gp", spawnParams[i].plus_gp);
+                    AddParameter(command, "@plus_weight", spawnParams[i].plus_weight);
+                    AddParameter(command, "@plus_ranged_eff", spawnParams[i].plus_ranged_eff);
+                    AddParameter(command, "@plus_reservoir_eff", spawnParams[i].plus_reservoir_eff);
 
                     if (spawnParams[i].GemSlots.Length > 0) 
                         AddParameter(command, "@gem_slot_1_type", (int)spawnParams[i].GemSlots[0].Type);
@@ -485,6 +549,8 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, parameters[i], lastIds[i]);
                 }
 
+
+
                 command.CommandText = string.Format("SELECT * FROM item_instance WHERE id IN({0})", string.Join(", ", parameters));
                 using DbDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -520,7 +586,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.CurrentEquipSlot = (ItemEquipSlots)reader.GetInt32("current_equip_slot");
 
             itemInstance.CurrentDurability = reader.GetInt32("current_durability");
-            itemInstance.MaximumDurability = reader.GetInt32("maximum_durability");
+            itemInstance.MaximumDurability = reader.GetInt32("plus_maximum_durability");
 
             itemInstance.EnhancementLevel = reader.GetByte("enhancement_level");
 
@@ -530,6 +596,12 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.Magical = reader.GetInt16("magical");
 
             itemInstance.Hardness = reader.GetByte("hardness");
+            itemInstance.PlusPhysical = reader.GetInt16("plus_physical");
+            itemInstance.PlusMagical = reader.GetInt16("plus_magical");
+            itemInstance.PlusGP = reader.GetInt16("plus_gp");
+            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight")*10); //maybe make this a double
+            itemInstance.PlusRangedEff = reader.GetInt16("plus_ranged_eff");
+            itemInstance.PlusReservoirEff = reader.GetInt16("plus_reservoir_eff");
 
             int gemSlotNum = 0;
             int gemSlot1Type = reader.GetByte("gem_slot_1_type");
@@ -541,7 +613,7 @@ namespace Necromancy.Server.Systems.Item
             GemSlot[] gemSlot = new GemSlot[gemSlotNum];
 
             itemInstance.EnchantId = reader.GetInt32("enchant_id");
-            itemInstance.GP = reader.GetInt16("gp");
+            itemInstance.GP = reader.GetInt16("plus_gp");
             itemInstance.Type = (ItemType)Enum.Parse(typeof(ItemType), reader.GetString("item_type"));
             itemInstance.Quality = (ItemQualities)Enum.Parse(typeof(ItemQualities), reader.GetString("quality"),true);
             itemInstance.MaxStackSize = reader.GetByte("max_stack_size");
@@ -580,12 +652,12 @@ namespace Necromancy.Server.Systems.Item
             if (reader.GetBoolean("req_thief")) itemInstance.RequiredClasses |= Classes.Thief;
             if (reader.GetBoolean("req_mage")) itemInstance.RequiredClasses |= Classes.Mage;
             if (reader.GetBoolean("req_priest")) itemInstance.RequiredClasses |= Classes.Priest;
-            //if (reader.GetBoolean("req_samurai")) itemInstance.RequiredClasses |= Classes.Samurai; TODO ENABLE ONCE YOU REBUILD DATABASE
-            //if (reader.GetBoolean("req_bishop")) itemInstance.RequiredClasses |= Classes.Bishop;
-            //if (reader.GetBoolean("req_ninja")) itemInstance.RequiredClasses |= Classes.Ninja;
-            //if (reader.GetBoolean("req_lord")) itemInstance.RequiredClasses |= Classes.Lord;
-            //if (reader.GetBoolean("req_clown")) itemInstance.RequiredClasses |= Classes.Clown;
-            //if (reader.GetBoolean("req_alchemist")) itemInstance.RequiredClasses |= Classes.Alchemist;
+            if (reader.GetBoolean("req_samurai")) itemInstance.RequiredClasses |= Classes.Samurai;
+            if (reader.GetBoolean("req_bishop")) itemInstance.RequiredClasses |= Classes.Bishop;
+            if (reader.GetBoolean("req_ninja")) itemInstance.RequiredClasses |= Classes.Ninja;
+            if (reader.GetBoolean("req_lord")) itemInstance.RequiredClasses |= Classes.Lord;
+            if (reader.GetBoolean("req_clown")) itemInstance.RequiredClasses |= Classes.Clown;
+            if (reader.GetBoolean("req_alchemist")) itemInstance.RequiredClasses |= Classes.Alchemist;
 
             if (reader.GetBoolean("req_lawful")) itemInstance.RequiredAlignments |= Alignments.Lawful;
             if (reader.GetBoolean("req_neutral")) itemInstance.RequiredAlignments |= Alignments.Neutral;
@@ -668,7 +740,7 @@ namespace Necromancy.Server.Systems.Item
 
             //grade,
             //weight
-
+            itemInstance.Weight = (int)(reader.GetDouble("weight")*10000);
 
             return itemInstance;
         }

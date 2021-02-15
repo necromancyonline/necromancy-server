@@ -41,6 +41,7 @@ namespace Necromancy.Server.Tasks
 
         protected override void Execute()
         {
+            Thread.Sleep(5000); //fix null ref on chara select. 
             while (_client.Character.characterActive)
             {
                 if (_logoutTime != DateTime.MinValue)
@@ -56,10 +57,35 @@ namespace Necromancy.Server.Tasks
                 else if (!_client.Character.Hp.depleted && playerDied)
                     playerDied = false;
 
+                StatRegen();
+
                 Thread.Sleep(tickTime);
             }
 
             this.Stop();
+        }
+
+        private void StatRegen()
+        {
+            if (_client.Character.Gp.current < _client.Character.Gp.max) 
+            { 
+                _client.Character.Gp.setCurrent(_client.Character.Gp.current + 5/*_client.Character.GPRecoveryRate*/);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(_client.Character.Gp.current);
+                _server.Router.Send(recvCharaUpdateAc, _client);
+            }
+
+            if(_client.Character.movementPose == 4/*running byte*/)
+            {
+                _client.Character.Od.setCurrent(_client.Character.Od.current - 5/*_client.Character.APCostDiff*/);
+                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.Character.Od.current);
+                _server.Router.Send(recvCharaUpdateAp, _client);
+            }
+            else if (_client.Character.Od.current < _client.Character.Od.max)
+            {
+                _client.Character.Od.setCurrent(_client.Character.Od.current + 5/*_client.Character.GPRecoveryRate*/);
+                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.Character.Od.current);
+                _server.Router.Send(recvCharaUpdateAp, _client);
+            }
         }
 
         private void PlayerDead()
@@ -120,10 +146,6 @@ namespace Necromancy.Server.Tasks
         {
             _logoutTime = DateTime.MinValue;
             IBuffer res = BufferProvider.Provide();
-            IBuffer res2 = BufferProvider.Provide();
-            IBuffer res3 = BufferProvider.Provide();
-            IBuffer res4 = BufferProvider.Provide();
-            IBuffer res5 = BufferProvider.Provide();
             Logger.Debug($"_logoutType [{_logoutType}]");
             if (_logoutType == 0x00) // Return to Title   also   Exit Game
             {

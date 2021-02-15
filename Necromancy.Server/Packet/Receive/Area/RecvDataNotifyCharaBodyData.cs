@@ -123,9 +123,12 @@ namespace Necromancy.Server.Packet.Receive.Area
             //Traits
             res.WriteUInt32(_character.RaceId); //race
             res.WriteUInt32(_character.SexId);
+            
             res.WriteByte(_character.HairId); //hair
             res.WriteByte(_character.HairColorId); //color
             res.WriteByte(_character.FaceId); //face
+            res.WriteByte(0); //face style
+            res.WriteByte(0); //voice
 
             res.WriteInt32(_deadBody.ConnectionState); // 0 = bag, 1 for dead? (Can't enter soul form if this isn't 0 or 1 i think).
             res.WriteInt32(_deadBody.ModelType); //4 = ash pile, not sure what this is.

@@ -1,0 +1,1994 @@
+Security Descriptor Definition Language
+						
+recv_soul_dispitem_request_data_r = 0xD5FD,   
+
+						res.WriteInt32(0);
+						
+recv_battle_report_noact_notify_heal_ac = 0xD607, 
+
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						
+
+recv_skill_cast_cancel = 0xD55D,
+
+						//no structure
+	
+	
+recv_shop_sell_r = 0xD4F8, 
+
+						res.WriteInt32(0);
+	
+
+						
+						
+
+String=L"network::proto_area_implement_client::recv_item_update_place_change() [ id1 = %llu, pos1 = (%u, %u, %u) ] <-> [ id2 = %llu, pos2 = (%u, %u, %u) ]\n"
+	
+recv_item_update_place_change = 0xD6A8,
+
+				res.WriteInt64(0);
+				res.WriteByte(0);
+				res.WriteByte(0);
+				res.WriteInt16(0);
+				res.WriteInt64(0);
+				res.WriteByte(0);
+				res.WriteByte(0);
+				res.WriteInt16(0);
+	
+
+	
+recv_gem_set_piece_r = 0xD6A4,
+
+				res.WriteInt32(0);
+	
+recv_wanted_jail_update_draw_point = 0xD6F0,
+
+				res.WriteInt32(0);
+	
+	
+
+	
+recv_minimap_notify = 0xE0D5,
+
+						res.WriteInt32(0);
+	
+
+	
+recv_union_mantle_open = 0xE0A6,
+
+						res.WriteInt32(0);
+						for(int i = 0; i < 0x10; i++)
+						{
+							res.WriteByte(0);
+						}
+						
+	
+
+recv_shop_message_init = 0xE7C0,
+
+						//no structure
+	
+recv_0xE7CF = 0xE7CF,
+
+						res.WriteInt32(0);
+	
+
+	
+
+	
+	
+
+recv_object_point_move_notify = 0xEEF0,
+
+						res.WriteInt32(0);
+						res.WriteFloat(0);//x
+						res.WriteFloat(0);//y
+						res.WriteFloat(0);//z
+						res.WriteByte(0);//view offset
+						res.WriteByte(0);
+	
+
+	
+
+	
+recv_revive_init_r = 0xEF4E,
+
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+	
+	
+
+	
+recv_trade_revert_r = 0xEDB9,
+
+						res.WriteInt32(0);
+	
+recv_0xEDE7 = 0xEDE7,
+
+						//no structure
+	
+	
+
+recv_eo_update_end_trapid = 0xE8BF,
+
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+	
+recv_0xE8B9 = 0xE8B9,
+
+						res.WriteInt32(0);
+						res.WriteFloat(0);
+						res.WriteFloat(0);
+						res.WriteFloat(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteInt16(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+	
+
+	
+recv_0xE983 = 0xE983,
+
+						res.WriteCString("");//find max size
+	
+
+	
+	
+
+recv_premium_service_update_time = 0xFD54,
+
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+	
+recv_battle_report_notify_damage_mp = 0xFD41,
+
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+	
+
+	
+	
+
+	
+recv_help_new_add = 0xFF3F,
+
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteInt16(0);
+						res.WriteFloat(0);
+						res.WriteFloat(0);
+						res.WriteCString(""); //find max size
+						res.WriteCString(""); //find max size
+	
+
+	
+recv_charabody_notify_loot_start2 = 0xFFD2,
+
+						res.WriteInt32(0);
+						
+						
+
+	
+recv_chara_update_job_attr_skill_cooltime_per = 0xEFE3,
+
+						res.WriteInt32(0);
+						res.WriteInt16(0);
+	
+recv_charabody_access_start_r = 0xEFED,
+
+						res.WriteInt32(0);
+	
+recv_0xF024 = 0xF024,
+
+						res.WriteInt32(0);
+	
+
+
+	
+
+						
+						
+
+	
+recv_trade_add_item_r = 0x52C9, // Parent = 0x5243 // Range ID = 01
+						
+						res.WriteInt32(0);
+	
+recv_shop_notify_open = 0x52FD, // Parent = 0x5243 // Range ID = 02
+						
+						res.WriteInt16(0); //Shop type
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteByte(0);
+	
+
+	
+	
+
+	
+recv_shop_close_r = 0x4E5C, // Parent = 0x4E17 // Range ID = 01
+						
+						res.WriteInt32(0);
+	
+recv_gem_synthesis_r = 0x4E7B, // Parent = 0x4E17 // Range ID = 02
+						
+						res.WriteInt32(0);
+	
+
+	
+	
+
+	
+recv_0x1FC1 = 0x1FC1, // Parent = 0x1F73 // Range ID = 01  // push wizardryonline_patched.4D5F32
+						
+						res.WriteInt32(0);
+						res.WriteFloat(0);
+						res.WriteFloat(0);
+						res.WriteFloat(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteFloat(0);
+						res.WriteFloat(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+	
+recv_job_change_notify_open = 0x1FE4, // Parent = 0x1F73 // Range ID = 02  
+						
+						res.WriteInt32(0);
+                        int numEntries = 0x7;
+                        res.WriteInt32(numEntries); //less than or equal to 0x7
+                        for(int i = 0; i < numEntries; i++)
+                        {
+                            res.WriteInt16(0);
+                        }
+                        res.WriteInt32(0);
+                        res.WriteByte(0);
+                        res.WriteInt64(0);
+                        res.WriteInt32(0);
+                        for(int i = 0; i < 0x7; i++)
+                        {
+                            res.WriteInt16(0);
+                        }
+                        res.WriteInt32(0);
+                        res.WriteInt32(0);
+                        for(int i = 0; i < 0x7; i++)
+                        {
+                            res.WriteInt16(0);
+                        }
+                        res.WriteInt32(0);
+                        res.WriteInt32(0);
+                        res.WriteInt32(0);
+                        for(int i = 0; i < 0x10; i++)
+                        {
+                            res.WriteByte(0);
+                        }
+                        res.WriteByte(0);
+	
+recv_gem_cancel_support_item_r = 0x1FEE, // Parent = 0x1F73 // Range ID = 03
+						
+						res.WriteInt32(0);
+	
+
+	
+	
+
+	
+recv_item_update_eqmask = 0x3BD3, // Parent = 0x3B9F // Range ID = 01
+						
+						res.WriteInt64(0);
+						res.WriteInt32(0);
+						
+						res.WriteInt32(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						
+						res.WriteInt32(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);//bool
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+	
+recv_0x3C1F = 0x3C1F, // Parent = 0x3B9F // Range ID = 02
+						
+						res.WriteInt32(0); // leads to error
+	
+
+						
+
+	
+recv_party_accept_to_invite_r = 0x32AE, // Parent = 0x3247 // Range ID = 01
+						
+						res.WriteInt32(0);
+	
+recv_gem_set_r = 0x32CD, // Parent = 0x3247 // Range ID = 02
+						
+						res.WriteInt32(0);
+	
+
+	
+	
+
+	
+recv_eo_update_state = 0x28FD, // Parent = 0x28E7 // Range ID = 01
+						
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+	
+recv_shop_repair_r = 0x29AF, // Parent = 0x28E7 // Range ID = 02
+						
+						res.WriteInt32(0);
+	
+
+	
+	
+
+	
+recv_chara_update_form = 0x2479, // Parent = 0x2478 // Range ID = 01	
+						
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+						res.WriteByte(0);
+	
+recv_create_send_pacakge_info = 0x2491, // Parent = 0x2478 // Range ID = 02	
+						
+						res.WriteInt32(0);
+						res.WriteFixedString("", 0x31);
+						res.WriteFixedString("", 0x5B);
+						res.WriteFixedString("", 0x5B);
+						res.WriteFixedString("", 0x259);
+						res.WriteInt32(0);
+						res.WriteInt16(0);
+						res.WriteInt64(0);
+						res.WriteInt32(0);
+						res.WriteFixedString("", 0x49);
+						res.WriteFixedString("", 0x49);
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteFixedString("", 0x10);
+						res.WriteByte(0);
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						for(int i = 0; i < 3; i++)
+						{
+							res.WriteByte(0);//bool
+							res.WriteInt32(0);
+							res.WriteInt32(0);
+							res.WriteInt32(0);
+						}
+						res.WriteInt64(0);
+	
+
+	
+	
+
+	
+recv_battle_report_action_monster_skill_start_cast = 0x1959, // Parent = 0x18CC // Range ID = 01
+						
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteFloat(0);
+						
+	
+recv_stall_deregist_item_r = 0x196E, // Parent = 0x18CC // Range ID = 02
+						
+						res.WriteInt32(0);
+	
+recv_battle_report_noact_notify_buff_detach	= 0x19AC, // Parent = 0x18CC // Range ID = 03
+						
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+						res.WriteByte(0);//bool
+	
+	
+	
+
+	
+recv_blacklist_clear_r = 0x1E6B, // Parent = 0x1E65 // Range ID = 01
+						
+						res.WriteInt32(0);
+	
+recv_battle_guard_start_self = 0x1E96, // Parent = 0x1E65 // Range ID = 02
+						
+						no structure
+	
+
+	
+	
+	
+
+recv_battle_report_notify_damage_hp = 0x904, // Parent = 0x8CD // Range ID = 01 
+						res.WriteInt32(0);
+						res.WriteInt32(0);
+	
+recv_0x916 = 0x916, // Parent = 0x8CD // Range ID = 02  
+						res.WriteInt32(0); // No String.  Goes to Error
+	
+recv_item_update_magic = 0x992, // Parent = 0x8CD // Range ID = 03 
+						res.WriteInt64(0);
+						res.WriteInt16(0);
+
+
+
+
+recv_cash_shop_get_url_common_r = 0x1A6,
+
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteCString("Length 0x801");
+			
+recv_event_block_message_end_no_object = 0x1AB,
+
+			//No Structure
+
+recv_sv_conf_option_request_r = 0x1DA,
+            res.WriteInt32(1);
+            res.WriteInt32(1);
+
+            res.WriteInt32(2);
+            res.WriteInt32(2);
+
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+
+            res.WriteInt32(4);
+            res.WriteInt32(4);
+
+            res.WriteInt32(5);
+            res.WriteInt32(5);
+
+            res.WriteInt32(6);
+            res.WriteInt32(6);
+
+            res.WriteInt32(1);
+
+recv_auction_receive_gold_r = 0x22C,
+            
+            res.WriteInt32(1);
+
+recv_item_update_hardness = 0x2C5,
+            
+            res.WriteInt64(1);
+            res.WriteByte(1);
+
+recv_charabody_notify_loot_start_cancel = 0x2FA,
+
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteInt16(1);
+            res.WriteCString("Length 31-2=DEC47");
+            res.WriteCString("Length 5B-1=DEC90");
+
+recv_stall_close_r = 0x397,
+
+            res.WriteInt32(1);
+			
+recv_skill_custom_close_r = 0x411, 
+            
+            res.WriteInt32(0);
+
+recv_event_tresurebox_select_r = 0x494,
+
+            res.WriteInt32(1);
+
+recv_charabody_loot_complete2_r = 0x54E,
+
+            res.WriteInt32(1);
+            res.WriteInt32(1);
+			
+recv_item_update_num = 0x5F8, 
+            
+            res.WriteInt64(0);
+            res.WriteByte(0);
+
+recv_battle_report_action_skill_exec = 0x604,
+
+            res.WriteInt32(1);
+
+recv_union_mantle_close_r = 0x65C,
+
+            res.WriteInt32(1);
+
+recv_chara_update_ap_cost_per = 0x661, 
+            
+            res.WriteInt32(0);
+            res.WriteInt16(0);
+			
+recv_cloak_notify_close_r = 0x723,
+
+            // no structure 
+
+recv_chara_update_condition_resist = 0x780,
+
+            res.WriteInt32(1);
+            res.WriteInt16(1);
+
+recv_wanted_jail_update_money = 0x794,
+
+            res.WriteInt64(1);
+
+recv_self_action_cost = 0x8CD,
+            
+            res.WriteInt16(1);
+            res.WriteInt16(1);
+            res.WriteInt16(1);
+
+recv_event_end = 0x99D, 
+            
+            res.WriteByte(0);
+			
+recv_gem_synthesis_info = 0x9F5,
+            
+            res.WriteInt32(1);
+
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+            res.WriteByte(1);
+
+            res.WriteInt16(1);
+
+            res.WriteInt64(1);
+
+recv_charabody_loot_start2_r = 0xB2F,
+            
+            res.WriteInt32(1);
+            res.WriteInt32(1);
+
+recv_item_drop_r = 0xBFE,
+            
+            res.WriteInt32(1);
+
+recv_dbg_option_change_r = 0xC5F,
+            
+            res.WriteInt32(1);
+
+recv_mail_open_r = 0xCE7,
+            
+            res.WriteInt32(1);
+
+recv_party_accept_to_apply_r = 0xCFF,
+            
+            res.WriteInt32(1);
+
+recv_cash_shop_fitting_equip_r = 0xD0D,
+            
+            res.WriteInt32(1);
+
+recv_record_close_r = 0xE0B,
+            
+            res.WriteInt32(1);
+
+recv_job_change_notify_close = 0xE45,
+            
+            //No Structure
+
+recv_item_cooltime_notify = 0xECF,
+            
+            res.WriteInt32(1);
+            res.WriteInt32(1);
+            res.WriteInt32(1);
+
+recv_chara_update_alignment = 0xEF9,
+            
+            res.WriteInt32(1); //Alignment ID
+
+recv_trade_notify_replied = 0x102E,
+            
+            res.WriteInt32(1);
+
+recv_dropobject_notify_access_priority = 0x10C5, 
+            
+            res.WriteInt32(0);
+ 
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+			
+recv_0x10DA = 0x10DA, //no String push wizardryonline_patched.4D5DBF
+            
+            int numEntries = 0x5;
+            res.WriteInt32(numEntries); //less than or equal to 5
+            for(int i = 0; i < numEntries; i++)
+                res.WriteInt32(0);
+
+recv_event_union_storage_open = 0x1105, 
+            
+            res.WriteInt64(1);
+            res.WriteInt64(1);
+
+recv_logout_cancel = 0x1198,      
+          
+            //No Structure
+
+recv_skill_inherit_lost = 0x11FA, 
+            
+            res.WriteInt32(1);
+
+recv_situation_end = 0x124C, 
+            
+            //no Structure
+
+recv_event_show_board_end = 0x125E, 
+
+			//no Structure
+			
+recv_battle_report_noact_notify_freeze = 0x129B, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteByte(0);
+			
+recv_charabody_self_salvage_notify = 0x12A4, 
+            
+            res.WriteCString("31-02=2F=DEC47");
+            res.WriteCString("5b-01=5A=Dec132");
+
+recv_charabody_self_salvage_end = 0x12E0, 
+            
+            res.WriteInt32(0);
+			
+recv_skill_base_notify = 0x1392, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+
+recv_0x1489 = 0x1489, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            //Error Condition - invalid structure
+			
+recv_chara_view_landing_notify = 0x14DA, 
+            
+            res.WriteInt32(0);
+
+recv_buff_shop_notify_open = 0x14F6, 
+            
+            res.WriteByte(0);
+
+recv_soul_dispitem_notify_data = 0x15B0, 
+            
+            res.WriteInt32(0);
+
+recv_shop_message_push = 0x15D0, 
+            
+            res.WriteInt32(0);
+            res.WriteCString("31-01=30=DEC48");
+
+recv_0x166B = 0x166B, 
+            
+            //no structure push wizardryonline_patched.4ED2F0
+			
+recv_union_request_establish_r = 0x1701, 
+            
+            res.WriteInt32(0);
+			
+recv_dbg_battle_guard_end_notify = 0x170B, 
+            
+            res.WriteInt32(0);			
+
+String=L"network::proto_area_implement_client::recv_message_board_notify_open() msgid:%d yesterday:(%d, %d, %d, %d) lastmonth:(%d, %d, %d, %d)\n"
+recv_message_board_notify_open = 0x170F, 
+            
+            res.WriteInt32(0);
+
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+			
+recv_battle_report_notify_phy_damage_hp = 0x173C, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_battle_report_notify_hit_effect = 0x179D, 
+            
+            res.WriteInt32(0);	
+
+recv_self_soul_point_notify = 0x182B, 
+            
+            res.WriteInt32(0);
+			
+recv_job_change_select_bonuspoint_r = 0x1837, 
+            
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+                        	
+            int numEntries = 0x7;
+            for (int i = 0; i < numEntries; i++)
+            {
+                res.WriteInt16(0);
+            }
+
+            int numEntries2 = 0x9;
+            for (int i = 0; i < numEntries2; i++)
+            {
+                res.WriteInt16(0);
+            }
+
+            int numEntries3 = 0x9;
+            for (int i = 0; i < numEntries3; i++)
+            {
+                res.WriteInt16(0);
+            }
+
+            int numEntries4 = 0xB; 
+            for (int i = 0; i < numEntries4; i++)
+            {
+                res.WriteInt16(0);
+            }
+                            
+            
+            res.WriteInt32(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+
+recv_gem_notify_close = 0x18CC, 
+
+			//No Structure
+			
+recv_battle_report_noact_notify_buff_update_time = 0x19C3, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_charabody_state_update_notify = 0x1A0F, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_situation_start = 0x1AA8, 
+            
+            res.WriteInt32(0);			
+			
+recv_event_start = 0x1B5C, 
+            
+            res.WriteInt32(0);
+            res.WriteByte(0);
+
+recv_quest_get_mission_quest_works_r = 0x1BD6, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_skill_tree_notify = 0x1C0A,
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+
+recv_item_update_ac = 0x1C15, 
+            
+            res.WriteInt64(0);
+            res.WriteInt16(0);
+			
+recv_cash_shop_fitting_unequip_r = 0x1C20, 
+            
+            res.WriteInt32(0);
+
+recv_skill_exec_r = 0x1C6C, 
+            
+            res.WriteInt32(0);
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+
+recv_cash_shop_get_url_commerce_r = 0x1D49, 
+            
+            res.WriteInt32(0);
+            res.WriteCString("");//"0x801"
+            res.WriteCString("");//"0x801"
+            res.WriteCString("");//"0x11"			
+			
+recv_trade_notify_invited = 0x1D68, 
+            
+            res.WriteInt32(0);
+
+recv_battle_report_end_notify = 0x1DBE, 
+           
+			//No Structure
+			
+recv_charabody_self_warpdragon_penalty = 0x1E65, 
+            
+            res.WriteInt32(0);
+
+recv_souleater_touch_notify = 0x1F32, 
+            
+            res.WriteInt32(0);			
+			
+recv_item_update_durability = 0x1F5A, 
+            
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+
+recv_shortcut_notify_deregist = 0x1F73, 
+            
+            res.WriteByte(0);
+            res.WriteByte(0);
+
+recv_data_notify_soulmaterialobject_data = 0x201C, 
+            
+			res.WriteInt32(0);
+
+			res.WriteFloat(0);//X
+			res.WriteFloat(0);//Y
+			res.WriteFloat(0);//Z
+
+			res.WriteFloat(0);//X
+			res.WriteFloat(0);//Y
+			res.WriteFloat(0);//Z
+			res.WriteByte(0);
+	
+			res.WriteInt32(0);
+
+			res.WriteInt32(0);
+			res.WriteInt32(0);
+			res.WriteInt32(0);
+
+			res.WriteInt32(0);
+
+recv_item_update_date_end_protect = 0x2063, 
+            
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+
+recv_gamepot_web_close_r = 0x213C, 
+            
+            res.WriteInt32(0);
+
+recv_0x218A = 0x218A, 
+            
+            res.WriteInt32(0); //No String - Goes to Error			
+
+recv_union_close_window_r = 0x2246, 
+            
+            res.WriteInt32(0);
+			
+recv_charabody_salvage_request_r = 0x2257, 
+            
+            res.WriteInt32(0);
+			
+recv_refusallist_add_user_r = 0x22E7, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_record_notify_open = 0x2353, 
+            
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+           
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+                        
+            int numEntries = 0xE;
+            for (int i = 0; i < numEntries; i++)
+            {
+                res.WriteInt16(0);
+            }
+            
+            int numEntries2 = 0x4;
+            for (int i = 0; i < numEntries2; i++)
+            {
+                res.WriteInt32(0);
+            }            
+            res.WriteInt64(0);
+
+            res.WriteInt64(0);
+
+            res.WriteInt64(0);
+
+            res.WriteInt32(0);
+
+            int numEntries3 = 0x6;
+            for (int i = 0; i < numEntries3; i++)
+            {
+                res.WriteInt64(0);
+            }
+ 
+            res.WriteInt64(0);
+
+            res.WriteInt64(0);
+
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+            
+            res.WriteInt64(0);
+
+            res.WriteInt32(0);			
+
+recv_emotion_update_type_r = 0x239D, 
+            
+            res.WriteInt32(0);
+			
+recv_chara_notify_stateflag = 0x23D3, 
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_object_sub_target_update_notify = 0x23E5, 
+            
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+
+recv_shop_buy_r = 0x2467, 
+            
+            res.WriteInt32(0);
+
+recv_data_notify_npc_data = 0x2470
+
+            res.WriteInt32(3);             // NPC ID (object id)
+
+            res.WriteInt32(10000108);      // NPC Serial ID from "npc.csv"
+
+            res.WriteByte(0);              // 0 - Clickable NPC (Active NPC, player can select and start dialog), 1 - Not active NPC (Player can't start dialog)
+
+            res.WriteCString("liar");//Name
+
+            res.WriteCString("training center personnel");//Title
+
+            res.WriteFloat(23200);//X Pos
+            res.WriteFloat(-50);//Y Pos
+            res.WriteFloat(3);//Z Pos
+            res.WriteByte(90);//view offset
+
+            res.WriteInt32(19);
+
+            //this is an x19 loop but i broke it up
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+            res.WriteInt32(-1);
+
+            res.WriteInt32(19);
+
+
+            int numEntries = 19;
+
+
+            for (int i = 0; i < numEntries; i++)
+
+            {
+                // loop start
+                res.WriteInt32(10310503); // this is a loop within a loop i went ahead and broke it up
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+
+                res.WriteInt32(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(1); // bool
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+
+            }
+
+            res.WriteInt32(19);
+
+            //this is an x19 loop but i broke it up
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+            res.WriteInt32(3);
+
+            res.WriteInt32(1011101);   //NPC Model from file "model_common.csv"
+
+            res.WriteInt16(100);       //NPC Model Size
+
+            res.WriteByte(1);            
+
+            res.WriteByte(1);
+
+            res.WriteByte(1);
+
+            res.WriteInt32(100);
+
+            res.WriteInt32(100);
+
+            res.WriteInt32(100);
+            res.WriteFloat(1000);
+            res.WriteFloat(1000);
+            res.WriteFloat(1000);
+
+            res.WriteInt32(128);
+
+            int numEntries2 = 128;
+
+
+            for (int i = 0; i < numEntries2; i++)
+
+            {
+                res.WriteInt32(1);
+                res.WriteInt32(1);
+                res.WriteInt32(1);
+
+            }
+
+
+recv_chara_update_maxap = 0x2478, 
+            
+            res.WriteInt32(0);			
+
+recv_data_notify_ggate_stone_data = 0x250E, 
+            
+            res.WriteInt32(0);//
+            res.WriteInt32(0);//
+            res.WriteByte(0);//
+            res.WriteCString("");//"0x5B"
+            res.WriteCString("");//"0x5B"
+	        res.WriteFloat(0);//X
+	        res.WriteFloat(0);//Y
+	        res.WriteFloat(0);//Z
+            res.WriteByte(0);//
+            res.WriteInt32(0);//
+
+            res.WriteInt16(0);//  BP Set
+
+
+            res.WriteInt32(0);//
+
+            res.WriteInt32(0);//
+			
+recv_0x3A0E = 0x3A0E, 
+            
+            res.WriteInt32(0); //No String sub_00481CB0. leads to Error condition
+			
+recv_npc_state_update_notify = 0x3B77, 
+           
+ 
+            res.WriteInt32(0);
+            res.WriteInt32(0);	
+
+recv_self_skill_point_notify = 0x3B9F, 
+            
+            res.WriteInt32(0);
+			
+recv_help_new_data = 0x3C41, 
+            
+            res.WriteInt32(0);//<=0xA
+
+recv_union_request_growth_result = 0x3C68,
+            
+            res.WriteInt32(0);
+
+recv_0x3C81 = 0x3C81, 
+            //No String - push wizardryonline_patched.4D6044
+            res.WriteInt32(0);
+ 
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+
+            res.WriteFloat(0);
+
+            res.WriteFloat(0);
+
+            res.WriteByte(0);
+			
+recv_data_get_self_chara_data_request_r = 0x3C89, 
+
+            //No Structure			
+
+recv_dbg_chara_equipped = 0x3D6C, 
+
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+                int numEntries = 0x2;
+                for (int i = 0; i < numEntries; i++)
+                {
+                    res.WriteInt32(0);
+                    res.WriteByte(0);
+                    res.WriteByte(0);
+                    res.WriteByte(0);
+                    
+                }
+
+                res.WriteByte(0);
+
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+
+                    res.WriteByte(0);
+
+            res.WriteInt32(0);
+			
+recv_battle_report_action_fall = 0x3D9F, 
+
+            //No Structure
+
+recv_event_soul_storage_open = 0x3DD0, 
+
+            res.WriteInt64(0);
+
+recv_trade_notify_problem = 0x3E0B, 
+
+            res.WriteInt32(0);
+            res.WriteByte(0);
+
+recv_charabody_self_salvage_result = 0x3E7F, 
+
+            res.WriteInt32(0);
+
+recv_0x3F2F = 0x3F2F,
+
+			//Could not find.  Suspect it's part of a range.
+			
+recv_auction_bid_r = 0x3F38, 
+
+            res.WriteInt32(0);
+
+recv_self_inherit_skill_level_notify = 0x3F5B, 
+
+            res.WriteByte(0);
+
+recv_shortcut_request_deregist_r = 0x42B6, 
+
+            res.WriteInt32(0);
+
+recv_quest_display_r = 0x42B8, 
+
+            res.WriteInt32(0);
+
+recv_gem_break_cost_r = 0x42DE, 
+
+            res.WriteInt64(0);
+
+recv_event_select_exec_winpos = 0x4404, 
+
+            res.WriteCString(""); //Length 0xC01
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+recv_union_rename_open = 0x442A, 
+
+            res.WriteCString(""); //Length 0x31
+
+recv_item_update_maxdur = 0x443C, 
+
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+
+recv_union_storage_draw_money_r = 0x4440, 
+
+            res.WriteInt32(0);
+
+recv_wanted_jail_payment_r = 0x4537, 
+
+            res.WriteInt32(0);
+
+recv_event_sync = 0x462E, 
+
+			//No Structure
+			
+recv_quest_target_count_r = 0x465C, 
+
+            res.WriteInt32(0);			
+			
+
+
+///////////////---------------\
+//////Begin Ranges------------\ 
+///////////////---------------\
+
+
+
+recv_battle_report_action_eq_break = 0xD426, // Parent = 0xD400 // Range ID = 01
+                    
+            res.WriteInt32(0); // leave as 0
+            res.WriteInt32(0); //number of slot? to break
+			
+recv_storage_draw_item2_r = 0xD43D, // Parent = 0xD400 // Range ID = 02
+                    
+            res.WriteInt32(0);			
+
+
+
+
+recv_chara_update_ability = 0xCBA2, // Parent = 0xCB94 // Range ID = 01
+                    
+            res.WriteInt32(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+			
+recv_message_board_notify_close = 0xCBBD, // Parent = 0xCB94 // Range ID = 02
+            
+			//No Structure
+			
+recv_charabody_notify_deadstate = 0xCC36, // Parent = 0xCB94 // Range ID = 03
+                    
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+
+
+
+recv_object_region_disappear_update_notify = 0xCF2A, // Parent = 0xCF29 // Range ID = 01
+                    
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+			
+recv_dbg_battle_charge_start_notify = 0xCF2B, // Parent = 0xCF29 // Range ID = 02
+                    
+            res.WriteInt32(0);
+
+
+
+recv_escape_exec = 0xD0B7, // Parent = 0xD04A // Range ID = 01
+                    
+            res.WriteInt32(0);
+			
+recv_chara_update_atk_magic_attr = 0xD0BB, // Parent = 0xD04A // Range ID = 02
+                    
+            res.WriteInt32(0);
+            res.WriteInt16(0);
+
+
+
+
+recv_dbg_battle_charge_end_notify = 0xA84F, // Parent = 0xA7E8 // Range ID = 01
+                    
+            res.WriteInt32(0);
+			
+recv_chara_update_maxweight = 0xA873, // Parent = 0xA7E8 // Range ID = 02
+                    
+            res.WriteInt32(0);
+            res.WriteInt32(0);			
+
+recv_charabody_salvage_notify_salvager = 0xA8A0, // Parent = 0xA7E8 // Range ID = 03 
+                    
+            res.WriteInt32(0);
+            res.WriteCString(""); // Length 0x31
+            res.WriteCString(""); // Length 0x5B
+			
+			
+			
+
+recv_quest_chapter_updated = 0xC119, // Parent = 0xC0D8 // Range ID = 01
+                    
+            res.WriteInt32(0);
+            res.WriteCString(""); // Length 0x181
+            
+        
+            int numEntries = 0x5;
+            res.WriteInt32(numEntries); //less than or equal to 0x5
+            for(int i = 0; i < numEntries; i++)
+            {
+            res.WriteByte(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+                res.WriteInt32(0);
+                res.WriteInt32(0);
+            }
+
+            res.WriteInt32(0);
+            res.WriteFloat(0);
+			
+recv_eo_notify_disappear_schedule = 0xC177, // Parent = 0xC0D8 // Range ID = 02
+                    
+            res.WriteInt32(0);
+            res.WriteFloat(0);
+			
+recv_charabody_self_raisescale_end = 0xC22F, // Parent = 0xC206 // Range ID = 01
+                    
+            res.WriteInt32(0);
+
+recv_battle_report_notify_action_bonus = 0xC235, // Parent = 0xC206 // Range ID = 02 
+                    
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+			
+			
+			
+
+recv_0xC055 = 0xC055, // Parent = 0xC003 // Range ID = 01
+                    
+            res.WriteInt32(0); //No String			
+
+recv_chara_update_def_magic_attr = 0xC067, // Parent = 0xC003 // Range ID = 02
+                    
+            res.WriteInt32(0);
+            res.WriteInt16(0);
+			
+			
+			
+recv_wanted_update_state_actor_notify = 0xAFD1, // Parent = 0xAF7F // Range ID = 01
+                    
+            res.WriteInt32(0);
+            res.WriteCString(""); // Length 0x31
+            res.WriteInt32(0);			
+			
+recv_comment_switch_r = 0xB025, // Parent = 0xAF7F // Range ID = 02
+                    
+            res.WriteInt32(0);
+			
+recv_quest_ended = 0xB02C, // Parent = 0xAF7F // Range ID = 03
+                    
+            res.WriteInt32(0);
+            res.WriteByte(0);
+
+
+
+recv_stall_set_name_r = 0xB212, // Parent = 0xB1CA // Range ID = 01
+                    
+            res.WriteInt32(0);
+
+recv_buff_shop_notify_item = 0xB24C, // Parent = 0xB1CA // Range ID = 02                    
+            
+            res.WriteByte(0);
+            res.WriteCString(""); // Length 0x3D
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+			
+			
+			
+			
+recv_auction_exhibit_r = 0xB38D, // Parent = 0xB371 // Range ID = 01                  
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+            
+recv_charabody_notify_crime_lv = 0xB3DA, // Parent = 0xB371 // Range ID = 02           
+            
+            res.WriteInt32(0);
+            res.WriteByte(0);
+			
+
+
+
+recv_party_cancel_member_recruit_r = 0xB0FC, // Parent = 0xB0E5 // Range ID = 01
+                       res.WriteInt32(0);
+
+recv_chara_update_lv = 0xB102, // Parent = 0xB0E5 // Range ID = 02
+                        res.WriteInt32(0);
+                        res.WriteInt16(0);
+
+
+
+
+recv_raisescale_request_revive_r = 0xA0FA, // Parent = 0xA0E3 // Range ID = 01
+            
+            res.WriteInt32(0);
+
+recv_auction_cancel_bid_r = 0xA0FC, // Parent = 0xA0E3 // Range ID = 02
+            
+            res.WriteInt32(0);
+
+recv_self_money_notify = 0xA146, // Parent = 0xA0E3 // Range ID = 03
+            
+            res.WriteInt64(0);
+
+
+
+
+recv_skill_request_base_from_item_r = 0xA520, // Parent = 0xA508 // Range ID = 01
+            
+            res.WriteInt32(0);
+
+recv_skill_custom_notify_close = 0xA548, // Parent = 0xA508 // Range ID = 02 
+            
+			//No Structure
+			
+recv_blacklist_update = 0xA63A, // Parent = 0xA611 // Range ID = 01
+            
+            int numEntries = 0x5;
+            res.WriteInt32(numEntries); //less than or equal to 0x5
+            for(int i = 0; i < numEntries; i++)
+            {
+                    res.WriteInt32(0);
+                    res.WriteInt32(0);
+                    res.WriteInt32(0);
+                    res.WriteInt32(0);
+                        res.WriteInt32(0);
+
+                        res.WriteInt32(0);
+                        
+                        res.WriteByte(0);
+
+                      res.WriteByte(0);
+
+                    int numEntries2 = 0x31;
+                    res.WriteInt32(numEntries2); //less than or equal to 31.  Probably fixed string for Character Name
+                    for(int j = 0; j < numEntries2; j++)
+                    {
+                            res.WriteByte(0);
+                    }
+
+                    int numEntries3 = 0x5B;
+                    res.WriteInt32(numEntries3); //less than or equal to 5B.  maybe fixed string for Character Name
+                    for(int k = 0; k < numEntries3; k++)
+                    {
+                            res.WriteByte(0);
+                    }
+
+                    res.WriteByte(0);
+                    res.WriteInt32(0);
+                    int numEntries4 = 0x61;
+                    res.WriteInt32(numEntries4); //less than or equal to 5B.  maybe fixed string for Character Name
+                    for(int l = 0; l < numEntries4; l++)
+                    {
+                            res.WriteByte(0);
+                    }
+
+
+recv_event_removetrap_close = 0xA643, // Parent = 0xA611 // Range ID = 02
+            					
+			//No Structure
+
+
+
+
+
+recv_battle_attack_pose_self =  0x9F74, // Parent = 0x9F70 // Range ID = 01
+            			
+			//No Structure
+
+recv_party_notify_recruit_request = 0x9F8F, // Parent = 0x9F70 // Range ID = 02 // after -> send_party_regist_party_recruit
+            
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+
+
+
+recv_charabody_notify_loot_item = 0x8CDE, // Parent = 0x8CC6 // Range ID = 01
+            
+            res.WriteByte(0);
+            res.WriteByte(0);
+            res.WriteInt16(0);
+
+            res.WriteInt16(0); //Number here is "pieces" 
+            res.WriteCString("item name"); // Length 0x31 
+            res.WriteCString("chara name"); // Length 0x5B
+
+recv_0x8D62 = 0x8D62, // Parent = 0x8CC6 // Range ID = 02  //No String - ERROR
+            
+            int numEntries = 0xA;// <=0xA
+            res.WriteInt32(numEntries); //// <=0xA
+            for(int i = 0; i < numEntries; i++)
+            {
+            res.WriteInt16(0);
+            res.WriteInt32(0);
+            }			
+			
+recv_thread_entry_message = 0x8D74, // Parent = 0x8CC6 // Range ID = 03
+            
+            res.WriteCString(""); // Length 0x5B
+            res.WriteCString(""); // Length 0x3D
+            res.WriteInt16(0);
+
+
+
+
+recv_chara_update_notify_comment = 0x8072, // Parent = 0x8066 // Range ID = 01
+            
+            res.WriteInt32(0);
+            res.WriteCString(""); // Length 0x181
+			
+recv_data_notify_eo_data = 0x8075, // Parent = 0x8066 // Range ID = 02
+            
+            res.WriteInt32(0);
+            res.WriteFloat(0);//x
+            res.WriteFloat(0);//y
+            res.WriteFloat(0);//z
+
+                res.WriteFloat(0);//x
+                res.WriteFloat(0);//y
+                res.WriteFloat(0);//z
+
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+
+recv_soulmaterial_shop_notify_item = 0x808B, // Parent = 0x8066 // Range ID = 03
+            
+            res.WriteByte(0);
+           
+           int numEntries = 0x10;// <=0x10
+            res.WriteInt32(numEntries); //// <=0x10
+            for(int i = 0; i < numEntries; i++)
+            {
+               res.WriteByte(0);
+            } 
+
+            int numEntries2 = 0x4;// <=0x4
+            for(int i = 0; i < numEntries2; i++)
+            {
+               res.WriteInt32(0);
+            } 
+
+			
+
+
+recv_item_update_weight = 0x848B, // Parent = 0x8487 // Range ID = 01
+            
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+           
+recv_temple_cure_curse_r = 0x850B, // Parent = 0x8487 // Range ID = 02
+            
+            res.WriteInt32(0);		   
+
+
+
+
+recv_party_entry_draw_r	= 0x85EA, // Parent = 0x85C6 // Range ID = 01
+            
+            res.WriteInt32(0);
+			
+recv_stall_shopping_notify_aborted = 0x8661, // Parent = 0x85C6 // Range ID = 02
+            
+			//No Structure
+			
+			
+
+
+recv_buff_shop_buy_r = 0x8325, // Parent = 0x8299 // Range ID = 01
+            
+            res.WriteInt32(0);
+			
+recv_0x8364 = 0x8364, // Parent = 0x8299 // Range ID = 02 //No Sring  ERROR
+            
+            res.WriteInt32(0);			
+
+
+
+
+recv_event_union_storage_update_money = 0x7D21, // Parent = 0x7D1C // Range ID = 01
+            
+            res.WriteByte(0);
+            res.WriteInt64(0);
+
+recv_data_notify_maplink = 0x7D25, // Parent = 0x7D1C // Range ID = 02
+            
+            res.WriteInt32(0);
+
+                res.WriteFloat(0);
+                res.WriteFloat(0);
+                res.WriteFloat(0);
+                res.WriteByte(0);
+
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+            res.WriteInt32(0);
+			
+			
+			
+			
+recv_cpf_notify_error = 0x73D7, // Parent = 0x73D1 // Range ID = 01
+            
+			//no structure
+			
+recv_wanted_jail_close_r = 0x7442, // Parent = 0x73D1 // Range ID = 02
+            
+            res.WriteInt32(0);
+
+
+		
+
+recv_battle_report_notify_raise	= 0x65D5, // Parent = 0x65A6 // Range ID = 01
+            
+            res.WriteInt32(0);
+			
+recv_gem_cancel_synthesis_r = 0x65DD, // Parent = 0x65A6 // Range ID = 02
+            
+            res.WriteInt32(0);		
+
+
+
+
+
+recv_chara_target_move_side_speed_per = 0x5DB7, // Parent = 0x5D52 // Range ID = 01
+            
+            res.WriteByte(0);
+            res.WriteInt16(0);			
+
+recv_battle_attack_pose_r = 0x5DEB, // Parent = 0x5D52 // Range ID = 02
+            
+            res.WriteInt32(0);
+
+
+//////////////
+///Bottom of List
+////////////
+
+
+recv_gimmick_state_update = 0x1041, // Parent = 0x102E // Range ID = 01
+                        res.WriteInt32(0);
+                        res.WriteInt32(0);
+
+recv_object_region_break_update_notify = 0x1052, // Parent = 0x102E // Range ID = 02
+                        res.WriteInt32(0);
+                        res.WriteInt64(0);
+
+
+recv_npc_flageffect_update_notify = 0x560, // Parent = 0x54E // Range ID = 01
+
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+                res.WriteFloat(0);
+                res.WriteFloat(0);
+                res.WriteFloat(0);
+
+recv_event_system_message = 0x561, // Parent = 0x54E // Range ID = 02
+
+            res.WriteCString(""); // Length 0xC01
+			
+recv_charabody_notify_party_leave = 0x5A5, // Parent = 0x54E // Range ID = 03
+
+            res.WriteInt32(0);
+
+
+			
+
+recv_premium_service_notify_attach = 0x3B1, // Parent = 0x397 // Range ID = 01
+
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+            res.WriteInt32(0);
+			
+	recv_temple_close_r = 0x3B6, // Parent = 0x397 // Range ID = 02 // sends stall_set_name after
+
+            res.WriteInt32(0);
+
+
+
+
+recv_raisescale_view_open = 0xC2E5 , // Parent = 0xC2A1 // Range ID = 01  // was 0xC25D
+            
+            res.WriteInt16(1);
+            res.WriteInt16(1);
+            res.WriteInt16(1);
+            res.WriteInt16(1);			
+
+
+recv_quest_check_time_limit_r = 0xC2E9, // Parent = 0xC2A1 // Range ID = 02 
+
+            res.WriteInt32(0);
+
+recv_self_returnhome_interval = 0xC300, // Parent = 0xC2A1 // Range ID = 03 
+
+            res.WriteInt32(0);
+			
+
+
+recv_0x4978 = 0x4978; //goes to error
+			res.WriteInt32(0);
+            res.WriteInt32(0);
+
+            int numEntries = 0xA;
+            res.WriteInt32(0xA);//<a
+                for(int i = 0; i < numEntries; i++)
+                {
+                    res.WriteInt16(1);
+                    int numEntries2 = 0xC1;
+                    res.WriteInt64(numEntries2);
+                    for(int j = 0; j < numEntries2; j++)
+                    {
+                        res.WriteByte(1);
+                    }
+                }
+
+recv_0x4ABB = 0x4ABB, //Goes to error
+
+			res.WriteInt32(0);
+            res.WriteInt16(0);
+            
+recv_0x4CF3 = 0x4CF3, //Goes to error
+
+			res.WriteInt32(0);
+			
+recv_0x50D1 = 0x50D1, //Goes to error
+
+			res.WriteInt32(0);			
+			
+recv_0x531B = 0x531B, //Goes to error
+
+				res.WriteByte(1);
+                res.WriteByte(1);
+                res.WriteInt16(1);
+            res.WriteFloat(1);
+            res.WriteCString("");//0x31
+            res.WriteCString("");//0x5B		
+
+recv_0x5513 = 0x5513, //Goes to error
+
+				res.WriteInt32(1);
+                res.WriteByte(1);
+                res.WriteInt32(1);
+                res.WriteInt32(1);
+                    res.WriteInt32(1);
+                    res.WriteInt32(1);
+                    res.WriteInt32(1);
+                    res.WriteInt32(1);
+                    res.WriteInt32(1);
+                    res.WriteInt32(1);
+                    res.WriteInt32(1);
+                
+                res.WriteFloat(1);//x
+                res.WriteFloat(1);//y
+                res.WriteFloat(1);//z
+                res.WriteByte(1);//offset
+                    
+                res.WriteCString("");//601
+
+recv_0xC078 = 0xC078, //Goes to push wizardryonline_patched.4D6008 
+
+				res.WriteInt32(1);
+                res.WriteInt16(1);
+                res.WriteInt16(1);
+                res.WriteInt32(1);
+               
+                res.WriteByte(1);
+                res.WriteByte(1);
+                res.WriteByte(1);
+
+                res.WriteInt16(1);
+
+                res.WriteByte(1);
+
+                res.WriteByte(1);
+
+                res.WriteByte(1);             
+  	
+recv_0xC078 = 0xC078, //Goes to push wizardryonline_patched.??forgot to write down
+	
+	
+				res.WriteInt32(0);
+
+                res.WriteInt16(0);
+                res.WriteInt16(0);
+                res.WriteInt16(0);
+
+                res.WriteByte(0);
+                res.WriteByte(0);
+                res.WriteByte(0);
+
+                res.WriteFloat(0);
+                res.WriteFloat(0);
+                
+                res.WriteByte(0);
+
+                res.WriteByte(0);
+	
+recv_0xD909 = 0xD909, //Goes to Error	
+	
+				res.WriteInt32(0);
+				
+recv_0xDA4A = 0xDA4A, //Goes to Error	
+	
+				res.WriteInt32(0);
+				
+recv_0xEEB7 = 0xEEB7, //Goes to Error					
+				res.WriteInt32(0);
+                res.WriteByte(0);				
+
+recv_0xFA0B = 0xFA0B, //Goes to Error					
+				res.WriteInt32(0);	
+				
+recv_0xFB79 = 0xFB79, //Goes to Error					
+				res.WriteInt32(0);					
+
+///////////////////////////////////////Updated 9/27/19				
+recv_0x692A = 0x692A; //Goes to Error
+            res.WriteInt32(0);
+            res.WriteInt32(0);		
+
+recv_0x6B6A = 0x6B6A; //Goes to 016711D6 | 68 03494D00       | push wizardryonline_patched.4D4903                                          |
+            res.WriteInt32(0);
+
+            res.WriteFloat(1);
+            res.WriteFloat(1);
+            res.WriteFloat(1);
+			res.WriteByte(1);
+
+            res.WriteByte(1);	
+
+recv_0x735E = 0x735E; //Goes to Error
+            res.WriteInt32(0);			
+			
+recv_0x746F = 0x746F; //Goes to Error  // 73D1 + 9E
+            res.WriteInt32(0);
+
+            res.WriteFloat(1);
+            res.WriteFloat(1);
+            res.WriteFloat(1);
+            res.WriteByte(1);	
+
+recv_0x755C = 0x755C; //Goes to Error
+            res.WriteInt32(0);
+            res.WriteInt32(0);	
+
+recv_0x7697 = 0x7697; //Goes to Error
+            res.WriteInt32(0);
+            res.WriteInt32(0);			
+			
+recv_0x7B86 = 0x7B86; //Goes to Error // 7B5D + 29
+            res.WriteInt32(0);
+            res.WriteByte(1);
+
+recv_0x8066 = 0x8066; // No Structure.  Goes to 004D464D | 68 D84CD600       | push wizardryonline_patched.D64CD8  | D64CD8:L"<area> - RecvException. func = %d, code = %d\n"
+			
+recv_0x825D = 0x825D; // No Structure.
+
+recv_0x97D9 = 0x97D9 //Goes to Error
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+			
+recv_0x9899 = 0x9899 // No Structure.  
+
+recv_0x9CA1 = 0x9CA1 //Goes to Error
+            res.WriteInt32(0);
+            res.WriteCString(""); //0x31
+            res.WriteCString(""); //0x5B
+            res.WriteByte(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);			
+			
+recv_0xA8BB = 0xA8BB // Goes to Error 
+            res.WriteInt32(0);
+            for (int i = 0; i < 5; i++)
+            {
+              
+                res.WriteFixedString("", 0x31);
+                res.WriteFixedString("", 0x25);
+                res.WriteInt32(0);
+                res.WriteInt32(0);
+                res.WriteInt64(0);
+                res.WriteInt32(0);
+            }
+
+            res.WriteFixedString("", 0x31);
+            res.WriteFixedString("", 0x25);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt64(0);
+            res.WriteInt32(0);			
+			
+recv_self_dragon_pos_notify	= 0x6FB2;
+
+			res.WriteInt32(0);
+
+            res.WriteFloat(1);
+            res.WriteFloat(1);
+            res.WriteFloat(1);
+			
+			res.WriteByte(1);
+			
+			
+recv_chara_update_battle_base_param = 0x2F2F
+   
+					res.WriteInt16(10);
+                    res.WriteInt16(10);
+                    res.WriteInt16(10);
+                    res.WriteInt16(10);
+
+                    res.WriteInt16(10);
+                    res.WriteInt16(10);
+                    res.WriteInt16(10);
+                    res.WriteInt16(10);

@@ -2,7 +2,7 @@
   "profiles": {
     "Start /w--MaxPacket64": {
       "commandName": "Project",
-      "commandLineArgs": "server start --max-packet-size=64 --b-list=3:0x2E64,0xFFFC,0xFFFD,0xFFFE,0xFFFF,3:0x6A72,3:0xE4AE,3:0x8D92,3:0x6B6A,0x8BB4,0x2470"
+      "commandLineArgs": "server start --max-packet-size=64 --b-list=3:0x2E64,0xFFFC,0xFFFD,0xFFFE,0xFFFF,3:0x6A72,3:0xE4AE,3:0x8D92,3:0x6B6A,0x8BB4,0x2470,0x2BA4,0x6A7A"
     },
     "Start No Arguments": {
       "commandName": "Project"

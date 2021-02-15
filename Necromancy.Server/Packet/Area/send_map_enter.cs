@@ -4,9 +4,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -26,6 +24,10 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(0); //error check. must be 0
             res.WriteByte(0); //Bool - play cutscene. 1 yes, 0 no?  //to-do,  play a cutscene on first time map entry 
             Router.Send(client, (ushort) AreaPacketId.recv_map_enter_r, res, ServerType.Area);
+
+            //Re-do all your stats
+            ItemService itemService = new ItemService(client.Character);
+            Router.Send(client, itemService.CalculateBattleStats(client));
         }
 
     }

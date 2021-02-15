@@ -40,10 +40,7 @@ namespace Necromancy.Server.Packet.Area
             {
                 MoveResult moveResult = itemService.Move(fromLoc, toLoc, quantity);
                 List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
-                foreach(PacketResponse response in responses)
-                {
-                    Router.Send(response);
-                }
+                Router.Send(client, responses);
             }
             catch (ItemException e) { error = (int)e.ExceptionType; }
 

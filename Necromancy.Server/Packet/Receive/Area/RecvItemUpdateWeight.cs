@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemUpdateWeight : PacketResponse
     {
-        public RecvItemUpdateWeight()
+        private readonly ulong _instanceId;
+        private readonly int _level;
+        public RecvItemUpdateWeight(ulong instanceId, int level)
             : base((ushort) AreaPacketId.recv_item_update_weight, ServerType.Area)
         {
+            _instanceId = instanceId;
+            _level = level;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(0);
-            res.WriteInt32(0);
+            res.WriteUInt64(_instanceId); //item instance id
+            res.WriteInt32(_level); //item's Weight stat
             return res;
         }
     }

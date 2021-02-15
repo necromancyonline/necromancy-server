@@ -514,6 +514,7 @@ namespace Necromancy.Server.Packet.Area
                     true);
                 /*client.Character.condition*/
                 client.Character.Od.toMax();
+                client.Character.Gp.toMax();
                 client.Character.AdventureBagGold -= GoldCostPerChoice[client.Character.eventSelectExtraSelectionCode];
                 if (client.Character.Hp.current >= client.Character.Hp.max) client.Character.Hp.toMax();
                 if (client.Character.Mp.current >= client.Character.Mp.current) client.Character.Mp.toMax();

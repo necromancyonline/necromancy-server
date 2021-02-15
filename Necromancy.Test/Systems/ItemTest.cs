@@ -35,6 +35,13 @@ namespace Necromancy.Test.Systems
                     itemInstance.BaseID = baseId[i];
                     itemInstance.Location = locs[i];
                     itemInstance.Quantity = spawnParams[i].Quantity;
+                    //itemInstance.PlusDurability = spawnParams[i].plus_maximum_durability;
+                    //itemInstance.PlusPhysical = spawnParams[i].plus_physical;
+                    //itemInstance.PlusMagical  = spawnParams[i].plus_magical;
+                    //itemInstance.PlusGP  = spawnParams[i].plus_gp;
+                    //itemInstance.PlusWeight  = spawnParams[i].plus_weight;
+                    //itemInstance.PlusRangedEff  = spawnParams[i].plus_ranged_eff;
+                    //itemInstance.PlusReservoirEff  = spawnParams[i].plus_reservoir_eff;
                     dummyItems.Add(itemInstance);
                 }
                 return dummyItems;
@@ -50,7 +57,7 @@ namespace Necromancy.Test.Systems
                 throw new NotImplementedException();
             }
 
-            public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
+            public List<ItemInstance> SelectOwneditemInstances(int ownerId)
             {
                 throw new NotImplementedException();
             }
@@ -69,9 +76,17 @@ namespace Necromancy.Test.Systems
             {
                 //ignore
             }
+            public void UpdateItemEnhancementLevel(ulong instanceId, int level)
+            {
+                //ignore
+            }
+            public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
+            {
+                //ignore
+            }
         }
 
-        public class TestMove
+            public class TestMove
         {
             private readonly Character _dummyCharacter;
             private readonly ItemService _itemService;
