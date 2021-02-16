@@ -21,7 +21,7 @@ namespace Necromancy.Server.Model
             Name = null;
             Created = DateTime.Now;
             WarehouseGold = 10203040;
-            Name = "";
+            Name = "MissingSoul";
         }
     }
 }

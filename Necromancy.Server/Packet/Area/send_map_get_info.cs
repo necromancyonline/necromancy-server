@@ -71,7 +71,7 @@ namespace Necromancy.Server.Packet.Area
 
             foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
             {
-                RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody, client.Character, client);
+                RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                 Router.Send(deadBodyData, client);
             }
 

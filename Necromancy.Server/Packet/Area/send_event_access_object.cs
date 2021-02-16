@@ -87,6 +87,8 @@ namespace Necromancy.Server.Packet.Area
                             x => (x == 1900002) || (x == 1900003),
                             () => RandomItemGuy(client, npcSpawn)
                         },
+                        {x => (x == 10000112 || x == 10000316 || x == 10000003 || x == 10000706 || x == 10000911 || x == 10000209),
+                            () => PlayerRevive(client, npcSpawn)},
 
                         {x => x < 10, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
                         {x => x < 100, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
@@ -1012,6 +1014,21 @@ namespace Necromancy.Server.Packet.Area
 
         }
 
+        private void PlayerRevive(NecClient client, NpcSpawn npcSpawn)
+        {
+            IBuffer res0 = BufferProvider.Provide();
+            res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
+            res0.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+
+            IBuffer res15 = BufferProvider.Provide();
+            //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
+            res15.WriteInt16(75); //Basic revival rate %
+            res15.WriteInt16(0); //Penalty %
+            res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
+            res15.WriteInt16(0); //Dimento medal addition %
+            Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+        }
 
         private void SpareEventParts(NecClient client, NpcSpawn npcSpawn)
         {
@@ -1208,81 +1225,6 @@ namespace Necromancy.Server.Packet.Area
             100999  ,  /*	Azzam's Trial Ground	*/
 
         };
-
-        //public void itemStats(InventoryItem inventoryItem, NecClient client)
-        //{
-        //    Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-        //    if (itemLibrarySetting == null) return;
-
-        //    IBuffer res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(itemLibrarySetting.Durability); // MaxDura points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_maxdur, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(itemLibrarySetting.Durability - 10); // Durability points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_durability, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32((int)itemLibrarySetting.Weight * 100); // Weight points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_weight, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt16((short)itemLibrarySetting.PhysicalAttack); // Defense and attack points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_physics, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt16((short)itemLibrarySetting.MagicalAttack); // Magic def and attack Points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_magic, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(itemLibrarySetting.SpecialPerformance); // for the moment i don't know what it change
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_enchantid, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt16((short)Util.GetRandomNumber(50, 100)); // Shwo GP on certain items
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(1); // for the moment i don't know what it change
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_date_end_protect, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteByte((byte)itemLibrarySetting.Hardness); // Hardness
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_hardness, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteByte(1); //Level requirement
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_level, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteByte(1); //sp Level requirement
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_sp_level, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(0b1111111111111111111111111111110); // State bitmask
-        //                              Router.Send(client, (ushort)AreaPacketId.recv_item_update_state, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id); // id?
-        //    res.WriteInt64(Util.GetRandomNumber(10, 10000)); // price
-        //    res.WriteInt64(Util.GetRandomNumber(10, 100)); // identify
-        //    res.WriteInt64(Util.GetRandomNumber(10, 1000)); // curse?
-        //    res.WriteInt64(Util.GetRandomNumber(10, 500)); // repair?
-        //    Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item_sell_price, res, ServerType.Area);
-
-        //}
 
     }
 }

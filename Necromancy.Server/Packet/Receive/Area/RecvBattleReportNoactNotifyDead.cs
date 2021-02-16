@@ -18,7 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             _instancedId = instancedId;
             _deadType = deadType;
-            _lossRegion = 1001010;
+            _lossRegion = 1;
             _deathType = 1;
         }
 

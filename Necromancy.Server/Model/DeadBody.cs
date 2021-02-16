@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Necromancy.Server.Common.Instance;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Model
 {
@@ -16,11 +18,14 @@ namespace Necromancy.Server.Model
         public float Y { get; set; }
         public float Z { get; set; }
         public byte Heading { get; set; }
+        //Basic traits
         public uint RaceId { get; set; }
         public uint SexId { get; set; }
-        public byte HairStyle { get; set; }
-        public byte HairColor { get; set; }
+        public byte HairId { get; set; }
+        public byte HairColorId { get; set; }
         public byte FaceId { get; set; }
+        public uint ClassId { get; set; }
+
         public int ConnectionState { get; set; }
         public int ModelType { get; set; }
         public byte CriminalStatus { get; set; }
@@ -28,23 +33,12 @@ namespace Necromancy.Server.Model
         public int deathPose { get; set; }
         public int Level { get; set; }
 
-
+        //Inventory
+        //public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
+        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems;
 
         public DeadBody()
         {
-            /*InstanceId = CharacterId.InstanceId;
-            CharaName = CharacterId.Name;
-            MapId = CharacterId.MapId;
-            X = CharacterId.X;
-            Y = CharacterId.Y;
-            Z = CharacterId.Z;
-            Heading = CharacterId.Heading;
-            RaceId = CharacterId.Raceid;
-            SexId = CharacterId.Sexid;
-            HairStyle = CharacterId.HairId;
-            HairColor = CharacterId.HairColorId;
-            FaceId = CharacterId.FaceId;
-            */
             Level = 0;
             ConnectionState = 1;//0 if disconnected, 1 if dead.
             ModelType = 1; //4 if they are an ash pile

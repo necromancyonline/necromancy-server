@@ -5,19 +5,25 @@ using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
 using System;
 
+/// <summary>
+/// This receive loads your Character on the map.  dead or alive.
+/// 
+/// for spirit stuff go to the CharaBodyData recv.
+/// </summary>
 namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvDataNotifyCharaData : PacketResponse
     {
         private readonly Character _character;
         private readonly string _soulName;
+        private readonly int _equipmentRenderingCount;
 
         public RecvDataNotifyCharaData(Character character, string soulName)
             : base((ushort) AreaPacketId.recv_data_notify_chara_data, ServerType.Area)
         {
             _character = character;
             _soulName = soulName;
-
+            _equipmentRenderingCount = _character.EquippedItems.Count;
         }
 
         protected override IBuffer ToBuffer()
@@ -39,12 +45,11 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(_character.activeModel);//_character.Level); Character.ActiveModel  0 = default
             res.WriteInt16(_character.modelScale); //Character.Scale   100 = normal size.
             res.WriteInt64((uint)_character.State); //find out where soul state is getting set.. and un-set it appropriately
-            res.WriteInt16(_character.deadType); //??  Soul State?  Soul Form? turns you soul form if above 0   : ToDo. key to death and revival
+            res.WriteInt16(0/*_character.deadType*/); //??  Soul State?  Soul Form? turns you soul form if above 0   : ToDo. key to death and revival
 
             res.WriteInt32(numEntries); // Number of equipment Slots
             i = 0;
             //sub_483660 
-            //foreach (InventoryItem inventoryItem in character.Inventory._equippedItems.Values)
             foreach (ItemInstance itemInstance in _character.EquippedItems.Values)
             {
                 res.WriteInt32((int)itemInstance.Type);
@@ -65,8 +70,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             {
                 res.WriteInt32(itemInstance.BaseID); //Item Base Model ID
                 res.WriteByte(00); //? TYPE data/chara/##/ 00 is character model, 01 is npc, 02 is monster
-                res.WriteByte((byte)(_character.RaceId * 10 + _character.SexId)); //Race and gender tens place is race 1= human, 2= elf 3=dwarf 4=gnome 5=porkul, ones is gender 1 = male 2 = female
-                res.WriteByte(16); //??item version
+                res.WriteByte(0); //Race and gender tens place is race 1= human, 2= elf 3=dwarf 4=gnome 5=porkul, ones is gender 1 = male 2 = female
+                res.WriteByte(0); //??item version
 
                 res.WriteInt32(itemInstance.BaseID); //testing (Theory, texture file related)
                 res.WriteByte(0); //hair
@@ -79,7 +84,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0); // testing (Theory Pants Tex)
                 res.WriteByte(0); // testing (Theory Hands Tex)
                 res.WriteByte(0); // testing (Theory Feet Tex)
-                res.WriteByte(1); //Alternate texture for item model  0 normal : 1 Pink 
+                res.WriteByte(0); //Alternate texture for item model  0 normal : 1 Pink 
 
                 res.WriteByte(0); // separate in assembly
                 res.WriteByte(0); // separate in assembly
@@ -112,10 +117,14 @@ namespace Necromancy.Server.Packet.Receive.Area
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots
             i = 0;
-            foreach (ItemInstance itemInstance in _character.EquippedItems.Values)
+            //Messy SoulState Equipment removal  hasdied check
+            if (_character.HasDied == false)
             {
-                res.WriteInt32((int)itemInstance.CurrentEquipSlot); //bitmask per equipment slot
-                i++;
+                foreach (ItemInstance itemInstance in _character.EquippedItems.Values)
+                {
+                    res.WriteInt32((int)itemInstance.CurrentEquipSlot); //bitmask per equipment slot
+                    i++;
+                }
             }
             while (i < numEntries)
             {
@@ -123,6 +132,10 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0); //Must have 25 on recv_chara_notify_data
                 i++;
             }
+            
+
+
+
             //sub_4835C0
             res.WriteInt32(_character.charaPose); //1 here means crouching?
             //sub_484660

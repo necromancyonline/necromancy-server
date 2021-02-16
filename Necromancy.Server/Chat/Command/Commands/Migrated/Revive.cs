@@ -19,6 +19,13 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             //if (client.Character.soulFormState == 1)
             {
+                client.Character.Hp.toMax();
+                client.Character.movementId = client.Character.InstanceId;
+                client.Character.State = CharacterState.NormalForm;
+                client.Character.HasDied = false;
+                client.Character.deadType = 0;
+
+
                 IBuffer res1 = BufferProvider.Provide();
                 res1.WriteInt32(0); //Has to be 0 or else you DC
                 res1.WriteUInt32(client.Character.DeadBodyInstanceId);
@@ -27,14 +34,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 IBuffer res = BufferProvider.Provide();
                 res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive
-                Router.Send(client, (ushort) AreaPacketId.recv_raisescale_request_revive_r, res,
-                    ServerType.Area); //responsible for camera movement
-
-                client.Character.soulFormState -= 1;
-                client.Character.Hp.toMax();
-                client.Character.movementId = client.Character.InstanceId;
-                client.Character.State = CharacterState.NormalForm;
-                client.Character.deadType = 0;
+                Router.Send(client, (ushort) AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
 
 
                 IBuffer res2 = BufferProvider.Provide();
@@ -58,12 +58,16 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 IBuffer res3 = BufferProvider.Provide();
                 res3.WriteUInt32(client.Character.DeadBodyInstanceId);
-                Router.Send(client.Map, (ushort) AreaPacketId.recv_object_disappear_notify, res3, ServerType.Area);
+                Router.Send(client, (ushort) AreaPacketId.recv_object_disappear_notify, res3, ServerType.Area);
+
+                res3 = BufferProvider.Provide();
+                res3.WriteUInt32(client.Character.InstanceId);
+                Router.Send(client.Map, (ushort)AreaPacketId.recv_object_disappear_notify, res3, ServerType.Area, client);
 
                 client.Character.HasDied = false;
                 client.Character.Hp.depleted = false;
                 RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
-                Router.Send(client, cData.ToPacket());
+                Router.Send(client.Map, cData.ToPacket());
             }
 
             /*else if (client.Character.soulFormState == 0)
@@ -80,6 +84,12 @@ namespace Necromancy.Server.Chat.Command.Commands
                 IBuffer res5 = BufferProvider.Provide();
                 Router.Send(client, (ushort) AreaPacketId.recv_self_lost_notify, res5, ServerType.Area);
             }*/
+
+            if (client.Map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+            {
+                client.Map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
+            }
+
         }
 
         public override AccountStateType AccountState => AccountStateType.User;

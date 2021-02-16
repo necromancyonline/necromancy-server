@@ -70,19 +70,8 @@ namespace Necromancy.Server.Packet.Msg
             character.DeadBodyInstanceId = deadBody.InstanceId;
             deadBody.CharacterInstanceId = character.InstanceId;
             character.movementId = character.InstanceId;
-            Logger.Debug(
-                $"Dead Body Instance ID {deadBody.InstanceId}   |  Character Instance ID {character.InstanceId}");
-            deadBody.CharaName = character.Name;
-            deadBody.MapId = character.MapId;
-            deadBody.X = character.X;
-            deadBody.Y = character.Y;
-            deadBody.Z = character.Z;
-            deadBody.Heading = character.Heading;
-            deadBody.RaceId = character.RaceId;
-            deadBody.SexId = character.SexId;
-            deadBody.HairStyle = character.HairId;
-            deadBody.HairColor = character.HairColorId;
-            deadBody.FaceId = character.FaceId;
+            Logger.Debug($"Dead Body Instance ID {deadBody.InstanceId}   |  Character Instance ID {character.InstanceId}");
+
         }
     }
 }
