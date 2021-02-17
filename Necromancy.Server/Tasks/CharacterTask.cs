@@ -95,10 +95,12 @@ namespace Necromancy.Server.Tasks
             playerDied = true;
             _client.Character.HasDied = true; 
             _client.Character.State = CharacterState.SoulForm;
+            _client.Character.deadType = (short)Util.GetRandomNumber(1, 5);
+            Logger.Debug($"Death Animation Number : {_client.Character.deadType}");
 
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.InstanceId);
-            RecvBattleReportNoactDead cDead1 = new RecvBattleReportNoactDead(_client.Character.InstanceId, 1);
+            RecvBattleReportNoactDead cDead1 = new RecvBattleReportNoactDead(_client.Character.InstanceId, _client.Character.deadType);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
 
             brList.Add(brStart);
@@ -106,8 +108,7 @@ namespace Necromancy.Server.Tasks
             brList.Add(brEnd);
             _server.Router.Send(_client.Map, brList, _client); // send death animation to other players
 
-            _client.Character.deadType = 1;
-            RecvBattleReportNoactDead cDead2 = new RecvBattleReportNoactDead(_client.Character.InstanceId, 2);
+            RecvBattleReportNoactDead cDead2 = new RecvBattleReportNoactDead(_client.Character.InstanceId, _client.Character.deadType);
             brList[1] = cDead2;
             _server.Router.Send(_client, brList); // send death animaton to player 1
 
@@ -128,8 +129,7 @@ namespace Necromancy.Server.Tasks
             deadBody.EquippedItems = _client.Character.EquippedItems;
             deadBody.ItemManager = _client.Character.ItemManager;
 
-            //_client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
-            _client.Character.deadType = 1;
+            _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
 
             //load your soul so you can run around and do soul stuff.  should also send to other soul state players.
             Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
@@ -141,7 +141,7 @@ namespace Necromancy.Server.Tasks
                     _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);
                 }
             );
-            Task.Delay(TimeSpan.FromSeconds(8)).ContinueWith
+            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
             (t1 =>
                 {
                     RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
