@@ -93,7 +93,7 @@ namespace Necromancy.Server.Tasks
         private void PlayerDead()
         {
             playerDied = true;
-            _client.Character.HasDied = true; // back to dead so your soul appears with-out gear.
+            _client.Character.HasDied = true; 
             _client.Character.State = CharacterState.SoulForm;
 
             List<PacketResponse> brList = new List<PacketResponse>();
@@ -106,7 +106,7 @@ namespace Necromancy.Server.Tasks
             brList.Add(brEnd);
             _server.Router.Send(_client.Map, brList, _client); // send death animation to other players
 
-            _client.Character.deadType = 2;
+            _client.Character.deadType = 1;
             RecvBattleReportNoactDead cDead2 = new RecvBattleReportNoactDead(_client.Character.InstanceId, 2);
             brList[1] = cDead2;
             _server.Router.Send(_client, brList); // send death animaton to player 1
@@ -126,9 +126,10 @@ namespace Necromancy.Server.Tasks
             deadBody.HairColorId = _client.Character.HairColorId;
             deadBody.FaceId = _client.Character.FaceId;
             deadBody.EquippedItems = _client.Character.EquippedItems;
+            deadBody.ItemManager = _client.Character.ItemManager;
 
-            _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
-            _client.Character.deadType = 2;
+            //_client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+            _client.Character.deadType = 1;
 
             //load your soul so you can run around and do soul stuff.  should also send to other soul state players.
             Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
@@ -140,7 +141,7 @@ namespace Necromancy.Server.Tasks
                     _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);
                 }
             );
-            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
+            Task.Delay(TimeSpan.FromSeconds(8)).ContinueWith
             (t1 =>
                 {
                     RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);

@@ -10,12 +10,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly ItemInstance _itemInstance;
         private readonly NecClient _client;
+        private readonly byte _itemZoneOverride;
 
-        public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance)
+        public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance, byte itemZoneOverride)
             : base((ushort) AreaPacketId.recv_item_instance_unidentified, ServerType.Area)
         {
             _itemInstance = itemInstance;
             _client = client;
+            _itemZoneOverride = itemZoneOverride;
         }
 
         protected override IBuffer ToBuffer()
@@ -52,7 +54,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // separate in assembly
 
 
-            res.WriteByte((byte)_itemInstance.Location.ZoneType); 
+            res.WriteByte(_itemZoneOverride/*(byte)_itemInstance.Location.ZoneType*/); 
             res.WriteByte(_itemInstance.Location.Container); 
             res.WriteInt16(_itemInstance.Location.Slot);
             res.WriteInt32((int)_itemInstance.CurrentEquipSlot); //CURRENT EQUIP SLOT
@@ -61,7 +63,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt16(5);//unknown
             res.WriteUInt32(1); //unknown
 
-            res.WriteFixedString($"", 16); //unknown
+            res.WriteFixedString($"{_itemInstance.Type}", 16); // Camilia decrypt key (unused)
 
             return res;
         }

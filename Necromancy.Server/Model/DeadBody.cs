@@ -34,7 +34,7 @@ namespace Necromancy.Server.Model
         public int Level { get; set; }
 
         //Inventory
-        //public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
+        public ItemManager ItemManager { get; set; } = new ItemManager(); //TODO make item service
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems;
 
         public DeadBody()

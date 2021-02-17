@@ -45,7 +45,28 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap.Add(ItemZoneType.AvatarInventory,   new ItemZone(MAX_CONTAINERS_AVATAR, MAX_CONTAINER_SIZE_AVATAR));
             ZoneMap.Add(ItemZoneType.TreasureBox,       new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
         }
+        public List<ItemInstance> GetLootableItems()
+        {
+            List<ItemInstance> itemInstances = new List<ItemInstance>();
 
+            foreach (ItemZone itemZone in ZoneMap.Values)
+            {
+                foreach (Container container in itemZone._containers)
+                {
+                    if (container != null)
+                    {
+                        foreach (ItemInstance itemInstance in container._slots)
+                        {
+                            if (itemInstance != null)
+                            {
+                                itemInstances.Add(itemInstance);
+                            }
+                        }
+                    }
+                }
+            }
+            return itemInstances;
+        }
         public ItemInstance GetItem(ItemLocation loc)
         {
             if (loc.Equals(ItemLocation.InvalidLocation)) return null;
@@ -149,5 +170,7 @@ namespace Necromancy.Server.Systems.Item
         {
             return ZoneMap[itemZoneType].GetContainer(container).Count == 0;
         }
+
+
     }
 }

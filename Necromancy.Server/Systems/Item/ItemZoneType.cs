@@ -16,6 +16,9 @@ namespace Necromancy.Server.Systems.Item
         UNKNOWN9        = 9, //shows item 
         WarehouseSp     = 10,
         AvatarInventory = 12,
-        TreasureBox     = 66
+        TreasureBox     = 66,
+        BodyCollection  = 71,
+        BCEquippedBag = 72,
+        BCPremiumBag = 74
     }
 }
