@@ -33,7 +33,6 @@ namespace Necromancy.Server.Packet.Area
 
             client.Character.soulFormState -= 1;
             client.Character.Hp.toMax();
-            client.Character.movementId = client.Character.InstanceId;
             client.Character.State = CharacterState.NormalForm;
 
             RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.current);

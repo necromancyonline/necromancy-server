@@ -69,7 +69,6 @@ namespace Necromancy.Server.Packet.Msg
             Server.Instances.AssignInstance(deadBody);
             character.DeadBodyInstanceId = deadBody.InstanceId;
             deadBody.CharacterInstanceId = character.InstanceId;
-            character.movementId = character.InstanceId;
             Logger.Debug($"Dead Body Instance ID {deadBody.InstanceId}   |  Character Instance ID {character.InstanceId}");
 
         }

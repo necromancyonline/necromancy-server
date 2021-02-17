@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
@@ -20,26 +22,14 @@ namespace Necromancy.Server.Chat.Command.Commands
             //if (client.Character.soulFormState == 1)
             {
                 client.Character.Hp.toMax();
-                client.Character.movementId = client.Character.InstanceId;
-                client.Character.State = CharacterState.NormalForm;
+                client.Character.State = CharacterState.InvulnerableForm;
                 client.Character.HasDied = false;
                 client.Character.deadType = 0;
 
-
-                IBuffer res1 = BufferProvider.Provide();
-                res1.WriteInt32(0); //Has to be 0 or else you DC
-                res1.WriteUInt32(client.Character.DeadBodyInstanceId);
-                res1.WriteUInt32(client.Character.InstanceId);
-                Router.Send(client, (ushort) AreaPacketId.recv_revive_init_r, res1, ServerType.Area);
-
                 IBuffer res = BufferProvider.Provide();
                 res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive
-                Router.Send(client, (ushort) AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
+                Router.Send(client, (ushort)AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
 
-
-                IBuffer res2 = BufferProvider.Provide();
-                res2.WriteInt32(0); // Error code, 0 = success
-                Router.Send(client, (ushort) AreaPacketId.recv_revive_execute_r, res2, ServerType.Area);
 
                 RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.current);
                 Router.Send(client, cHpUpdate.ToPacket());
@@ -56,9 +46,15 @@ namespace Necromancy.Server.Chat.Command.Commands
                 Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_end_notify, res6, ServerType.Area);
                 //
 
+                IBuffer res1 = BufferProvider.Provide();
+                res1.WriteInt32(0); //Has to be 0 or else you DC
+                res1.WriteUInt32(client.Character.DeadBodyInstanceId);
+                res1.WriteUInt32(client.Character.InstanceId);
+                Router.Send(client, (ushort)AreaPacketId.recv_revive_init_r, res1, ServerType.Area);
+
                 IBuffer res3 = BufferProvider.Provide();
                 res3.WriteUInt32(client.Character.DeadBodyInstanceId);
-                Router.Send(client, (ushort) AreaPacketId.recv_object_disappear_notify, res3, ServerType.Area);
+                Router.Send(client.Map, (ushort) AreaPacketId.recv_object_disappear_notify, res3, ServerType.Area);
 
                 res3 = BufferProvider.Provide();
                 res3.WriteUInt32(client.Character.InstanceId);
@@ -68,6 +64,18 @@ namespace Necromancy.Server.Chat.Command.Commands
                 client.Character.Hp.depleted = false;
                 RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
                 Router.Send(client.Map, cData.ToPacket());
+
+                IBuffer res2 = BufferProvider.Provide();
+                res2.WriteInt32(0); // Error code, 0 = success
+                Router.Send(client, (ushort)AreaPacketId.recv_revive_execute_r, res2, ServerType.Area);
+
+                Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+                (t1 =>
+                    {
+                        RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId,(uint)CharacterState.NormalForm);
+                        //Router.Send(client.Map, recvCharaNotifyStateflag.ToPacket()); //grab structure from xdbg
+                    }
+                );
             }
 
             /*else if (client.Character.soulFormState == 0)

@@ -29,7 +29,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (client.Character.HasDied == false)
             {
-                client.Character.HasDied = true; // setting before the Sleep so other monsters can't "kill you" while you're dieing
+                client.Character.HasDied = true;
                 client.Character.Hp.Modify(-client.Character.Hp.current);
 
 

@@ -120,6 +120,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32((int)itemInstance.CurrentEquipSlot); //bitmask per equipment slot
                 i++;
             }
+            
             while (i < numEntries)
             {
                 //sub_483420   

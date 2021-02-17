@@ -16,14 +16,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly Character _character;
         private readonly string _soulName;
-        private readonly int _equipmentRenderingCount;
 
         public RecvDataNotifyCharaData(Character character, string soulName)
             : base((ushort) AreaPacketId.recv_data_notify_chara_data, ServerType.Area)
         {
             _character = character;
             _soulName = soulName;
-            _equipmentRenderingCount = _character.EquippedItems.Count;
         }
 
         protected override IBuffer ToBuffer()

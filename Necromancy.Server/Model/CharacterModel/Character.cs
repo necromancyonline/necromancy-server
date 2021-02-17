@@ -67,14 +67,12 @@ namespace Necromancy.Server.Model
         public float Y { get; set; }
         public float Z { get; set; }
         public byte Heading { get; set; }
-        public byte battlePose { get; set; }
         public byte battleAnim { get; set; }
         public byte battleNext { get; set; }
         public int charaPose { get; set; }
         public byte movementPose { get; set; }
         public byte movementAnim { get; set; }
         public bool weaponEquipped { get; set; }
-        public uint movementId { get; set; }
         public bool mapChange { get; set; }
 
         //Normal Attack
