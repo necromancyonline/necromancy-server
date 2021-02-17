@@ -49,17 +49,21 @@ namespace Necromancy.Server.Systems.Item
         {
             List<ItemInstance> itemInstances = new List<ItemInstance>();
 
-            foreach (ItemZone itemZone in ZoneMap.Values)
+            foreach (ItemZoneType itemZoneType in ZoneMap.Keys)
             {
-                foreach (Container container in itemZone._containers)
+                if (itemZoneType == ItemZoneType.AdventureBag | itemZoneType == ItemZoneType.EquippedBags | itemZoneType == ItemZoneType.PremiumBag)
                 {
-                    if (container != null)
+                    ZoneMap.TryGetValue(itemZoneType, out ItemZone itemZone);
+                    foreach (Container container in itemZone._containers)
                     {
-                        foreach (ItemInstance itemInstance in container._slots)
+                        if (container != null)
                         {
-                            if (itemInstance != null)
+                            foreach (ItemInstance itemInstance in container._slots)
                             {
-                                itemInstances.Add(itemInstance);
+                                if (itemInstance != null)
+                                {
+                                    itemInstances.Add(itemInstance);
+                                }
                             }
                         }
                     }

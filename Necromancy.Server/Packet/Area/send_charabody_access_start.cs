@@ -11,6 +11,8 @@ namespace Necromancy.Server.Packet.Area
 {
     public class send_charabody_access_start : ClientHandler
     {
+        private ItemInstance _itemInstance;
+        private byte _ItemZoneTypeOverride;
         private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_charabody_access_start));
         public send_charabody_access_start(NecServer server) : base(server)
         {
@@ -31,7 +33,12 @@ namespace Necromancy.Server.Packet.Area
 
             foreach (ItemInstance itemInstance in deadBody.ItemManager.GetLootableItems())
             {
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)ItemZoneType.BodyCollection);
+                _itemInstance = itemInstance;
+                _itemInstance.Statuses = ItemStatuses.Unidentified;
+                if (_itemInstance.Location.ZoneType == ItemZoneType.AdventureBag) _ItemZoneTypeOverride = (byte)ItemZoneType.BCAdventureBag;
+                if (_itemInstance.Location.ZoneType == ItemZoneType.EquippedBags) _ItemZoneTypeOverride = (byte)ItemZoneType.BCEquippedBag;
+                if (_itemInstance.Location.ZoneType == ItemZoneType.PremiumBag) _ItemZoneTypeOverride = (byte)ItemZoneType.BCPremiumBag;
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, _ItemZoneTypeOverride);
                 Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
 
