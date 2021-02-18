@@ -502,6 +502,10 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_party_mentor_create(this));
             _areaConsumer.AddHandler(new send_party_mentor_remove(this));
             _areaConsumer.AddHandler(new send_forge_execute(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start2(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_complete2(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start3(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_complete3(this));
         }
     }
 }

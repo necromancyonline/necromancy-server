@@ -1047,11 +1047,11 @@ namespace Necromancy.Server.Packet.Id
         send_chara_view_landing = 0x54, //opcode not found   //TODO
         send_charabody_access_abort = 0x8C84,
         send_charabody_access_start = 0x6D2F, 
-        send_charabody_loot_complete2 = 0x56, //opcode not found
-        send_charabody_loot_complete3 = 0x57, //opcode not found 
-        send_charabody_loot_start2 = 0x58, //opcode not found
+        send_charabody_loot_complete2 = 0x136E,
+        send_charabody_loot_complete3 = 0x23F8, 
+        send_charabody_loot_start2 = 0xF943,
         send_charabody_loot_start2_cancel = 0x59, //opcode not found
-        send_charabody_loot_start3 = 0x61, //opcode not found
+        send_charabody_loot_start3 = 0xC9D5,
         send_charabody_salvage_abort = 0x6FFC,
         send_charabody_salvage_request = 0x4616,
         send_charabody_salvage_request_cancel = 0xFB48,

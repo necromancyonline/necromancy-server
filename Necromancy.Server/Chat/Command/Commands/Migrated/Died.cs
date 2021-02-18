@@ -24,7 +24,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             if (client.Character.HasDied == true)
             {
                 IBuffer res4 = BufferProvider.Provide();
-                Router.Send(client.Map, (ushort) AreaPacketId.recv_self_lost_notify, res4, ServerType.Area);
+                Router.Send(client, (ushort) AreaPacketId.recv_self_lost_notify, res4, ServerType.Area);
             }
 
             if (client.Character.HasDied == false)
