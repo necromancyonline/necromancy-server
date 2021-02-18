@@ -41,7 +41,8 @@ namespace Necromancy.Server.Systems.Item
 
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
-            throw new NotImplementedException();
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            return item;
         }
         internal ItemInstance GetLootedItem(ItemLocation location)
         {

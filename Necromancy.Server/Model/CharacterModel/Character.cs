@@ -124,8 +124,9 @@ namespace Necromancy.Server.Model
         //Inventory
         public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems {get;  } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
+        public ItemLocation lootNotify { get; set; }
 
-    public Character()
+        public Character()
         {
             InstanceId = InstanceGenerator.InvalidInstanceId;
             Id = IDatabase.InvalidDatabaseId;
@@ -174,6 +175,7 @@ namespace Necromancy.Server.Model
             helperTextAbdul = true;
             mapChange = false;
             StepCount = 0;
+            lootNotify = new ItemLocation((ItemZoneType)0, 0, 0);
         }
 
         public bool characterActive
