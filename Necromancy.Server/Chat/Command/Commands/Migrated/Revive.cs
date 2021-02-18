@@ -69,11 +69,76 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res2.WriteInt32(0); // Error code, 0 = success
                 Router.Send(client, (ushort)AreaPacketId.recv_revive_execute_r, res2, ServerType.Area);
 
-                Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+                //Disappear .. all the monsters, NPCs, and characters.  welcome to Life! it's less lonely
+                foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
+                {
+                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.InstanceId);
+                    Router.Send(client, recvObjectDisappearNotify.ToPacket());
+                }
+                foreach (MonsterSpawn monsterSpawn in client.Map.MonsterSpawns.Values)
+                {
+                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.InstanceId);
+                    Router.Send(client, recvObjectDisappearNotify.ToPacket());
+                }
+                foreach (NecClient client2 in client.Map.ClientLookup.GetAll())
+                {
+                    if (client2 == client) continue; //Don't dissapear yourself ! that'd be bad news bears.
+                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
+                    Router.Send(client, recvObjectDisappearNotify.ToPacket());
+                }
+
+                Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                 (t1 =>
                     {
-                        RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId,(uint)CharacterState.NormalForm);
+                        RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId, (uint)CharacterState.NormalForm);
                         //Router.Send(client.Map, recvCharaNotifyStateflag.ToPacket()); //grab structure from xdbg
+
+                        //if you are not dead, do normal stuff.  else...  do dead person stuff
+                        if (client.Character.State != Model.CharacterModel.CharacterState.SoulForm)
+                        {
+                            foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
+                            {
+                                if (otherClient == client)
+                                {
+                                    // skip myself
+                                    continue;
+                                }
+                                if (otherClient.Character.State != Model.CharacterModel.CharacterState.SoulForm)
+                                {
+                                    RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
+                                    Router.Send(otherCharacterData, client);
+                                }
+                                if (otherClient.Union != null)
+                                {
+                                    RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
+                                    Router.Send(otherUnionData, client);
+                                }
+                            }
+
+                            foreach (MonsterSpawn monsterSpawn in client.Map.MonsterSpawns.Values)
+                            {
+                                RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
+                                Router.Send(monsterData, client);
+                            }
+
+                            foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
+                            {
+                                if (npcSpawn.Visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
+                                {
+                                    RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
+                                    Router.Send(npcData, client);
+                                }
+                            }
+
+                            foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
+                            {
+                                if (client.Character.State != Model.CharacterModel.CharacterState.SoulForm)
+                                {
+                                    RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                                    Router.Send(deadBodyData, client);
+                                }
+                            }
+                        }
                     }
                 );
             }

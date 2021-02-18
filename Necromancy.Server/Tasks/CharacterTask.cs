@@ -95,7 +95,7 @@ namespace Necromancy.Server.Tasks
             playerDied = true;
             _client.Character.HasDied = true; 
             _client.Character.State = CharacterState.SoulForm;
-            _client.Character.deadType = (short)Util.GetRandomNumber(1, 5);
+            _client.Character.deadType = (short)Util.GetRandomNumber(1, 4);
             Logger.Debug($"Death Animation Number : {_client.Character.deadType}");
 
             List<PacketResponse> brList = new List<PacketResponse>();
@@ -130,8 +130,27 @@ namespace Necromancy.Server.Tasks
             deadBody.ItemManager = _client.Character.ItemManager;
 
             _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+            List<NecClient> soulStateClients = new List<NecClient>();
 
-            //load your soul so you can run around and do soul stuff.  should also send to other soul state players.
+            //Disappear .. all the monsters, NPCs, and characters.  welcome to death! it's lonely
+            foreach (NpcSpawn npcSpawn in _client.Map.NpcSpawns.Values)
+            {
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.InstanceId);
+                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+            }
+            foreach (MonsterSpawn monsterSpawn in _client.Map.MonsterSpawns.Values)
+            {
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.InstanceId);
+                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+            }
+            foreach (NecClient client in _client.Map.ClientLookup.GetAll())
+            {
+                if (client == _client) continue; //Don't dissapear yourself ! that'd be bad news bears.
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
+                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+            }
+
+            //load your dead body on the map for looting.  disappear your character model for everyone else besides you
             Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
             (t1 =>
                 {
@@ -144,10 +163,46 @@ namespace Necromancy.Server.Tasks
             Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
             (t1 =>
                 {
+                    //send your soul to all the other souls runnin around
+                    foreach (NecClient client in _client.Map.ClientLookup.GetAll())
+                    {
+                        if (client.Character.State == CharacterState.SoulForm) { soulStateClients.Add(client); }
+                    }
+                    //re-render your soulstate character to your client with out gear on it, and any other soul state clients on map.
                     RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
-                    _server.Router.Send(_client, cData.ToPacket());
+                    _server.Router.Send(soulStateClients, cData.ToPacket());
+
+                    foreach (NecClient otherClient in _client.Map.ClientLookup.GetAll())
+                    {
+                        if (otherClient == _client)
+                        {
+                            // skip myself
+                            continue;
+                        }
+                        //Render all the souls if you are in soul form yourself
+                        if (otherClient.Character.State == Model.CharacterModel.CharacterState.SoulForm)
+                        {
+                            RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
+                            _server.Router.Send(otherCharacterData, _client);
+                        }
+
+                        if (otherClient.Union != null)
+                        {
+                            RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
+                            _server.Router.Send(otherUnionData, _client);
+                        }
+                    }
+                    foreach (NpcSpawn npcSpawn in _client.Map.NpcSpawns.Values)
+                    {
+                        if (npcSpawn.Visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
+                        {
+                            RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
+                            _server.Router.Send(npcData, _client);
+                        }
+                    }
                 }
             );
+
         }
 
         public void Logout(DateTime logoutTime, byte logoutType)
