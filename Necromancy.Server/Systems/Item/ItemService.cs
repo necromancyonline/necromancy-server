@@ -43,6 +43,16 @@ namespace Necromancy.Server.Systems.Item
         {
             throw new NotImplementedException();
         }
+        internal ItemInstance GetLootedItem(ItemLocation location)
+        {
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.CurrentEquipSlot != ItemEquipSlots.None)
+            {
+                Unequip(item.CurrentEquipSlot);
+            }
+            Remove(item.Location, item.Quantity);
+            return item;
+        }
 
         public enum MoveType
         {
@@ -110,6 +120,34 @@ namespace Necromancy.Server.Systems.Item
             item.CurrentEquipSlot = ItemEquipSlots.None;
             _itemDao.UpdateItemEquipMask(item.InstanceID, ItemEquipSlots.None);
             return item;
+        }
+        public ItemInstance PutLootedItem(ItemInstance itemInstance) //I hate this the most. it's so aweful and shoehorned. replace immediatly.
+        {
+            ItemInstance myNewItem = itemInstance;
+            ItemSpawnParams SpawnParams = new ItemSpawnParams()
+            {
+                plus_gp = itemInstance.PlusGP,
+                plus_magical = itemInstance.PlusMagical,
+                plus_maximum_durability = itemInstance.PlusDurability,
+                plus_physical = itemInstance.PlusPhysical,
+                plus_ranged_eff = itemInstance.PlusRangedEff,
+                plus_reservoir_eff = itemInstance.PlusReservoirEff,
+                plus_weight = itemInstance.PlusWeight,
+                Quantity = itemInstance.Quantity,
+                ItemStatuses = itemInstance.Statuses |= ItemStatuses.Unidentified
+            };
+            ItemSpawnParams[] spawnParamsA = new ItemSpawnParams[1] { SpawnParams };
+            int[] ids = new int[1] { (int)itemInstance.InstanceID };
+            //ToDo,  make this find space in more than just your adventure bag.
+            ItemLocation[] nextOpenLocations = _character.ItemManager.NextOpenSlots(ItemZoneType.AdventureBag, 1);
+            //ToDo,  implement a single InsertItemIstance DAO so this whole thing can be simplified
+            List<ItemInstance> itemInstances = _itemDao.InsertItemInstances(_character.Id, nextOpenLocations, ids, spawnParamsA);
+            foreach (ItemInstance item in itemInstances)
+            {
+                _character.ItemManager.PutItem(item.Location, item);
+                myNewItem = item;
+            }
+            return myNewItem;
         }
 
         public List<ItemInstance> SpawnItemInstances(ItemZoneType itemZoneType, int[] baseIds, ItemSpawnParams[] spawnParams)

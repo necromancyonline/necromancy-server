@@ -26,6 +26,7 @@ namespace Necromancy.Server.Packet.Area
         {
             uint instanceId = packet.Data.ReadUInt32();
             Logger.Debug($"Accessing Body ID {instanceId}");
+            client.Character.eventSelectReadyCode = instanceId; // store the Instance of the body you are looting on your character.
 
             //DeadBody deadBody = Server.Instances.GetInstance(instanceId) as DeadBody; //add case logic to detect different instance types.  monster, deadbody, other
 
@@ -52,6 +53,7 @@ namespace Necromancy.Server.Packet.Area
                 case DeadBody deadBody1:
                     client.Map.DeadBodies.TryGetValue(deadBody1.InstanceId, out deadBody1);
                     Logger.Debug($"Lootin  {deadBody1.SoulName}? You Criminal!!");
+                    //client.Character.eventSelectReadyCode = deadBody1.CharacterInstanceId; // store the Instance of the character who owns the body you are looting on your character.
 
                     foreach (ItemInstance itemInstance in deadBody1.ItemManager.GetLootableItems())
                     {
