@@ -282,7 +282,7 @@ namespace Necromancy.Server.Systems.Item
             UPDATE 
                 nec_item_instance 
             SET 
-                owner_id = @owner_id 
+                owner_id = @owner_id, statuses = @statuses 
             WHERE 
                 id = @id";
 
@@ -404,11 +404,12 @@ namespace Necromancy.Server.Systems.Item
                 });
         }
 
-        public void UpdateItemOwner(ulong instanceId, int ownerId)
+        public void UpdateItemOwner(ulong instanceId, int ownerId, int statuses)
         {
             ExecuteNonQuery(SqlUpdateItemOwner,
                 command =>
                 {
+                    AddParameter(command, "@statuses", statuses);
                     AddParameter(command, "@owner_id", ownerId);
                     AddParameter(command, "@id", instanceId);
                 });

@@ -62,6 +62,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 spawmParams[i] = new ItemSpawnParams();
                 spawmParams[i].ItemStatuses = ItemStatuses.Identified;
+                if (command.Length > 1 && command[1] == "u") spawmParams[i].ItemStatuses = ItemStatuses.Unidentified;
             }
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> items = itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);

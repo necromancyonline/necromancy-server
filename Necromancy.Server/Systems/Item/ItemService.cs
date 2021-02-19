@@ -42,6 +42,7 @@ namespace Necromancy.Server.Systems.Item
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
             ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.Statuses.HasFlag(ItemStatuses.Unidentified)) item.Statuses -= ItemStatuses.Unidentified;
             return item;
         }
 
@@ -128,7 +129,7 @@ namespace Necromancy.Server.Systems.Item
             //ToDo,  make this find space in more than just your adventure bag.
             ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
             myNewItem.Location = nextOpenLocation;
-            _itemDao.UpdateItemOwner(myNewItem.InstanceID, _character.Id);
+            _itemDao.UpdateItemOwner(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
             _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
             _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
             return myNewItem;
@@ -183,7 +184,7 @@ namespace Necromancy.Server.Systems.Item
                         if (itemInstance.Type == ItemType.SHIELD_LARGE || itemInstance.Type == ItemType.SHIELD_MEDIUM || itemInstance.Type == ItemType.SHIELD_SMALL)
                         {
                             if (itemInstance.GP == 0) itemInstance.GP += 50;
-                            if (itemInstance.MaximumDurability == 0) itemInstance.MaximumDurability = 55;
+                            if (itemInstance.MaximumDurability <= 0) itemInstance.MaximumDurability = 55;
                         }
                     }
                     //update items base stats per enchantment level.

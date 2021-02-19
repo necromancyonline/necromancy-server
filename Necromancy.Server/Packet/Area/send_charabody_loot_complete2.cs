@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //result, 0 sucess.  interupted, etc.
-            res.WriteFloat(3); // time remaining
+            res.WriteFloat(0); // time remaining
             Router.Send(client, (ushort)AreaPacketId.recv_charabody_loot_complete2_r, res, ServerType.Area);
 
             if (deadClient != null)
@@ -52,6 +52,8 @@ namespace Necromancy.Server.Packet.Area
                 RecvItemRemove recvItemRemove = new RecvItemRemove(deadClient, iteminstance);
                 if (deadClient != null) Router.Send(recvItemRemove);
 
+                //update the item statuses to unidentified
+                iteminstance.Statuses |= ItemStatuses.Unidentified;
                 //put the item in the new owners inventory
                 itemService.PutLootedItem(iteminstance);
 

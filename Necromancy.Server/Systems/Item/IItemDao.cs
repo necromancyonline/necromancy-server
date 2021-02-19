@@ -17,7 +17,7 @@ namespace Necromancy.Server.Systems.Item
         public void UpdateItemEquipMask(ulong instanceId, ItemEquipSlots equipSlots);
         public void UpdateItemEnhancementLevel(ulong instanceId, int level);
         public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability);
-        public void UpdateItemOwner(ulong instanceId, int ownerId);
+        public void UpdateItemOwner(ulong instanceId, int ownerId, int statuses);
         public List<ItemInstance> SelectOwneditemInstances(int ownerId);
         
     }
