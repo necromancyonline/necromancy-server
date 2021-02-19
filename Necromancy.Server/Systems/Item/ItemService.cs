@@ -44,16 +44,6 @@ namespace Necromancy.Server.Systems.Item
             ItemInstance item = _character.ItemManager.GetItem(location);
             return item;
         }
-        internal ItemInstance GetLootedItem(ItemLocation location)
-        {
-            ItemInstance item = _character.ItemManager.GetItem(location);
-            if (item.CurrentEquipSlot != ItemEquipSlots.None)
-            {
-                Unequip(item.CurrentEquipSlot);
-            }
-            Remove(item.Location, item.Quantity);
-            return item;
-        }
 
         public enum MoveType
         {
@@ -122,6 +112,15 @@ namespace Necromancy.Server.Systems.Item
             _itemDao.UpdateItemEquipMask(item.InstanceID, ItemEquipSlots.None);
             return item;
         }
+        internal ItemInstance GetLootedItem(ItemLocation location)
+        {
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.CurrentEquipSlot != ItemEquipSlots.None)
+            {
+                Unequip(item.CurrentEquipSlot);
+            }
+            return item;
+        }
         public ItemInstance PutLootedItem(ItemInstance itemInstance) 
         {
             ItemInstance myNewItem = itemInstance;
@@ -129,7 +128,8 @@ namespace Necromancy.Server.Systems.Item
             //ToDo,  make this find space in more than just your adventure bag.
             ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
             myNewItem.Location = nextOpenLocation;
-            _itemDao.UpdateItemOwner(itemInstance.InstanceID, _character.Id);
+            _itemDao.UpdateItemOwner(myNewItem.InstanceID, _character.Id);
+            _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
             _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
             return myNewItem;
         }

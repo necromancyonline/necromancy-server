@@ -239,10 +239,10 @@ namespace Necromancy.Server.Model
                 client.Character.Heading = this.Orientation;
             }
 
-            client.Map = this;
             client.Character.MapId = Id;
             client.Character.mapChange = false;
             ClientLookup.Add(client);
+            client.Map = this;
             Logger.Debug($"Client Lookup count is now : {ClientLookup.GetAll().Count}  for map  {this.Id} ");
             Logger.Debug($"Character State for character {client.Character.Name} is {client.Character.State}");
             RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);

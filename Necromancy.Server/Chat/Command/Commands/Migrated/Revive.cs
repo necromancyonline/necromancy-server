@@ -83,7 +83,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 foreach (NecClient client2 in client.Map.ClientLookup.GetAll())
                 {
                     if (client2 == client) continue; //Don't dissapear yourself ! that'd be bad news bears.
-                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
+                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client2.Character.InstanceId);
                     Router.Send(client, recvObjectDisappearNotify.ToPacket());
                 }
 

@@ -428,6 +428,13 @@ namespace Necromancy.Server.Systems.Item
             throw new NotImplementedException();
         }
 
+        public void UpdateItemLocation(ulong instanceId, ItemLocation loc)
+        {
+            ulong[] instanceIds = new ulong[1] { instanceId };
+            ItemLocation[] locs = new ItemLocation[1] { loc };
+            UpdateItemLocations(instanceIds, locs);
+        }
+
         public void UpdateItemLocations(ulong[] instanceIds, ItemLocation[] locs)
         {
             int size = instanceIds.Length;
