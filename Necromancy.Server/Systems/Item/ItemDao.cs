@@ -278,6 +278,13 @@ namespace Necromancy.Server.Systems.Item
             WHERE 
                 id = @id";
 
+        private const string SqlUpdateItemOwner = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                owner_id = @owner_id 
+            WHERE 
+                id = @id";
 
         private const string SqlDeleteItemInstance = @"
             DELETE FROM 
@@ -397,6 +404,15 @@ namespace Necromancy.Server.Systems.Item
                 });
         }
 
+        public void UpdateItemOwner(ulong instanceId, int ownerId)
+        {
+            ExecuteNonQuery(SqlUpdateItemOwner,
+                command =>
+                {
+                    AddParameter(command, "@owner_id", ownerId);
+                    AddParameter(command, "@id", instanceId);
+                });
+        }
         public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
         {
             ExecuteNonQuery(SqlUpdateItemCurrentDurability,

@@ -122,32 +122,15 @@ namespace Necromancy.Server.Systems.Item
             _itemDao.UpdateItemEquipMask(item.InstanceID, ItemEquipSlots.None);
             return item;
         }
-        public ItemInstance PutLootedItem(ItemInstance itemInstance) //I hate this the most. it's so aweful and shoehorned. replace immediatly.
+        public ItemInstance PutLootedItem(ItemInstance itemInstance) 
         {
             ItemInstance myNewItem = itemInstance;
-            ItemSpawnParams SpawnParams = new ItemSpawnParams()
-            {
-                plus_gp = itemInstance.PlusGP,
-                plus_magical = itemInstance.PlusMagical,
-                plus_maximum_durability = itemInstance.PlusDurability,
-                plus_physical = itemInstance.PlusPhysical,
-                plus_ranged_eff = itemInstance.PlusRangedEff,
-                plus_reservoir_eff = itemInstance.PlusReservoirEff,
-                plus_weight = itemInstance.PlusWeight,
-                Quantity = itemInstance.Quantity,
-                ItemStatuses = itemInstance.Statuses |= ItemStatuses.Unidentified
-            };
-            ItemSpawnParams[] spawnParamsA = new ItemSpawnParams[1] { SpawnParams };
-            int[] ids = new int[1] { (int)itemInstance.InstanceID };
+
             //ToDo,  make this find space in more than just your adventure bag.
-            ItemLocation[] nextOpenLocations = _character.ItemManager.NextOpenSlots(ItemZoneType.AdventureBag, 1);
-            //ToDo,  implement a single InsertItemIstance DAO so this whole thing can be simplified
-            List<ItemInstance> itemInstances = _itemDao.InsertItemInstances(_character.Id, nextOpenLocations, ids, spawnParamsA);
-            foreach (ItemInstance item in itemInstances)
-            {
-                _character.ItemManager.PutItem(item.Location, item);
-                myNewItem = item;
-            }
+            ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
+            myNewItem.Location = nextOpenLocation;
+            _itemDao.UpdateItemOwner(itemInstance.InstanceID, _character.Id);
+            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
             return myNewItem;
         }
 
@@ -199,10 +182,8 @@ namespace Necromancy.Server.Systems.Item
                         if (itemInstance.Weight == 0) { itemInstance.Weight += 1234; }
                         if (itemInstance.Type == ItemType.SHIELD_LARGE || itemInstance.Type == ItemType.SHIELD_MEDIUM || itemInstance.Type == ItemType.SHIELD_SMALL)
                         {
-                            if (itemInstance.GP == 0)
-                            {
-                            itemInstance.GP += 50;
-                            }
+                            if (itemInstance.GP == 0) itemInstance.GP += 50;
+                            if (itemInstance.MaximumDurability == 0) itemInstance.MaximumDurability = 55;
                         }
                     }
                     //update items base stats per enchantment level.

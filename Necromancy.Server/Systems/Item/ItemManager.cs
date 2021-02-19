@@ -145,7 +145,7 @@ namespace Necromancy.Server.Systems.Item
             return nextOpenSlot;
         }
 
-        private ItemLocation NextOpenSlot(ItemZoneType itemZoneType)
+        public ItemLocation NextOpenSlot(ItemZoneType itemZoneType) //Todo,  CopyPasta one of these that searches all equipped bags.
         {
             int nextContainerWithSpace = ZoneMap[itemZoneType].NextContainerWithSpace;
             if (nextContainerWithSpace != ItemZone.NO_CONTAINERS_WITH_SPACE)

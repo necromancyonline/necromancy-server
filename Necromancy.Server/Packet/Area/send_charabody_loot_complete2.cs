@@ -48,6 +48,11 @@ namespace Necromancy.Server.Packet.Area
                 ItemService deadCharacterItemService = new ItemService(deadCharacter);
 
                 ItemInstance iteminstance = deadCharacterItemService.GetLootedItem(deadCharacter.lootNotify);
+                //remove the icon from the deadClient's inventory if they are online.
+                RecvItemRemove recvItemRemove = new RecvItemRemove(deadClient, iteminstance);
+                if (deadClient != null) Router.Send(recvItemRemove);
+
+                //put the item in the new owners inventory
                 itemService.PutLootedItem(iteminstance);
 
                 RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, iteminstance, (byte)iteminstance.Location.ZoneType);
