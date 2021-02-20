@@ -8,9 +8,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaNotifyStateflag : PacketResponse
     {
         private readonly uint _instanceId;
-        private readonly uint _state;
+        private readonly ulong _state;
 
-        public RecvCharaNotifyStateflag(uint instanceId, uint state)
+        public RecvCharaNotifyStateflag(uint instanceId, ulong state)
             : base((ushort) AreaPacketId.recv_chara_notify_stateflag, ServerType.Area)
         {
             _instanceId = instanceId;
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(_instanceId);
-            res.WriteUInt32(_state);
+            res.WriteUInt64(_state);
             return res;
         }
     }
