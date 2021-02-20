@@ -15,9 +15,9 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteInt32(0);
-            res.WriteInt32(0);
+            res.WriteInt32(0); //CharaBody Instance Id
+            res.WriteInt32(0); //deadstate      : //4 changes body to ash pile, 5 causes a mist to happen and disappear (Lost)
+            res.WriteInt32(0); //change_type
             return res;
         }
     }

@@ -17,8 +17,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort) AreaPacketId.recv_battle_report_noact_notify_dead, ServerType.Area)
         {
             _instancedId = instancedId;
-            _deadType = deadType;
-            _lossRegion = 2;
+            _deadType = Util.GetRandomNumber(1,3);
+            _lossRegion = Util.GetRandomNumber(1,6); 
             _deathType = deadType;
         }
 
@@ -26,9 +26,9 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(_instancedId);
-            res.WriteInt32(_deadType); //Death animation 
-            res.WriteInt32(_lossRegion); //Loss_region
-            res.WriteInt32(_deathType); //Death message notify in chat  see sys message below
+            res.WriteInt32(_deadType); //Death Message Popup :  1 = "You Died", 2 = "You Died", 3 = fainted, beyond that = nothing  . Changes based on DeathType.  
+            res.WriteInt32(_lossRegion); //Loss_region :  Death animation to play for other players.   :  0 nothing, 1 head explode, 2 chest explode, 3 chest explode, 4 cut in half, 5 expload, 6 fall over, 
+            res.WriteInt32(_deathType); //Death message notify in chat. Changes based on death message popup.  "DeadType"
             return res;
         }
         /*

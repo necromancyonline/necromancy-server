@@ -26,13 +26,10 @@ namespace Necromancy.Server.Packet.Area
             //if you are not dead, do normal stuff.  else...  do dead person stuff
             if (client.Character.State != Model.CharacterModel.CharacterState.SoulForm)
             {
+                Logger.Debug($"Not dead.  rendering living stuff.  CharacterState:{client.Character.State}");
                 foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
                 {
-                    if (otherClient == client)
-                    {
-                        // skip myself
-                        continue;
-                    }
+                    if (otherClient == client) continue;
                     if (otherClient.Character.State != Model.CharacterModel.CharacterState.SoulForm)
                     {
                         RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
@@ -61,17 +58,11 @@ namespace Necromancy.Server.Packet.Area
                     }
                 }
 
-                foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
-                {
-                    if (client.Character.State != Model.CharacterModel.CharacterState.SoulForm)
-                    {
-                        RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                        Router.Send(deadBodyData, client);
-                    }
-                }
+
             }
             else //you are dead here.  only getting soul form characters and NPCs.  sorry bro.
             {
+                Logger.Debug($"Rendering Dead stuff");
                 foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
                 {
                     if (otherClient == client)
@@ -102,12 +93,17 @@ namespace Necromancy.Server.Packet.Area
                 }
 
             }
+            //Allways render the stuff below this line.
+            foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
+            {
+                RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                Router.Send(deadBodyData, client);                
+            }
 
             foreach (Gimmick gimmickSpawn in client.Map.GimmickSpawns.Values)
             {
                 RecvDataNotifyGimmickData gimmickData = new RecvDataNotifyGimmickData(gimmickSpawn);
                 Router.Send(gimmickData, client);
-
             }
 
             foreach (GGateSpawn gGateSpawn in client.Map.GGateSpawns.Values)

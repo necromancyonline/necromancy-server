@@ -24,7 +24,6 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort) AreaPacketId.recv_data_notify_charabody_data, ServerType.Area)
         {
             _deadBody = deadBody;
-            //_deadBody.EquippedItems = new Dictionary<ItemEquipSlots, ItemInstance>(); //make souls gearless. until we figure out why SpiritEQMask is a thing.  what do spirits even wear?
         }
 
         protected override IBuffer ToBuffer()
@@ -49,7 +48,6 @@ namespace Necromancy.Server.Packet.Receive.Area
             //LoadEquip.SlotSetup(res, _deadBody, numEntries);
             foreach (ItemInstance itemInstance in _deadBody.EquippedItems.Values)
             {
-                Logger.Debug($"i is currently {i} for item {itemInstance.Type}");
                 if (itemInstance.CurrentEquipSlot == ItemEquipSlots.Talkring) continue;//skip Talk Rings. gotta get the value count below 19
                 res.WriteInt32((int)itemInstance.Type);
                 //Logger.Debug($"Loading {i}:{itemInstance.Type} | {itemInstance.UnidentifiedName}");
