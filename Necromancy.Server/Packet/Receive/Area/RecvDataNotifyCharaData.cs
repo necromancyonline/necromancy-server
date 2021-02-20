@@ -142,8 +142,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(_character.HairId); //hair
             res.WriteByte(_character.HairColorId); //color
             res.WriteByte(_character.FaceId); //face
-            res.WriteByte(0);//voice?
-            res.WriteByte(0);//skinTone?
+            res.WriteByte(_character.FaceArrangeId);//face arrange
+            res.WriteByte(_character.VoiceId);//voice
             //weird 64 loop
             for (i = 0; i < 100; i++)
             { res.WriteInt64(0); }

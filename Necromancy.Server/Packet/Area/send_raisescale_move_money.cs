@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            client.Character.AdventureBagGold -= packet.Data.ReadInt32();
+            client.Character.AdventureBagGold -= packet.Data.ReadUInt32();
             int errorCheck = packet.Data.ReadInt32();
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(errorCheck); //Error check

@@ -37,10 +37,11 @@ namespace Necromancy.Server.Model
         public byte HairColorId { get; set; }
         public byte FaceId { get; set; }
         public uint ClassId { get; set; }
+        public byte FaceArrangeId { get; set; }
+        public byte VoiceId { get; set; }
 
 
         //Stats
-        public uint AlignmentId { get; set; }
         public ushort Strength { get; set; }
         public ushort Vitality { get; set; }
         public ushort Dexterity { get; set; }
@@ -54,6 +55,11 @@ namespace Necromancy.Server.Model
         public BaseStat Gp;
         public BaseStat Weight;
         public BaseStat Condition;
+
+        //Progression
+        public ulong ExperienceCurrent { get; set; }
+        public uint SkillPoints { get; set; }
+
 
 
         //Model
@@ -83,7 +89,7 @@ namespace Necromancy.Server.Model
 
         //Temporary Value Holders
         public int StepCount { get; set; }
-        public long AdventureBagGold { get; set; }
+        public ulong AdventureBagGold { get; set; }
         public byte soulFormState { get; set; }
         public int[] EquipId { get; set; }
         public uint activeSkillInstance { get; set; }
@@ -144,6 +150,8 @@ namespace Necromancy.Server.Model
             deadType = 0;
             modelScale = 100;
             AdventureBagGold = 80706050;
+            ExperienceCurrent = 0;
+            SkillPoints = 0;
             eventSelectExecCode = -1;
             Hp = new BaseStat(1000, 1000);
             Mp = new BaseStat(450, 500);
@@ -171,6 +179,8 @@ namespace Necromancy.Server.Model
             Name = "";
             ClassId = 0;
             unionId = 0;
+            FaceArrangeId = 0;
+            VoiceId = 0;
             criminalState = 0;
             helperTextAbdul = true;
             mapChange = false;

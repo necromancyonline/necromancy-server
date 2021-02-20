@@ -157,7 +157,11 @@ namespace Necromancy.Server
             {
                 return;
             }
-
+            //Try to update the character stats.
+            if (!this.Database.UpdateCharacter(client.Character))
+            {
+                Logger.Error("Could not update the database with character details before disconnect");
+            }
             Clients.Remove(client);
 
             Map map = client.Map;

@@ -505,7 +505,7 @@ namespace Necromancy.Server.Packet.Area
             {
                 int[] HPandMPperChoice = new int[] {100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100};
                 int[] ConditionPerChoice = new int[] {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
-                int[] GoldCostPerChoice = new int[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
+                ulong[] GoldCostPerChoice = new ulong[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
                 Logger.Debug($"The selection you have made is {client.Character.eventSelectExtraSelectionCode}");
 
                 client.Character.Hp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode],
@@ -530,7 +530,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteByte((byte) ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
                 Router.Send(client, (ushort) AreaPacketId.recv_chara_update_con, res, ServerType.Area);
                 res = BufferProvider.Provide();
-                res.WriteInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
+                res.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
                 Router.Send(client, (ushort) AreaPacketId.recv_self_money_notify, res, ServerType.Area);
 
                 IBuffer res22 = BufferProvider.Provide();

@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            //Text file says no structure, is this the long struct and we just skipped??
+            //Text file says no structure, is this the long struct and we just skipped??//  i blame bank.  Copy from send_data_get_self...
             return res;
         }
     }

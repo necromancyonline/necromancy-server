@@ -7,6 +7,7 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive;
 using Necromancy.Server.Systems.Item;
+using System;
 using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
@@ -14,7 +15,6 @@ namespace Necromancy.Server.Packet.Area
     public class send_data_get_self_chara_data_request : ClientHandler
     {
         private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_data_get_self_chara_data_request));
-
         public send_data_get_self_chara_data_request(NecServer server) : base(server)
         {
         }
@@ -26,11 +26,21 @@ namespace Necromancy.Server.Packet.Area
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> ownedItems = itemService.LoadEquipmentModels();
             client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
-
+            SetSoulAlignment(client);
             SendDataGetSelfCharaData(client);
 
             IBuffer res2 = BufferProvider.Provide();
             Router.Send(client, (ushort)AreaPacketId.recv_data_get_self_chara_data_request_r, res2, ServerType.Area);
+        }
+        private void SetSoulAlignment(NecClient client)
+        {
+            uint alignmentId = 0;
+            int maxAlignment = Math.Max(client.Soul.PointsLawful, Math.Max(client.Soul.PointsNeutral, client.Soul.PointsChaos));
+            if (maxAlignment == client.Soul.PointsLawful) alignmentId = 1;// (uint)Alignments.Lawful;
+            else if (maxAlignment == client.Soul.PointsNeutral) alignmentId = 2;// (uint)Alignments.Neutral;
+            else if (maxAlignment == client.Soul.PointsChaos) alignmentId = 3;// (uint)Alignments.Chaotic;
+            Logger.Debug($"max alignment = {maxAlignment}");
+            client.Soul.AlignmentId = alignmentId;
         }
 
         private void SendDataGetSelfCharaData(NecClient client)
@@ -45,8 +55,8 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(client.Character.HairId); //hair
             res.WriteByte(client.Character.HairColorId); //color
             res.WriteByte(client.Character.FaceId); //face
-            res.WriteByte(0);//FaceArrange
-            res.WriteByte(0);//Voice
+            res.WriteByte(client.Character.FaceArrangeId);//FaceArrange
+            res.WriteByte(client.Character.VoiceId);//Voice
             for (int j = 0; j < 100; j++)
                 res.WriteInt64(0);
 
@@ -56,10 +66,10 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.Character.activeModel);//Model
             res.WriteUInt32(client.Character.ClassId); // class
             res.WriteInt16(client.Character.Level); // current level 
-            res.WriteInt64(91234567); // current exp
-            res.WriteInt64(50000000); // soul exp
-            res.WriteInt64(99999999); // exp needed to level
-            res.WriteInt64(60000000); // soul exp needed to level
+            res.WriteUInt64(client.Character.ExperienceCurrent); // current exp
+            res.WriteUInt64(client.Soul.ExperienceCurrent); // soul exp
+            res.WriteInt64(100); // exp needed to level
+            res.WriteInt64(200); // soul exp needed to level
             res.WriteInt32(client.Character.Hp.current); // current hp
             res.WriteInt32(client.Character.Mp.current); // current mp
             res.WriteInt32(client.Character.Od.current); // current od
@@ -117,17 +127,17 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt16(21); //possibly EXP Boost Gauge. trying to find it
 
             // gold and alignment?
-            res.WriteInt64(client.Character.AdventureBagGold); // gold
-            res.WriteUInt32(client.Character.AlignmentId); // AlignmentId
-            res.WriteInt32(6000); // lawful
-            res.WriteInt32(5000); // neutral
-            res.WriteInt32(6100); // chaos
+            res.WriteUInt64(client.Character.AdventureBagGold); // gold
+            res.WriteUInt32(client.Soul.AlignmentId); // AlignmentId
+            res.WriteInt32(client.Soul.PointsLawful); // lawful
+            res.WriteInt32(client.Soul.PointsNeutral); // neutral
+            res.WriteInt32(client.Soul.PointsChaos); // chaos
             res.WriteInt32(Util.GetRandomNumber(90400101, 90400130)); // title from honor.csv
 
             //sub_484980
-            res.WriteInt32(10000); // ac eval calculation?
-            res.WriteInt32(20000); // ac eval calculation?
-            res.WriteInt32(30000); // ac eval calculation?
+            res.WriteInt32(10000); // SP Lawful accrual per tick?
+            res.WriteInt32(20000); // SP Neutral accrual per tick?
+            res.WriteInt32(30000); // SP Chaos accrual per tick?
 
             // characters stats
             res.WriteUInt16(client.Character.Strength); // str
@@ -191,18 +201,18 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(client.Character.Heading); //view offset
 
             //sub_read_int32 skill point
-            res.WriteInt32(101); // skill point
+            res.WriteUInt32(client.Character.SkillPoints); // skill point
 
             res.WriteInt64((long)client.Character.State);//Character State
 
             //sub_494AC0
             res.WriteByte(client.Soul.Level); // soul level
-            res.WriteInt64(22);// Current Soul Points
-            res.WriteInt64(90);//new
+            res.WriteInt64(client.Soul.PointsCurrent);// Current Soul Points
+            res.WriteInt64(120);//new Max level?
             res.WriteInt64(120);// Max soul points
-            res.WriteByte(client.Character.criminalState); // 0 is white,1 yellow 2 red 3+ skull
+            res.WriteByte(client.Soul.CriminalLevel); // 0 is white,1 yellow 2 red 3+ skull
             res.WriteByte((byte)client.Character.beginnerProtection); //Beginner protection (bool)
-            res.WriteByte(255); //Level cap
+            res.WriteByte(255); // character Level cap?
             res.WriteByte(1);
             res.WriteByte(2);
             res.WriteByte(3);

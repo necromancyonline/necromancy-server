@@ -69,7 +69,6 @@ namespace Necromancy.Server.Packet.Msg
             character.HairId = hair_id;
             character.HairColorId = hair_color_id;
             character.FaceId = face_id;
-            character.AlignmentId = alignment_id;
             character.Strength = strength;
             character.Vitality = vitality;
             character.Dexterity = dexterity;
@@ -77,7 +76,9 @@ namespace Necromancy.Server.Packet.Msg
             character.Intelligence = intelligence;
             character.Piety = piety;
             character.Luck = luck;
-            character.ClassId = class_id;            
+            character.ClassId = class_id;
+            character.FaceArrangeId = 0; //ToDo. identify readbyte
+            character.VoiceId = 0; //ToDo. identify readbyte
 
             //----------------------------------------------------------
             // Character Slot ID

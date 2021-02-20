@@ -24,7 +24,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
 
             IBuffer res0 = BufferProvider.Provide();
-            res0.WriteInt64(client.Soul.WarehouseGold); // Gold in the storage
+            res0.WriteUInt64(client.Soul.WarehouseGold); // Gold in the storage
             int numEntries = 0x1A;//Less than or equal to 0z1A
             res0.WriteInt32(0x1A);
             for (int i = 0; i < numEntries; i++)
