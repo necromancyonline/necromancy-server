@@ -13,8 +13,7 @@ namespace Necromancy.Server.Packet.Area
 {
     public class send_data_get_self_chara_data_request : ClientHandler
     {
-        private static readonly NecLogger Logger =
-            LogProvider.Logger<NecLogger>(typeof(send_data_get_self_chara_data_request));
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_data_get_self_chara_data_request));
 
         public send_data_get_self_chara_data_request(NecServer server) : base(server)
         {
@@ -26,6 +25,7 @@ namespace Necromancy.Server.Packet.Area
         {
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> ownedItems = itemService.LoadEquipmentModels();
+            client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
 
             SendDataGetSelfCharaData(client);
 
@@ -177,8 +177,8 @@ namespace Necromancy.Server.Packet.Area
 
             //sub_484B00 map ip and connection
             res.WriteInt32(client.Character.MapId); //MapSerialID
-            res.WriteInt32(client.Character.MapId); //MapID
-            res.WriteInt32(client.Character.MapId); //MapID
+            res.WriteInt32(client.Character.MapId); //MapID ?floor
+            res.WriteInt32(client.Character.MapId); //MapID ?
             res.WriteByte((byte)(client.Character.criminalState + 5));//new??
             res.WriteByte(1); //Beginner Protection (bool) ???
             res.WriteFixedString(Settings.DataAreaIpAddress, 65); //IP
@@ -202,7 +202,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt64(120);// Max soul points
             res.WriteByte(client.Character.criminalState); // 0 is white,1 yellow 2 red 3+ skull
             res.WriteByte((byte)client.Character.beginnerProtection); //Beginner protection (bool)
-            res.WriteByte(0); //Level cap
+            res.WriteByte(255); //Level cap
             res.WriteByte(1);
             res.WriteByte(2);
             res.WriteByte(3);
@@ -217,8 +217,8 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(6);//new
 
             //sub_read_3-int16 unknown
-            res.WriteInt16(50); // HP Consumption Rate?
-            res.WriteInt16(50); // MP Consumption Rate?
+            res.WriteInt16(50); // HP Recovery Rate for heals?
+            res.WriteInt16(50); // MP Recovery Rate for heals?
             res.WriteInt16(5); // OD Consumption Rate (if greater than currentOD, Can not sprint)
 
             //sub_4833D0

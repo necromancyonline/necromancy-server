@@ -27,6 +27,7 @@ namespace Necromancy.Server.Tasks
         private DateTime _logoutTime;
         private byte _logoutType;
         private bool playerDied;
+        private List<NecClient> _clients;
 
         public CharacterTask(NecServer server, NecClient client)
         {
@@ -128,7 +129,7 @@ namespace Necromancy.Server.Tasks
             deadBody.FaceId = _client.Character.FaceId;
             deadBody.EquippedItems = _client.Character.EquippedItems;
             deadBody.ItemManager = _client.Character.ItemManager;
-
+            _clients = _client.Map.ClientLookup.GetAll();
             _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
             List<NecClient> soulStateClients = new List<NecClient>();
 
@@ -143,7 +144,7 @@ namespace Necromancy.Server.Tasks
                 RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.InstanceId);
                 _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
             }
-            foreach (NecClient client in _client.Map.ClientLookup.GetAll())
+            foreach (NecClient client in _clients)
             {
                 if (client == _client) continue; //Don't dissapear yourself ! that'd be bad news bears.
                 RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
@@ -160,11 +161,12 @@ namespace Necromancy.Server.Tasks
                     _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);
                 }
             );
-            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
+            //Re-render all the NPCs and Monsters, and character objects
+            Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
             (t1 =>
                 {
                     //send your soul to all the other souls runnin around
-                    foreach (NecClient client in _client.Map.ClientLookup.GetAll())
+                    foreach (NecClient client in _clients)
                     {
                         if (client.Character.State == CharacterState.SoulForm) { soulStateClients.Add(client); }
                     }
@@ -172,7 +174,7 @@ namespace Necromancy.Server.Tasks
                     RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
                     _server.Router.Send(soulStateClients, cData.ToPacket());
 
-                    foreach (NecClient otherClient in _client.Map.ClientLookup.GetAll())
+                    foreach (NecClient otherClient in _clients)
                     {
                         if (otherClient == _client)
                         {
@@ -180,7 +182,7 @@ namespace Necromancy.Server.Tasks
                             continue;
                         }
                         //Render all the souls if you are in soul form yourself
-                        if (otherClient.Character.State == Model.CharacterModel.CharacterState.SoulForm)
+                        if (otherClient.Character.State == CharacterState.SoulForm)
                         {
                             RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
                             _server.Router.Send(otherCharacterData, _client);

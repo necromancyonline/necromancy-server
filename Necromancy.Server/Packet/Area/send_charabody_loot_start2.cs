@@ -30,12 +30,12 @@ namespace Necromancy.Server.Packet.Area
             client.Map.DeadBodies.TryGetValue(client.Character.eventSelectReadyCode, out DeadBody deadBody);
             Character deadCharacter = _server.Instances.GetInstance(deadBody.CharacterInstanceId) as Character;
             NecClient deadClient = _server.Clients.GetByCharacterInstanceId(deadBody.CharacterInstanceId);
-            deadCharacter.lootNotify = fromLoc; //gotta be able to pass this information to loot_complete2 on successful loot
-            //ItemService itemService = new ItemService(client.Character);
-            ItemService deadCharacterItemService = new ItemService(deadCharacter);
+            if (deadCharacter != null)
+            {
+                deadCharacter.lootNotify = fromLoc; //gotta be able to pass this information to loot_complete2 on successful loot
 
-            ItemInstance iteminstance = deadCharacterItemService.GetIdentifiedItem(fromLoc);
-
+            }
+           
             //Tell your character to start looting the dead body.  Updates Pose
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //result / err check
@@ -49,7 +49,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteByte((byte)fromZone);
                 res.WriteByte(fromContainer);
                 res.WriteInt16(fromSlot);
-                res.WriteFloat(5); //base loot time
+                res.WriteFloat(1); //base loot time
                 res.WriteFloat(10); // loot time
                 res.WriteCString($"{client.Soul.Name}"); // soul name
                 res.WriteCString($"{client.Character.Name}"); // chara name

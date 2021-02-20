@@ -40,10 +40,10 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteFloat(_character.Y);
             res.WriteFloat(_character.Z);
             res.WriteByte(_character.Heading);
-            res.WriteInt32(_character.activeModel);//_character.Level); Character.ActiveModel  0 = default
+            res.WriteInt32(_character.activeModel);// Character.ActiveModel  0 = default
             res.WriteInt16(_character.modelScale); //Character.Scale   100 = normal size.
-            res.WriteInt64((uint)_character.State); //find out where soul state is getting set.. and un-set it appropriately
-            res.WriteInt16(0/*_character.deadType*/); //??  Soul State?  Soul Form? turns you soul form if above 0   : ToDo. key to death and revival
+            res.WriteUInt64((ulong)_character.State); //Character State
+            res.WriteInt16(_character.Level); // current level ??
 
             res.WriteInt32(numEntries); // Number of equipment Slots
             i = 0;

@@ -52,6 +52,10 @@ namespace Necromancy.Server.Packet.Area
                 RecvItemRemove recvItemRemove = new RecvItemRemove(deadClient, iteminstance);
                 if (deadClient != null) Router.Send(recvItemRemove);
 
+                //Add RecvItemRemove to remove the icon from the charabody window on successfull loot as well.//ToDo - this didnt work
+                RecvItemRemove recvItemRemove2 = new RecvItemRemove(client, iteminstance);
+                Router.Send(recvItemRemove2);
+
                 //update the item statuses to unidentified
                 iteminstance.Statuses |= ItemStatuses.Unidentified;
                 //put the item in the new owners inventory

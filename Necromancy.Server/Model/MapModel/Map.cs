@@ -220,6 +220,7 @@ namespace Necromancy.Server.Model
             {
                 client.Map.Leave(client);
             }
+            client.Map = this;
 
             Logger.Info(client, $"Entering Map: {Id}:{FullName}");
             // If position is passed in use it and set character position, if null then use map default coords
@@ -231,7 +232,8 @@ namespace Necromancy.Server.Model
                 client.Character.Z = mapPosition.Z;
                 client.Character.Heading = mapPosition.Heading;
             }
-            else
+            //set character coords to default map entry coords If arriving form another map.
+            else if (client.Character.MapId != Id)
             {
                 client.Character.X = this.X;
                 client.Character.Y = this.Y;
@@ -242,7 +244,6 @@ namespace Necromancy.Server.Model
             client.Character.MapId = Id;
             client.Character.mapChange = false;
             ClientLookup.Add(client);
-            client.Map = this;
             Logger.Debug($"Client Lookup count is now : {ClientLookup.GetAll().Count}  for map  {this.Id} ");
             Logger.Debug($"Character State for character {client.Character.Name} is {client.Character.State}");
             RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);

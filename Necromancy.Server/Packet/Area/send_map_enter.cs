@@ -3,8 +3,12 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
+using System;
+using System.Threading.Tasks;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -25,9 +29,22 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(0); //Bool - play cutscene. 1 yes, 0 no?  //to-do,  play a cutscene on first time map entry 
             Router.Send(client, (ushort) AreaPacketId.recv_map_enter_r, res, ServerType.Area);
 
-            //Re-do all your stats
-            ItemService itemService = new ItemService(client.Character);
-            Router.Send(client, itemService.CalculateBattleStats(client));
+
+            //added delay to prevent crash on map entry.
+            Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+            (t1 =>
+            {
+                //Re-do all your stats
+                ItemService itemService = new ItemService(client.Character);
+                Router.Send(client, itemService.CalculateBattleStats(client));
+
+                client.Character.ClearStateBit(CharacterState.InvulnerableForm);
+
+                RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId, (ulong)client.Character.State);
+                Router.Send(client.Map, recvCharaNotifyStateflag.ToPacket());
+            }
+            );
+
         }
 
     }

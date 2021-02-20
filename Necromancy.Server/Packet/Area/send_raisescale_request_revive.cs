@@ -34,16 +34,6 @@ namespace Necromancy.Server.Packet.Area
                 RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.current);
                 Router.Send(client, cHpUpdate.ToPacket());
 
-                IBuffer res4 = BufferProvider.Provide();
-                res4.WriteUInt32(client.Character.InstanceId);
-                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
-
-                IBuffer res5 = BufferProvider.Provide();
-                res5.WriteUInt32(client.Character.InstanceId);
-                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_notify_raise, res5, ServerType.Area);
-
-                IBuffer res6 = BufferProvider.Provide();
-                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_end_notify, res6, ServerType.Area);
                 //
 
                 IBuffer res1 = BufferProvider.Provide();
@@ -86,6 +76,17 @@ namespace Necromancy.Server.Packet.Area
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client2.Character.InstanceId);
                     Router.Send(client, recvObjectDisappearNotify.ToPacket());
                 }
+
+                IBuffer res4 = BufferProvider.Provide();
+                res4.WriteUInt32(client.Character.InstanceId);
+                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
+
+                IBuffer res5 = BufferProvider.Provide();
+                res5.WriteUInt32(client.Character.InstanceId);
+                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_notify_raise, res5, ServerType.Area);
+
+                IBuffer res6 = BufferProvider.Provide();
+                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_end_notify, res6, ServerType.Area);
 
                 Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                 (t1 =>
@@ -144,7 +145,7 @@ namespace Necromancy.Server.Packet.Area
                 (t1 =>
                 {
                     RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId, (ulong)CharacterState.NormalForm);
-                    Router.Send(client.Map, recvCharaNotifyStateflag.ToPacket()); //grab structure from xdbg
+                    Router.Send(client.Map, recvCharaNotifyStateflag.ToPacket()); 
                 }
                 );
             }
