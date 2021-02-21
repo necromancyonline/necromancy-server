@@ -9,8 +9,8 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCom : DbCommand
     {
         private const string SqlInsertCharacter =@"
-            INSERT INTO nec_character(id,account_id,soul_id,slot,map_id,x,y,z,name,race_id,sex_id,hair_id,hair_color_id,face_id,strength,vitality,dexterity,agility,intelligence,piety,luck,class_id,level,created,hp_current,mp_current,gold,condition_current,channel,face_arrange_id,voice_id,experience_current,skill_points)
-            VALUES(@id,@account_id,@soul_id,@slot,@map_id,@x,@y,@z,@name,@race_id,@sex_id,@hair_id,@hair_color_id,@face_id,@strength,@vitality,@dexterity,@agility,@intelligence,@piety,@luck,@class_id,@level,@created,@hp_current,@mp_current,@gold,@condition_current,@channel,@face_arrange_id,@voice_id,@experience_current,@skill_points)";
+            INSERT INTO nec_character(account_id,soul_id,slot,map_id,x,y,z,name,race_id,sex_id,hair_id,hair_color_id,face_id,strength,vitality,dexterity,agility,intelligence,piety,luck,class_id,level,created,hp_current,mp_current,gold,condition_current,channel,face_arrange_id,voice_id,experience_current,skill_points)
+            VALUES(@account_id,@soul_id,@slot,@map_id,@x,@y,@z,@name,@race_id,@sex_id,@hair_id,@hair_color_id,@face_id,@strength,@vitality,@dexterity,@agility,@intelligence,@piety,@luck,@class_id,@level,@created,@hp_current,@mp_current,@gold,@condition_current,@channel,@face_arrange_id,@voice_id,@experience_current,@skill_points)";
 
         private const string SqlSelectCharacterById =@"
             SELECT * FROM nec_character WHERE id=@id";
