@@ -26,7 +26,7 @@ namespace Necromancy.Server.Model
         public string Name { get; set; }
         public byte Level { get; set; }
 
-        
+
         //Basic traits
         public uint RaceId { get; set; }
         public uint SexId { get; set; }
@@ -120,7 +120,7 @@ namespace Necromancy.Server.Model
 
         //Inventory
         public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
-        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems {get;  } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
+        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems { get; } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
         public ItemLocation lootNotify { get; set; }
         public ulong AdventureBagGold { get; set; }
 
@@ -214,6 +214,23 @@ namespace Necromancy.Server.Model
             else if (this.Condition.current > 40) this.OdRecoveryRate = 4; //+0 
             else if (this.Condition.current > 20) this.OdRecoveryRate = 2; //-2 to all stats
             else this.OdRecoveryRate = 2; // -4 to all stats //should be 1 recovery rate, but our 500ms tick reduces to 0
+        }
+        public void LoginCheckDead() //todo,  further analysis on character states and poses. eliminate this HP based overide
+        {
+            if (this.Hp.current <= 0)
+            {
+                this.HasDied = true;
+                this.State = CharacterState.SoulForm;
+                this.deadType = 1;
+            }
+            if (this.Hp.current == -1)
+            {
+                this.deadType = 4;
+            }
+            else if (this.Hp.current < -1)
+            {
+                this.deadType = 5;
+            }
         }
     }
 }

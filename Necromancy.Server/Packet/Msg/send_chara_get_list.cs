@@ -53,7 +53,8 @@ namespace Necromancy.Server.Packet.Msg
             foreach (Character character in characters)
             {
                 ItemService itemService = new ItemService(character);
-                List<ItemInstance> ownedItems = itemService.LoadEquipmentModels();
+                itemService.LoadEquipmentModels();
+                character.LoginCheckDead();
 
                 IBuffer res = BufferProvider.Provide();
 
@@ -61,9 +62,9 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(character.Id); //  Character ID
                 res.WriteFixedString(character.Name, 91); // 0x5B | 91x 1 byte
 
-                res.WriteInt32(0); // 0 = Alive | 1 = Dead
+                res.WriteInt32(character.deadType); // 0 = Alive | 1,2,3, = Dead 4 = ash, 5 = lost
                 res.WriteInt32(character.Level); //character level stat
-                res.WriteInt32(0); //todo (unknown)
+                res.WriteInt32(Util.GetRandomNumber(0,4)); //todo (unknown)
                 res.WriteUInt32(character.ClassId); //class stat 
 
                 res.WriteUInt32(character.RaceId); //race

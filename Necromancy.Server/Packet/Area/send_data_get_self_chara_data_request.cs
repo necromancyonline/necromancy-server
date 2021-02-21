@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             ItemService itemService = new ItemService(client.Character);
-            List<ItemInstance> ownedItems = itemService.LoadEquipmentModels();
+            itemService.LoadEquipmentModels();
             client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
             client.Soul.SetSoulAlignment();
             _equippedItems = new ItemInstance[client.Character.EquippedItems.Count];

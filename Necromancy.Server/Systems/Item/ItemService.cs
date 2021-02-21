@@ -206,7 +206,7 @@ namespace Necromancy.Server.Systems.Item
             return ownedItems;
         }
 
-        public List<ItemInstance> LoadEquipmentModels()
+        public void LoadEquipmentModels()
         {
             _character.EquippedItems.Clear();
             List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
@@ -226,7 +226,6 @@ namespace Necromancy.Server.Systems.Item
                     }
                 }
             }
-            return ownedItems;
         }
         public ItemInstance Remove(ItemLocation location, byte quantity)
         {

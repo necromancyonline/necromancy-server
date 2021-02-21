@@ -3,6 +3,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
@@ -27,19 +28,22 @@ namespace Necromancy.Server.Packet.Msg
             byte hair_id = packet.Data.ReadByte();
             byte hair_color_id = packet.Data.ReadByte();
             byte face_id = packet.Data.ReadByte();
+            byte face_arrange_id = packet.Data.ReadByte();
+            byte voice_id = packet.Data.ReadByte();
 
             uint alignment_id = packet.Data.ReadUInt32();
 
-            ushort strength = packet.Data.ReadUInt16();
-            ushort vitality = packet.Data.ReadUInt16();
-            ushort dexterity = packet.Data.ReadUInt16();
-            ushort agility = packet.Data.ReadUInt16();
-            ushort intelligence = packet.Data.ReadUInt16();
-            ushort piety = packet.Data.ReadUInt16();
-            ushort luck = packet.Data.ReadUInt16();
+            ushort strength = packet.Data.ReadUInt16(); //bonus stat, not base
+            ushort vitality = packet.Data.ReadUInt16();//bonus stat, not base
+            ushort dexterity = packet.Data.ReadUInt16();//bonus stat, not base
+            ushort agility = packet.Data.ReadUInt16();//bonus stat, not base
+            ushort intelligence = packet.Data.ReadUInt16();//bonus stat, not base
+            ushort piety = packet.Data.ReadUInt16();//bonus stat, not base
+            ushort luck = packet.Data.ReadUInt16();//bonus stat, not base
 
             uint class_id = packet.Data.ReadUInt32();
-            uint unknown_a = packet.Data.ReadUInt32();
+            int error_check = packet.Data.ReadInt32();
+            byte unknown = packet.Data.ReadByte();
 
 
             //-------------------------------------
@@ -52,6 +56,9 @@ namespace Necromancy.Server.Packet.Msg
             }
 
             Character character = new Character();
+            Attribute attribute = new Attribute();
+            attribute.DefaultClassAtributes(race_id);
+
             character.MapId = map.Id;
             character.X = map.X;
             character.Y = map.Y;
@@ -68,16 +75,20 @@ namespace Necromancy.Server.Packet.Msg
             character.HairId = hair_id;
             character.HairColorId = hair_color_id;
             character.FaceId = face_id;
-            character.Strength = strength;
-            character.Vitality = vitality;
-            character.Dexterity = dexterity;
-            character.Agility = agility;
-            character.Intelligence = intelligence;
-            character.Piety = piety;
-            character.Luck = luck;
+            character.FaceArrangeId = face_arrange_id;
+            character.VoiceId = voice_id;
+            character.Hp.setCurrent(attribute.Hp);
+            character.Hp.setMax(attribute.Hp);
+            character.Mp.setCurrent(attribute.Mp);
+            character.Mp.setMax(attribute.Mp);
+            character.Strength = (ushort)(strength + attribute.Str);
+            character.Vitality = (ushort)(vitality + attribute.Vit);
+            character.Dexterity = (ushort)(dexterity + attribute.Dex);
+            character.Agility = (ushort)(agility + attribute.Agi);
+            character.Intelligence = (ushort)(intelligence + attribute.Int);
+            character.Piety = (ushort)(piety + attribute.Pie);
+            character.Luck = (ushort)(luck + attribute.Luck);
             character.ClassId = class_id;
-            character.FaceArrangeId = 0; //ToDo. identify readbyte
-            character.VoiceId = 0; //ToDo. identify readbyte
 
             //----------------------------------------------------------
             // Character Slot ID
@@ -114,7 +125,7 @@ namespace Necromancy.Server.Packet.Msg
             Logger.Info($"Created class_id: {class_id}");
             
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(error_check);
             res.WriteInt32(character.Id); //CharacterId
 
             Router.Send(client, (ushort) MsgPacketId.recv_chara_create_r, res, ServerType.Msg);
@@ -196,7 +207,6 @@ namespace Necromancy.Server.Packet.Msg
 
         private void CreateShortcutBars(NecClient client, Character character, uint class_id)
         {
-            ShortcutBar shortcutBar0 = new ShortcutBar();
             if (class_id == 0) // Fighter
             {
                 //TODO Fix magic numbers all over the place

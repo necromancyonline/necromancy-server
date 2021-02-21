@@ -23,6 +23,13 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             if (client.Character.HasDied == true)
             {
+                IBuffer res1 = BufferProvider.Provide();
+                res1.WriteUInt32(client.Character.InstanceId); // ID
+                res1.WriteInt64((long)CharacterState.LostState); //
+                Router.Send(client.Map, (ushort)AreaPacketId.recv_chara_notify_stateflag, res1, ServerType.Area);
+
+                client.Character.Hp.setCurrent(-2); //This will make you show lost on chara select.
+
                 IBuffer res4 = BufferProvider.Provide();
                 Router.Send(client, (ushort) AreaPacketId.recv_self_lost_notify, res4, ServerType.Area);
             }
