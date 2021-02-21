@@ -43,7 +43,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(_character.activeModel);// Character.ActiveModel  0 = default
             res.WriteInt16(_character.modelScale); //Character.Scale   100 = normal size.
             res.WriteUInt64((ulong)_character.State); //Character State
-            res.WriteInt16(_character.Level); // current level ??
+            res.WriteInt16(1000); // current level ??
 
             res.WriteInt32(numEntries); // Number of equipment Slots
             i = 0;

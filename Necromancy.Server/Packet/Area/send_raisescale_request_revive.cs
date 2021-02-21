@@ -6,6 +6,7 @@ using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet.Receive.Area;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -24,17 +25,12 @@ namespace Necromancy.Server.Packet.Area
                 client.Character.Hp.toMax();
                 client.Character.State = CharacterState.InvulnerableForm;
                 client.Character.HasDied = false;
+                client.Character.Hp.depleted = false;
                 client.Character.deadType = 0;
 
                 IBuffer res = BufferProvider.Provide();
                 res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive
                 Router.Send(client, (ushort)AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
-
-
-                RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.current);
-                Router.Send(client, cHpUpdate.ToPacket());
-
-                //
 
                 IBuffer res1 = BufferProvider.Provide();
                 res1.WriteInt32(0); //Has to be 0 or else you DC
@@ -50,14 +46,10 @@ namespace Necromancy.Server.Packet.Area
                 res3.WriteUInt32(client.Character.InstanceId);
                 Router.Send(client.Map, (ushort)AreaPacketId.recv_object_disappear_notify, res3, ServerType.Area, client);
 
-                client.Character.HasDied = false;
-                client.Character.Hp.depleted = false;
+
                 RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
                 Router.Send(client.Map, cData.ToPacket());
 
-                IBuffer res2 = BufferProvider.Provide();
-                res2.WriteInt32(0); // Error code, 0 = success
-                Router.Send(client, (ushort)AreaPacketId.recv_revive_execute_r, res2, ServerType.Area);
 
                 //Disappear .. all the monsters, NPCs, and characters.  welcome to Life! it's less lonely
                 foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
@@ -77,21 +69,21 @@ namespace Necromancy.Server.Packet.Area
                     Router.Send(client, recvObjectDisappearNotify.ToPacket());
                 }
 
-                IBuffer res4 = BufferProvider.Provide();
-                res4.WriteUInt32(client.Character.InstanceId);
-                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
+                List<PacketResponse> brList = new List<PacketResponse>();
+                RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(client.Character.InstanceId);
+                RecvBattleReportNotifyRaise recvBattleReportNotifyRaise = new RecvBattleReportNotifyRaise(client.Character.InstanceId);
+                RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
 
-                IBuffer res5 = BufferProvider.Provide();
-                res5.WriteUInt32(client.Character.InstanceId);
-                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_notify_raise, res5, ServerType.Area);
-
-                IBuffer res6 = BufferProvider.Provide();
-                Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_end_notify, res6, ServerType.Area);
+                brList.Add(brStart);
+                brList.Add(recvBattleReportNotifyRaise); 
+                brList.Add(brEnd);
+                Router.Send(client.Map, brList); 
 
                 Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                 (t1 =>
                 {
-
+                    RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.current);
+                    Router.Send(client, cHpUpdate.ToPacket());
 
                     //if you are not dead, do normal stuff.  else...  do dead person stuff
                     if (client.Character.State != CharacterState.SoulForm)
@@ -132,7 +124,7 @@ namespace Necromancy.Server.Packet.Area
 
                         foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
                         {
-                            if (client.Character.State != CharacterState.SoulForm)
+                            if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
                             {
                                 RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                                 Router.Send(deadBodyData, client);

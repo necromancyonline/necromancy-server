@@ -107,11 +107,7 @@ namespace Necromancy.Server.Tasks
             brList.Add(brStart);
             brList.Add(cDead1); //animate the death of your living body
             brList.Add(brEnd);
-            _server.Router.Send(_client.Map, brList, _client); // send death animation to other players
-
-            RecvBattleReportNoactDead cDead2 = new RecvBattleReportNoactDead(_client.Character.InstanceId, _client.Character.deadType);
-            brList[1] = cDead2;
-            _server.Router.Send(_client, brList); // send death animaton to player 1
+            _server.Router.Send(_client.Map, brList); // send death animation to all players
 
             DeadBody deadBody = _server.Instances.GetInstance((uint)_client.Character.DeadBodyInstanceId) as DeadBody;
             deadBody.X = _client.Character.X;
@@ -156,15 +152,11 @@ namespace Necromancy.Server.Tasks
             (t1 =>
                 {
                     RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                    _server.Router.Send(_client.Map, cBodyData.ToPacket());
+                    if (_client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                    { _server.Router.Send(_client.Map, cBodyData.ToPacket()); }
+                    _server.Router.Send(_client, cBodyData.ToPacket());
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.Character.InstanceId);
                     _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);
-                }
-            );
-            //Re-render all the NPCs and Monsters, and character objects
-            Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
-            (t1 =>
-                {
                     //send your soul to all the other souls runnin around
                     foreach (NecClient client in _clients)
                     {
@@ -173,7 +165,12 @@ namespace Necromancy.Server.Tasks
                     //re-render your soulstate character to your client with out gear on it, and any other soul state clients on map.
                     RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
                     _server.Router.Send(soulStateClients, cData.ToPacket());
-
+                }
+            );
+            //Re-render all the NPCs and Monsters, and character objects
+            Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
+            (t1 =>
+                {
                     foreach (NecClient otherClient in _clients)
                     {
                         if (otherClient == _client)

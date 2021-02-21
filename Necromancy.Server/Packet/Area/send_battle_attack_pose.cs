@@ -37,7 +37,7 @@ namespace Necromancy.Server.Packet.Area
                 client);
 
             client.Character.weaponEquipped = true;
-            client.Character.AddStateBit(CharacterState.BattlePose);
+            //client.Character.AddStateBit(CharacterState.BattlePose);
         }
     }
 }

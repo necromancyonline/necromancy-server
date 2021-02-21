@@ -94,10 +94,13 @@ namespace Necromancy.Server.Packet.Area
 
             }
             //Allways render the stuff below this line.
-            foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
+            if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
             {
-                RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                Router.Send(deadBodyData, client);                
+                foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
+                {
+                    RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                    Router.Send(deadBodyData, client);
+                }
             }
 
             foreach (Gimmick gimmickSpawn in client.Map.GimmickSpawns.Values)

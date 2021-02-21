@@ -97,8 +97,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer res4 = BufferProvider.Provide();
                     res4.WriteUInt32(character2.InstanceId); //Character ID
                     res4.WriteInt32(y); //Character pose
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_pose_notify, res4, ServerType.Area,
-                        client);
+                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_pose_notify, res4, ServerType.Area);
                     break;
 
                 case "emotion":
