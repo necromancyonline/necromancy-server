@@ -18,16 +18,26 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly DeadBody _deadBody;
         private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(RecvDataNotifyCharaBodyData));
+        private ItemInstance[] _equippedItems;
 
 
         public RecvDataNotifyCharaBodyData(DeadBody deadBody) 
             : base((ushort) AreaPacketId.recv_data_notify_charabody_data, ServerType.Area)
         {
             _deadBody = deadBody;
+            foreach (ItemInstance itemInstance in _deadBody.EquippedItems.Values)
+            {
+                if (itemInstance.CurrentEquipSlot == ItemEquipSlots.Talkring) _deadBody.EquippedItems.Remove(itemInstance.CurrentEquipSlot); //Skip rendering talk rings.
+            }
+            _equippedItems = new ItemInstance[_deadBody.EquippedItems.Count];
+            _deadBody.EquippedItems.Values.CopyTo(_equippedItems, 0);
         }
 
         protected override IBuffer ToBuffer()
         {
+            int i = 0;
+            int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
+
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(_deadBody.InstanceId); //Instance ID of dead body
             res.WriteUInt32(_deadBody.CharacterInstanceId); //Reference to actual player's instance ID
@@ -40,46 +50,33 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(_deadBody.Level);
 
             res.WriteInt16(100); //model scale.  set to 100.
-            int i = 0;
-            int numEntries = 19;
-            res.WriteInt32(numEntries); //less than or equal to 19
 
             //This is actually rendering gear on the character model laying dead on the ground.
-            //LoadEquip.SlotSetup(res, _deadBody, numEntries);
-            foreach (ItemInstance itemInstance in _deadBody.EquippedItems.Values)
+            //sub_483420 
+            res.WriteInt32(numEntries); // Number of equipment Slots
+            //sub_483660 
+            for (i = 0; i < numEntries; i++)
             {
-                if (itemInstance.CurrentEquipSlot == ItemEquipSlots.Talkring) continue;//skip Talk Rings. gotta get the value count below 19
-                res.WriteInt32((int)itemInstance.Type);
-                //Logger.Debug($"Loading {i}:{itemInstance.Type} | {itemInstance.UnidentifiedName}");
-                i++;
+                res.WriteInt32((int)_equippedItems[i].Type);
             }
-            while (i < numEntries)
-            {
-                //sub_483660   
-                res.WriteInt32(0); //Must have 25 on recv_chara_notify_data
-                //Logger.Debug($"Loading {i}: blank");
-                i++;
-            }
-            res.WriteInt32(numEntries);
-            //Consolidated Frequently Used Code
-            //LoadEquip.EquipItems(res, _deadBody, numEntries);
-            i = 0;
+
+            //sub_483420
+            res.WriteInt32(numEntries); // Number of equipment Slots
             //sub_4948C0
-            foreach (ItemInstance itemInstance in _deadBody.EquippedItems.Values)
+            for (i = 0; i < numEntries; i++)
             {
-                if (itemInstance.CurrentEquipSlot == ItemEquipSlots.Talkring) continue;//skip Talk Rings. gotta get the value count below 19
-                res.WriteInt32(itemInstance.BaseID); //Item Base Model ID
+                res.WriteInt32(_equippedItems[i].BaseID); //Item Base Model ID
                 res.WriteByte(00); //? TYPE data/chara/##/ 00 is character model, 01 is npc, 02 is monster
                 res.WriteByte(0); //Race and gender tens place is race 1= human, 2= elf 3=dwarf 4=gnome 5=porkul, ones is gender 1 = male 2 = female
                 res.WriteByte(0); //??item version
 
-                res.WriteInt32(itemInstance.BaseID); //testing (Theory, texture file related)
+                res.WriteInt32(_equippedItems[i].BaseID); //testing (Theory, texture file related)
                 res.WriteByte(0); //hair
-                res.WriteByte(0); //color
+                res.WriteByte(1); //color
                 res.WriteByte(0); //face
 
-                res.WriteByte(0); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
-                res.WriteByte(0);  //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
+                res.WriteByte(45); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
+                res.WriteByte((byte)(_deadBody.FaceId * 10));  //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
                 res.WriteByte(00); // testing (Theory Torso Tex)
                 res.WriteByte(0); // testing (Theory Pants Tex)
                 res.WriteByte(0); // testing (Theory Hands Tex)
@@ -88,49 +85,12 @@ namespace Necromancy.Server.Packet.Receive.Area
 
                 res.WriteByte(0); // separate in assembly
                 res.WriteByte(0); // separate in assembly
-                i++;
             }
-            while (i < numEntries)//Must have 25 on recv_chara_notify_data
+            //sub_483420
+            res.WriteInt32(numEntries); // Number of equipment Slots to display
+            for (i = 0; i < numEntries; i++)
             {
-                res.WriteInt32(0); //Sets your Item ID per Iteration
-                res.WriteByte(0); // 
-                res.WriteByte(0); // (theory bag)
-                res.WriteByte(0); // (theory Slot)
-
-                res.WriteInt32(0); //testing (Theory, Icon related)
-                res.WriteByte(0); //
-                res.WriteByte(0); // (theory bag)
-                res.WriteByte(0); // (theory Slot)
-
-                res.WriteByte(0); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
-                res.WriteByte(00); //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
-                res.WriteByte(0); // testing (Theory Torso Tex)
-                res.WriteByte(0); // testing (Theory Pants Tex)
-                res.WriteByte(0); // testing (Theory Hands Tex)
-                res.WriteByte(0); // testing (Theory Feet Tex)
-                res.WriteByte(0); //Alternate texture for item model 
-
-                res.WriteByte(0); // separate in assembly
-                res.WriteByte(0); // separate in assembly
-                i++;
-            }
-            res.WriteInt32(numEntries);
-            //Consolidated Frequently Used Code
-            //LoadEquip.EquipSlotBitMask(res, _deadBody, numEntries);
-            i = 0;
-            //sub_483420 
-            foreach (ItemInstance itemInstance in _deadBody.EquippedItems.Values)
-            {
-                if (itemInstance.CurrentEquipSlot == ItemEquipSlots.Talkring) continue;//skip Talk Rings. gotta get the value count below 19
-                res.WriteInt32((int)itemInstance.CurrentEquipSlot); //bitmask per equipment slot
-                i++;
-            }
-            
-            while (i < numEntries)
-            {
-                //sub_483420   
-                res.WriteInt32(0); //Must have 25 on recv_chara_notify_data
-                i++;
+                res.WriteInt32((int)_equippedItems[i].CurrentEquipSlot); //bitmask per equipment slot
             }
 
             //Traits

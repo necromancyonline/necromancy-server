@@ -12,6 +12,7 @@ namespace Necromancy.Server.Packet.Area
 {
     public class send_raisescale_request_revive : ClientHandler
     {
+        private List<NecClient> _necClients;
         public send_raisescale_request_revive(NecServer server) : base(server)
         {
         }
@@ -20,6 +21,7 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
+            _necClients = client.Map.ClientLookup.GetAll();
             //if (client.Character.soulFormState == 1)
             {
                 client.Character.Hp.toMax();
@@ -62,7 +64,7 @@ namespace Necromancy.Server.Packet.Area
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.InstanceId);
                     Router.Send(client, recvObjectDisappearNotify.ToPacket());
                 }
-                foreach (NecClient client2 in client.Map.ClientLookup.GetAll())
+                foreach (NecClient client2 in _necClients)
                 {
                     if (client2 == client) continue; //Don't dissapear yourself ! that'd be bad news bears.
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client2.Character.InstanceId);
@@ -88,14 +90,14 @@ namespace Necromancy.Server.Packet.Area
                     //if you are not dead, do normal stuff.  else...  do dead person stuff
                     if (client.Character.State != CharacterState.SoulForm)
                     {
-                        foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
+                        foreach (NecClient otherClient in _necClients)
                         {
                             if (otherClient == client)
                             {
                                 // skip myself
                                 continue;
                             }
-                            if (otherClient.Character.State != Model.CharacterModel.CharacterState.SoulForm)
+                            if (otherClient.Character.State != CharacterState.SoulForm)
                             {
                                 RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
                                 Router.Send(otherCharacterData, client);

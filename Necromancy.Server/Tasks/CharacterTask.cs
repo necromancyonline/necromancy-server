@@ -85,7 +85,7 @@ namespace Necromancy.Server.Tasks
             }
             else if (_client.Character.Od.current < _client.Character.Od.max)
             {
-                _client.Character.Od.setCurrent(_client.Character.Od.current + 5/*_client.Character.GPRecoveryRate*/);
+                _client.Character.Od.setCurrent(_client.Character.Od.current + _client.Character.OdRecoveryRate/2);
                 RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.Character.Od.current);
                 _server.Router.Send(recvCharaUpdateAp, _client);
             }

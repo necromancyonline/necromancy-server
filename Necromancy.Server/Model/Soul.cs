@@ -47,5 +47,15 @@ namespace Necromancy.Server.Model
             AlignmentId = 0;
         }
 
+        public void SetSoulAlignment()
+        {
+            uint alignmentId = 0;
+            int maxAlignment = Math.Max(this.PointsLawful, Math.Max(this.PointsNeutral, this.PointsChaos));
+            if (maxAlignment == this.PointsLawful) alignmentId = 1;// (uint)Alignments.Lawful;
+            else if (maxAlignment == this.PointsNeutral) alignmentId = 2;// (uint)Alignments.Neutral;
+            else if (maxAlignment == this.PointsChaos) alignmentId = 3;// (uint)Alignments.Chaotic;
+            this.AlignmentId = alignmentId;
+        }
+
     }
 }

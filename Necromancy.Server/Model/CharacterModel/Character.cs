@@ -26,9 +26,6 @@ namespace Necromancy.Server.Model
         public string Name { get; set; }
         public byte Level { get; set; }
 
-        public CharacterState State { get; set; }
-
-        // TODO sort this messy class out...
         
         //Basic traits
         public uint RaceId { get; set; }
@@ -55,18 +52,30 @@ namespace Necromancy.Server.Model
         public BaseStat Gp;
         public BaseStat Weight;
         public BaseStat Condition;
+        public short OdRecoveryRate { get; set; }
+        public short HpRecoveryRate { get; set; }
+        public short MpRecoveryRate { get; set; }
 
         //Progression
         public ulong ExperienceCurrent { get; set; }
         public uint SkillPoints { get; set; }
 
 
-
         //Model
-        public int activeModel;
-        public short modelScale;
-        public short deadType;
-
+        public int activeModel { get; set; }
+        public short modelScale { get; set; }
+        public bool HasDied { get; set; }
+        public short deadType { get; set; }
+        public uint DeadBodyInstanceId { get; set; }
+        public CharacterState State { get; set; }
+        public byte soulFormState { get; set; }
+        public byte criminalState { get; set; }
+        public int beginnerProtection { get; set; }
+        public uint activeSkillInstance { get; set; }
+        public bool castingSkill { get; set; }
+        public int skillStartCast { get; set; }
+        public uint partyId { get; set; }
+        public int unionId { get; set; }
 
         //Movement Related
         public float X { get; set; }
@@ -78,27 +87,20 @@ namespace Necromancy.Server.Model
         public int charaPose { get; set; }
         public byte movementPose { get; set; }
         public byte movementAnim { get; set; }
-        public bool weaponEquipped { get; set; }
-        public bool mapChange { get; set; }
+        public int StepCount { get; set; }
+        public bool takeover { get; set; }
 
-        //Normal Attack
-        public int[] AttackIds { get; set; }
 
         //Map Related
         public int MapId { get; set; }
+        public bool mapChange { get; set; }
+        public int Channel { get; set; }
 
-        //Temporary Value Holders
-        public int StepCount { get; set; }
-        public ulong AdventureBagGold { get; set; }
-        public byte soulFormState { get; set; }
-        public int[] EquipId { get; set; }
-        public uint activeSkillInstance { get; set; }
-        public bool castingSkill { get; set; }
+
+        //Event helpers
         public uint eventSelectReadyCode { get; set; }
         public int eventSelectExecCode { get; set; }
         public int eventSelectExtraSelectionCode { get; set; }
-        public bool takeover { get; set; }
-        public int skillStartCast { get; set; }
         public bool helperText { get; set; }
         public bool helperTextBlacksmith { get; set; }
         public bool helperTextDonkey { get; set; }
@@ -107,17 +109,6 @@ namespace Necromancy.Server.Model
         public Event currentEvent { get; set; }
         public bool secondInnAccess { get; set; }
 
-        public uint killerInstanceId { get; private set; }
-        public bool HasDied { get; set; }
-        public uint DeadBodyInstanceId { get; set; }
-        public int Channel { get; set; }
-        public int beginnerProtection { get; set; }
-
-
-        //public bool playerDead { get; set; }
-        public uint partyId { get; set; }
-        public int unionId { get; set; }
-        public byte criminalState { get; set; }
 
         //Msg Value Holders
         public uint friendRequest { get; set; }
@@ -131,6 +122,7 @@ namespace Necromancy.Server.Model
         public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems {get;  } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
         public ItemLocation lootNotify { get; set; }
+        public ulong AdventureBagGold { get; set; }
 
         public Character()
         {
@@ -172,7 +164,6 @@ namespace Necromancy.Server.Model
             currentEvent = null;
             secondInnAccess = false;
             _characterActive = true;
-            killerInstanceId = 0;
             secondInnAccess = false;
             partyId = 0;
             InstanceId = 0;
@@ -186,6 +177,7 @@ namespace Necromancy.Server.Model
             mapChange = false;
             StepCount = 0;
             lootNotify = new ItemLocation((ItemZoneType)0, 0, 0);
+            OdRecoveryRate = 0;
         }
 
         public bool characterActive
@@ -213,6 +205,15 @@ namespace Necromancy.Server.Model
         public bool IsStealthed()
         {
             return State.HasFlag(CharacterState.StealthForm);
+        }
+
+        public void ConditionBonus()
+        {
+            if (this.Condition.current > 180) this.OdRecoveryRate = 16; //+8 to all stats
+            else if (this.Condition.current > 140) this.OdRecoveryRate = 8; //+4 to all stats
+            else if (this.Condition.current > 40) this.OdRecoveryRate = 4; //+0 
+            else if (this.Condition.current > 20) this.OdRecoveryRate = 2; //-2 to all stats
+            else this.OdRecoveryRate = 2; // -4 to all stats //should be 1 recovery rate, but our 500ms tick reduces to 0
         }
     }
 }

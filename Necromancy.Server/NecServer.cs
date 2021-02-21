@@ -203,8 +203,6 @@ namespace Necromancy.Server
             Chat.CommandHandler.AddCommand(new StatusCommand(this));
             Chat.CommandHandler.AddCommand(new NpcCommand(this));
             Chat.CommandHandler.AddCommand(new MonsterCommand(this));
-            Chat.CommandHandler.AddCommand(new AdminConsoleRecvItemInstance(this));
-            Chat.CommandHandler.AddCommand(new AdminConsoleRecvItemInstanceUnidentified(this));
             Chat.CommandHandler.AddCommand(new ChangeFormMenu(this));
             Chat.CommandHandler.AddCommand(new Died(this));
             Chat.CommandHandler.AddCommand(new LogOut(this));

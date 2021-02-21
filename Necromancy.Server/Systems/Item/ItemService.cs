@@ -549,6 +549,7 @@ namespace Necromancy.Server.Systems.Item
             List<PacketResponse> responses = new List<PacketResponse>();
             BattleParam battleParam = new BattleParam();
 
+            client.Character.ConditionBonus();
             client.Character.Weight.setCurrent(0);
             client.Character.Gp.setMax(0);
             bool ShieldCheck = false;
