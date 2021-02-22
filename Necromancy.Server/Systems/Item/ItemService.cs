@@ -41,7 +41,9 @@ namespace Necromancy.Server.Systems.Item
 
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
-            throw new NotImplementedException();
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.Statuses.HasFlag(ItemStatuses.Unidentified)) item.Statuses -= ItemStatuses.Unidentified;
+            return item;
         }
 
         public enum MoveType
@@ -111,6 +113,27 @@ namespace Necromancy.Server.Systems.Item
             _itemDao.UpdateItemEquipMask(item.InstanceID, ItemEquipSlots.None);
             return item;
         }
+        internal ItemInstance GetLootedItem(ItemLocation location)
+        {
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.CurrentEquipSlot != ItemEquipSlots.None)
+            {
+                Unequip(item.CurrentEquipSlot);
+            }
+            return item;
+        }
+        public ItemInstance PutLootedItem(ItemInstance itemInstance) 
+        {
+            ItemInstance myNewItem = itemInstance;
+
+            //ToDo,  make this find space in more than just your adventure bag.
+            ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
+            myNewItem.Location = nextOpenLocation;
+            _itemDao.UpdateItemOwner(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
+            _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
+            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
+            return myNewItem;
+        }
 
         public List<ItemInstance> SpawnItemInstances(ItemZoneType itemZoneType, int[] baseIds, ItemSpawnParams[] spawnParams)
         {
@@ -160,10 +183,8 @@ namespace Necromancy.Server.Systems.Item
                         if (itemInstance.Weight == 0) { itemInstance.Weight += 1234; }
                         if (itemInstance.Type == ItemType.SHIELD_LARGE || itemInstance.Type == ItemType.SHIELD_MEDIUM || itemInstance.Type == ItemType.SHIELD_SMALL)
                         {
-                            if (itemInstance.GP == 0)
-                            {
-                            itemInstance.GP += 50;
-                            }
+                            if (itemInstance.GP == 0) itemInstance.GP += 50;
+                            if (itemInstance.MaximumDurability <= 0) itemInstance.MaximumDurability = 55;
                         }
                     }
                     //update items base stats per enchantment level.
@@ -185,7 +206,7 @@ namespace Necromancy.Server.Systems.Item
             return ownedItems;
         }
 
-        public List<ItemInstance> LoadEquipmentModels()
+        public void LoadEquipmentModels()
         {
             _character.EquippedItems.Clear();
             List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
@@ -205,7 +226,6 @@ namespace Necromancy.Server.Systems.Item
                     }
                 }
             }
-            return ownedItems;
         }
         public ItemInstance Remove(ItemLocation location, byte quantity)
         {
@@ -528,6 +548,7 @@ namespace Necromancy.Server.Systems.Item
             List<PacketResponse> responses = new List<PacketResponse>();
             BattleParam battleParam = new BattleParam();
 
+            client.Character.ConditionBonus();
             client.Character.Weight.setCurrent(0);
             client.Character.Gp.setMax(0);
             bool ShieldCheck = false;

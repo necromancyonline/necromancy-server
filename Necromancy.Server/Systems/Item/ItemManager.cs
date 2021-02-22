@@ -45,7 +45,32 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap.Add(ItemZoneType.AvatarInventory,   new ItemZone(MAX_CONTAINERS_AVATAR, MAX_CONTAINER_SIZE_AVATAR));
             ZoneMap.Add(ItemZoneType.TreasureBox,       new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
         }
+        public List<ItemInstance> GetLootableItems()
+        {
+            List<ItemInstance> itemInstances = new List<ItemInstance>();
 
+            foreach (ItemZoneType itemZoneType in ZoneMap.Keys)
+            {
+                if (itemZoneType == ItemZoneType.AdventureBag | itemZoneType == ItemZoneType.EquippedBags | itemZoneType == ItemZoneType.PremiumBag)
+                {
+                    ZoneMap.TryGetValue(itemZoneType, out ItemZone itemZone);
+                    foreach (Container container in itemZone._containers)
+                    {
+                        if (container != null)
+                        {
+                            foreach (ItemInstance itemInstance in container._slots)
+                            {
+                                if (itemInstance != null)
+                                {
+                                    itemInstances.Add(itemInstance);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return itemInstances;
+        }
         public ItemInstance GetItem(ItemLocation loc)
         {
             if (loc.Equals(ItemLocation.InvalidLocation)) return null;
@@ -120,7 +145,7 @@ namespace Necromancy.Server.Systems.Item
             return nextOpenSlot;
         }
 
-        private ItemLocation NextOpenSlot(ItemZoneType itemZoneType)
+        public ItemLocation NextOpenSlot(ItemZoneType itemZoneType) //Todo,  CopyPasta one of these that searches all equipped bags.
         {
             int nextContainerWithSpace = ZoneMap[itemZoneType].NextContainerWithSpace;
             if (nextContainerWithSpace != ItemZone.NO_CONTAINERS_WITH_SPACE)
@@ -149,5 +174,7 @@ namespace Necromancy.Server.Systems.Item
         {
             return ZoneMap[itemZoneType].GetContainer(container).Count == 0;
         }
+
+
     }
 }

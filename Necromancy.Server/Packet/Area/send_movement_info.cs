@@ -66,7 +66,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res2 = BufferProvider.Provide();
 
-            res2.WriteUInt32(client.Character.movementId); //Character ID
+            res2.WriteUInt32(client.Character.InstanceId); //Character ID
             res2.WriteFloat(client.Character.X);
             res2.WriteFloat(client.Character.Y);
             res2.WriteFloat(client.Character.Z);

@@ -6,8 +6,8 @@ namespace Necromancy.Server.Model.CharacterModel
     public enum CharacterState : uint
     {
         // CharacterState             // Binary                           Dec
-        SoulForm = 0,                 // 0000 0000 0000 0000 0000 0000    0
-        BattlePose = 1 << 0,          // 0000 0000 0000 0000 0000 0001    1
+        InvalidState = 0,             // 0000 0000 0000 0000 0000 0000    0
+        SoulForm = 1 << 0,            // 0000 0000 0000 0000 0000 0001    1
         BlockPose = 1 << 1,           // 0000 0000 0000 0000 0000 0010    2
         StealthForm = 1 << 2,         // 0000 0000 0000 0000 0000 0100    4
         NothingForm = 1 << 3,         // 0000 0000 0000 0000 0000 1000    8

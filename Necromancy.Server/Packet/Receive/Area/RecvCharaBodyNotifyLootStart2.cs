@@ -15,7 +15,13 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            //res.WriteByte(fromZone);
+            //res.WriteByte(fromContainer);
+            //res.WriteInt16(fromSlot);
+            //res.WriteFloat(10); //base loot time
+            //res.WriteFloat(15); // loot time
+            //res.WriteCString($"{client.Soul.Name}"); // soul name
+            //res.WriteCString($"{client.Character.Name}"); // chara name
             return res;
         }
     }

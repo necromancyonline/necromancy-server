@@ -24,7 +24,7 @@ namespace Necromancy.Server.Packet.Area
             //This is all Position and Orientation Related.
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.movementId);//Character Instance ID. Set to movementId for a rigged dead body takeover.
+            res.WriteUInt32(client.Character.InstanceId);//Character Instance ID. Set to movementId for a rigged dead body takeover.
             res.WriteFloat(client.Character.X); //might need to change to Target X Y Z
             res.WriteFloat(client.Character.Y);
             res.WriteFloat(client.Character.Z);

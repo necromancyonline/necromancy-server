@@ -157,7 +157,11 @@ namespace Necromancy.Server
             {
                 return;
             }
-
+            //Try to update the character stats.
+            if (!this.Database.UpdateCharacter(client.Character))
+            {
+                Logger.Error("Could not update the database with character details before disconnect");
+            }
             Clients.Remove(client);
 
             Map map = client.Map;
@@ -199,8 +203,6 @@ namespace Necromancy.Server
             Chat.CommandHandler.AddCommand(new StatusCommand(this));
             Chat.CommandHandler.AddCommand(new NpcCommand(this));
             Chat.CommandHandler.AddCommand(new MonsterCommand(this));
-            Chat.CommandHandler.AddCommand(new AdminConsoleRecvItemInstance(this));
-            Chat.CommandHandler.AddCommand(new AdminConsoleRecvItemInstanceUnidentified(this));
             Chat.CommandHandler.AddCommand(new ChangeFormMenu(this));
             Chat.CommandHandler.AddCommand(new Died(this));
             Chat.CommandHandler.AddCommand(new LogOut(this));
@@ -502,6 +504,10 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_party_mentor_create(this));
             _areaConsumer.AddHandler(new send_party_mentor_remove(this));
             _areaConsumer.AddHandler(new send_forge_execute(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start2(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_complete2(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start3(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_complete3(this));
         }
     }
 }

@@ -45,12 +45,16 @@ namespace Necromancy.Server.Packet.Msg
 
         private void SendNotifyData(NecClient client)
         {
+            ///////
+            //// this one is not like the others.  It actually requires 25 entries to fire.
+            ///////
             List<Character> characters = Database.SelectCharactersBySoulId(client.Soul.Id);
 
             foreach (Character character in characters)
             {
                 ItemService itemService = new ItemService(character);
-                List<ItemInstance> ownedItems = itemService.LoadEquipmentModels();
+                itemService.LoadEquipmentModels();
+                character.LoginCheckDead();
 
                 IBuffer res = BufferProvider.Provide();
 
@@ -58,9 +62,9 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(character.Id); //  Character ID
                 res.WriteFixedString(character.Name, 91); // 0x5B | 91x 1 byte
 
-                res.WriteInt32(0); // 0 = Alive | 1 = Dead
+                res.WriteInt32(character.deadType); // 0 = Alive | 1,2,3, = Dead 4 = ash, 5 = lost
                 res.WriteInt32(character.Level); //character level stat
-                res.WriteInt32(0); //todo (unknown)
+                res.WriteInt32(Util.GetRandomNumber(0,4)); //todo (unknown)
                 res.WriteUInt32(character.ClassId); //class stat 
 
                 res.WriteUInt32(character.RaceId); //race
@@ -68,27 +72,28 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteByte(character.HairId); //hair
                 res.WriteByte(character.HairColorId); //color
                 res.WriteByte(character.FaceId); //face
-                res.WriteByte(0);//Voice?
-                res.WriteByte(0);//skinTone?
-                //LoadEquip.SlotSetup(res, character, 0x19);
+                res.WriteByte(character.FaceArrangeId);//Voice?
+                res.WriteByte(character.VoiceId);//skinTone?
+
+
+                // cb eax 19.  Has to be 25 values.
                 int numEntries = 0x19;
                 int i = 0;
                 //sub_483660 
-                //foreach (InventoryItem inventoryItem in character.Inventory._equippedItems.Values)
                 foreach (ItemInstance itemInstance in character.EquippedItems.Values)
                 {
                     res.WriteInt32((int)itemInstance.Type);
-                    Logger.Debug($"Loading {i}:{itemInstance.Type} | {itemInstance.UnidentifiedName}");
+                    //Logger.Debug($"Loading {i}:{itemInstance.Type} | {itemInstance.UnidentifiedName}");
                     i++;
                 }
                 while (i < numEntries)
                 {
                     //sub_483660   
                     res.WriteInt32(0); //Must have 25 on recv_chara_notify_data
-                    Logger.Debug($"Loading {i}: blank");
+                    //Logger.Debug($"Loading {i}: blank");
                     i++;
                 }
-                //LoadEquip.EquipItems(res, character, 0x19);
+
                 i = 0;
                 //sub_4948C0
                 foreach (ItemInstance itemInstance in character.EquippedItems.Values)
@@ -140,7 +145,6 @@ namespace Necromancy.Server.Packet.Msg
                     i++;
                 }
 
-                //LoadEquip.EquipSlotBitMask(res, character, 0x19);
                 i = 0;
                 //sub_483420 
                 foreach (ItemInstance itemInstance in character.EquippedItems.Values)
@@ -154,17 +158,17 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteInt32(0); //Must have 25 on recv_chara_notify_data
                     i++;
                 }
-                //LoadEquip.SlotUpgradeLevel(res, character, 0x19);
+
                 i = 0;
                 foreach (ItemInstance itemInstance in character.EquippedItems.Values)
                 {
-                    res.WriteInt32(10); ///item quality(+#) or aura? 10 = +7, 19 = +6,(maybe just wep aura)
+                    res.WriteInt32(itemInstance.EnhancementLevel); ///item quality(+#) or aura? 10 = +7, 19 = +6,(maybe just wep aura)
                     i++;
                 }
                 while (i < numEntries)
                 {
                     //sub_483420   
-                    res.WriteInt32(10); //Must have 25 on recv_chara_notify_data
+                    res.WriteInt32(0); //Must have 25 on recv_chara_notify_data
                     i++;
                 }
 
@@ -176,7 +180,7 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteByte((byte)character.EquippedItems.Count); //count your equipment here
 
                 res.WriteInt32(character.MapId); //Map your character is on
-                res.WriteInt32(0);//??? probably map area related
+                res.WriteInt32(Util.GetRandomNumber(0,3));//??? probably map area related
 
                 res.WriteByte(0);
                 res.WriteByte(0); //Character Name change in Progress.  (0 no : 1 Yes ).  Red indicator on top right

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -25,6 +27,7 @@ namespace Necromancy.Server.Tasks
         private DateTime _logoutTime;
         private byte _logoutType;
         private bool playerDied;
+        private List<NecClient> _clients;
 
         public CharacterTask(NecServer server, NecClient client)
         {
@@ -82,7 +85,7 @@ namespace Necromancy.Server.Tasks
             }
             else if (_client.Character.Od.current < _client.Character.Od.max)
             {
-                _client.Character.Od.setCurrent(_client.Character.Od.current + 5/*_client.Character.GPRecoveryRate*/);
+                _client.Character.Od.setCurrent(_client.Character.Od.current + _client.Character.OdRecoveryRate/2);
                 RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.Character.Od.current);
                 _server.Router.Send(recvCharaUpdateAp, _client);
             }
@@ -91,44 +94,114 @@ namespace Necromancy.Server.Tasks
         private void PlayerDead()
         {
             playerDied = true;
+            _client.Character.HasDied = true; 
+            _client.Character.State = CharacterState.SoulForm;
+            _client.Character.deadType = (short)Util.GetRandomNumber(1, 4);
+            Logger.Debug($"Death Animation Number : {_client.Character.deadType}");
+
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.killerInstanceId);
-            RecvBattleReportNoactDead cDead1 = new RecvBattleReportNoactDead(_client.Character.InstanceId, 1);
-            RecvBattleReportNoactDead cDead2 = new RecvBattleReportNoactDead(_client.Character.InstanceId, 2);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.InstanceId);
+            RecvBattleReportNoactDead cDead1 = new RecvBattleReportNoactDead(_client.Character.InstanceId, _client.Character.deadType);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
 
             brList.Add(brStart);
             brList.Add(cDead1); //animate the death of your living body
             brList.Add(brEnd);
-            _server.Router.Send(_client.Map, brList, _client); // send death animation to other players
+            _server.Router.Send(_client.Map, brList); // send death animation to all players
 
-
-            brList[1] = cDead2;
-            _server.Router.Send(_client, brList); // send death animaton to player 1
-
-            DeadBody deadBody = _server.Instances.GetInstance((uint) _client.Character.DeadBodyInstanceId) as DeadBody;
-
+            DeadBody deadBody = _server.Instances.GetInstance((uint)_client.Character.DeadBodyInstanceId) as DeadBody;
             deadBody.X = _client.Character.X;
             deadBody.Y = _client.Character.Y;
             deadBody.Z = _client.Character.Z;
             deadBody.Heading = _client.Character.Heading;
-            _client.Character.movementId = _client.Character.DeadBodyInstanceId;
-            _client.Character.deadType = 1;
+            deadBody.BeginnerProtection = (byte)_client.Character.beginnerProtection;
+            deadBody.CharaName = _client.Character.Name;
+            deadBody.SoulName = _client.Soul.Name;
+            deadBody.EquippedItems = _client.Character.EquippedItems;
+            deadBody.RaceId = _client.Character.RaceId;
+            deadBody.SexId = _client.Character.SexId;
+            deadBody.HairId = _client.Character.HairId;
+            deadBody.HairColorId = _client.Character.HairColorId;
+            deadBody.FaceId = _client.Character.FaceId;
+            deadBody.EquippedItems = _client.Character.EquippedItems;
+            deadBody.ItemManager = _client.Character.ItemManager;
+            _clients = _client.Map.ClientLookup.GetAll();
+            _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+            List<NecClient> soulStateClients = new List<NecClient>();
 
-            Thread.Sleep(5000);
-            //_client.Character.HasDied = false; // quick switch to living state so your dead body loads with your gear
-            //load your dead body on to the map for you to see in soul form. 
-            //_client.Character.State = Model.CharacterModel.CharacterState.SoulForm;  //Mess with this after you finish inventory
-            RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody, _client.Character, _client);
-            _server.Router.Send(_client, cBodyData.ToPacket());
+            //Disappear .. all the monsters, NPCs, and characters.  welcome to death! it's lonely
+            foreach (NpcSpawn npcSpawn in _client.Map.NpcSpawns.Values)
+            {
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.InstanceId);
+                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+            }
+            foreach (MonsterSpawn monsterSpawn in _client.Map.MonsterSpawns.Values)
+            {
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.InstanceId);
+                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+            }
+            foreach (NecClient client in _clients)
+            {
+                if (client == _client) continue; //Don't dissapear yourself ! that'd be bad news bears.
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
+                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+            }
 
-            _client.Character.HasDied = true; // back to dead so your soul appears with-out gear.
+            //load your dead body on the map for looting.  disappear your character model for everyone else besides you
+            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
+            (t1 =>
+                {
+                    RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                    if (_client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                    { _server.Router.Send(_client.Map, cBodyData.ToPacket()); }
+                    _server.Router.Send(_client, cBodyData.ToPacket());
+                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.Character.InstanceId);
+                    _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);
+                    //send your soul to all the other souls runnin around
+                    foreach (NecClient client in _clients)
+                    {
+                        if (client.Character.State == CharacterState.SoulForm) { soulStateClients.Add(client); }
+                    }
+                    //re-render your soulstate character to your client with out gear on it, and any other soul state clients on map.
+                    RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
+                    _server.Router.Send(soulStateClients, cData.ToPacket());
+                }
+            );
+            //Re-render all the NPCs and Monsters, and character objects
+            Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
+            (t1 =>
+                {
+                    foreach (NecClient otherClient in _clients)
+                    {
+                        if (otherClient == _client)
+                        {
+                            // skip myself
+                            continue;
+                        }
+                        //Render all the souls if you are in soul form yourself
+                        if (otherClient.Character.State == CharacterState.SoulForm)
+                        {
+                            RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
+                            _server.Router.Send(otherCharacterData, _client);
+                        }
 
-            Thread.Sleep(100);
+                        if (otherClient.Union != null)
+                        {
+                            RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
+                            _server.Router.Send(otherUnionData, _client);
+                        }
+                    }
+                    foreach (NpcSpawn npcSpawn in _client.Map.NpcSpawns.Values)
+                    {
+                        if (npcSpawn.Visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
+                        {
+                            RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
+                            _server.Router.Send(npcData, _client);
+                        }
+                    }
+                }
+            );
 
-            //reload your living body with no gear
-            RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
-            _server.Router.Send(_client.Map, cData.ToPacket());
         }
 
         public void Logout(DateTime logoutTime, byte logoutType)

@@ -278,6 +278,13 @@ namespace Necromancy.Server.Systems.Item
             WHERE 
                 id = @id";
 
+        private const string SqlUpdateItemOwner = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                owner_id = @owner_id, statuses = @statuses 
+            WHERE 
+                id = @id";
 
         private const string SqlDeleteItemInstance = @"
             DELETE FROM 
@@ -397,6 +404,16 @@ namespace Necromancy.Server.Systems.Item
                 });
         }
 
+        public void UpdateItemOwner(ulong instanceId, int ownerId, int statuses)
+        {
+            ExecuteNonQuery(SqlUpdateItemOwner,
+                command =>
+                {
+                    AddParameter(command, "@statuses", statuses);
+                    AddParameter(command, "@owner_id", ownerId);
+                    AddParameter(command, "@id", instanceId);
+                });
+        }
         public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
         {
             ExecuteNonQuery(SqlUpdateItemCurrentDurability,
@@ -410,6 +427,13 @@ namespace Necromancy.Server.Systems.Item
         public ItemInstance SelectItemInstance(int characterId, ItemLocation itemLocation)
         {
             throw new NotImplementedException();
+        }
+
+        public void UpdateItemLocation(ulong instanceId, ItemLocation loc)
+        {
+            ulong[] instanceIds = new ulong[1] { instanceId };
+            ItemLocation[] locs = new ItemLocation[1] { loc };
+            UpdateItemLocations(instanceIds, locs);
         }
 
         public void UpdateItemLocations(ulong[] instanceIds, ItemLocation[] locs)

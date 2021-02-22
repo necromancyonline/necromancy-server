@@ -67,6 +67,12 @@ namespace Necromancy.Server.Packet.Area
             {
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, item);
                 Router.Send(recvItemInstance);
+                if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
+                {
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, item, (byte)item.Location.ZoneType);
+                    Router.Send(recvItemInstanceUnidentified);
+                }
+
             }
         }
         public void LoadCloakRoom(NecClient client)

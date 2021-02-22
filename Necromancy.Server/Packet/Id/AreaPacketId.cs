@@ -247,7 +247,7 @@ namespace Necromancy.Server.Packet.Id
         recv_charabody_notify_crime_lv = 0xB3DA,
         recv_charabody_notify_deadstate = 0xCC36,
         recv_charabody_notify_loot_item = 0x8CDE,
-        recv_charabody_notify_loot_start2 = 0xFFD2,
+        recv_charabody_notify_loot_start2 = 0xFF3F,
         recv_charabody_notify_loot_start_cancel = 0x2FA,
         recv_charabody_notify_party_join = 0xD67D,
         recv_charabody_notify_party_leave = 0x5A5,
@@ -399,7 +399,7 @@ namespace Necromancy.Server.Packet.Id
         recv_gimmick_access_object_notify = 0xD804,
         recv_gimmick_access_object_r = 0xA4A5,
         recv_gimmick_state_update = 0x1041,
-        recv_help_new_add = 0xFF3F,
+        recv_help_new_add = 0xFFD2, //0xFF3F,
         recv_help_new_data = 0x3C41,
         recv_help_new_remove_r = 0xC0D8,
         recv_inherit_start_r = 0xF3A1,
@@ -1047,11 +1047,11 @@ namespace Necromancy.Server.Packet.Id
         send_chara_view_landing = 0x54, //opcode not found   //TODO
         send_charabody_access_abort = 0x8C84,
         send_charabody_access_start = 0x6D2F, 
-        send_charabody_loot_complete2 = 0x56, //opcode not found
-        send_charabody_loot_complete3 = 0x57, //opcode not found 
-        send_charabody_loot_start2 = 0x58, //opcode not found
+        send_charabody_loot_complete2 = 0x136E,
+        send_charabody_loot_complete3 = 0x23F8, 
+        send_charabody_loot_start2 = 0xF943,
         send_charabody_loot_start2_cancel = 0x59, //opcode not found
-        send_charabody_loot_start3 = 0x61, //opcode not found
+        send_charabody_loot_start3 = 0xC9D5,
         send_charabody_salvage_abort = 0x6FFC,
         send_charabody_salvage_request = 0x4616,
         send_charabody_salvage_request_cancel = 0xFB48,

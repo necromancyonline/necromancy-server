@@ -18,7 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(_client.Soul.WarehouseGold); // Gold in the storage
+            res.WriteUInt64(_client.Soul.WarehouseGold); // Gold in the storage
             int numEntries = 0x1A;
             res.WriteInt32(numEntries);//Less than or equal to 0x1A; new
             for (int i = 0; i < numEntries; i++)

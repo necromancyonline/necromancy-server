@@ -82,6 +82,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(Map map, NecPacket packet, params NecClient[] excepts)
         {
+            if (map == null) return;
             List<NecClient> clients = GetClients(map.ClientLookup.GetAll(), excepts);
             foreach (NecClient client in clients)
             {

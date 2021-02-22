@@ -24,16 +24,26 @@ CREATE TABLE IF NOT EXISTS `account`
     CONSTRAINT `uq_account_mail` UNIQUE (`mail`)
 );
 
-CREATE TABLE IF NOT EXISTS `nec_soul`
-(
-    `id`         INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `account_id` INTEGER  NOT NULL,
-    `name`       TEXT     NOT NULL,
-    `level`      INTEGER  NOT NULL,
-    `created`    DATETIME NOT NULL,
-    `password`   TEXT DEFAULT NULL,
-    CONSTRAINT `fk_nec_soul_account_id` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`),
-    CONSTRAINT `uq_nec_soul_name` UNIQUE (`name`)
+CREATE TABLE IF NOT EXISTS "nec_soul" (
+	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	"account_id"	INTEGER NOT NULL,
+	"name"	TEXT NOT NULL,
+	"level"	INTEGER NOT NULL,
+	"created"	DATETIME NOT NULL,
+	"password"	TEXT DEFAULT NULL,
+	"experience_current"	INTEGER NOT NULL DEFAULT (0),
+	"warehouse_gold"	INTEGER NOT NULL DEFAULT (0),
+	"points_lawful"	INTEGER NOT NULL DEFAULT (0),
+	"points_neutral"	INTEGER NOT NULL DEFAULT (0),
+	"points_chaos"	INTEGER NOT NULL DEFAULT (0),
+	"criminal_level"	INTEGER NOT NULL DEFAULT (0),
+	"points_current"	INTEGER NOT NULL DEFAULT (0),
+	"material_life"	INTEGER NOT NULL DEFAULT (0),
+	"material_reincarnation"	INTEGER NOT NULL DEFAULT (0),
+	"material_lawful"	INTEGER NOT NULL DEFAULT (0),
+	"material_chaos"	INTEGER NOT NULL DEFAULT (0),
+	CONSTRAINT "uq_nec_soul_name" UNIQUE("name"),
+	CONSTRAINT "fk_nec_soul_account_id" FOREIGN KEY("account_id") REFERENCES "account"("id")
 );
 
 CREATE TABLE IF NOT EXISTS `nec_map`
@@ -48,38 +58,45 @@ CREATE TABLE IF NOT EXISTS `nec_map`
     `orientation` INTEGER DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS `nec_character`
-(
-    `id`               INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `account_id`       INTEGER  NOT NULL,
-    `soul_id`          INTEGER  NOT NULL,
-    `slot`             INTEGER  NOT NULL,
-    `map_id`           INTEGER  NOT NULL,
-    `x`                REAL     NOT NULL,
-    `y`                REAL     NOT NULL,
-    `z`                REAL     NOT NULL,
-    `name`             TEXT     NOT NULL,
-    `race_id`          INTEGER  NOT NULL,
-    `sex_id`           INTEGER  NOT NULL,
-    `hair_id`          INTEGER  NOT NULL,
-    `hair_color_id`    INTEGER  NOT NULL,
-    `face_id`          INTEGER  NOT NULL,
-    `alignment_id`     INTEGER  NOT NULL,
-    `strength`         INTEGER  NOT NULL,
-    `vitality`         INTEGER  NOT NULL,
-    `dexterity`        INTEGER  NOT NULL,
-    `agility`          INTEGER  NOT NULL,
-    `intelligence`     INTEGER  NOT NULL,
-    `piety`            INTEGER  NOT NULL,
-    `luck`             INTEGER  NOT NULL,
-    `class_id`         INTEGER  NOT NULL,
-    `level`            INTEGER  NOT NULL,
-    `created`          DATETIME NOT NULL,
-    CONSTRAINT `fk_nec_character_account_id` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`),
-    CONSTRAINT `fk_nec_character_soul_id` FOREIGN KEY (`soul_id`) REFERENCES `nec_soul` (`id`),
-    CONSTRAINT `fk_nec_character_map_id` FOREIGN KEY (`map_id`) REFERENCES `nec_map` (`id`),
-    CONSTRAINT `uq_nec_character_soul_id_name` UNIQUE (`soul_id`, `name`),
-    CONSTRAINT `uq_nec_character_soul_id_slot` UNIQUE (`soul_id`, `slot`)
+CREATE TABLE IF NOT EXISTS "nec_character" (
+	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	"account_id"	INTEGER NOT NULL,
+	"soul_id"	INTEGER NOT NULL,
+	"slot"	INTEGER NOT NULL,
+	"map_id"	INTEGER NOT NULL,
+	"x"	REAL NOT NULL,
+	"y"	REAL NOT NULL,
+	"z"	REAL NOT NULL,
+	"name"	TEXT NOT NULL,
+	"race_id"	INTEGER NOT NULL,
+	"sex_id"	INTEGER NOT NULL,
+	"hair_id"	INTEGER NOT NULL,
+	"hair_color_id"	INTEGER NOT NULL,
+	"face_id"	INTEGER NOT NULL,
+	"strength"	INTEGER NOT NULL,
+	"vitality"	INTEGER NOT NULL,
+	"dexterity"	INTEGER NOT NULL,
+	"agility"	INTEGER NOT NULL,
+	"intelligence"	INTEGER NOT NULL,
+	"piety"	INTEGER NOT NULL,
+	"luck"	INTEGER NOT NULL,
+	"class_id"	INTEGER NOT NULL,
+	"level"	INTEGER NOT NULL,
+	"created"	DATETIME NOT NULL,
+	"hp_current"	INTEGER NOT NULL DEFAULT (0),
+	"mp_current"	INTEGER NOT NULL DEFAULT (0),
+	"gold"	INTEGER NOT NULL DEFAULT (0),
+	"condition_current"	INTEGER NOT NULL DEFAULT (0),
+	"channel"	INTEGER NOT NULL DEFAULT (0),
+	"face_arrange_id"	INTEGER NOT NULL DEFAULT (0),
+	"voice_id"	INTEGER NOT NULL DEFAULT (0),
+	"experience_current"	INTEGER NOT NULL DEFAULT (0),
+	"skill_points"	INTEGER NOT NULL DEFAULT (0),
+	CONSTRAINT "uq_nec_character_soul_id_name" UNIQUE("soul_id","name"),
+	CONSTRAINT "fk_nec_character_account_id" FOREIGN KEY("account_id") REFERENCES "account"("id"),
+	CONSTRAINT "fk_nec_character_soul_id" FOREIGN KEY("soul_id") REFERENCES "nec_soul"("id"),
+	CONSTRAINT "uq_nec_character_soul_id_slot" UNIQUE("soul_id","slot"),
+	CONSTRAINT "fk_nec_character_map_id" FOREIGN KEY("map_id") REFERENCES "nec_map"("id")
 );
 
 CREATE TABLE IF NOT EXISTS `nec_npc_spawn`

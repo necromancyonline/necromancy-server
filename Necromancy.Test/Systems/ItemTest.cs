@@ -84,6 +84,14 @@ namespace Necromancy.Test.Systems
             {
                 //ignore
             }
+            public void UpdateItemLocation(ulong instanceId, ItemLocation itemLocation)
+            {
+                //ignore
+            }
+            public void UpdateItemOwner(ulong instanceId, int ownerId, int statuses)
+            {
+                //ignore
+            }
         }
 
             public class TestMove

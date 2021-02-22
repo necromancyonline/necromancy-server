@@ -119,6 +119,7 @@ namespace Necromancy.Cli
             }
 
             Logger.Info("Press `e'-key to exit.");
+            
             ConsoleKeyInfo keyInfo = Console.ReadKey();
             while (keyInfo.Key != ConsoleKey.E)
             {

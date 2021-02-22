@@ -88,7 +88,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res35.WriteByte(0);
                     Router.Send(client, (ushort)AreaPacketId.recv_event_start, res35, ServerType.Area);
                     //Open union storage
-                    res36.WriteInt64(client.Soul.WarehouseGold); //todo make union gold variable
+                    res36.WriteUInt64(client.Soul.WarehouseGold); //todo make union gold variable
                     res36.WriteInt64(500); //??
                     Router.Send(client, (ushort) AreaPacketId.recv_event_union_storage_open, res36,
                         ServerType.Area);
