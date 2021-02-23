@@ -81,8 +81,10 @@ namespace Necromancy.Server.Setting
         [DataMember(Order = 43)] public uint PoolNpcIdSize { get; set; }
         [DataMember(Order = 44)] public uint PoolMonsterIdLowerBound { get; set; }
         [DataMember(Order = 45)] public uint PoolMonsterIdSize { get; set; }
-        [DataMember(Order = 46)] public uint PoolDynamicIdLowerBound { get; set; }
-        [DataMember(Order = 47)] public uint PoolDynamicIdSize { get; set; }
+        [DataMember(Order = 46)] public uint PoolDeadBodyIdLowerBound { get; set; }
+        [DataMember(Order = 47)] public uint PoolDeadBodyIdSize { get; set; }
+        [DataMember(Order = 48)] public uint PoolDynamicIdLowerBound { get; set; }
+        [DataMember(Order = 49)] public uint PoolDynamicIdSize { get; set; }
 
         // Folder
         [DataMember(Order = 60)] public string RepositoryFolder { get; set; }
@@ -115,6 +117,8 @@ namespace Necromancy.Server.Setting
             PoolNpcIdSize = 100000000;
             PoolMonsterIdLowerBound = 600000000;
             PoolMonsterIdSize = 100000000;
+            PoolDeadBodyIdLowerBound = 800000000;
+            PoolDeadBodyIdSize = 100000000;
             LogLevel = 0;
             LogUnknownIncomingPackets = true;
             LogOutgoingPackets = true;
@@ -150,6 +154,8 @@ namespace Necromancy.Server.Setting
             PoolNpcIdSize = setting.PoolNpcIdSize;
             PoolMonsterIdLowerBound = setting.PoolMonsterIdLowerBound;
             PoolMonsterIdSize = setting.PoolMonsterIdSize;
+            PoolDeadBodyIdLowerBound = setting.PoolDeadBodyIdLowerBound;
+            PoolDeadBodyIdSize = setting.PoolDeadBodyIdSize;
             PoolDynamicIdLowerBound = setting.PoolDynamicIdLowerBound;
             PoolDynamicIdSize = setting.PoolDynamicIdSize;
             LogLevel = setting.LogLevel;

@@ -64,6 +64,7 @@ namespace Necromancy.Server.Packet.Msg
 
             //Logic to support your dead body //Make this static.  need a predictable deadbody instance ID to support disconnect/reconnet
             DeadBody deadBody = new DeadBody();
+            deadBody.Id = character.Id;
             Server.Instances.AssignInstance(deadBody);
             character.DeadBodyInstanceId = deadBody.InstanceId;
             deadBody.CharacterInstanceId = character.InstanceId;
