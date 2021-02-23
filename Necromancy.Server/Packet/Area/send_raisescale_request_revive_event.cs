@@ -2,6 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -21,20 +22,14 @@ namespace Necromancy.Server.Packet.Area
             res22.WriteByte(0);
             Router.Send(client, (ushort)AreaPacketId.recv_event_start, res22, ServerType.Area);
             //if success
-            res22 = BufferProvider.Provide();
-            res22.WriteCString("scale\revive_success"); // animates your body floating up and standing
-            res22.WriteUInt32(client.Character.InstanceId); //ObjectID
-            Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+            RecvEventScriptPlay recvEventScriptPlay1 = new RecvEventScriptPlay("scale\revive_success", client.Character.InstanceId);
+            Router.Send(recvEventScriptPlay1, client);
             //if fail
-            res22 = BufferProvider.Provide();
-            res22.WriteCString("scale\revive_fail"); // animates your body floating up and standing
-            res22.WriteUInt32(client.Character.InstanceId); //ObjectID
-            //Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+            RecvEventScriptPlay recvEventScriptPlay2 = new RecvEventScriptPlay("scale\revive_fail", client.Character.InstanceId);
+            //Router.Send(recvEventScriptPlay2, client);
             //if fail again. you're lost
-            res22 = BufferProvider.Provide();
-            res22.WriteCString("scale\revive_lost"); // animates your body floating up and standing
-            res22.WriteUInt32(client.Character.InstanceId); //ObjectID
-            //Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+            RecvEventScriptPlay recvEventScriptPlay3 = new RecvEventScriptPlay("scale\revive_lost", client.Character.InstanceId);
+            //Router.Send(recvEventScriptPlay3, client);
         }
     }
 }

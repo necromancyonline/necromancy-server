@@ -162,6 +162,10 @@ namespace Necromancy.Server
             {
                 Logger.Error("Could not update the database with character details before disconnect");
             }
+            if (!this.Database.UpdateSoul(client.Soul))
+            {
+                Logger.Error("Could not update the database with soul details before disconnect");
+            }
             Clients.Remove(client);
 
             Map map = client.Map;

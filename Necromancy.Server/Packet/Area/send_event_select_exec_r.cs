@@ -168,9 +168,8 @@ namespace Necromancy.Server.Packet.Area
                 }
                 else
                 {
-                    IBuffer res22 = BufferProvider.Provide();
-                    res22.WriteCString("etc/heal_fountain"); // find max size 
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/heal_fountain", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay, client);
 
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("You drink The water and it replenishes you"); // Length 0xC01
@@ -375,6 +374,8 @@ namespace Necromancy.Server.Packet.Area
                     case 0:
                         if (client.Soul.Level > 3)
                         {
+                            res9.WriteCString($"Our sincerest apologies. That's only for new souls."); // Length 0xC01
+                            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res9, ServerType.Area); // show system message on middle of the screen.
                             SendEventEnd(client);
                             client.Character.eventSelectExtraSelectionCode = 0;
                             client.Character.eventSelectExecCode = 0;
@@ -451,6 +452,9 @@ namespace Necromancy.Server.Packet.Area
                     case 0:
                         if (client.Soul.Level > 3)
                         {
+                            res9 = BufferProvider.Provide();
+                            res9.WriteCString($"Sorry big guy. That's only for new souls."); // Length 0xC01
+                            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res9, ServerType.Area); // show system message on middle of the screen.
                             SendEventEnd(client);
                             client.Character.eventSelectExtraSelectionCode = 0;
                             client.Character.eventSelectExecCode = 0;
@@ -504,7 +508,7 @@ namespace Necromancy.Server.Packet.Area
             if (client.Character.eventSelectExecCode == 0)
             {
                 int[] HPandMPperChoice = new int[] {100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100};
-                int[] ConditionPerChoice = new int[] {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
+                byte[] ConditionPerChoice = new byte[] {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
                 ulong[] GoldCostPerChoice = new ulong[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
                 Logger.Debug($"The selection you have made is {client.Character.eventSelectExtraSelectionCode}");
 
@@ -512,7 +516,7 @@ namespace Necromancy.Server.Packet.Area
                     true);
                 client.Character.Mp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode],
                     true);
-                /*client.Character.condition*/
+                client.Character.Condition.setCurrent(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
                 client.Character.Od.toMax();
                 client.Character.Gp.toMax();
                 client.Character.AdventureBagGold -= GoldCostPerChoice[client.Character.eventSelectExtraSelectionCode];
@@ -527,15 +531,15 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt32(client.Character.Mp.current);
                 Router.Send(client, (ushort) AreaPacketId.recv_chara_update_mp, res, ServerType.Area);
                 res = BufferProvider.Provide();
-                res.WriteByte((byte) ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
+                res.WriteByte(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
                 Router.Send(client, (ushort) AreaPacketId.recv_chara_update_con, res, ServerType.Area);
                 res = BufferProvider.Provide();
                 res.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
                 Router.Send(client, (ushort) AreaPacketId.recv_self_money_notify, res, ServerType.Area);
 
-                IBuffer res22 = BufferProvider.Provide();
-                res22.WriteCString("inn/fade_bgm"); // find max size 
-                Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+                RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("inn/fade_bgm", client.Character.InstanceId);
+                Router.Send(recvEventScriptPlay, client);
+
             }
             else
             {
@@ -729,9 +733,8 @@ namespace Necromancy.Server.Packet.Area
                     break;
                 case 1:
                     res = BufferProvider.Provide();
-                    res.WriteCString("etc/warp_samemap"); // find max size 
-                    res.WriteUInt32(client.Character.InstanceId); //newJp
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res, ServerType.Area);
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay, client);
                     Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
                     (t1 =>
                         {
@@ -748,9 +751,8 @@ namespace Necromancy.Server.Packet.Area
                     break;
                 case 2:
                     res = BufferProvider.Provide();
-                    res.WriteCString("etc/warp_samemap"); // find max size
-                    res.WriteUInt32(client.Character.InstanceId); //newJp
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res, ServerType.Area);
+                    RecvEventScriptPlay recvEventScriptPlay2 = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay2, client);
                     Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
                     (t1 =>
                         {
@@ -767,9 +769,8 @@ namespace Necromancy.Server.Packet.Area
                     break;
                 case 3:
                     res = BufferProvider.Provide();
-                    res.WriteCString("etc/warp_samemap"); // find max size
-                    res.WriteUInt32(client.Character.InstanceId); //newJp
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res, ServerType.Area);
+                    RecvEventScriptPlay recvEventScriptPlay3 = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay3, client);
                     Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
                     (t1 =>
                         {

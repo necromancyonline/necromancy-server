@@ -992,9 +992,8 @@ namespace Necromancy.Server.Packet.Area
         private void MapHomeWarp(NecClient client, GGateSpawn ggateSpawn)
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteCString("etc/warp_samemap"); // find max size 
-            res.WriteUInt32(client.Character.InstanceId); //newJp
-            Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res, ServerType.Area);
+            RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+            Router.Send(recvEventScriptPlay, client);
             Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
             (t1 =>
                 {

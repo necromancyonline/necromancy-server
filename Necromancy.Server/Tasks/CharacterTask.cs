@@ -27,6 +27,7 @@ namespace Necromancy.Server.Tasks
         private DateTime _logoutTime;
         private byte _logoutType;
         private bool playerDied;
+        private int _tickCounter;
         private List<NecClient> _clients;
 
         public CharacterTask(NecServer server, NecClient client)
@@ -36,6 +37,7 @@ namespace Necromancy.Server.Tasks
             tickTime = 500;
             _logoutTime = DateTime.MinValue;
             playerDied = false;
+            _tickCounter = 0;
         }
 
         public override string TaskName => "CharacterTask";
@@ -62,12 +64,34 @@ namespace Necromancy.Server.Tasks
 
                 StatRegen();
 
+                if (_tickCounter == 600)
+                {
+                    CriminalRepent();
+                    SoulMaterialIncrease();
+                    _tickCounter = 0;
+                }
+
+                _tickCounter++;
                 Thread.Sleep(tickTime);
             }
 
             this.Stop();
         }
 
+        private void CriminalRepent()
+        {
+            _client.Soul.CriminalLevel -= 1;
+            if (_client.Soul.CriminalLevel <= 0) _client.Soul.CriminalLevel = 0;
+            _client.Character.criminalState = _client.Soul.CriminalLevel;
+        }
+        private void SoulMaterialIncrease()
+        {
+            _client.Soul.MaterialChaos += 10;
+            _client.Soul.MaterialLawful += 10;
+            _client.Soul.MaterialLife += 10;
+            _client.Soul.MaterialReincarnation += 10;
+            _client.Soul.PointsChaos += 10; //temporary. testing
+        }
         private void StatRegen()
         {
             if (_client.Character.Gp.current < _client.Character.Gp.max) 

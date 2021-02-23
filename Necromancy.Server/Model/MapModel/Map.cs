@@ -290,6 +290,10 @@ namespace Necromancy.Server.Model
             {
                 Logger.Error("Could not update the database with current known player position");
             }
+            if (!_server.Database.UpdateSoul(client.Soul))
+            {
+                Logger.Error("Could not update the database with soul details ");
+            }
         }
 
         public void Leave(NecClient client)
@@ -300,6 +304,11 @@ namespace Necromancy.Server.Model
             {
                 Logger.Error("Could not update the database with last known player position");
             }
+            if (!_server.Database.UpdateSoul(client.Soul))
+            {
+                Logger.Error("Could not update the database with soul details ");
+            }
+ 
 
             client.Map = null;
 
