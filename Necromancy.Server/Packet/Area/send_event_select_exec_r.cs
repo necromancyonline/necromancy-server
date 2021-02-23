@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Arrowgene.Logging;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -581,142 +582,75 @@ namespace Necromancy.Server.Packet.Area
 
         private void RandomItemGuy(NecClient client, NpcSpawn npcSpawn)
         {
+            ItemSpawnParams spawmParam = new ItemSpawnParams();
+            spawmParam.ItemStatuses = ItemStatuses.Unidentified;
+            ItemService itemService = new ItemService(client.Character);
+            ItemInstance itemInstance = null;
+
+            IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(2);
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
             if (client.Character.eventSelectExecCode == 0)
             {
-                //List<Item> Weaponlist = new System.Collections.Generic.List<Item>();
-                //foreach (Item weapon in Server.Items.Values)
-                //{ 
-                //    if(weapon.Id > 10100101 & weapon.Id < 15300101)
-                //    {
-                //        Weaponlist.Add(weapon);
-                //    }
-                //}
+                List<ItemInfoSetting> Weaponlist = new List<ItemInfoSetting>();
+                foreach (ItemInfoSetting weapon in Server.SettingRepository.ItemInfo.Values)
+                {
+                    if (weapon.Id > 10100101 & weapon.Id < 15300101)
+                    {
+                        Weaponlist.Add(weapon);
+                    }
+                }
 
-                //Item item = Weaponlist[Util.GetRandomNumber(0,Weaponlist.Count)];
+                int baseId = Weaponlist[Util.GetRandomNumber(0, Weaponlist.Count)].Id;
+                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                //    Character character = client.Character;
-
-                //    // Create InventoryItem
-                //    InventoryItem inventoryItem = new InventoryItem();
-                //    inventoryItem.Item = item;
-                //    inventoryItem.ItemId = item.Id;
-                //    inventoryItem.Quantity = 1;
-                //    inventoryItem.CurrentDurability = item.Durability;
-                //    inventoryItem.CharacterId = character.Id;
-                //    inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                //    inventoryItem.State = 0;
-
-                //    Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-                //    client.Character.Inventory.AddInventoryItem(inventoryItem);
-                //    if (!Server.Database.InsertInventoryItem(inventoryItem))
-                //    {
-                //        IBuffer res13 = BufferProvider.Provide();
-                //        res13.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
-                //        Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13, ServerType.Area); // show system message on middle of the screen.
-                //        return;
-                //    }
-
-                //    RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
-                //    Router.Send(recvItemInstance, client);
-                //    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                //    Router.Send(recvItemInstanceUnidentified, client);
-
-                //    itemStats(inventoryItem, client);
-                
-                //    IBuffer res12 = BufferProvider.Provide();
-                //    res12.WriteCString($"Enjoy your new {item.Name}"); // Length 0xC01
-                //    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12, ServerType.Area); // show system message on middle of the screen.
-                
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else if (client.Character.eventSelectExecCode == 1)
             {
-                //List<Item> ArmorList = new System.Collections.Generic.List<Item>();
-                //foreach (Item armor in Server.Items.Values)
-                //{
-                //    if (armor.Id > 16100101 & armor.Id < 30499901)
-                //    {
-                //        ArmorList.Add(armor);
-                //    }
-                //}
+                List<ItemInfoSetting> ArmorList = new List<ItemInfoSetting>();
+                foreach (ItemInfoSetting armor in Server.SettingRepository.ItemInfo.Values)
+                {
+                    if (armor.Id > 16100101 & armor.Id < 30499901)
+                    {
+                        ArmorList.Add(armor);
+                    }
+                }
 
-                //Item item = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)];
+                int baseId = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)].Id;
+                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                //Character character = client.Character;
-
-                //// Create InventoryItem
-                //InventoryItem inventoryItem = new InventoryItem();
-                //inventoryItem.Item = item;
-                //inventoryItem.ItemId = item.Id;
-                //inventoryItem.Quantity = 1;
-                //inventoryItem.CurrentDurability = item.Durability;
-                //inventoryItem.CharacterId = character.Id;
-                //inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                //inventoryItem.State = 0;
-
-                //Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-                //client.Character.Inventory.AddInventoryItem(inventoryItem);
-                //if (!Server.Database.InsertInventoryItem(inventoryItem))
-                //{
-                //    IBuffer res13 = BufferProvider.Provide();
-                //    res13.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
-                //    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13, ServerType.Area); // show system message on middle of the screen.
-                //    return;
-                //}
-
-                //RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
-                //Router.Send(recvItemInstance, client);
-                //RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                //Router.Send(recvItemInstanceUnidentified, client);
-
-                //itemStats(inventoryItem, client);
-
-                //IBuffer res12 = BufferProvider.Provide();
-                //res12.WriteCString($"Enjoy your new {item.Name}"); // Length 0xC01
-                //Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12, ServerType.Area); // show system message on middle of the screen.
-
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else if (client.Character.eventSelectExecCode == 2)
             { //50401040,Moist Cudgel
-                //Item item = Server.Items[50401040]; //This can select from a small array of items, and a small array of custom names
+                int baseId = 50401040; //This can select from a small array of items, and a small array of custom names
+                spawmParam.ItemStatuses = ItemStatuses.Identified;
+                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                //Character character = client.Character;
-
-                //// Create InventoryItem
-                //InventoryItem inventoryItem = new InventoryItem();
-                //inventoryItem.Item = item;
-                //inventoryItem.ItemId = item.Id;
-                //inventoryItem.Quantity = 1;
-                //inventoryItem.CurrentDurability = item.Durability;
-                //inventoryItem.CharacterId = character.Id;
-                //inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                //inventoryItem.State = 0;
-
-                //Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-                //client.Character.Inventory.AddInventoryItem(inventoryItem);
-                //if (!Server.Database.InsertInventoryItem(inventoryItem))
-                //{
-                //    IBuffer res13 = BufferProvider.Provide();
-                //    res13.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
-                //    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13, ServerType.Area); // show system message on middle of the screen.
-                //    return;
-                //}
-
-                //RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
-                //Router.Send(recvItemInstance, client);
-                //RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                //Router.Send(recvItemInstanceUnidentified, client);
-
-                //itemStats(inventoryItem, client);
-
-                //IBuffer res12 = BufferProvider.Provide();
-                //res12.WriteCString($"Enjoy your new Super {item.Name}"); // Length 0xC01
-                //Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12, ServerType.Area); // show system message on middle of the screen.
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                Router.Send(client, recvItemInstance.ToPacket());
             }
 
+            if (itemInstance == null)
+            {
+                res = BufferProvider.Provide();
+                res.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
+                Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
+                res = BufferProvider.Provide();
+                Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+                RecvEventEnd(client); //End The Event 
+                return;
+            }
+            res = BufferProvider.Provide();
+            res.WriteCString($"Enjoy your new Super {itemInstance.UnidentifiedName}"); // Length 0xC01
+            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
 
+            res = BufferProvider.Provide();
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             RecvEventEnd(client); //End The Event 
         }
 

@@ -56,16 +56,13 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            int[] itemIds = new int[] { itemId };
-            ItemSpawnParams[] spawmParams = new ItemSpawnParams[itemIds.Length];
-            for (int i = 0; i < itemIds.Length; i++)
-            {
-                spawmParams[i] = new ItemSpawnParams();
-                spawmParams[i].ItemStatuses = ItemStatuses.Identified;
-                if (command.Length > 1 && command[1] == "u") spawmParams[i].ItemStatuses = ItemStatuses.Unidentified;
-            }
+
+            ItemSpawnParams spawmParam = new ItemSpawnParams();
+            spawmParam.ItemStatuses = ItemStatuses.Identified;
+            if (command.Length > 1 && command[1] == "u") spawmParam.ItemStatuses = ItemStatuses.Unidentified;
+
             ItemService itemService = new ItemService(client.Character);
-            List<ItemInstance> items = itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
+            ItemInstance itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, itemId, spawmParam);
             byte itemZoneOverride = 0;
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(2);
@@ -73,23 +70,16 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (command.Length > 1 && command[1] == "u")
             {
-                foreach (ItemInstance itemInstance in items)
-                {
-                    if (command.Length > 2) { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.Location.ZoneType; }
-                    Logger.Debug(itemInstance.Type.ToString());
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, byte.Parse(command[2]));
-                    Router.Send(client, recvItemInstanceUnidentified.ToPacket());
-                }
+                if (command.Length > 2 && command[2] != "") { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.Location.ZoneType; }
+                Logger.Debug(itemInstance.Type.ToString());
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, itemZoneOverride);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else
             {
-                foreach (ItemInstance itemInstance in items)
-                {
-                    Logger.Debug(itemInstance.Type.ToString());
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
-                    Router.Send(client, recvItemInstance.ToPacket());
-                }
-
+                Logger.Debug(itemInstance.Type.ToString());
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                Router.Send(client, recvItemInstance.ToPacket());
             }
             res = BufferProvider.Provide();
             Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);

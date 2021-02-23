@@ -42,7 +42,11 @@ namespace Necromancy.Server.Systems.Item
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
             ItemInstance item = _character.ItemManager.GetItem(location);
-            if (item.Statuses.HasFlag(ItemStatuses.Unidentified)) item.Statuses -= ItemStatuses.Unidentified;
+            if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
+            { 
+                item.Statuses &= ~ItemStatuses.Unidentified;
+                _itemDao.UpdateItemOwnerAndStatus(item.InstanceID, _character.Id, (int)item.Statuses);
+            }
             return item;
         }
 
@@ -129,10 +133,19 @@ namespace Necromancy.Server.Systems.Item
             //ToDo,  make this find space in more than just your adventure bag.
             ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
             myNewItem.Location = nextOpenLocation;
-            _itemDao.UpdateItemOwner(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
+            _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
             _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
             _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
             return myNewItem;
+        }
+
+        public ItemInstance SpawnItemInstance(ItemZoneType itemZoneType, int baseId, ItemSpawnParams spawnParam)
+        {
+            int[] itemIds = new int[] { baseId };
+            ItemSpawnParams[] spawmParams = new ItemSpawnParams[1];
+            spawmParams[0] = spawnParam;
+            List<ItemInstance> items = SpawnItemInstances(itemZoneType, itemIds, spawmParams);
+            return items[0];
         }
 
         public List<ItemInstance> SpawnItemInstances(ItemZoneType itemZoneType, int[] baseIds, ItemSpawnParams[] spawnParams)
