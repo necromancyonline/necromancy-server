@@ -1,7 +1,8 @@
-﻿using Arrowgene.Buffers;
+using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -15,10 +16,16 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
+            int response = packet.Data.ReadInt32(); //0 for yes, -1 for no;
 
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_charabody_self_salvage_result, res, ServerType.Area);
+            //send response _r
+            RecvCharaBodySalvageRequest recvCharaBodySalvageRequest = new RecvCharaBodySalvageRequest(response);
+            Router.Send(client.Map, recvCharaBodySalvageRequest.ToPacket());
+
+            RecvCharaBodySalvageNotifySalvager recvCharaBodySalvageNotifySalvager = new RecvCharaBodySalvageNotifySalvager(200000002, client.Character.Name, client.Soul.Name);
+            //Router.Send(client, recvCharaBodySalvageNotifySalvager.ToPacket());
+
+
         }
 
 

@@ -2,6 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -16,17 +17,13 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             uint targetId = packet.Data.ReadUInt32();
-            IBuffer res = BufferProvider.Provide();
+            client.Map.DeadBodies.TryGetValue(targetId, out DeadBody deadbody);
+            NecClient necClient = Server.Clients.GetByCharacterInstanceId(deadbody.CharacterInstanceId);
 
-            res.WriteInt32(0);
+            //ask the soul if they want to be collected. gotta have consent!
+            RecvCharaBodySelfSalvageNotify recvCharaBodySelfSalvageNotify = new RecvCharaBodySelfSalvageNotify(client.Character.Name, client.Soul.Name);
+            if (necClient != null) Router.Send(necClient, recvCharaBodySelfSalvageNotify.ToPacket());
 
-            Router.Send(client, (ushort) AreaPacketId.recv_charabody_salvage_request_r, res, ServerType.Area);
-
-            IBuffer res2 = BufferProvider.Provide();
-	        res2.WriteUInt32(targetId);
-            res2.WriteCString("soul"); // find max size
-            res2.WriteCString("char"); // find max size
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_charabody_salvage_notify_body, res2, ServerType.Area);
         }
     }
 }
