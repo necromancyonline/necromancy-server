@@ -5,6 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
+    /// <summary>
+    /// when the walkers get you, fire this.
+    /// </summary>
     public class RecvSoulEaterTouchNotify : PacketResponse
     {
         public RecvSoulEaterTouchNotify()
@@ -15,7 +18,8 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(0);//objectId
+            res.WriteInt32(0);//is_success
             return res;
         }
     }

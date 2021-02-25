@@ -42,7 +42,7 @@ namespace Necromancy.Server.Packet.Area
         private void SendDataGetSelfCharaData(NecClient client)
         {
             int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
-            int numStatusEffects = 0; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
+            int numStatusEffects = client.Character.StatusEffects.Length; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
             int i = 0;
             if (client.Character.State == Model.CharacterModel.CharacterState.SoulForm) numEntries = 0; //Dead mean wear no gear
 
@@ -329,10 +329,10 @@ namespace Necromancy.Server.Packet.Area
             //sub_485A70
             for (int k = 0; k < numStatusEffects; k++) //status buffs / debuffs
             {
-                res.WriteInt32(0); //instanceID or unique ID
-                res.WriteInt32(0); //Buff.SerialId
-                res.WriteInt32(0); //Buff.EffectId
-                res.WriteInt32(9999999); //new
+                res.WriteInt32(i); //instanceID or unique ID
+                res.WriteUInt32(client.Character.StatusEffects[k]); //Buff.SerialId from buff.csv
+                res.WriteInt32(Util.GetRandomNumber(100,6000)); //Time Remaining in seconds
+                res.WriteInt32(1); //new
             }
 
             res.WriteByte(0);//new

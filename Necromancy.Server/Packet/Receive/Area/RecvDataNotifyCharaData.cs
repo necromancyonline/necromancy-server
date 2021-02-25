@@ -34,7 +34,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             TimeSpan differenceJoined = DateTime.Today.ToUniversalTime() - DateTime.UnixEpoch;
             int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
-            int numStatusEffects = 0; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
+            int numStatusEffects = _character.StatusEffects.Length; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
             int i = 0;
             if (_character.HasDied == true) numEntries = 0; //Dead mean wear no gear
 
@@ -136,10 +136,10 @@ namespace Necromancy.Server.Packet.Receive.Area
             //sub_485A70
             for (i = 0; i < numStatusEffects; i++)
             {
-                res.WriteInt32(0); //instanceID or unique ID
-                res.WriteInt32(0); //Buff.SerialId
-                res.WriteInt32(0); //Buff.EffectId
-                res.WriteInt32(9999999); //new
+                res.WriteInt32(i); //instanceID or unique ID
+                res.WriteUInt32(_character.StatusEffects[i]); //Buff.SerialId from buff.csv
+                res.WriteInt32(Util.GetRandomNumber(100, 6000)); //Time Remaining in seconds
+                res.WriteInt32(1); //new
             }
 
             //sub_481AA0

@@ -111,7 +111,7 @@ namespace Necromancy.Server.Packet.Area
 
             foreach (GGateSpawn gGateSpawn in client.Map.GGateSpawns.Values)
             {
-                RecvDataNotifyGGateData gGateSpawnData = new RecvDataNotifyGGateData(gGateSpawn);
+                RecvDataNotifyGGateStoneData gGateSpawnData = new RecvDataNotifyGGateStoneData(gGateSpawn);
                 Router.Send(gGateSpawnData, client);
             }
 
