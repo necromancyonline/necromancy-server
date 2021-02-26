@@ -147,6 +147,10 @@ namespace Necromancy.Server.Tasks
             deadBody.HairId = _client.Character.HairId;
             deadBody.HairColorId = _client.Character.HairColorId;
             deadBody.FaceId = _client.Character.FaceId;
+            deadBody.FaceArrangeId = _client.Character.FaceArrangeId;
+            deadBody.VoiceId = _client.Character.VoiceId;
+            deadBody.Level = _client.Character.Level;
+            deadBody.ClassId = _client.Character.ClassId;
             deadBody.EquippedItems = _client.Character.EquippedItems;
             deadBody.ItemManager = _client.Character.ItemManager;
             _clients = _client.Map.ClientLookup.GetAll();

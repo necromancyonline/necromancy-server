@@ -8,6 +8,11 @@ namespace Necromancy.Server.Packet.Area
 {
     public class send_charabody_self_salvage_notify_r : ClientHandler
     {
+        private enum myResponse : int
+        {
+            AcceptCollection = 0,
+            DenyCollection = int.MaxValue
+        }
         public send_charabody_self_salvage_notify_r(NecServer server) : base(server)
         {
         }
@@ -17,13 +22,28 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             int response = packet.Data.ReadInt32(); //0 for yes, -1 for no;
+            NecClient necClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
-            //send response _r
+            //Notify the dead client that it has accepted body collection and it's soul now posseses the salvager.
+            RecvCharaBodySelfSalvageResult recvCharaBodySelfSalvageResult = new RecvCharaBodySelfSalvageResult(response);
+            Router.Send(client, recvCharaBodySelfSalvageResult.ToPacket());
+
+            //tell the salvager about your choice.
             RecvCharaBodySalvageRequest recvCharaBodySalvageRequest = new RecvCharaBodySalvageRequest(response);
-            Router.Send(client.Map, recvCharaBodySalvageRequest.ToPacket());
+            Router.Send(necClient, recvCharaBodySalvageRequest.ToPacket());
 
-            RecvCharaBodySalvageNotifySalvager recvCharaBodySalvageNotifySalvager = new RecvCharaBodySalvageNotifySalvager(200000002, client.Character.Name, client.Soul.Name);
-            //Router.Send(client, recvCharaBodySalvageNotifySalvager.ToPacket());
+
+            if (response == (int)myResponse.AcceptCollection)
+            {
+                //tell the dead client who collected the body
+                RecvCharaBodySalvageNotifySalvager recvCharaBodySalvageNotifySalvager = new RecvCharaBodySalvageNotifySalvager(necClient.Character.InstanceId, necClient.Character.Name, necClient.Soul.Name);
+                Router.Send(client, recvCharaBodySalvageNotifySalvager.ToPacket());
+
+                //tell the salvager who they collected.
+                RecvCharaBodySalvageNotifyBody recvCharaBodySalvageNotifyBody = new RecvCharaBodySalvageNotifyBody(client.Character.DeadBodyInstanceId, client.Character.Name, client.Soul.Name);
+                Router.Send(necClient, recvCharaBodySalvageNotifyBody.ToPacket());
+            }
+
 
 
         }

@@ -512,6 +512,8 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_charabody_loot_complete2(this));
             _areaConsumer.AddHandler(new send_charabody_loot_start3(this));
             _areaConsumer.AddHandler(new send_charabody_loot_complete3(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start2_cancel(this));
+            _areaConsumer.AddHandler(new send_charabody_self_salvage_abort(this));            
         }
     }
 }

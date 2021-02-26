@@ -20,9 +20,15 @@ namespace Necromancy.Server.Packet.Area
             client.Map.DeadBodies.TryGetValue(targetId, out DeadBody deadbody);
             NecClient necClient = Server.Clients.GetByCharacterInstanceId(deadbody.CharacterInstanceId);
 
+            if (deadbody != null) deadbody.SalvagerId = client.Character.InstanceId;
+
             //ask the soul if they want to be collected. gotta have consent!
             RecvCharaBodySelfSalvageNotify recvCharaBodySelfSalvageNotify = new RecvCharaBodySelfSalvageNotify(client.Character.Name, client.Soul.Name);
-            if (necClient != null) Router.Send(necClient, recvCharaBodySelfSalvageNotify.ToPacket());
+            if (necClient != null)
+            {
+                Router.Send(necClient, recvCharaBodySelfSalvageNotify.ToPacket());
+                necClient.Character.eventSelectExecCode = (int)client.Character.InstanceId;
+            }
 
         }
     }

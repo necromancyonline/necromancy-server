@@ -2,6 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -15,11 +16,9 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            IBuffer res = BufferProvider.Provide();
-
-            res.WriteInt32(0);
-
-            Router.Send(client, (ushort) AreaPacketId.recv_charabody_salvage_request_cancel_r, res, ServerType.Area);
+         
+            RecvCharaBodySalvageRequestCancel recvCharaBodySalvageRequestCancel = new RecvCharaBodySalvageRequestCancel(0);
+            Router.Send(client, recvCharaBodySalvageRequestCancel.ToPacket());
         }
     }
 }
