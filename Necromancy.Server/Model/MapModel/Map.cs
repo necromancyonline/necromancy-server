@@ -5,6 +5,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Model.MapModel;
 using Necromancy.Server.Model.Skills;
 using Necromancy.Server.Packet.Receive.Area;
@@ -246,8 +247,37 @@ namespace Necromancy.Server.Model
             ClientLookup.Add(client);
             Logger.Debug($"Client Lookup count is now : {ClientLookup.GetAll().Count}  for map  {this.Id} ");
             Logger.Debug($"Character State for character {client.Character.Name} is {client.Character.State}");
+             //ToDo  move all this rendering logic to Send_Map_Entry.   We dont need a copy of this logic on every map instance.
+            //Send your character data to the other living or dead players on the map.
             RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
-            _server.Router.Send(this, myCharacterData, client);
+            //_server.Router.Send(this, myCharacterData, client); //replaced by below logic
+
+            //dead
+            //you are dead here.  only getting soul form characters. sorry bro.             
+            if (client.Character.State.HasFlag(CharacterState.SoulForm))
+            {
+                foreach (NecClient otherClient in this.ClientLookup.GetAll())
+                {
+                    if (otherClient == client) continue;
+                    if (otherClient.Character.State.HasFlag(CharacterState.SoulForm))
+                    {
+                        _server.Router.Send(myCharacterData, otherClient);
+                    }
+                }
+            }
+            else //Bro, you alive! You gon see living characters!
+            {
+                foreach (NecClient otherClient in this.ClientLookup.GetAll())
+                {
+                    if (otherClient == client) continue;
+                    if (otherClient.Character.State.HasFlag(CharacterState.SoulForm))
+                    {
+                        continue;
+                    }
+                    _server.Router.Send(myCharacterData, otherClient);
+                }
+            }
+
             if (client.Union != null)
             {
                 RecvDataNotifyUnionData myUnionData = new RecvDataNotifyUnionData(client.Character, client.Union.Name);

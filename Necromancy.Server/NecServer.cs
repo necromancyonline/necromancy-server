@@ -41,6 +41,7 @@ using Necromancy.Server.Packet.Area.SendCmdExec;
 using Necromancy.Server.Packet.Auth;
 using Necromancy.Server.Packet.Custom;
 using Necromancy.Server.Packet.Msg;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Setting;
 
 namespace Necromancy.Server
@@ -169,6 +170,11 @@ namespace Necromancy.Server
             Clients.Remove(client);
 
             Map map = client.Map;
+            if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+            {
+                RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
+                Router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
+            }
             if (map != null)
             {
                 map.Leave(client);

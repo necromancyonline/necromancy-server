@@ -34,6 +34,7 @@ namespace Necromancy.Server.Packet.Area
             //LoadBattleStats(client);
             LoadHonor(client);
             //LoadSoulDispItem(client);
+            LoadSoulState(client);
         }
 
         public void LoadSoulDispItem(NecClient client)
@@ -42,6 +43,21 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res19 = BufferProvider.Provide();
             res19.WriteInt32(Util.GetRandomNumber(62000001, 62000015)); //soul_dispitem.csv
             Router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_notify_data, res19, ServerType.Area);
+        }
+
+        public void LoadSoulState (NecClient client)
+        {
+            if (client.Character.Hp.current <=0)
+            {
+                client.Character.State |= Model.CharacterModel.CharacterState.SoulForm;
+                client.Character.HasDied = true;
+            }
+            if (client.Character.Hp.current < -1) client.Character.State |= Model.CharacterModel.CharacterState.LostState;
+            if ((int)client.Account.State == 100) client.Character.State |= Model.CharacterModel.CharacterState.GameMaster;
+
+
+
+
         }
 
         public void LoadHonor(NecClient client)

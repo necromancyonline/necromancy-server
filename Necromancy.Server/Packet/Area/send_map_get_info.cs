@@ -3,11 +3,15 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
+    /// <summary>
+    //Tell the entering client about all the other objects on the map being entered.
+    /// </summary>
     public class send_map_get_info : ClientHandler
     {
         private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_map_get_info));
@@ -23,18 +27,50 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            //if you are not dead, do normal stuff.  else...  do dead person stuff
-            if (client.Character.State != Model.CharacterModel.CharacterState.SoulForm)
+            //you are dead here.  only getting soul form characters and NPCs.  sorry bro.             
+            if (client.Character.State.HasFlag(CharacterState.SoulForm))
+            {
+                Logger.Debug($"Rendering Dead stuff");
+                foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
+                {
+                    if (otherClient == client)
+                    {
+                        // skip myself
+                        continue;
+                    }
+                    //Render all the souls if you are in soul form yourself
+                    if (otherClient.Character.State.HasFlag(CharacterState.SoulForm))
+                    {
+                        RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
+                        Router.Send(otherCharacterData, client);
+                    }
+
+                    if (otherClient.Union != null)
+                    {
+                        RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
+                        Router.Send(otherUnionData, client);
+                    }
+                }
+                foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
+                {
+                    if (npcSpawn.Visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
+                    {
+                        RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
+                        Router.Send(npcData, client);
+                    }
+                }
+            }
+            else //if you are not dead, do normal stuff.  else...  do dead person stuff
             {
                 Logger.Debug($"Not dead.  rendering living stuff.  CharacterState:{client.Character.State}");
                 foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
                 {
                     if (otherClient == client) continue;
-                    if (otherClient.Character.State != Model.CharacterModel.CharacterState.SoulForm)
+                    if (!otherClient.Character.State.HasFlag(CharacterState.SoulForm))
                     {
                         RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
                         Router.Send(otherCharacterData, client);
-                    }     
+                    }
                     if (otherClient.Union != null)
                     {
                         RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
@@ -58,39 +94,6 @@ namespace Necromancy.Server.Packet.Area
                     }
                 }
 
-
-            }
-            else //you are dead here.  only getting soul form characters and NPCs.  sorry bro.
-            {
-                Logger.Debug($"Rendering Dead stuff");
-                foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
-                {
-                    if (otherClient == client)
-                    {
-                        // skip myself
-                        continue;
-                    }
-                    //Render all the souls if you are in soul form yourself
-                    if (otherClient.Character.State == Model.CharacterModel.CharacterState.SoulForm)
-                    {
-                        RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
-                        Router.Send(otherCharacterData, client);
-                    }                   
-
-                    if (otherClient.Union != null)
-                    {
-                        RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
-                        Router.Send(otherUnionData, client);
-                    }
-                }
-                foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
-                {
-                    if (npcSpawn.Visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
-                    {
-                        RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
-                        Router.Send(npcData, client);
-                    }
-                }
 
             }
             //Allways render the stuff below this line.

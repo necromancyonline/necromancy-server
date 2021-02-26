@@ -112,7 +112,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     //recv_charabody_notify_deadstate = 0xCC36, // Parent = 0xCB94 // Range ID = 03
                     IBuffer res6 = BufferProvider.Provide();
                     res6.WriteUInt32(character2.DeadBodyInstanceId);
-                    res6.WriteInt32(5); //4 changes body to ash pile, 5 causes a mist to happen and disappear
+                    res6.WriteInt32(y); //4 changes body to ash pile, 5 causes a mist to happen and disappear
                     res6.WriteInt32(y); // change type. unknown impact.
                     Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_notify_deadstate, res6,
                         ServerType.Area);
@@ -154,11 +154,12 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "spirit":
-                    //recv_charabody_notify_spirit = 0x36A6, //causes charater model to dissappear, but not title. for body collection??
+                    //recv_charabody_notify_spirit = 0x36A6, // Dead-Body online status toggle.  0 = disconnected client. 1 = connected
+                    NecClient necClient = client.Map.ClientLookup.GetByCharacterInstanceId(character2.InstanceId);
                     IBuffer res12 = BufferProvider.Provide();
-                    res12.WriteUInt32(character2.InstanceId);
+                    res12.WriteUInt32(character2.DeadBodyInstanceId);
                     res12.WriteByte((byte) y);
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_notify_spirit, res12, ServerType.Area);
+                    Router.Send(necClient, (ushort) AreaPacketId.recv_charabody_notify_spirit, res12, ServerType.Area);
                     break;
 
                 case "abyss": //lil marker in soul form of where you died if you jump off the map

@@ -29,6 +29,12 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(0); //Bool - play cutscene. 1 yes, 0 no?  //to-do,  play a cutscene on first time map entry 
             Router.Send(client, (ushort) AreaPacketId.recv_map_enter_r, res, ServerType.Area);
 
+            //if (client.Map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+            //{
+            //    RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.ConnectedClient);
+            //    Router.Send(client.Map, recvCharaBodyNotifySpirit.ToPacket());
+            //}
+
 
             //added delay to prevent crash on map entry.
             Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith

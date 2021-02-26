@@ -10,7 +10,7 @@ using System;
 /// <summary>
 /// This receive loads your Character on the map.  dead or alive.
 /// 
-/// for spirit stuff go to the CharaBodyData recv.
+/// for deadbody stuff go to the CharaBodyData recv.
 /// </summary>
 namespace Necromancy.Server.Packet.Receive.Area
 {
