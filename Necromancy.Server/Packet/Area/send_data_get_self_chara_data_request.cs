@@ -27,8 +27,9 @@ namespace Necromancy.Server.Packet.Area
         {
             ItemService itemService = new ItemService(client.Character);
             itemService.LoadEquipmentModels();
-            client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
             client.Soul.SetSoulAlignment();
+            client.Character.LoginCheckDead();
+            client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
             _equippedItems = new ItemInstance[client.Character.EquippedItems.Count];
             client.Character.EquippedItems.Values.CopyTo(_equippedItems, 0);
 
@@ -44,7 +45,7 @@ namespace Necromancy.Server.Packet.Area
             int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
             int numStatusEffects = client.Character.StatusEffects.Length; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
             int i = 0;
-            if (client.Character.State == Model.CharacterModel.CharacterState.SoulForm) numEntries = 0; //Dead mean wear no gear
+            if (client.Character.State.HasFlag(Model.CharacterModel.CharacterState.SoulForm)) numEntries = 0; //Dead mean wear no gear
 
             IBuffer res = BufferProvider.Provide();
             //sub_4953B0 - characteristics

@@ -181,7 +181,7 @@ namespace Necromancy.Server.Tasks
                 {
                     RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                     if (_client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                    { _server.Router.Send(_client.Map, cBodyData.ToPacket()); }
+                    { _server.Router.Send(_client.Map, cBodyData.ToPacket(), _client); }
                     _server.Router.Send(_client, cBodyData.ToPacket());
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.Character.InstanceId);
                     _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);

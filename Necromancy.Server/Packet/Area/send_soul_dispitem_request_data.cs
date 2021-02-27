@@ -55,9 +55,6 @@ namespace Necromancy.Server.Packet.Area
             if (client.Character.Hp.current < -1) client.Character.State |= Model.CharacterModel.CharacterState.LostState;
             if ((int)client.Account.State == 100) client.Character.State |= Model.CharacterModel.CharacterState.GameMaster;
 
-
-
-
         }
 
         public void LoadHonor(NecClient client)

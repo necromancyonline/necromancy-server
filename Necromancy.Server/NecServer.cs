@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Arrowgene.Logging;
 using Arrowgene.Networking.Tcp.Server.AsyncEvent;
 using Necromancy.Server.Chat;
@@ -172,8 +173,22 @@ namespace Necromancy.Server
             Map map = client.Map;
             if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
             {
+                map.DeadBodies.TryGetValue(client.Character.DeadBodyInstanceId, out DeadBody deadBody);
+                deadBody.ConnectionState = 0;
                 RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
                 Router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
+
+                Task.Delay(TimeSpan.FromSeconds(600)).ContinueWith
+                (t1 =>
+                    {
+                        if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                        {
+                            RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.DeadBodyInstanceId);
+                            Router.Send(client.Map, recvObjectDisappearNotify.ToPacket(), client);
+                            map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
+                        }
+                    }
+                );
             }
             if (map != null)
             {
