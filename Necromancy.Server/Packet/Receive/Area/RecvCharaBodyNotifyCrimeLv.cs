@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyNotifyCrimeLv : PacketResponse
     {
-        public RecvCharaBodyNotifyCrimeLv()
+        private uint _id;
+        private byte _crimeLevel;
+        public RecvCharaBodyNotifyCrimeLv(uint id, byte crimeLevel)
             : base((ushort) AreaPacketId.recv_charabody_notify_crime_lv, ServerType.Area)
         {
+            _id = id;
+            _crimeLevel = crimeLevel;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteByte(0);
+            res.WriteUInt32(_id);
+            res.WriteByte(_crimeLevel);
             return res;
         }
     }

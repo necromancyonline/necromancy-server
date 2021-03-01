@@ -31,9 +31,16 @@ namespace Necromancy.Server.Packet.Area
             //DeadBody deadBody = Server.Instances.GetInstance(instanceId) as DeadBody; //add case logic to detect different instance types.  monster, deadbody, other
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_charabody_access_start_r, res, ServerType.Area);
-
+            res.WriteInt32(0); //Insert logic gate here. should not always succeed
+            Router.Send(client.Map, (ushort)AreaPacketId.recv_charabody_access_start_r, res, ServerType.Area);
+        //SALVAGE_DEADBODY,-510,It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+        //SALVAGE_DEADBODY,-513, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+        // SALVAGE_DEADBODY,-514, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+        //  SALVAGE_DEADBODY,-528, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+        //   SALVAGE_DEADBODY,-526, It cannot be stolen from party members., SYSTEM_IMPORTANCE,
+        //   SALVAGE_DEADBODY,-519, The soul is about to revive..., SYSTEM_NOTIFY,
+        //   SALVAGE_DEADBODY,-507, No more corpses can be recovered., SYSTEM_NOTIFY,
+   
 
             if (instanceId == 0)
                 return;

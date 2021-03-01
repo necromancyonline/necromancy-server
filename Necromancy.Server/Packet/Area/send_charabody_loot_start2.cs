@@ -2,6 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
@@ -54,6 +55,9 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteCString($"{client.Soul.Name}"); // soul name
                 res.WriteCString($"{client.Character.Name}"); // chara name
                 Router.Send(deadClient, (ushort)AreaPacketId.recv_charabody_notify_loot_start2, res, ServerType.Area);
+
+                RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
+                _server.Router.Send(deadClient, cData.ToPacket());
             }
 
         }

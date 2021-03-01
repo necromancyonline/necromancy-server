@@ -84,15 +84,28 @@ namespace Necromancy.Server.Packet.Area
 
             Router.Send(client.Map, (ushort) AreaPacketId.recv_0x8D92, res2, ServerType.Area, client);
 
-            client.Character.battleAnim =
-                0; //re-setting the byte to 0 at the end of every iteration to allow for normal movements.
+            client.Character.battleAnim = 0; //re-setting the byte to 0 at the end of every iteration to allow for normal movements.
 
+            //Cancel skill execution on movement start
             if (client.Character.castingSkill)
             {
                 RecvSkillCastCancel cancelCast = new RecvSkillCastCancel();
                 Router.Send(client.Map, cancelCast.ToPacket());
                 client.Character.activeSkillInstance = 0;
                 client.Character.castingSkill = false;
+            }
+
+            //Tell any charaBodies who are along for the ride that movement is happening.
+            foreach (NecClient necClient in client.BodyCollection.Values)
+            {
+                IBuffer res5 = BufferProvider.Provide();
+                res5.WriteUInt32(necClient.Character.InstanceId);
+                res5.WriteFloat(client.Character.X);
+                res5.WriteFloat(client.Character.Y);
+                res5.WriteFloat(client.Character.Z);
+                res5.WriteByte(client.Character.Heading); //Heading
+                res5.WriteByte(client.Character.movementAnim); //state
+                Router.Send(necClient, (ushort)AreaPacketId.recv_object_point_move_notify, res5, ServerType.Area);
             }
 
 
@@ -127,18 +140,13 @@ namespace Necromancy.Server.Packet.Area
             {
                 Logger.Debug($"Moving object ID {client.Character.eventSelectReadyCode}.");
                 IBuffer res = BufferProvider.Provide();
-                IBuffer res3 = BufferProvider.Provide();
-
-
                 res.WriteUInt32(client.Character.eventSelectReadyCode);
                 res.WriteFloat(client.Character.X);
                 res.WriteFloat(client.Character.Y);
                 res.WriteFloat(client.Character.Z);
                 res.WriteByte(client.Character.Heading); //Heading
                 res.WriteByte(client.Character.movementAnim); //state
-
                 Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
-                Router.Send(client, (ushort) AreaPacketId.recv_object_point_move_r, res3, ServerType.Area);
             }
 
             //Logic to see if you are in range of a map transition

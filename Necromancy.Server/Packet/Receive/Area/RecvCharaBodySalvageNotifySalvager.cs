@@ -22,7 +22,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_id);
+            res.WriteUInt32(_id); //salvage_objectId
             res.WriteCString(_charaName); // Length 0x31
             res.WriteCString(_soulName); // Length 0x5B
             return res;
