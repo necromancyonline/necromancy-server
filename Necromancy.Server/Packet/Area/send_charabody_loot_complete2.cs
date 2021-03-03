@@ -21,7 +21,8 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             client.Map.DeadBodies.TryGetValue(client.Character.eventSelectReadyCode, out DeadBody deadBody);
-            Character deadCharacter = _server.Instances.GetInstance(deadBody.CharacterInstanceId) as Character;
+            Character deadCharacter = _server.Instances.GetCharacterByInstanceId(deadBody.CharacterInstanceId); 
+            //Todo - server or map needs to maintain characters in memory for a period of time after disconnect
             NecClient deadClient = _server.Clients.GetByCharacterInstanceId(deadBody.CharacterInstanceId);
 
             IBuffer res = BufferProvider.Provide();

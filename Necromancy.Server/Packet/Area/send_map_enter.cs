@@ -32,6 +32,9 @@ namespace Necromancy.Server.Packet.Area
             if (client.Map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
             {
                 Logger.Debug($"found dead body of {client.Character.Name} already on map.  Hope you didn't lose your loot!");
+                DeadBody deadBody = Server.Instances.GetInstance((uint)client.Character.DeadBodyInstanceId) as DeadBody;
+                deadBody.ConnectionState = 1;
+
                 RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.ConnectedClient);
                 Router.Send(client.Map, recvCharaBodyNotifySpirit.ToPacket());
             }

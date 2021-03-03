@@ -25,13 +25,6 @@ namespace Necromancy.Server.Packet.Area
             RecvCharaBodySelfSalvageEnd recvCharaBodySelfSalvageEnd = new RecvCharaBodySelfSalvageEnd(0);
             Router.Send(client, recvCharaBodySelfSalvageEnd.ToPacket());
 
-            RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(0, client.Character.DeadBodyInstanceId);
-            Router.Send(necClient, recvCharaBodySalvageEnd.ToPacket());
-
-            //tell the salvager about your choice.
-            RecvCharaBodySalvageRequest recvCharaBodySalvageRequest = new RecvCharaBodySalvageRequest(0);
-            Router.Send(necClient, recvCharaBodySalvageRequest.ToPacket());
-
             deadBody.X = necClient.Character.X;
             deadBody.Y = necClient.Character.Y;
             deadBody.Z = necClient.Character.Z;
@@ -42,7 +35,14 @@ namespace Necromancy.Server.Packet.Area
             deadBody.MapId = necClient.Character.MapId;
             client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
             RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-            Server.Router.Send(client.Map, cBodyData.ToPacket());
+            if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+            {
+                Server.Router.Send(client.Map, cBodyData.ToPacket());
+            }
+
+            RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(client.Character.DeadBodyInstanceId, 0);
+            Router.Send(necClient, recvCharaBodySalvageEnd.ToPacket());
+
             //send your soul to all the other souls runnin around
             RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
             foreach (NecClient soulStateClient in client.Map.ClientLookup.GetAll())

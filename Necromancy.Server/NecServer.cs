@@ -33,6 +33,7 @@ using Necromancy.Server.Database;
 using Necromancy.Server.Discord;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Model.MapModel;
 using Necromancy.Server.Model.Union;
 using Necromancy.Server.Packet;
@@ -170,7 +171,72 @@ namespace Necromancy.Server
             }
             Clients.Remove(client);
 
+            //I disconnected while my dead body was being carried around by another player
+            if (client.Character.HasDied == true) 
+            {
+                DeadBody deadBody = this.Instances.GetInstance(client.Character.DeadBodyInstanceId) as DeadBody;
+                if (deadBody.SalvagerId != 0)
+                {
+                    NecClient mySalvager = this.Clients.GetByCharacterInstanceId(deadBody.SalvagerId);
+                    if (mySalvager != null)
+                    {
+                        deadBody.X = mySalvager.Character.X;
+                        deadBody.Y = mySalvager.Character.Y;
+                        deadBody.Z = mySalvager.Character.Z;
+                        deadBody.MapId = mySalvager.Character.MapId;
+                        deadBody.ConnectionState = 0;
+                        mySalvager.BodyCollection.Remove(deadBody.InstanceId);
+
+                        mySalvager.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+                        RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                        if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                        {
+                            Router.Send(mySalvager.Map, cBodyData.ToPacket(), client);
+                        }
+                        
+                        //must occur after the charaBody notify.
+                        RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.InstanceId, 5);
+                        Router.Send(mySalvager, recvCharaBodySalvageEnd.ToPacket());
+                    }
+                }
+            }
+
+            //while i was dead and being carried around, the player carrying me disconnected
+            foreach (NecClient collectedBody in client.BodyCollection.Values)
+            {
+                DeadBody deadBody = this.Instances.GetInstance(collectedBody.Character.DeadBodyInstanceId) as DeadBody;
+
+                RecvCharaBodySelfSalvageEnd recvCharaBodySelfSalvageEnd = new RecvCharaBodySelfSalvageEnd(3);
+                Router.Send(collectedBody, recvCharaBodySelfSalvageEnd.ToPacket());
+
+
+                deadBody.X = client.Character.X;
+                deadBody.Y = client.Character.Y;
+                deadBody.Z = client.Character.Z;
+                collectedBody.Character.X = client.Character.X;
+                collectedBody.Character.Y = client.Character.Y;
+                collectedBody.Character.Z = client.Character.Z;
+                //ToDo  add Town checking.  if map.ID.toString()[0]==1 skip deadbody rendering
+                deadBody.MapId = client.Character.MapId;
+
+                client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+                RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                {
+                    Router.Send(client.Map, cBodyData.ToPacket());
+                }
+
+                //send your soul to all the other souls runnin around
+                RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(collectedBody.Character, collectedBody.Soul.Name);
+                foreach (NecClient soulStateClient in client.Map.ClientLookup.GetAll())
+                {
+                    if (soulStateClient.Character.State == CharacterState.SoulForm) this.Router.Send(soulStateClient, cData.ToPacket());
+                }
+            }                
+
             Map map = client.Map;
+
+            //If i was dead, toggle my deadBody to a Rucksack
             if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
             {
                 map.DeadBodies.TryGetValue(client.Character.DeadBodyInstanceId, out DeadBody deadBody);
