@@ -88,9 +88,9 @@ namespace Necromancy.Test.Systems
             {
                 //ignore
             }
-            public void UpdateItemOwner(ulong instanceId, int ownerId, int statuses)
+            public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses)
             {
-                //ignore
+                //curse you DummyItemDAO!!! 
             }
         }
 
