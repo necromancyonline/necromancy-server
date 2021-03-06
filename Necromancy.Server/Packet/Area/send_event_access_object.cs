@@ -11,6 +11,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -72,7 +73,7 @@ namespace Necromancy.Server.Packet.Area
                                  (x == 10000702),
                             () => Blacksmith(client, npcSpawn)
                         },
-                        //{x => x == 10000010, () => DonkeysItems(client, npcSpawn)},
+                        {x => x == 10000010, () => DonkeysItems(client, npcSpawn)},
                         {x => x == 80000003, () => CloakRoomShopClerk(client, npcSpawn)},
                         {x => x == 10000002, () => RegularInn(client, npcSpawn)},
                         {x => x == 10000703, () => CrimInn(client, npcSpawn)},
@@ -561,7 +562,7 @@ namespace Necromancy.Server.Packet.Area
 
         private void DonkeysItems(NecClient client, NpcSpawn npcSpawn)
         {
-            //if (client.Character.helperTextDonkey)
+            if (client.Character.helperTextDonkey)
             {
                 IBuffer res2 = BufferProvider.Provide();
                 res2.WriteCString($"{npcSpawn.Name}"); //Name
@@ -575,10 +576,10 @@ namespace Necromancy.Server.Packet.Area
 
                 client.Character.helperTextDonkey = false;
             }
-            /*else
+            else
             {
-                int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101,15300003 };
-                int[] DonkeyPrices = new int[] {100,02,100,10,500,500,400,280,350,1100,1000,1000,500,450,450,300,350,250,450,400,450,1450,1500,1400,1550,1000,1500,1500 };
+                int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101, 15300003 };
+                int[] DonkeyPrices = new int[] { 100, 02, 100, 10, 500, 500, 400, 280, 350, 1100, 1000, 1000, 500, 450, 450, 300, 350, 250, 450, 400, 450, 1450, 1500, 1400, 1550, 1000, 1500, 1500 };
                 int numItems = DonkeyItems.Count();
                 IBuffer res = BufferProvider.Provide();
                 //recv_shop_notify_open = 0x52FD, // Parent = 0x5243 // Range ID = 02
@@ -589,41 +590,37 @@ namespace Necromancy.Server.Packet.Area
                 Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_open, res, ServerType.Area);
                 Character _character = client.Character;
                 NecClient _client = client;
+                ItemService itemService = new ItemService(client.Character);
                 for (int i = 0; i < numItems; i++)
                 {
-                    Item item = Server.Items[DonkeyItems[i]];
+                    Server.SettingRepository.ItemLibrary.TryGetValue(DonkeyItems[i], out ItemLibrarySetting item);
                     // Create InventoryItem
-                    InventoryItem inventoryItem = new InventoryItem();
-                    inventoryItem.Id = item.Id;
-                    inventoryItem.Item = item;
-                    inventoryItem.ItemId = item.Id;
-                    inventoryItem.Quantity = 1;
-                    inventoryItem.CurrentDurability = item.Durability;
-                    inventoryItem.CharacterId = client.Character.Id;
-                    inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                    inventoryItem.State = 0;
-                    inventoryItem.StorageType = (int)BagType.AvatarInventory;
-                    _character.Inventory.AddAvatarItem(inventoryItem);
+                    ItemInstance inventoryItem = new ItemInstance((ulong)DonkeyItems[i])
+                    {
+                        BaseID = item.Id,
+                        Quantity = 1,
+                        CurrentDurability = item.Durability,
+                        OwnerID = 0,
+                        CurrentEquipSlot = ItemEquipSlots.None,
+                        Location = new ItemLocation(ItemZoneType.UNKNOWN4, 0, (short)i),
+                        Statuses = ItemStatuses.Identified
+                        //add in all the stats here using Item Library Setting, or make a database query
+                        //probably best to have the ItemLibrary Table loaded in to memory in setting Repository
+                    };
 
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, inventoryItem);
                     Router.Send(recvItemInstance, client);
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                    Router.Send(recvItemInstanceUnidentified, client);
-
-                    itemStats(inventoryItem, client);
-
 
                     res = BufferProvider.Provide();
-                    res.SetPositionStart();
                     res.WriteByte((byte)i); //idx
                     res.WriteInt32(DonkeyItems[i]); // item Serial id
                     res.WriteInt64(DonkeyPrices[i]); // item price
                     res.WriteInt64(69); // new
                     res.WriteInt64(692); // new
-                    res.WriteByte(1); //Bool new
-                    res.WriteFixedString($"{inventoryItem.Item.Name}", 0x10); // ?
-                    res.WriteInt32(6969); //new
-                    res.WriteInt16(15); //new
+                    res.WriteByte((byte)(Util.GetRandomNumber(0,2))); //Bool new
+                    res.WriteFixedString($"{inventoryItem.UnidentifiedName}", 0x10); // //should be identified name.
+                    res.WriteInt32((int)inventoryItem.Statuses); //new
+                    res.WriteInt16(1); //new
                     Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item, res, ServerType.Area);
 
                 }
@@ -631,7 +628,7 @@ namespace Necromancy.Server.Packet.Area
                 IBuffer res5 = BufferProvider.Provide();
                 res5.WriteCString($"{npcSpawn.Name}'s Goods");
                 Router.Send(client, (ushort)AreaPacketId.recv_shop_title_push, res5, ServerType.Area);
-            }*/
+            }
         }
         private void AuctionHouse(NecClient client, NpcSpawn npcSpawn)
         {
