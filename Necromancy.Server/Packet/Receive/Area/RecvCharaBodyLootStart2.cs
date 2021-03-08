@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyLootStart2 : PacketResponse
     {
-        public RecvCharaBodyLootStart2()
+        private int _result;
+        private int _lootTime;
+        public RecvCharaBodyLootStart2(int result, int lootTime)
             : base((ushort) AreaPacketId.recv_charabody_loot_start2_r, ServerType.Area)
         {
+            _result = result;
+            _lootTime = lootTime;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteInt32(0);
+            res.WriteInt32(_result); //Result
+            res.WriteInt32(_lootTime); //LootTime
             return res;
         }
     }

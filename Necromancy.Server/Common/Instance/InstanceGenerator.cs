@@ -20,6 +20,7 @@ namespace Necromancy.Server.Common.Instance
         private readonly DatabaseInstanceIdPool _characterPool;
         private readonly DatabaseInstanceIdPool _npcPool;
         private readonly DatabaseInstanceIdPool _monsterPool;
+        private readonly DatabaseInstanceIdPool _deadBodyPool;
         private readonly List<IInstanceIdPool> _pools;
         private readonly NecServer _server;
         private readonly NecSetting _setting;
@@ -32,14 +33,14 @@ namespace Necromancy.Server.Common.Instance
             _instances = new Dictionary<uint, IInstance>();
             _dynamicPool = new InstanceIdPool("Dynamic", _setting.PoolDynamicIdLowerBound, _setting.PoolDynamicIdSize);
             _pools.Add(_dynamicPool);
-            _characterPool = new DatabaseInstanceIdPool("Character", _setting.PoolCharacterIdLowerBound,
-                _setting.PoolCharacterIdSize);
+            _characterPool = new DatabaseInstanceIdPool("Character", _setting.PoolCharacterIdLowerBound,   _setting.PoolCharacterIdSize);
             _pools.Add(_characterPool);
             _npcPool = new DatabaseInstanceIdPool("Npc", _setting.PoolNpcLowerBound, _setting.PoolNpcIdSize);
             _pools.Add(_npcPool);
-            _monsterPool =
-                new DatabaseInstanceIdPool("Monster", _setting.PoolMonsterIdLowerBound, _setting.PoolMonsterIdSize);
+            _monsterPool = new DatabaseInstanceIdPool("Monster", _setting.PoolMonsterIdLowerBound, _setting.PoolMonsterIdSize);
             _pools.Add(_monsterPool);
+            _deadBodyPool = new DatabaseInstanceIdPool("DeadBody", _setting.PoolDeadBodyIdLowerBound, _setting.PoolDeadBodyIdSize);
+            _pools.Add(_deadBodyPool);
 
             foreach (IInstanceIdPool pool in _pools)
             {
@@ -113,7 +114,11 @@ namespace Necromancy.Server.Common.Instance
             bool success;
             if (instance is Character character)
             {
-                success = _characterPool.TryAssign((uint) character.Id, out instanceId);
+                success = _characterPool.TryAssign((uint)character.Id, out instanceId);
+            }
+            else if (instance is DeadBody deadBody)
+            {
+                success = _deadBodyPool.TryAssign((uint)deadBody.Id, out instanceId);
             }
             else if (instance is NpcSpawn npc)
             {

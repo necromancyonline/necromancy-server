@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfSalvageResult : PacketResponse
     {
-        public RecvCharaBodySelfSalvageResult()
+        private int _code;
+        public RecvCharaBodySelfSalvageResult(int code)
             : base((ushort) AreaPacketId.recv_charabody_self_salvage_result, ServerType.Area)
         {
+            _code = code;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_code);//result
             return res;
         }
     }

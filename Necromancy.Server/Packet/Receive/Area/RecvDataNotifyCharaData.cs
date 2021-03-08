@@ -10,7 +10,7 @@ using System;
 /// <summary>
 /// This receive loads your Character on the map.  dead or alive.
 /// 
-/// for spirit stuff go to the CharaBodyData recv.
+/// for deadbody stuff go to the CharaBodyData recv.
 /// </summary>
 namespace Necromancy.Server.Packet.Receive.Area
 {
@@ -34,7 +34,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             TimeSpan differenceJoined = DateTime.Today.ToUniversalTime() - DateTime.UnixEpoch;
             int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
-            int numStatusEffects = 0; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
+            int numStatusEffects = _character.StatusEffects.Length; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
             int i = 0;
             if (_character.HasDied == true) numEntries = 0; //Dead mean wear no gear
 
@@ -49,7 +49,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(_character.activeModel);// Character.ActiveModel  0 = default
             res.WriteInt16(_character.modelScale); //Character.Scale   100 = normal size.
             res.WriteUInt64((ulong)_character.State); //Character State
-            res.WriteInt16(1000); // current level ??
+            res.WriteInt16(1); // current level ??
 
             //sub_483420 
             res.WriteInt32(numEntries); // Number of equipment Slots
@@ -136,10 +136,10 @@ namespace Necromancy.Server.Packet.Receive.Area
             //sub_485A70
             for (i = 0; i < numStatusEffects; i++)
             {
-                res.WriteInt32(0); //instanceID or unique ID
-                res.WriteInt32(0); //Buff.SerialId
-                res.WriteInt32(0); //Buff.EffectId
-                res.WriteInt32(9999999); //new
+                res.WriteInt32(i); //instanceID or unique ID
+                res.WriteUInt32(_character.StatusEffects[i]); //Buff.SerialId from buff.csv
+                res.WriteInt32(Util.GetRandomNumber(100, 6000)); //Time Remaining in seconds
+                res.WriteInt32(1); //new
             }
 
             //sub_481AA0

@@ -1,5 +1,7 @@
 using Arrowgene.Buffers;
+using Arrowgene.Logging;
 using Necromancy.Server.Common;
+using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -7,10 +9,10 @@ using Necromancy.Server.Systems.Item;
 using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
-{
-    public class send_soul_dispitem_request_data : ClientHandler
+{    public class send_soul_dispitem_request_data : ClientHandler
     {
         private NecServer _server;
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_soul_dispitem_request_data));
         public send_soul_dispitem_request_data(NecServer server) : base(server)
         {
             _server = server;
@@ -32,6 +34,7 @@ namespace Necromancy.Server.Packet.Area
             //LoadBattleStats(client);
             LoadHonor(client);
             //LoadSoulDispItem(client);
+            LoadSoulState(client);
         }
 
         public void LoadSoulDispItem(NecClient client)
@@ -40,6 +43,18 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res19 = BufferProvider.Provide();
             res19.WriteInt32(Util.GetRandomNumber(62000001, 62000015)); //soul_dispitem.csv
             Router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_notify_data, res19, ServerType.Area);
+        }
+
+        public void LoadSoulState (NecClient client)
+        {
+            if (client.Character.Hp.current <=0)
+            {
+                client.Character.State |= Model.CharacterModel.CharacterState.SoulForm;
+                client.Character.HasDied = true;
+            }
+            if (client.Character.Hp.current < -1) client.Character.State |= Model.CharacterModel.CharacterState.LostState;
+            if ((int)client.Account.State == 100) client.Character.State |= Model.CharacterModel.CharacterState.GameMaster;
+
         }
 
         public void LoadHonor(NecClient client)
@@ -63,14 +78,18 @@ namespace Necromancy.Server.Packet.Area
         {
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> ownedItems = itemService.LoadOwneditemInstances(server);
-            foreach (ItemInstance item in ownedItems)
+            foreach (ItemInstance itemInstance in ownedItems)
             {
-                RecvItemInstance recvItemInstance = new RecvItemInstance(client, item);
-                Router.Send(recvItemInstance);
-                if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
+                if (itemInstance.Statuses.HasFlag(ItemStatuses.Unidentified))
                 {
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, item, (byte)item.Location.ZoneType);
-                    Router.Send(recvItemInstanceUnidentified);
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                    Router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                    Logger.Debug($" Unidentified item : {itemInstance.Location.ZoneType}");
+                }
+                else
+                {
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                    Router.Send(client, recvItemInstance.ToPacket());
                 }
 
             }

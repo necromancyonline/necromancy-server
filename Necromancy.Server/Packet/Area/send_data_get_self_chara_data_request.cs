@@ -27,8 +27,9 @@ namespace Necromancy.Server.Packet.Area
         {
             ItemService itemService = new ItemService(client.Character);
             itemService.LoadEquipmentModels();
-            client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
             client.Soul.SetSoulAlignment();
+            client.Character.LoginCheckDead();
+            client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
             _equippedItems = new ItemInstance[client.Character.EquippedItems.Count];
             client.Character.EquippedItems.Values.CopyTo(_equippedItems, 0);
 
@@ -42,9 +43,9 @@ namespace Necromancy.Server.Packet.Area
         private void SendDataGetSelfCharaData(NecClient client)
         {
             int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
-            int numStatusEffects = 0; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
+            int numStatusEffects = client.Character.StatusEffects.Length; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
             int i = 0;
-            if (client.Character.State == Model.CharacterModel.CharacterState.SoulForm) numEntries = 0; //Dead mean wear no gear
+            if (client.Character.State.HasFlag(Model.CharacterModel.CharacterState.SoulForm)) numEntries = 0; //Dead mean wear no gear
 
             IBuffer res = BufferProvider.Provide();
             //sub_4953B0 - characteristics
@@ -329,10 +330,10 @@ namespace Necromancy.Server.Packet.Area
             //sub_485A70
             for (int k = 0; k < numStatusEffects; k++) //status buffs / debuffs
             {
-                res.WriteInt32(0); //instanceID or unique ID
-                res.WriteInt32(0); //Buff.SerialId
-                res.WriteInt32(0); //Buff.EffectId
-                res.WriteInt32(9999999); //new
+                res.WriteInt32(i); //instanceID or unique ID
+                res.WriteUInt32(client.Character.StatusEffects[k]); //Buff.SerialId from buff.csv
+                res.WriteInt32(Util.GetRandomNumber(100,6000)); //Time Remaining in seconds
+                res.WriteInt32(1); //new
             }
 
             res.WriteByte(0);//new

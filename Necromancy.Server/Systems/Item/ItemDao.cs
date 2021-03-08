@@ -278,7 +278,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE 
                 id = @id";
 
-        private const string SqlUpdateItemOwner = @"
+        private const string SqlUpdateItemOwnerAndStatus = @"
             UPDATE 
                 nec_item_instance 
             SET 
@@ -404,9 +404,9 @@ namespace Necromancy.Server.Systems.Item
                 });
         }
 
-        public void UpdateItemOwner(ulong instanceId, int ownerId, int statuses)
+        public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses)
         {
-            ExecuteNonQuery(SqlUpdateItemOwner,
+            ExecuteNonQuery(SqlUpdateItemOwnerAndStatus,
                 command =>
                 {
                     AddParameter(command, "@statuses", statuses);

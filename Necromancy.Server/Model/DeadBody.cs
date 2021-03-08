@@ -24,6 +24,8 @@ namespace Necromancy.Server.Model
         public byte HairId { get; set; }
         public byte HairColorId { get; set; }
         public byte FaceId { get; set; }
+        public byte FaceArrangeId { get; set; }
+        public byte VoiceId { get; set; }
         public uint ClassId { get; set; }
 
         public int ConnectionState { get; set; }
@@ -32,6 +34,7 @@ namespace Necromancy.Server.Model
         public byte BeginnerProtection { get; set; }
         public int deathPose { get; set; }
         public int Level { get; set; }
+        public uint SalvagerId { get; set; }
 
         //Inventory
         public ItemManager ItemManager { get; set; } = new ItemManager(); //TODO make item service

@@ -29,6 +29,9 @@ namespace Necromancy.Server.Systems.Item
         private const int MAX_CONTAINERS_TREASURE_BOX = 1;
         private const int MAX_CONTAINER_SIZE_TREASURE_BOX = 10;
 
+        private const int MAX_CONTAINERS_WAREHOUSE = 27;
+        private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
+
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
 
         public ItemManager()
@@ -43,7 +46,19 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap[ItemZoneType.BagSlot].PutContainer(0, MAX_CONTAINER_SIZE_BAG_SLOT);
 
             ZoneMap.Add(ItemZoneType.AvatarInventory,   new ItemZone(MAX_CONTAINERS_AVATAR, MAX_CONTAINER_SIZE_AVATAR));
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(0, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(1, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(2, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(3, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(4, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(5, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(6, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(7, MAX_CONTAINER_SIZE_AVATAR);
+            ZoneMap[ItemZoneType.AvatarInventory].PutContainer(8, MAX_CONTAINER_SIZE_AVATAR);
+
             ZoneMap.Add(ItemZoneType.TreasureBox,       new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
+            ZoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
+            ZoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
         }
         public List<ItemInstance> GetLootableItems()
         {

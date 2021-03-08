@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfSalvageNotify : PacketResponse
     {
-        public RecvCharaBodySelfSalvageNotify()
+        private string _charaName;
+        private string _soulName;
+        public RecvCharaBodySelfSalvageNotify(string charaName, string soulName)
             : base((ushort) AreaPacketId.recv_charabody_self_salvage_notify, ServerType.Area)
         {
+            _charaName = charaName;
+            _soulName = soulName;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteCString("");//Length is 31-02=2F=DEC47
-            res.WriteCString("");//Length is 5b-01=5A=Dec132
+            res.WriteCString(_charaName);//Length is 31-02=2F=DEC47
+            res.WriteCString(_soulName);//Length is 5b-01=5A=Dec132
             return res;
         }
     }

@@ -27,6 +27,7 @@ namespace Necromancy.Server.Tasks
         private DateTime _logoutTime;
         private byte _logoutType;
         private bool playerDied;
+        private int _tickCounter;
         private List<NecClient> _clients;
 
         public CharacterTask(NecServer server, NecClient client)
@@ -36,6 +37,7 @@ namespace Necromancy.Server.Tasks
             tickTime = 500;
             _logoutTime = DateTime.MinValue;
             playerDied = false;
+            _tickCounter = 0;
         }
 
         public override string TaskName => "CharacterTask";
@@ -62,12 +64,34 @@ namespace Necromancy.Server.Tasks
 
                 StatRegen();
 
+                if (_tickCounter == 600)
+                {
+                    CriminalRepent();
+                    SoulMaterialIncrease();
+                    _tickCounter = 0;
+                }
+
+                _tickCounter++;
                 Thread.Sleep(tickTime);
             }
 
             this.Stop();
         }
 
+        private void CriminalRepent()
+        {
+            _client.Soul.CriminalLevel -= 1;
+            if (_client.Soul.CriminalLevel <= 0) _client.Soul.CriminalLevel = 0;
+            _client.Character.criminalState = _client.Soul.CriminalLevel;
+        }
+        private void SoulMaterialIncrease()
+        {
+            _client.Soul.MaterialChaos += 10;
+            _client.Soul.MaterialLawful += 10;
+            _client.Soul.MaterialLife += 10;
+            _client.Soul.MaterialReincarnation += 10;
+            _client.Soul.PointsChaos += 10; //temporary. testing
+        }
         private void StatRegen()
         {
             if (_client.Character.Gp.current < _client.Character.Gp.max) 
@@ -123,8 +147,13 @@ namespace Necromancy.Server.Tasks
             deadBody.HairId = _client.Character.HairId;
             deadBody.HairColorId = _client.Character.HairColorId;
             deadBody.FaceId = _client.Character.FaceId;
+            deadBody.FaceArrangeId = _client.Character.FaceArrangeId;
+            deadBody.VoiceId = _client.Character.VoiceId;
+            deadBody.Level = _client.Character.Level;
+            deadBody.ClassId = _client.Character.ClassId;
             deadBody.EquippedItems = _client.Character.EquippedItems;
             deadBody.ItemManager = _client.Character.ItemManager;
+            deadBody.ConnectionState = 1;
             _clients = _client.Map.ClientLookup.GetAll();
             _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
             List<NecClient> soulStateClients = new List<NecClient>();
@@ -153,7 +182,7 @@ namespace Necromancy.Server.Tasks
                 {
                     RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                     if (_client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                    { _server.Router.Send(_client.Map, cBodyData.ToPacket()); }
+                    { _server.Router.Send(_client.Map, cBodyData.ToPacket(), _client); }
                     _server.Router.Send(_client, cBodyData.ToPacket());
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.Character.InstanceId);
                     _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);

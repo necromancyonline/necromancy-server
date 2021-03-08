@@ -7,21 +7,33 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyNotifyLootItem : PacketResponse
     {
-        public RecvCharaBodyNotifyLootItem()
-            : base((ushort) AreaPacketId.recv_charabody_notify_loot_item, ServerType.Area)
-        {
+        private byte _fromZone;
+        private byte _fromContainer;
+        private short _fromSlot;
+        private short _itemCount;
+        private string _soulName;
+        private string _charaName;
+        public RecvCharaBodyNotifyLootItem(byte fromZone, byte fromContainer, short fromSlot, short itemCount, string soulName, string charaName)
+            : base((ushort)AreaPacketId.recv_charabody_notify_loot_item, ServerType.Area)
+        {            
+            _fromZone = fromZone;
+            _fromContainer = fromContainer;
+            _fromSlot = fromSlot;
+            _itemCount = itemCount;
+            _soulName = soulName;
+            _charaName = charaName;            
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteInt16(0);
+            res.WriteByte(_fromZone);
+            res.WriteByte(_fromContainer);
+            res.WriteInt16(_fromSlot);
 
-            res.WriteInt16(0); //Number here is "pieces" 
-            res.WriteCString("item name"); // Length 0x31 
-            res.WriteCString("chara name"); // Length 0x5B
+            res.WriteInt16(_itemCount); //Number here is "pieces" 
+            res.WriteCString(_soulName); // Length 0x31 
+            res.WriteCString(_charaName); // Length 0x5B
             return res;
         }
     }

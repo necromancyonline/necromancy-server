@@ -19,13 +19,16 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            //if (command[0] == "")
-            //{
-            //    responses.Add(ChatResponse.CommandError(client, $"Invalid opcode: {command[0]}"));
-            //    return;
-            //}
-
             IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(2);
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
+            res.WriteInt32(1); // 0 = normal 1 = cinematic
+            res.WriteByte(0);
+            //Router.Send(client, (ushort)AreaPacketId.recv_event_start, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
 
             //no int32 section
             Router.Send(client, (ushort)AreaPacketId.recv_0x166B, res, ServerType.Area); Thread.Sleep(2000);
@@ -99,9 +102,14 @@ namespace Necromancy.Server.Chat.Command.Commands
             //cstring section
             res = BufferProvider.Provide(); Thread.Sleep(2000);
             res.WriteCString("This is not the greatest test in the world! ohh no, this is just a Tribuuuute"); Thread.Sleep(2000);//find max size
-            Router.Send(client, (ushort)AreaPacketId.recv_0xE983, res, ServerType.Area); 
+            Router.Send(client, (ushort)AreaPacketId.recv_0xE983, res, ServerType.Area);
 
+            res = BufferProvider.Provide();
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
 
+            res = BufferProvider.Provide();
+            res.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
 
         public override AccountStateType AccountState => AccountStateType.User;

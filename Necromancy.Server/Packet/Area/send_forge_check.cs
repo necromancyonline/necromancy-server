@@ -42,8 +42,8 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0); //err check
-            res.WriteUInt64(itemInstance.InstanceID);
-            res.WriteByte(itemInstance.Quantity);
+            res.WriteUInt64((ulong)Util.GetRandomNumber(500,600)); //Forge Cost.   Not itemInstance.InstanceID
+            res.WriteByte((byte)Util.GetRandomNumber(0,11)); //'Masters Response' Probability of success cast as a sarcastic message.
             res.WriteInt32(itemInstance.Physical*100);
             res.WriteInt32(itemInstance.Magical*100);
             res.WriteInt32(itemInstance.MaximumDurability);
@@ -53,9 +53,9 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32((int)(itemInstance.MaximumDurability * forgeMultiplier.Durability));
             res.WriteByte((byte)(itemInstance.Hardness + forgeMultiplier.Hardness));
             res.WriteInt32(itemInstance.Weight - forgeMultiplier.Weight);
-            res.WriteInt16(1); //???
-            res.WriteInt16(1);//??
-            res.WriteInt16(1);//??
+            res.WriteInt16((short)Util.GetRandomNumber (0,5)); //???
+            res.WriteInt16((short)Util.GetRandomNumber(0, 5)); //???
+            res.WriteInt16((short)Util.GetRandomNumber(0, 5)); //???
 
             Router.Send(client, (ushort)AreaPacketId.recv_forge_check_r, res, ServerType.Area);
         }

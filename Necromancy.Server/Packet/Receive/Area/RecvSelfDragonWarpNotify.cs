@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSelfDragonWarpNotify : PacketResponse
     {
-        public RecvSelfDragonWarpNotify()
+        private int _objectId;
+        public RecvSelfDragonWarpNotify(int objectId)
             : base((ushort) AreaPacketId.recv_self_dragon_warp_notify, ServerType.Area)
         {
+            _objectId = objectId;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_objectId);
             return res;
         }
     }
