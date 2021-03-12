@@ -1,9 +1,11 @@
 using Arrowgene.Logging;
+using Necromancy.Server.Setting;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
+using System.IO;
 using System.Text;
 
 
@@ -28,7 +30,11 @@ namespace Necromancy.Server.Systems
         {
             //TODO move info to resources
             SQLiteConnectionStringBuilder sqLiteConnStrBuilder = new SQLiteConnectionStringBuilder();
-            sqLiteConnStrBuilder.DataSource = "Database\\db.sqlite";            
+            string SettingFile = "server_setting.json";
+            SettingProvider settingProvider = new SettingProvider();
+            NecSetting _setting = settingProvider.Load<NecSetting>(SettingFile);
+            string sqLitePath = Path.Combine(_setting.DatabaseSettings.SqLiteFolder, "db.sqlite");
+            sqLiteConnStrBuilder.DataSource = sqLitePath;            
             sqLiteConnStrBuilder.Version = 3; 
             sqLiteConnStrBuilder.Pooling = true;
             sqLiteConnStrBuilder.ForeignKeys = true;
