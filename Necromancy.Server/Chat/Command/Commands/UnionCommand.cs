@@ -7,6 +7,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -40,7 +41,15 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res36.WriteCString("Trade_Union");
                     Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
                     break;
+                case "mant":
+                    res36.WriteInt32(0);
+                    for (int i = 0; i < 0x10; i++)
+                    {
+                        res36.WriteByte(0);
+                    }
 
+                    Router.Send(client, (ushort)AreaPacketId.recv_union_mantle_open, res36, ServerType.Area);
+                    break;
                 case "xunion":
                     res36.WriteUInt32(client.Character.InstanceId);
                     res36.WriteInt32(0 /*client.Character.UnionId*/);
@@ -80,7 +89,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res35.WriteByte(0);
                     Router.Send(client, (ushort)AreaPacketId.recv_event_start, res35, ServerType.Area);
                     //Open union storage
-                    res36.WriteInt64(client.Soul.WarehouseGold); //todo make union gold variable
+                    res36.WriteUInt64(client.Soul.WarehouseGold); //todo make union gold variable
                     res36.WriteInt64(500); //??
                     Router.Send(client, (ushort) AreaPacketId.recv_event_union_storage_open, res36,
                         ServerType.Area);
@@ -170,7 +179,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     }
 
                     res.WriteByte(2);
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_quest_order, res, ServerType.Area);
+                    //no_JP Router.Send(client, (ushort) AreaPacketId.recv_event_quest_order, res, ServerType.Area);
                     break;
 
                 case "mission":
@@ -204,12 +213,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res21.WriteByte(255);
                     Router.Send(client, (ushort) AreaPacketId.recv_event_start, res21, ServerType.Area);
 
-                    IBuffer res22 = BufferProvider.Provide();
-
-                    res22.WriteCString(
-                        "tutorial/tutorial_soul"); //ReadScript query to ...\Data\script\event\. Will play if found
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
-
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("tutorial/tutorial_soul", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay, client);
 
                     break;
 

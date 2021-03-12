@@ -164,6 +164,7 @@ namespace Necromancy.Server.Database.Sql.Core
             npcSpawn.Status_X = GetInt32(reader, "status_x");
             npcSpawn.Status_Y = GetInt32(reader, "status_y");
             npcSpawn.Status_Z = GetInt32(reader, "status_z");
+            //Logger.Debug($"Reading Row {npcSpawn.Id}"); //for determining which row read throws SQL errors.
             return npcSpawn;
         }
     }

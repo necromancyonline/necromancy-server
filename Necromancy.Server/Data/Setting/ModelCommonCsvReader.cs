@@ -14,7 +14,7 @@ namespace Necromancy.Server.Data.Setting
             _modelAtrSettings = modelAtrSettings;
         }
 
-        protected override int NumExpectedItems => 11;
+        protected override int NumExpectedItems => 14;
 
         protected override ModelCommonSetting CreateInstance(string[] properties)
         {
@@ -55,22 +55,31 @@ namespace Necromancy.Server.Data.Setting
 
             if (!int.TryParse(properties[7], out int effectScaling))
             {
-                return null;
+                //return null;
+                effectScaling = 0;
             }
 
             if (!int.TryParse(properties[8], out int active))
             {
-                return null;
+                //return null;
+                active = 0;
             }
 
+            //10 = damage sprite height
+            //11 = bow firing position z offset
+            //12 = Gun firing position Z offset
+            //13 = hide shadows
+            //14 = model name
+
+            //commenting out.  jp no longer contained a setting identifier in model_common like US
             MonsterSetting monster = null;
-            if (properties.Length > 11 && int.TryParse(properties[11], out int monsterId))
-            {
-                if (_monsterSetting.ContainsKey(monsterId))
-                {
-                    monster = _monsterSetting[monsterId];
-                }
-            }
+            //if (properties.Length > 11 && int.TryParse(properties[11], out int monsterId))
+            //{
+            //    if (_monsterSetting.ContainsKey(monsterId))
+            //    {
+            //        monster = _monsterSetting[monsterId];
+            //    }
+            //}
             
             ModelAtrSetting atr = null;
             if (_modelAtrSettings.ContainsKey(modelAtrId))
@@ -89,7 +98,7 @@ namespace Necromancy.Server.Data.Setting
                 ZRadiusOffset = zRadiusOffset,
                 Effect = effectScaling,
                 Active = active,
-                Remarks = properties[10],
+                Remarks = properties[14], //this is the name of the model
                 Monster = monster
             };
         }

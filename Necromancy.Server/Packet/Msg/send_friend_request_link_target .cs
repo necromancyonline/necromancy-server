@@ -34,6 +34,7 @@ namespace Necromancy.Server.Packet.Msg
             res2.WriteFixedString($"{client.Character.Name}", 0x5B); //size is 0x5B
             res2.WriteUInt32(client.Character.InstanceId); //?
             res2.WriteByte(1);
+            res2.WriteByte(0);
             Router.Send(Server.Clients.GetByCharacterInstanceId(targetInstanceId),
                 (ushort) MsgPacketId.recv_friend_notify_link_invite, res2, ServerType.Msg);
             Server.Clients.GetByCharacterInstanceId(targetInstanceId).Character.friendRequest =

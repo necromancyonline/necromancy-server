@@ -24,12 +24,12 @@ namespace Necromancy.Server.Packet.Area
             //This is all Position and Orientation Related.
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.movementId);//Character ID
+            res.WriteUInt32(client.Character.InstanceId);//Character Instance ID. Set to movementId for a rigged dead body takeover.
             res.WriteFloat(client.Character.X); //might need to change to Target X Y Z
             res.WriteFloat(client.Character.Y);
             res.WriteFloat(client.Character.Z);
             res.WriteByte(client.Character.Heading);//View offset / Head Rotation
-            res.WriteByte(client.Character.movementAnim);//Character state? body rotation? TBD. should be character state, but not sure where to read that from
+            res.WriteByte(client.Character.movementPose);//Character state? body rotation? TBD. should be character state, but not sure where to read that from
 
             //Router.Send(client.Map, (ushort)AreaPacketId.recv_self_dragon_pos_notify, res, ServerType.Area, client);
 

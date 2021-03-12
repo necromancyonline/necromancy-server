@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
+using Necromancy.Server.Common;
+using Buffer = System.Buffer;
 
 namespace Necromancy.Server.Data
 {
@@ -353,6 +355,68 @@ namespace Necromancy.Server.Data
             datWriter.Close();
         }
 
+        public void EncryptWoItm()
+        {
+
+            string keys = "AABBCCDDEEFFGGHH";
+            string csv =
+                "100101,HELMET,NORMAL,,0,,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,,,0,0,0,0,0,0,0,0,1,,,40,40,20,,0,0,0,0,0,0,,,,0,0,0,0,0,0,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,,,0,,NONE,HEAD,,,,0,0,0,0,0,0,1,0,,100101,,,,,,,,,,,,,,,,,,,,,,,,,0,0,5,1,0";
+            string csv1 =
+                "100101, HELMET, NORMAL, , 0, , 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, , , 0, 0, 0, 0, 0, 0, 0, 0, 1, , , 40, 40, 20, , 0, 0, 0, 0, 0, 0, , , , 0, 0, 0, 0, 0, 0, , , , , , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, , , 0, , NONE, HEAD, , , , 0, 0, 0, 0, 0, 0, 1, 0, , 100101, , , , , , , , , , , , , , , , , , , , , , , , , 0, 0, 5, 1, 0";
+            Camellia c = new Camellia();
+            byte[] key = Encoding.UTF8.GetBytes(keys);
+            uint keyLength = (uint) key.Length * 8;
+            byte[][] subkey = new byte[34][];
+            byte[] oinput = Encoding.UTF8.GetBytes(csv1);
+            int inlen = oinput.Length;
+            int padding = 16 - (inlen % 16);
+            int totalLength = inlen + padding;
+            
+            byte[] input = new byte[totalLength];
+            int length = input.Length;
+            Buffer.BlockCopy(oinput, 0, input,0, inlen);
+            byte[] output = new byte[length];
+
+            Span<byte> inPtr = input;
+            Span<byte> outPtr = output;
+            
+            c.KeySchedule(keyLength, key, subkey);
+
+            int current = 0;
+            while (current < length)
+            {
+                int xorLen = current + 16 < length ? 16 : length - current;
+               // for (int i = 0; i < xorLen; i++)
+              //  {
+                //    input[current + i] = (byte) (input[current + i] ^ prv[i]);
+              //  }
+              
+                c.CryptBlock(
+                    false,
+                    keyLength,
+                    inPtr.Slice(current, 16),
+                    subkey,
+                    outPtr.Slice(current, 16)
+                );
+               // for (int i = 0; i < xorLen; i++)
+              //  {
+                //    prv[i] = output[current + i];
+               // }
+                current += xorLen;
+               // Console.WriteLine($"{current} {xorLen} {length}");
+            }
+            
+            Console.WriteLine(HexDump(output));
+            Console.WriteLine(Util.ToHexString(output));
+            Console.WriteLine($"ActualSize:{output.Length} A:{output.Length + 4 :X8} B:{inlen:X8}");
+            
+            // 416 = actualt data suze
+            // 420
+            // 412
+            bool done = true;
+        }
+        
+        
         /// <summary>
         /// 0x403700
         /// </summary>
@@ -503,8 +567,8 @@ namespace Necromancy.Server.Data
             //byte sub = 0xC4;
 
             // Uncomment for JP client
-            // dl = 0x67;
-            // sub = 0xC7;
+             dl = 0x67;
+             sub = 0xC7;
 
             buffer.Position = 12;
             IBuffer outBuffer = new StreamBuffer();
@@ -568,7 +632,7 @@ namespace Necromancy.Server.Data
             byte al = 0;
 
             //Uncomment for US Steam Client
-            byte dl = 0xA6;
+            //byte dl = 0xA6;
             byte add = 0x21;
 
             //Uncomment for US Sunset Client.
@@ -580,8 +644,8 @@ namespace Necromancy.Server.Data
             //byte sub = 0xC4;
 
             // Uncomment for JP client
-            // dl = 0x67;
-            // sub = 0xC7;
+             byte dl = 0x67;
+             byte sub = 0xC7;
 
             //Uncomment for beta client
             //dl = 0x7D;
@@ -626,6 +690,73 @@ namespace Necromancy.Server.Data
             }
 
             return outBuffer;
+        }
+
+
+        public static string HexDump(byte[] bytes, int bytesPerLine = 16)
+        {
+            if (bytes == null) return "<null>";
+            int bytesLength = bytes.Length;
+
+            char[] HexChars = "0123456789ABCDEF".ToCharArray();
+
+            int firstHexColumn =
+                8 // 8 characters for the address
+                + 3; // 3 spaces
+
+            int firstCharColumn = firstHexColumn
+                                  + bytesPerLine * 3 // - 2 digit for the hexadecimal value and 1 space
+                                  + (bytesPerLine - 1) / 8 // - 1 extra space every 8 characters from the 9th
+                                  + 2; // 2 spaces 
+
+            int lineLength = firstCharColumn
+                             + bytesPerLine // - characters to show the ascii value
+                             + Environment.NewLine.Length; // Carriage return and line feed (should normally be 2)
+
+            char[] line = (new String(' ', lineLength - Environment.NewLine.Length) + Environment.NewLine)
+                .ToCharArray();
+            int expectedLines = (bytesLength + bytesPerLine - 1) / bytesPerLine;
+            StringBuilder result = new StringBuilder(expectedLines * lineLength);
+
+            for (int i = 0; i < bytesLength; i += bytesPerLine)
+            {
+                line[0] = HexChars[(i >> 28) & 0xF];
+                line[1] = HexChars[(i >> 24) & 0xF];
+                line[2] = HexChars[(i >> 20) & 0xF];
+                line[3] = HexChars[(i >> 16) & 0xF];
+                line[4] = HexChars[(i >> 12) & 0xF];
+                line[5] = HexChars[(i >> 8) & 0xF];
+                line[6] = HexChars[(i >> 4) & 0xF];
+                line[7] = HexChars[(i >> 0) & 0xF];
+
+                int hexColumn = firstHexColumn;
+                int charColumn = firstCharColumn;
+
+                for (int j = 0; j < bytesPerLine; j++)
+                {
+                    if (j > 0 && (j & 7) == 0) hexColumn++;
+                    if (i + j >= bytesLength)
+                    {
+                        line[hexColumn] = ' ';
+                        line[hexColumn + 1] = ' ';
+                        line[charColumn] = ' ';
+                    }
+                    else
+                    {
+                        byte b = bytes[i + j];
+                        line[hexColumn] = HexChars[(b >> 4) & 0xF];
+                        line[hexColumn + 1] = HexChars[b & 0xF];
+                        line[charColumn] = (b < 32 ? '·' : (char) b);
+                    }
+
+                    hexColumn += 3;
+                    charColumn++;
+                }
+
+                result.Append(line);
+            }
+
+            return result.ToString();
         }
     }
 }

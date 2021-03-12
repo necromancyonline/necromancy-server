@@ -23,6 +23,9 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteUInt32(_response.CharacterInstanceId);
             res.WriteFixedString(_response.SoulName, 49);
             res.WriteFixedString(_response.CharacterName, 37);
+            res.WriteInt32(1);//new
+            res.WriteInt32(2);//new
+            res.WriteInt32(3);//new
             res.WriteFixedString(_response.Message, 769);
             return res;
         }

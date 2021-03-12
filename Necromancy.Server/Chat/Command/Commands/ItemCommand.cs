@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
@@ -5,9 +6,11 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.ItemModel;
+using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive;
 using Necromancy.Server.Packet.Receive.Area;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -24,7 +27,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         public override AccountStateType AccountState => AccountStateType.User;
         public override string Key => "itm";
-        public override string HelpText => "usage: `/itm [itemId]`";
+        public override string HelpText => "usage: `/itm [itemId] (optional)u`";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -34,178 +37,52 @@ namespace Necromancy.Server.Chat.Command.Commands
                 responses.Add(ChatResponse.CommandError(client, "To few arguments"));
                 return;
             }
-
+            
             if (!int.TryParse(command[0], out int itemId))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid Number: {command[0]}"));
                 return;
             }
-
-            if (!Server.Items.ContainsKey(itemId))
-            {
-                responses.Add(ChatResponse.CommandError(client, $"ItemId: '{itemId}' does not exist"));
-                return;
-            }
-
-            Item item = Server.Items[itemId];
-            Character character = client.Character;
-            if (character == null)
+            
+            if (client.Character == null)
             {
                 responses.Add(ChatResponse.CommandError(client, "Character is null"));
                 return;
             }
 
-            // Create InventoryItem
-            InventoryItem inventoryItem = new InventoryItem();
-            inventoryItem.Item = item;
-            inventoryItem.ItemId = item.Id;
-            inventoryItem.Quantity = 1;
-            inventoryItem.CurrentDurability = item.Durability;
-            inventoryItem.CharacterId = character.Id;
-            inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-            inventoryItem.State = 0;
-
-            Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-            client.Character.Inventory.AddInventoryItem(inventoryItem);
-            if (!Server.Database.InsertInventoryItem(inventoryItem))
+            if (!Server.SettingRepository.ItemInfo.ContainsKey(itemId))
             {
-                responses.Add(ChatResponse.CommandError(client, "Could not save InventoryItem to Database"));
+                responses.Add(ChatResponse.CommandError(client, $"ItemId: '{itemId}' does not exist"));
                 return;
             }
 
-            RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem,client);
-            Router.Send(recvItemInstance, client);
-            RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem,client);
-            Router.Send(recvItemInstanceUnidentified, client);
-            responses.Add(ChatResponse.CommandInfo(client, $"item {item.Id} in slot {inventoryItem.BagSlotIndex} in bag {inventoryItem.BagId}"));
-            ConfigureItem(client, inventoryItem, itemLibrarySetting);
 
-        }
+            ItemSpawnParams spawmParam = new ItemSpawnParams();
+            spawmParam.ItemStatuses = ItemStatuses.Identified;
+            if (command.Length > 1 && command[1] == "u") spawmParam.ItemStatuses = ItemStatuses.Unidentified;
 
-        public void RecvItemInstance(NecClient client, InventoryItem inventoryItem)
-        {
-            // TODO find the purpose of this call, is it just an update?
+            ItemService itemService = new ItemService(client.Character);
+            ItemInstance itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, itemId, spawmParam);
+            byte itemZoneOverride = 0;
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt64((ulong) inventoryItem.Id); //ItemID
-            res.WriteInt32(inventoryItem.Item.Id); // 0 does not display icon
-            res.WriteByte(1); //Number of "items"
-            res.WriteInt32(0); //--Item status, in multiples of numbers, 8 = blessed/cursed/both 
-            res.WriteFixedString(inventoryItem.Item.Name, 0x10);
-            res.WriteByte(0); // 0 = adventure bag. 1 = character equipment
-            res.WriteByte(0); // 0~2 // maybe.. more bag index?
-            res.WriteInt16(2); //-- bag slot index
-            res.WriteInt32(0); //-- EquipmentSlotId (when equipped 0= not equipped)  //Slot spots? 10200101 here caused certain spots to have an item, -1 for all slots(avatar included)  /13
-            res.WriteInt32(inventoryItem.Item.Id); //Percentage stat, 9 max i think       /12
-            res.WriteByte(0); //1
-            res.WriteByte(0); // Dest slot
-            res.WriteCString(inventoryItem.Item.Name); // no max length
-            res.WriteInt16(short.MaxValue); //10
-            res.WriteInt16(short.MaxValue); //9
-            res.WriteInt32(inventoryItem.Item.Id); //Divides max % by this number     //8
-            res.WriteByte(0); //7
-            res.WriteInt32(inventoryItem.Item.Id); //6
+            res.WriteInt32(2);
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
 
-            int numEntries = 1;
-            res.WriteInt32(numEntries); // less than or equal to 2
-            for (int i = 0; i < numEntries; i++)
+            if (command.Length > 1 && command[1] == "u")
             {
-                res.WriteInt32(0 + i);
+                if (command.Length > 2 && command[2] != "") { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.Location.ZoneType; }
+                Logger.Debug(itemInstance.Type.ToString());
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, itemZoneOverride);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
-
-            numEntries = 1;
-            res.WriteInt32(numEntries); // less than or equal to 3
-            for (int i = 0; i < numEntries; i++)
+            else
             {
-                res.WriteByte(1); //bool
-                res.WriteInt32(1);
-                res.WriteInt32(1);
-                res.WriteInt32(1);
+                Logger.Debug(itemInstance.Type.ToString());
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                Router.Send(client, recvItemInstance.ToPacket());
             }
-
-            res.WriteInt32(inventoryItem.Item.Id); //4
-
-            res.WriteInt32(inventoryItem.Item.Id); //5
-            res.WriteInt16(0xFF); // 0 = green | 0xFF = normal
-
-            res.WriteInt32(inventoryItem.Item.Id); //Guard protection toggle, 1 = on, everything else is off //3
-            res.WriteInt16(0); //2
-
-            Router.Send(client, (ushort) AreaPacketId.recv_item_instance, res, ServerType.Area);
-        }
-
-        public void UpdateState(NecClient client, InventoryItem invItem, uint state)
-        {
-            IBuffer res = BufferProvider.Provide();
             res = BufferProvider.Provide();
-            res.WriteUInt64((ulong) invItem
-                .Id); //client.Character.EquipId[x]  put stuff unidentified and get the status equipped  , 0 put stuff identified
-            res.WriteUInt32(state);
-            Router.Send(client, (ushort) AreaPacketId.recv_item_update_state, res, ServerType.Area);
-        }
-
-        public void ConfigureItem(NecClient client, InventoryItem inventoryItem, ItemLibrarySetting itemLibrarySetting)
-        {
-            IBuffer res = BufferProvider.Provide();
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteByte((byte)itemLibrarySetting.RequiredSoulLevel);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_level, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt32((int)itemLibrarySetting.Weight*100);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_weight, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt16((short)itemLibrarySetting.PhysicalAttack); // Defense and attack points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_physics, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.RequiredSoulLevel);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_enchantid, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteByte((byte)itemLibrarySetting.Hardness);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_hardness, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt32(100);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_maxdur, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt32(99);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_durability, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt16((short)itemLibrarySetting.MagicalAttack);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_magic, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt16(69);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteInt16((short)10000); // Shwo GP on certain items
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteByte(5);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_sp_level, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)inventoryItem.Id);
-            res.WriteUInt32(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_state, res, ServerType.Area);
-        }
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+        }        
     }
 }

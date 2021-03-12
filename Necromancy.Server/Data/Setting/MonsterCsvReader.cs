@@ -2,7 +2,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class MonsterCsvReader : CsvReader<MonsterSetting>
     {
-        protected override int NumExpectedItems => 12;
+        protected override int NumExpectedItems => 30;
 
         protected override MonsterSetting CreateInstance(string[] properties)
         {
@@ -31,29 +31,29 @@ namespace Necromancy.Server.Data.Setting
                 return null;
             }
 
-            if (!TryParseNullableInt(properties[8], out int? modelSwitching))
+            if (!TryParseNullableInt(properties[9], out int? modelSwitching))
             {
                 return null;
             }
 
-            if (!int.TryParse(properties[9], out int attackSkillId))
-            {
-                return null;
-            }
-
-
-            if (!int.TryParse(properties[10], out int level))
-            {
-                return null;
-            }
-
-            if (!int.TryParse(properties[11], out int combatMode))
+            if (!int.TryParse(properties[10], out int attackSkillId))
             {
                 return null;
             }
 
 
-            if (!int.TryParse(properties[11], out int textureType))
+            if (!int.TryParse(properties[11], out int level))
+            {
+                return null;
+            }
+
+            if (!int.TryParse(properties[12], out int combatMode))
+            {
+                return null;
+            }
+
+
+            if (!int.TryParse(properties[13], out int textureType))
             {
                 return null;
             }

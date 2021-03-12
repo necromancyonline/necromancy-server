@@ -9,10 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Arrowgene.Logging;
 using Necromancy.Server.Logging;
-using Necromancy.Server.Model.ItemModel;
-using Necromancy.Server.Packet.Receive;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -89,6 +88,8 @@ namespace Necromancy.Server.Packet.Area
                             x => (x == 1900002) || (x == 1900003),
                             () => RandomItemGuy(client, npcSpawn)
                         },
+                        {x => (x == 10000112 || x == 10000316 || x == 10000003 || x == 10000706 || x == 10000911 || x == 10000209),
+                            () => PlayerRevive(client, npcSpawn)},
 
                         {x => x < 10, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
                         {x => x < 100, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
@@ -138,7 +139,8 @@ namespace Necromancy.Server.Packet.Area
                         {x => x == 74013071, () => SendGetWarpTarget(client, ggateSpawn)},
                         {x => x == 74013161, () => SendGetWarpTarget(client, ggateSpawn)},
                         {x => x == 74013271, () => SendGetWarpTarget(client, ggateSpawn)},
-
+                        {x => x == 7500001, () => ModelLibraryWarp(client, ggateSpawn)},
+                        {x => (x == 7500001) || (x == 7500002) || (x == 7500003) || (x == 7500004),() => MapHomeWarp(client, ggateSpawn)},
                         {x => x < 900000100, () => WorkInProgressGGate(client, ggateSpawn) }
                     };
 
@@ -214,33 +216,45 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res7 = BufferProvider.Provide();
 
             int numEntries = mapIDs.Length;
+            if (numEntries > 0x20) numEntries = 0x20;
             ; //Max of 0x20 : cmp ebx,20 
             res7.WriteInt32(numEntries);
             for (int i = 0; i < numEntries; i++)
             {
                 //sub_494c50
-                res7.WriteInt32(nameIdx[i]); //Stage ID from Stage.CSV
-                res7.WriteInt32(
-                    mapIDs[i]); //Map ID.  Cross Refrences Dungeun_info.csv to get X/Y value for map icon, and dungeun description. 
-                res7.WriteInt32(partySize[i]); //max players
-                res7.WriteInt16(levels[i]);
+                res7.WriteInt32(mapIDs[i]); //Map ID.  Cross Refrences Dungeun_info.csv to get X/Y value for map icon, and dungeun description. 
                 ; //Recommended Level
-                //sub_4834C0
-                res7.WriteByte(19);
-                for (int j = 0; j < 0x80; j++) //j max 0x80
-                {
-                    res7.WriteInt32(mapIDs[i]);
-                    res7.WriteFixedString($"Channel-{j}",
-                        0x61); //Channel Names.  Variables let you know what Loop Iteration you're on
-                    res7.WriteByte(1); //bool 1 | 0
-                    res7.WriteUInt16(0xFFFF); //Max players  -  Comment from other recv
-                    res7.WriteInt16(7); //Current players  - Comment from other recv
-                    res7.WriteByte(3);
-                    res7.WriteByte(6); //channel Emoticon - 6 for a Happy Face
-                }
 
-                res7.WriteByte(6); //Number or Channels  - comment from other recv
+                res7.WriteInt32(partySize[i]); //max players
+                res7.WriteInt16(levels[i]);//recommended level for map to display in icon
+
+                res7.WriteInt32(nameIdx[i]); //Stage ID from Stage.CSV
+
+                //sub_4834C0
+                res7.WriteByte(10);
+                for (int k = 0; k < 5; k++)
+                {
+                    res7.WriteByte(1);//new Bool //must be 1 to render map channel info
+                    res7.WriteByte(1);//new //something important. must be 1 to render map channel info
+                    res7.WriteInt16(levels[i]);//Recomended Level part 1
+                    res7.WriteInt16(levels[i]);//Recomended level part 2.  why does it add these two?
+                    res7.WriteInt32(partySize[i]);//new //party size limit
+
+                    for (int j = 0; j < 0x80; j++) //j max 0x80
+                    {
+                        res7.WriteInt32(mapIDs[i]);
+                        res7.WriteFixedString($"Channel-{j}", 0x61); //Channel Names.  Variables let you know what Loop Iteration you're on
+                        res7.WriteByte(0); //Channel Full bool.   0 no, 1 yes
+                        res7.WriteInt16((short)Util.GetRandomNumber(0, 50)); //Current players for 'fullness bar'
+                        res7.WriteInt16((short)Util.GetRandomNumber(0, 40));//Max Players 'for fullness bar'
+                        res7.WriteByte((byte)Util.GetRandomNumber(0,6)); //channel Emoticon - 6 for a Happy Face
+                    }
+                    res7.WriteByte(5); //number of channels to display
+                }
+                
+                res7.WriteByte(1); //
             }
+            res7.WriteInt32(100);
 
             Router.Send(client, (ushort) AreaPacketId.recv_event_select_map_and_channel, res7, ServerType.Area);
         }
@@ -293,7 +307,6 @@ namespace Necromancy.Server.Packet.Area
             }
         }
 
-        // I added these to Npc database for now, should it be handled differently?????
         private void SendGetWarpTarget(NecClient client, GGateSpawn ggateSpawn)
         {
             client.Character.eventSelectExecCode = -1;
@@ -565,8 +578,8 @@ namespace Necromancy.Server.Packet.Area
             }
             else
             {
-                int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101,15300003 };
-                int[] DonkeyPrices = new int[] {100,02,100,10,500,500,400,280,350,1100,1000,1000,500,450,450,300,350,250,450,400,450,1450,1500,1400,1550,1000,1500,1500 };
+                int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101, 15300003 };
+                int[] DonkeyPrices = new int[] { 100, 02, 100, 10, 500, 500, 400, 280, 350, 1100, 1000, 1000, 500, 450, 450, 300, 350, 250, 450, 400, 450, 1450, 1500, 1400, 1550, 1000, 1500, 1500 };
                 int numItems = DonkeyItems.Count();
                 IBuffer res = BufferProvider.Provide();
                 //recv_shop_notify_open = 0x52FD, // Parent = 0x5243 // Range ID = 02
@@ -577,35 +590,37 @@ namespace Necromancy.Server.Packet.Area
                 Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_open, res, ServerType.Area);
                 Character _character = client.Character;
                 NecClient _client = client;
+                ItemService itemService = new ItemService(client.Character);
                 for (int i = 0; i < numItems; i++)
                 {
-                    Item item = Server.Items[DonkeyItems[i]];
+                    Server.SettingRepository.ItemLibrary.TryGetValue(DonkeyItems[i], out ItemLibrarySetting item);
                     // Create InventoryItem
-                    InventoryItem inventoryItem = new InventoryItem();
-                    inventoryItem.Id = item.Id;
-                    inventoryItem.Item = item;
-                    inventoryItem.ItemId = item.Id;
-                    inventoryItem.Quantity = 1;
-                    inventoryItem.CurrentDurability = item.Durability;
-                    inventoryItem.CharacterId = client.Character.Id;
-                    inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                    inventoryItem.State = 0;
-                    inventoryItem.StorageType = (int)BagType.AvatarInventory;
-                    _character.Inventory.AddAvatarItem(inventoryItem);
+                    ItemInstance inventoryItem = new ItemInstance((ulong)DonkeyItems[i])
+                    {
+                        BaseID = item.Id,
+                        Quantity = 1,
+                        CurrentDurability = item.Durability,
+                        OwnerID = 0,
+                        CurrentEquipSlot = ItemEquipSlots.None,
+                        Location = new ItemLocation(ItemZoneType.UNKNOWN4, 0, (short)i),
+                        Statuses = ItemStatuses.Identified
+                        //add in all the stats here using Item Library Setting, or make a database query
+                        //probably best to have the ItemLibrary Table loaded in to memory in setting Repository
+                    };
 
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, inventoryItem);
                     Router.Send(recvItemInstance, client);
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                    Router.Send(recvItemInstanceUnidentified, client);
-
-                    itemStats(inventoryItem, client);
-
 
                     res = BufferProvider.Provide();
                     res.WriteByte((byte)i); //idx
                     res.WriteInt32(DonkeyItems[i]); // item Serial id
                     res.WriteInt64(DonkeyPrices[i]); // item price
-                    res.WriteFixedString($"{inventoryItem.Item.Name}", 0x10); // ?
+                    res.WriteInt64(69); // new
+                    res.WriteInt64(692); // new
+                    res.WriteByte((byte)(Util.GetRandomNumber(0,2))); //Bool new
+                    res.WriteFixedString($"{inventoryItem.UnidentifiedName}", 0x10); // //should be identified name.
+                    res.WriteInt32((int)inventoryItem.Statuses); //new
+                    res.WriteInt16(1); //new
                     Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item, res, ServerType.Area);
 
                 }
@@ -670,24 +685,22 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.Character.helperTextCloakRoom)
             {
-                IBuffer res2 = BufferProvider.Provide();
-                res2.WriteCString($"{npcSpawn.Name}"); //Name
-                res2.WriteCString($"{npcSpawn.Title}"); //Title (inside chat box)
-                res2.WriteCString(
-                    "Welcome! We take care of your belongings and money."); //Text block
-                Router.Send(client, (ushort) AreaPacketId.recv_event_message_no_object, res2, ServerType.Area);
+                string name, title, text;
+                name = npcSpawn.Name;
+                title = npcSpawn.Title;
+                text = "Welcome! We take care of your belongings and money.";
+                RecvEventMessageNoObject eventText = new RecvEventMessageNoObject(name, title, text);
+                Router.Send(eventText, client);
 
-                IBuffer res6 = BufferProvider.Provide();
-                Router.Send(client, (ushort) AreaPacketId.recv_event_sync, res6, ServerType.Area);
+                RecvEventSync eventSync = new RecvEventSync();
+                Router.Send(eventSync, client);
 
                 client.Character.helperTextCloakRoom = false;
             }
             else
             {
-                IBuffer res4 = BufferProvider.Provide();
-                //recv_event_soul_storage_open = 0x3DD0, 
-                res4.WriteInt64(client.Soul.WarehouseGold); // Gold in the storage
-                Router.Send(client, (ushort) AreaPacketId.recv_event_soul_storage_open, res4, ServerType.Area);
+                RecvEventSoulStorageOpen openStorage = new RecvEventSoulStorageOpen(client);
+                Router.Send(openStorage, client);
             }
         }
 
@@ -948,6 +961,70 @@ namespace Necromancy.Server.Packet.Area
                 ServerType.Area); // It's the windows that contain the multiple choice            
         }
 
+        private void ModelLibraryWarp(NecClient client, GGateSpawn ggateSpawn)
+        {
+
+            IBuffer res = BufferProvider.Provide();
+            res.WriteCString("US NPC Models"); //Length 0x601         
+            Router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res,ServerType.Area); // It's the first choice        
+            res = BufferProvider.Provide();
+            res.WriteCString("Monsters"); //Length 0x601         
+            Router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res, ServerType.Area); // It's the second choice
+            res = BufferProvider.Provide();
+            res.WriteCString("Giant Monsters"); //Length 0x601         
+            Router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res, ServerType.Area); // It's the third choice
+            res = BufferProvider.Provide();
+            res.WriteCString("Colossal Monsters"); //Length 0x601         
+            Router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res, ServerType.Area); // It's the fourth choice
+            res = BufferProvider.Provide();
+            res.WriteCString("US Gimmicks"); //Length 0x601         
+            Router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res, ServerType.Area); // It's the fifth choice
+
+            res = BufferProvider.Provide();
+            res.WriteCString("Select area to travel to"); // It's the title dude
+            res.WriteUInt32(ggateSpawn.InstanceId); // 
+            Router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res, ServerType.Area); //
+        }
+
+        private void MapHomeWarp(NecClient client, GGateSpawn ggateSpawn)
+        {
+            IBuffer res = BufferProvider.Provide();
+            RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+            Router.Send(recvEventScriptPlay, client);
+            Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
+            (t1 =>
+                {
+                    res = BufferProvider.Provide();
+                    res.WriteUInt32(client.Character.InstanceId);
+                    res.WriteFloat(client.Map.X);
+                    res.WriteFloat(client.Map.Y);
+                    res.WriteFloat(client.Map.Z);
+                    res.WriteByte(client.Character.Heading);
+                    res.WriteByte(client.Character.movementAnim);
+                    Router.Send(client.Map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                }
+            );
+            res = BufferProvider.Provide();
+            res.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
+
+        }
+
+        private void PlayerRevive(NecClient client, NpcSpawn npcSpawn)
+        {
+            IBuffer res0 = BufferProvider.Provide();
+            res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
+            res0.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+
+            IBuffer res15 = BufferProvider.Provide();
+            //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
+            res15.WriteInt16(75); //Basic revival rate %
+            res15.WriteInt16(0); //Penalty %
+            res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
+            res15.WriteInt16(0); //Dimento medal addition %
+            Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+        }
 
         private void SpareEventParts(NecClient client, NpcSpawn npcSpawn)
         {
@@ -1008,104 +1085,142 @@ namespace Necromancy.Server.Packet.Area
 
         int[] StageSelect = new int[]
         {
-            1 /* Ilfalo Port  */, 100001 /*	Caligrase Sewers	*/, 100002 /*	Kaoka Parrej Ruins	*/,
-            100003 /*	Deltis Keep	*/, 100004 /*	Golden Dragon Ruins	*/, 100005 /*	Chikor Castle Site	*/,
-            100006 /*	Aria Reservoir	*/, 100007 /*	Temple of Oblivion	*/, 100008 /*	Underground Sewers	*/,
-            100009 /*	Descension Ruins	*/, 100010 /*	Roswald Deep Fort	*/, 100011 /*	Azarm Trial Grounds	*/,
-            100012 /*	Ruined Chamber	*/, 100013 /*	Facility 13	*/, 100014 /*	Dark Roundtable	*/,
-            100015 /*	Sangent Ruins	*/, 100019 /*	Papylium Hanging Gardens	*/, 100020 /*	Azarm Trial Grounds	*/,
-            100022 /*	The Labyrinth of Apocrypha	*/, 110001 /*	Dum Spiro Spero	*/, 110002 /*	Trial of Fantasy	*/
+            1 /* Ilfalo Port  */, 
+            //2 /**/,
+            3 /*Capital City itox*/,
+            4 /*Desert cty Loewenthal*/,
+            5 /*Euclid's Infinite Corridors*/,
+            100000 /* trial Area */,
+            100001 /*	Caligrase Sewers	*/, 
+            100002 /*	Kaoka Parrej Ruins	*/,
+            100003 /*	Deltis Keep	*/, 
+            100004 /*	Golden Dragon Ruins	*/, 
+            100005 /*	Chikor Castle Site	*/,
+            100006 /*	Aria Reservoir	*/, 
+            100007 /*	Temple of Oblivion	*/, 
+            100008 /*	Underground Sewers	*/,
+            100009 /*	Descension Ruins	*/, 
+            100010 /*	Roswald Deep Fort	*/, 
+            100011 /*	Azarm Trial Grounds	*/,
+            100012 /*	Ruined Chamber	*/, 
+            100013 /*	Facility 13	*/, 
+            100014 /*	Dark Roundtable	*/,
+            100015 /*	Sangent Ruins	*/, 
+            100016 /* Rotthardie Ruins */,
+            100017 /* Land of Turmoil */,
+            100019 /*	Papylium Hanging Gardens	*/, 
+            100020 /*	Azarm Trial Grounds	*/,
+            100021 /* Horror Palace */,
+            100022 /*	The Labyrinth of Apocrypha	*/, 
+            100023 /* Abyssal Labyrinth */,
+            100024 /* Labyrinth of Sade */,
+            //110001 /*	Dum Spiro Spero	*/, 
+            //110002 /*	Trial of Fantasy	*/,
+            //110003/*,Wraith Stomach,11004,*/,
+            //110004/*,M.A.C.,18001,*/,
+            120001/*,The House of Savage Lust,10016,*/,
+            //120002/*,Blue Cave,10018,*/,
+            //120003/*,Miskatonic University,10021,*/,
+            //120004/*,Ilvanboulle Mines,10023,*/,
+            //120005/*,Melkatonic Tower,19001,*/,
+            //120006/*,Cave Full,19002,*/,
+            //120007/*,Trial of the Mad Lord,10025,*/,
+            //120008/*,Chaos Strasse,10020,10020,*/,
+            //120009/*,Trial of the Mad Lord 2,11005,*/,
+            //100080/*,Euclid's Infinite Corridors,18002,*/,
+            //100090/*,Tutorial,19993,*/,
+            //100091/*,Solo Movement Tutorial,19994,*/,
+            //100092/*,Solo Movement Tutorial,19995,*/,
+            //100093/*,Multi Movement Tutorial,19996,*/,
+            //100094/*,Multi Movement Tutorial,19997,*/,
+            //100099/*,Sub Dungeon,19998,*/,
+            //100999/*,Azarm Trial Grounds,19999,*/,
         };
 
         int[] mapIDs = new int[]
         {
-            2001001, 2002001, 2001101, 2003101, 2001103, 2002101, 2002102, 2001105, 2003102, 2002104, 2003104, 2004106,
-            2004103, 2001014, 2004001
+            2002021 ,  /*	MAC	*/
+            1003101 ,  /*	Random dungeon	*/
+            2001101 ,  /*	Caligulase sewer	*/
+            2002101 ,  /*	Kaoka Parazi Ruins	*/
+            2003101 ,  /*	Chicol Castle Ruins	*/
+            2001103 ,  /*	Deltis Okura Room	*/
+            2002102 ,  /*	Yellow Dragon Temple Ruins	*/
+            2001105 ,  /*	Aria River Reservoir	*/
+            2003102 ,  /*	Temple of Oblivion	*/
+            2001001 ,  /*	Old underground waterway	*/
+            2001006 ,  /*	Remains of the ritual site of the descendants	*/
+            2002104 ,  /*	Rosawald Submerged Fort	*/
+            2001151 ,  /*	Azzam's Trial Ground	*/
+            2003104 ,  /*	Devastated yard	*/
+            2004106 ,  /*	Facility No. 13	*/
+            2004103 ,  /*	Dark round table	*/
+            2002001 ,  /*	Sangent Ruins	*/
+            2003201 ,  /*	Ruins of Lot Hardy	*/
+            2003107 ,  /*	Land of fluctuations	*/
+            2003001 ,  /*	Babylim aerial garden	*/
+            2001051 ,  /*	Azzam's Trial Ground [For Intermediates]	*/
+            2004001 ,  /*	Pseudepigrapha Labyrinth	*/
+            2006101 ,  /*	House of lust and lewdness	*/
+            2007101 ,  /*	Blue cave	*/
+            2007006 ,  /*	Chaotic Strase	*/
+            2006102 ,  /*	Miskatonic University Branch	*/
+            2007102 ,  /*	Il Van Bole Mine	*/
+            2006231 ,  /*	Crazy House	*/
+            2801001 ,  /*	Mad King's Trial Ground	*/
+            2801006 ,  /*	Mad King's Trial Ground 2	*/
+            2001201 ,  /*	Labyrinth of the Abyss	*/
+            2004201 ,  /*	Labyrinth of Sharde	*/
+            2003051 ,  /*	DIR Collaboration Dungeon: Dum Spielow Speylow	*/
+            2002015 ,  /*	Detour Dungeon: A Dream Trial Ground	*/
+            2003152 ,  /*	Summer Vacation Event Dungeon: Grim Reaper's Stomach	*/
+            9009001 ,  /*	Azzam's Trial Ground	*/
+
         };
 
-        short[] levels = new short[] {1, 3, 5, 7, 9, 11, 12, 12, 14, 16, 16, 17, 18, 19, 20, 22};
-        int[] partySize = new int[] {2, 3, 4, 5, 5, 5, 5, 4, 5, 4, 5, 3, 4, 5, 2, 4};
+        short[] levels = new short[] {1, 3, 5, 7, 9, 11, 12, 12, 14, 16, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 99, 99, 99 };
+        int[] partySize = new int[] {2, 3, 4, 5, 5, 5, 5, 4, 5, 4, 5, 3, 4, 5, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, };
 
         int[] nameIdx = new int[]
         {
-            100008, 100015, 100001, 100005, 100003, 100002, 100004, 100006, 100007, 100010, 100012, 100013, 100014,
-            110002, 100022
+            110004  ,  /*	MAC	*/
+            100080  ,  /*	Random dungeon	*/
+            100001  ,  /*	Caligulase sewer	*/
+            100002  ,  /*	Kaoka Parazi Ruins	*/
+            100005  ,  /*	Chicol Castle Ruins	*/
+            100003  ,  /*	Deltis Okura Room	*/
+            100004  ,  /*	Yellow Dragon Temple Ruins	*/
+            100006  ,  /*	Aria River Reservoir	*/
+            100007  ,  /*	Temple of Oblivion	*/
+            100008  ,  /*	Old underground waterway	*/
+            100009  ,  /*	Remains of the ritual site of the descendants	*/
+            100010  ,  /*	Rosawald Submerged Fort	*/
+            100011  ,  /*	Azzam's Trial Ground	*/
+            100012  ,  /*	Devastated yard	*/
+            100013  ,  /*	Facility No. 13	*/
+            100014  ,  /*	Dark round table	*/
+            100015  ,  /*	Sangent Ruins	*/
+            100016  ,  /*	Ruins of Lot Hardy	*/
+            100017  ,  /*	Land of fluctuations	*/
+            100018  ,  /*	Babylim aerial garden	*/
+            100020  ,  /*	Azzam's Trial Ground [For Intermediates]	*/
+            100022  ,  /*	Pseudepigrapha Labyrinth	*/
+            120001  ,  /*	House of lust and lewdness	*/
+            120002  ,  /*	Blue cave	*/
+            120008  ,  /*	Chaotic Strase	*/
+            120005  ,  /*	Miskatonic University Branch	*/
+            120004  ,  /*	Il Van Bole Mine	*/
+            100021  ,  /*	Crazy House	*/
+            120007  ,  /*	Mad King's Trial Ground	*/
+            120009  ,  /*	Mad King's Trial Ground 2	*/
+            100023  ,  /*	Labyrinth of the Abyss	*/
+            100024  ,  /*	Labyrinth of Sharde	*/
+            110001  ,  /*	DIR Collaboration Dungeon: Dum Spielow Speylow	*/
+            110002  ,  /*	Detour Dungeon: A Dream Trial Ground	*/
+            110003  ,  /*	Summer Vacation Event Dungeon: Grim Reaper's Stomach	*/
+            100999  ,  /*	Azzam's Trial Ground	*/
+
         };
-
-        public void itemStats(InventoryItem inventoryItem, NecClient client)
-        {
-            Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-            if (itemLibrarySetting == null) return;
-
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.Durability); // MaxDura points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_maxdur, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.Durability - 10); // Durability points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_durability, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32((int)itemLibrarySetting.Weight * 100); // Weight points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_weight, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt16((short)itemLibrarySetting.PhysicalAttack); // Defense and attack points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_physics, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt16((short)itemLibrarySetting.MagicalAttack); // Magic def and attack Points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_magic, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.SpecialPerformance); // for the moment i don't know what it change
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_enchantid, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt16((short)Util.GetRandomNumber(50, 100)); // Shwo GP on certain items
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(1); // for the moment i don't know what it change
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_date_end_protect, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteByte((byte)itemLibrarySetting.Hardness); // Hardness
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_hardness, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteByte(1); //Level requirement
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_level, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteByte(1); //sp Level requirement
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_sp_level, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(0b1111111111111111111111111111110); // State bitmask
-                                      Router.Send(client, (ushort)AreaPacketId.recv_item_update_state, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id); // id?
-            res.WriteInt64(Util.GetRandomNumber(10, 10000)); // price
-            res.WriteInt64(Util.GetRandomNumber(10, 100)); // identify
-            res.WriteInt64(Util.GetRandomNumber(10, 1000)); // curse?
-            res.WriteInt64(Util.GetRandomNumber(10, 500)); // repair?
-            Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item_sell_price, res, ServerType.Area);
-
-        }
 
     }
 }

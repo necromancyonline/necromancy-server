@@ -15,28 +15,15 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteByte(0);
-
-            res.WriteInt32(0); // item id
-
+            res.WriteByte(0); //idx
+            res.WriteInt32(0); // item Serial id
             res.WriteInt64(0); // item price
-
-            res.WriteByte(0); // loops 0x10 times assuming this is stats for weapon / armor
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
-            res.WriteByte(0);
+            res.WriteInt64(69); // new
+            res.WriteInt64(692); // new
+            res.WriteByte(1); //Bool new
+            res.WriteFixedString($"Item Name", 0x10); // ?
+            res.WriteInt32(6969); //new
+            res.WriteInt16(15); //new
             return res;
         }
     }

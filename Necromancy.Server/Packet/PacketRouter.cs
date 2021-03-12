@@ -82,6 +82,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(Map map, NecPacket packet, params NecClient[] excepts)
         {
+            if (map == null) return;
             List<NecClient> clients = GetClients(map.ClientLookup.GetAll(), excepts);
             foreach (NecClient client in clients)
             {
@@ -125,7 +126,7 @@ namespace Necromancy.Server.Packet
             {
                 foreach (PacketResponse response in buffers)
                 {
-                    response.AddClients(client);
+                    response.Clients.Add(client);
                     Send(response);
                 }
             }
@@ -138,9 +139,21 @@ namespace Necromancy.Server.Packet
         {
             List<NecClient> mapClients = map.ClientLookup.GetAll();
             mapClients.AddRange(response.Clients);
-            response.CleatClients();
+            response.Clients.Clear();
             List<NecClient> clients = GetClients(mapClients, excepts);
-            response.AddClients(clients);
+            response.Clients.AddRange(clients);
+            Send(response);
+        }
+
+        /// <summary>
+        /// Send a specific packet response.
+        /// </summary>
+        public void Send(PacketResponse response, List<NecClient> clientList)
+        {
+            foreach (NecClient client in clientList)
+            {
+                response.Clients.Add(client);              
+            }
             Send(response);
         }
 
@@ -149,7 +162,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(PacketResponse response, params NecClient[] clients)
         {
-            response.AddClients(clients);
+            response.Clients.AddRange(clients);
             Send(response);
         }
 
@@ -159,7 +172,7 @@ namespace Necromancy.Server.Packet
         public void Send(ChatResponse response)
         {
             RecvChatNotifyMessage notifyMessage = new RecvChatNotifyMessage(response);
-            notifyMessage.AddClients(response.Recipients);
+            notifyMessage.Clients.AddRange(response.Recipients);
             Send(notifyMessage);
         }
 

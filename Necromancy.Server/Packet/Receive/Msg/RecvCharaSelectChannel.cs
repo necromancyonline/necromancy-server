@@ -17,21 +17,32 @@ namespace Necromancy.Server.Packet.Receive.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteInt32(0);
-            res.WriteInt32(0);
+
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt16(0);
+            res.WriteInt32(0);
             res.WriteByte(0);
-            for (int i = 0; i < 0x80; i++)
+
+            for (int i = 0; i < 5; i++)
             {
-                res.WriteInt32(0);
-                res.WriteFixedString("", 0x61); //size is 0x61
-                res.WriteByte(0);//bool
-                res.WriteInt16(0);
-                res.WriteInt16(0);
+                res.WriteByte(0); //bool
                 res.WriteByte(0);
+                res.WriteInt16(0);
+                res.WriteInt16(0);
+                res.WriteInt32(0);
+                for (int j = 0; j < 0x80; j++)
+                {
+                    res.WriteInt32(0);
+                    res.WriteFixedString("", 0x61);
+                    res.WriteByte(0); //bool
+                    res.WriteInt16(0);
+                    res.WriteInt16(0);
+                    res.WriteByte(0);
+                }
                 res.WriteByte(0);
             }
+
             res.WriteByte(0);
             return res;
         }

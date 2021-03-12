@@ -27,7 +27,8 @@ namespace Necromancy.Server.Packet.Auth
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteCString(Settings.DataMsgIpAddress);
-            res.WriteInt32(Settings.MsgPort);
+            res.WriteUInt16(Settings.MsgPort);
+            res.WriteFixedString("", 0x14);
             Router.Send(client, (ushort) AuthPacketId.recv_base_select_world_r, res, ServerType.Auth);
         }
     }

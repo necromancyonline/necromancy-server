@@ -23,8 +23,9 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(_instanceId); // Unique Instance ID
-            res.WriteInt32(_unknown1); //unknown
-            res.WriteInt32(_unknown2);
+            res.WriteInt32(1); //unknown
+            res.WriteInt32(1);
+            res.WriteByte(0);
             return res;
         }
     }

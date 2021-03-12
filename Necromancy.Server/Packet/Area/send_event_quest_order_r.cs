@@ -64,7 +64,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt32(0);
             }
             res.WriteByte(1); // Add more completion requirement, Collect, Mob kill, ect.., 2 = 2 requirement !! 1 = 1requirement !! 0 = 0requirement.
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_event_quest_order, res, ServerType.Area);
+            //no_JP Router.Send(client.Map, (ushort)AreaPacketId.recv_event_quest_order, res, ServerType.Area);
 
 
             SendEventEnd(client);

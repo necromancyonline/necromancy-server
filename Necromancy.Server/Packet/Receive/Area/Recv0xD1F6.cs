@@ -15,7 +15,17 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            //Find struct still
+            res.WriteInt32(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+            res.WriteFloat(0);
+            res.WriteFloat(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
             return res;
         }
     }

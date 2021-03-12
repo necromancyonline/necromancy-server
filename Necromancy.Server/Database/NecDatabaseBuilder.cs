@@ -4,7 +4,6 @@ using Arrowgene.Logging;
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Database.Sql;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.ItemModel;
 using Necromancy.Server.Model.MapModel;
 using Necromancy.Server.Setting;
 
@@ -88,31 +87,6 @@ namespace Necromancy.Server.Database
                     }
                 }
 
-                // insert items (un-comment to rebuild table from settings lookup) Currently disabled for inventory development
-                /*foreach (ItemInfoSetting itemInfoSetting in _settingRepository.ItemInfo.Values)
-                {
-                    if (!_settingRepository.ItemLibrary.TryGetValue(itemInfoSetting.Id, out ItemLibrarySetting itemLibrarySetting))
-                    {
-                        Logger.Debug($"ItemId: {itemInfoSetting.Id} - is in itemInfo.CSV for this client, but not the Item Library`");
-                        continue;
-                    }
-
-                    Item item = new Item();
-                    item.Id = itemLibrarySetting.Id;
-                    item.Name = itemLibrarySetting.Name;
-                    item.Durability = itemLibrarySetting.Durability;
-                    item.Physical = itemLibrarySetting.PhysicalAttack;
-                    item.Magical = itemLibrarySetting.MagicalAttack;
-                    item.ItemType = (ItemType)Enum.Parse(typeof(ItemType), itemLibrarySetting.ItemType);
-                    item.EquipmentSlotType = (EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), itemLibrarySetting.EquipmentType);
-                    
-                    if (!database.InsertItem(item))
-                    {
-                        Logger.Error($"ItemId: {item.Id} - could not be inserted into table`");
-                        return;
-                    }
-                }*/
-
                 scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_account.sql"));
                 scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_npc_spawn.sql"));
                 scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_monster_spawn.sql"));
@@ -123,7 +97,9 @@ namespace Necromancy.Server.Database
                 scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_maptransition.sql"));
                 scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_ggate.sql"));
                 scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_item_library.sql"));
-                scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_item_spawn.sql"));
+                scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_item_instance.sql"));
+                scriptRunner.Run(Path.Combine(_setting.DatabaseSettings.ScriptFolder, "data_shortcut_bar.sql"));
+                
             }
 
             SqlMigrator migrator = new SqlMigrator(database);

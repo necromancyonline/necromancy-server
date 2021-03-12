@@ -2,7 +2,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class NpcCsvReader : CsvReader<NpcSetting>
     {
-        protected override int NumExpectedItems => 15;
+        protected override int NumExpectedItems => 34;
 
         protected override NpcSetting CreateInstance(string[] properties)
         {
@@ -11,7 +11,7 @@ namespace Necromancy.Server.Data.Setting
                 return null;
             }
 
-            if (!int.TryParse(properties[12], out int level))
+            if (!int.TryParse(properties[20], out int level))
             {
                 return null;
             }
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Data.Setting
                 Id = id,
                 Level = level,
                 Name = properties[1],
-                Title = properties[13]
+                Title = properties[20]
             };
         }
     }

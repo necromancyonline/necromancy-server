@@ -2,6 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
@@ -19,13 +20,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 
         protected override IBuffer ToBuffer()
         {
-            int numEntries = 19; // 1 to 19 equipment.  Setting to 0 because NPCS don't wear gear.
-            int numStatusEffects = 128;
-
-            if (_npcSpawn.ModelId > 52000 /*CharacterModelUpperLimit*/)
-            {
-                numEntries = 0;
-            } //ToDo find NPCs using chara models and build a table containing their equipment IDs
+            int numEntries = 0; //max of 0x19; 
+            int numStatusEffects = 0; //max of 128;
+            int i = 0;
+            ItemInstance[] _equippedItems = new ItemInstance[numEntries]; //ToDo Add NPC specific equipment here
 
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(_npcSpawn.InstanceId); // InstanceId 
@@ -38,20 +36,50 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteFloat(_npcSpawn.Z); //Z Pos
             res.WriteByte(_npcSpawn.Heading); //view offset
 
+            //sub_483420 
             res.WriteInt32(numEntries); // Number of equipment Slots
-            //Consolidated Frequently Used Code
-            LoadEquip.SlotSetup(res, _character, numEntries);
+            //sub_483660 
+            for (i = 0; i < numEntries; i++)
+            {
+                res.WriteInt32((int)_equippedItems[i].Type);
+            }
+
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots
-            //Consolidated Frequently Used Code
-            LoadEquip.EquipItems(res, _character, numEntries);
+            //sub_4948C0
+            for (i = 0; i < numEntries; i++)
+            {
+                res.WriteInt32(_equippedItems[i].BaseID); //Item Base Model ID
+                res.WriteByte(00); //? TYPE data/chara/##/ 00 is character model, 01 is npc, 02 is monster
+                res.WriteByte(0); //Race and gender tens place is race 1= human, 2= elf 3=dwarf 4=gnome 5=porkul, ones is gender 1 = male 2 = female
+                res.WriteByte(0); //??item version
+
+                res.WriteInt32(_equippedItems[i].BaseID); //testing (Theory, texture file related)
+                res.WriteByte(0); //hair
+                res.WriteByte(1); //color
+                res.WriteByte(0); //face
+
+                res.WriteByte(45); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
+                res.WriteByte((byte)(_character.FaceId * 10));  //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
+                res.WriteByte(00); // testing (Theory Torso Tex)
+                res.WriteByte(0); // testing (Theory Pants Tex)
+                res.WriteByte(0); // testing (Theory Hands Tex)
+                res.WriteByte(0); // testing (Theory Feet Tex)
+                res.WriteByte(0); //Alternate texture for item model  0 normal : 1 Pink 
+
+                res.WriteByte(0); // separate in assembly
+                res.WriteByte(0); // separate in assembly
+            }
+
             //sub_483420
-            res.WriteInt32(numEntries); // Number of equipment Slots
-            //Consolidated Frequently Used Code
-            LoadEquip.EquipSlotBitMask(res, _character, numEntries);
+            res.WriteInt32(numEntries); // Number of equipment Slots to display
+            for (i = 0; i < numEntries; i++)
+            {
+                res.WriteInt32((int)_equippedItems[i].CurrentEquipSlot); //bitmask per equipment slot
+            }
 
             res.WriteInt32(_npcSpawn.ModelId); //NPC Model from file "model_common.csv"
-            res.WriteInt16(_npcSpawn.Size); //NPC Model Size
+            res.WriteInt16(100/*_npcSpawn.Size*/); //NPC Model Size  //Hardcoded to 100
             res.WriteByte(4); //Hair ID for Character models
             res.WriteByte(5); //Hair Color ID for Character models
             res.WriteByte(3); //Face ID for Character models
@@ -65,17 +93,18 @@ namespace Necromancy.Server.Packet.Receive.Area
             //0bx1xxxxxx - 1 blinking  / 0 solid
             //0b1xxxxxxx - 
             res.WriteInt32(Util.GetRandomNumber(1, 9)); //npc Emoticon above head 1 for skull. 2-9 different hearts
-            res.WriteInt32(_npcSpawn
-                .Status); //From  NPC.CSV column C  |   //horse: 4 TP machine:5 Ghost: 6 Illusion 7. Dungeun: 8 Stone 9. Ggate 1.  torch 13,14,15. power spot :22  event:23 ??:16,17,18
+            res.WriteInt32(_npcSpawn.Status); //From  NPC.CSV column C  |   //horse: 4 TP machine:5 Ghost: 6 Illusion 7. Dungeun: 8 Stone 9. Ggate 1.  torch 13,14,15. power spot :22  event:23 ??:16,17,18
             res.WriteFloat(_npcSpawn.Status_X); //x for particle effects from Int32 above From NPC.CSV column D
             res.WriteFloat(_npcSpawn.Status_Y); //y for particle effects from Int32 above From NPC.CSV column E
             res.WriteFloat(_npcSpawn.Status_Z); //z for particle effects from Int32 above From NPC.CSV column F
+
             res.WriteInt32(numStatusEffects); //number of status effects. 128 Max.
-            for (int i = 0; i < numStatusEffects; i++)
+            for (i = 0; i < numStatusEffects; i++)
             {
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
+                res.WriteInt32(0);//new
             }
 
             return res;

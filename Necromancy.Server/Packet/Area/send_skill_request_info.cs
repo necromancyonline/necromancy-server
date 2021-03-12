@@ -22,8 +22,15 @@ namespace Necromancy.Server.Packet.Area
                 IBuffer res = BufferProvider.Provide();
                 res.WriteInt32(skillTreeItems[i].SkillId);      // base skill id
                 res.WriteInt32(skillTreeItems[i].Level);          // skill level
-                res.WriteByte(0);
-                res.WriteByte(0);
+                res.WriteByte(0); //bool    "Is_takeover"
+                res.WriteByte(0); //bool    "is_Custom_Set"
+
+                res.WriteInt32(0);//new
+                res.WriteByte(0);//new
+                res.WriteByte(0);//new
+                res.WriteInt16(0);//new
+                res.WriteInt16(0);//new
+
                 // No Response OP code
                 Router.Send(client, (ushort)AreaPacketId.recv_skill_tree_notify, res, ServerType.Area);
             }

@@ -63,16 +63,22 @@ namespace Necromancy.Server.Data.Setting
             Honor.Clear();
             Load(Strings, "str_table.csv", new StrTableCsvReader());
             Load(ItemInfo, "iteminfo.csv", new ItemInfoCsvReader());
+            Load(ItemInfo, "iteminfo2.csv", new ItemInfoCsvReader());
             //Load(ItemNecromancy, "item_necromancy.csv", new ItemNecromancyCsvReader()); //disabled migrating to new library
             Load(ItemLibrary, "itemlibrary.csv", new ItemLibrarySettingCsvReader());
             Load(Monster, "monster.csv", new MonsterCsvReader());
             Load(SkillBase, "skill_base.csv", new SkillBaseCsvReader());
+            Load(SkillBase, "skill_base2.csv", new SkillBaseCsvReader());
+            Load(SkillBase, "skill_base3.csv", new SkillBaseCsvReader());
             Load(EoBase, "eo_base.csv", new EoBaseCsvReader());
+            Load(EoBase, "eo_base2.csv", new EoBaseCsvReader());
+            Load(EoBase, "eo_base3.csv", new EoBaseCsvReader());
             Load(Npc, "npc.csv", new NpcCsvReader());
             Load(ModelAtr, "model_atr.csv", new ModelAtrCsvReader());
             Load(Map, "map.csv", new MapCsvReader(Strings));
             Load(ModelCommon, "model_common.csv", new ModelCommonCsvReader(Monster, ModelAtr));
             Load(Honor, "honor.csv", new HonorCsvReader());
+            Logger.Debug($"Number of Honor titles found. {Honor.Count}");
             return this;
         }
 

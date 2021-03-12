@@ -255,6 +255,16 @@ namespace Necromancy.Server.Database.Sql
             return (uint) GetInt32(reader, column);
         }
 
+        protected long GetInt64(DbDataReader reader, string column)
+        {
+            return reader.GetInt64(reader.GetOrdinal(column));
+        }
+
+        protected ulong GetUInt64(DbDataReader reader, string column)
+        {
+            return (ulong)GetInt64(reader, column);
+        }
+
         protected byte GetByte(DbDataReader reader, string column)
         {
             return reader.GetByte(reader.GetOrdinal(column));

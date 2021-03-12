@@ -35,6 +35,12 @@ namespace Necromancy.Server.Packet.Receive.Msg
             for (int i = 0; i < 8; i++)
                 res.WriteInt32(0);
             res.WriteByte(0);
+            res.WriteInt32(0);
+
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteInt32(0);
             return res;
         }
     }

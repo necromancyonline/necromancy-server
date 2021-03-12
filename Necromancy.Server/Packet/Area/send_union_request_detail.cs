@@ -85,15 +85,21 @@ namespace Necromancy.Server.Packet.Msg
                         res3.WriteFixedString($"{character.Name}", 0x5B); //size is 0x5B
                         res3.WriteUInt32(character.ClassId);
                         res3.WriteByte(character.Level);
+                        res3.WriteByte(0);//new
+
                         res3.WriteInt32(character.MapId); // Location of your Union Member
                         res3.WriteInt32(unionJoinedCalculation); //Area of Map, somehow. or Channel;
                         res3.WriteFixedString($"Channel {character.Channel}", 0x61); // Channel location
                         res3.WriteUInt32(unionMemberList.MemberPriviledgeBitMask); //permissions bitmask  obxxxx1 = invite | obxxx1x = kick | obxx1xx = News | 0bxx1xxxxx = General Storage | 0bx1xxxxxx = Deluxe Storage
+                        res3.WriteByte(0);//new
                         res3.WriteUInt32(unionMemberList.Rank); //Rank  3 = beginner 2 = member, 1 = sub-leader 0 = leader
                         res3.WriteInt32(onlineStatus); //online status. 0 = online, 1 = offline, 2 = away
                         res3.WriteInt32(unionJoinedCalculation); //Date Joined in seconds since unix time
                         res3.WriteInt32(Util.GetRandomNumber(0, 0));
                         res3.WriteInt32(Util.GetRandomNumber(0, 0));
+                        res3.WriteInt32(Util.GetRandomNumber(0, 0));//new
+                        res3.WriteFixedString($"{character.Name}", 0x181); //size is 0x181, new
+
                         Router.Send(client, (ushort)MsgPacketId.recv_union_notify_detail_member, res3, ServerType.Msg);
                     }
 
@@ -109,7 +115,7 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteUInt32(UnionLeaderInstanceId); //Leader
                     res.WriteInt32(unionCreatedCalculation);//Last login timestamp for demoting? 
                     res.WriteUInt32(UnionSubLeader1InstanceId); //subleader1
-                    res.WriteInt32(unionCreatedCalculation);//Last login timestamp for demoting? 
+                    res.WriteInt32(unionCreatedCalculation);//Last login timestamp for demoting?
                     res.WriteUInt32(UnionSubLeader2InstanceId); //subleader2
                     res.WriteInt32(unionCreatedCalculation);//Last login timestamp for demoting? 
                     res.WriteByte((byte)myUnion.Level); //Union Level
@@ -124,6 +130,13 @@ namespace Necromancy.Server.Packet.Msg
                     for (int i = 0; i < 8; i++)
                         res.WriteInt32(i);
                     res.WriteByte(255);
+                    res.WriteInt32(0);
+
+                    res.WriteInt32(0);
+                    res.WriteInt32(0);
+                    res.WriteInt32(0);
+                    res.WriteInt32(0);
+
                     Router.Send(client, (ushort)MsgPacketId.recv_union_notify_detail, res, ServerType.Msg);
                 }
             }

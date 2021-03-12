@@ -6,17 +6,16 @@ namespace Necromancy.Server.Packet
 {
     public abstract class PacketResponse
     {
-        private readonly List<NecClient> _clients;
         private NecPacket _packet;
 
         public PacketResponse(ushort id, ServerType serverType)
         {
-            _clients = new List<NecClient>();
+            Clients = new List<NecClient>();
             Id = id;
             ServerType = serverType;
         }
 
-        public List<NecClient> Clients => new List<NecClient>(_clients);
+        public readonly List<NecClient> Clients;
         public ServerType ServerType { get; }
         public ushort Id { get; }
 
@@ -30,21 +29,6 @@ namespace Necromancy.Server.Packet
             }
 
             return _packet;
-        }
-
-        public void AddClients(params NecClient[] clients)
-        {
-            _clients.AddRange(clients);
-        }
-
-        public void AddClients(IEnumerable<NecClient> clients)
-        {
-            _clients.AddRange(clients);
-        }
-
-        public void CleatClients()
-        {
-            _clients.Clear();
         }
     }
 }

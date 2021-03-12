@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Arrowgene.Buffers;
+using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
@@ -19,16 +21,27 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            int x = 0;
+            int x = 10010101;
             if (command[0] == "all")
             {
+                //foreach (HonorSetting honorSetting in Server.SettingRepository.Honor.Values)
+                int[] honorSettings = Server.SettingRepository.Honor.Keys.ToArray();
+                int numEntries = Server.SettingRepository.Honor.Count; //its over 1000!
+
                 IBuffer res = BufferProvider.Provide();
-                int numEntries = Server.SettingRepository.Honor.Count;
-                res.WriteInt32(numEntries); // must be under 0x3E8 // wtf?
-                //for (int i = 0; i < numEntries; i++)
-                foreach (HonorSetting honorSetting in Server.SettingRepository.Honor.Values)
+                res.WriteInt32(1000); // must be under 0x3E8 // wtf?
+                for (int i = 0; i < 1000; i++)
                 {
-                    res.WriteInt32(honorSetting.Id);
+                    res.WriteInt32(honorSettings[i]);
+                    res.WriteUInt32(client.Character.InstanceId);
+                    res.WriteByte(1); // bool	New Title 0:Yes  1:No	
+                }
+                Router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
+                res = BufferProvider.Provide();
+                res.WriteInt32(numEntries-1000); // must be under 0x3E8 // wtf?
+                for (int i = 1000; i < numEntries; i++)
+                {
+                    res.WriteInt32(honorSettings[i]);
                     res.WriteUInt32(client.Character.InstanceId);
                     res.WriteByte(0); // bool	New Title 0:Yes  1:No	
                 }

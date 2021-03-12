@@ -19,7 +19,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             //SendDataNotifyItemObjectData
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteInt32(251001); //Object ID
+            res.WriteInt32(251001); //sys_msg.csv call
             res.WriteFloat(client.Character.X); //Initial X
             res.WriteFloat(client.Character.Y); //Initial Y
             res.WriteFloat(client.Character.Z); //Initial Z

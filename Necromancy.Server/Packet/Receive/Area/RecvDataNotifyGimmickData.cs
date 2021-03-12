@@ -25,6 +25,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             resI.WriteByte(_gimmickSpawn.Heading);
             resI.WriteInt32(_gimmickSpawn.ModelId); //Gimmick number (from gimmick.csv)
             resI.WriteInt32(_gimmickSpawn.State); //Gimmick State
+            resI.WriteInt32(0); //new
             return resI;
         }
     }

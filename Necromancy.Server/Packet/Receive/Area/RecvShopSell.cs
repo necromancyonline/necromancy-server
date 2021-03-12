@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvShopSell : PacketResponse
     {
-        public RecvShopSell()
+        private readonly int _error;
+        public RecvShopSell(NecClient client, int error)
             : base((ushort) AreaPacketId.recv_shop_sell_r, ServerType.Area)
         {
+            _error = error;
+            Clients.Add(client);
         }
-
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_error);
             return res;
         }
     }

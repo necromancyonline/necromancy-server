@@ -1,0 +1,68 @@
+0x00513310 location for opcode section, 12 opcodes, 13 recv strings (one unknown)
+---------------------------------------------------------------
+recv_cpf_notify_error = 0x73D7,
+	no structure
+---------------------------------------------------------------
+recv_cpf_authenticate = 0xBA73,
+	int size = _cpfString.Length;
+	res.WriteInt32(size); //Less than or equal to 0x80
+	res.WriteFixedString($"{_cpfString}", size);
+---------------------------------------------------------------
+recv_base_select_world_r = 0x848C,
+	res.WriteInt32(0);
+    res.WriteCString(Settings.DataMsgIpAddress);
+    res.WriteUInt16(Settings.MsgPort);
+    res.WriteFixedString("", 0x14);
+---------------------------------------------------------------
+recv_base_ping_r = 0xD2D6,
+	no structure
+---------------------------------------------------------------
+recv_base_get_worldlist_r = 0xB717,
+	int numEntries = 10;
+	IBuffer res = BufferProvider.Provide();
+	res.WriteInt32(numEntries); //Less than or equal to 10
+	for (int i = 1; i <= numEntries; i++)
+	{
+		res.WriteInt32(i); // World ID
+		res.WriteFixedString($"World {i}", 37);
+		res.WriteInt32(0);
+		res.WriteInt16(0); //Max Player
+		res.WriteInt16(0); //Current Player
+	}
+
+	res.WriteInt32(0);
+	res.WriteByte(0); // 1 = Server merge notice
+---------------------------------------------------------------
+recv_base_check_version_r = 0xEFDD,
+	res.WriteInt32(0);
+	res.WriteUInt32(major);
+	res.WriteUInt32(minor);
+---------------------------------------------------------------
+recv_base_check_version2_r = 0xEC0A,
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_base_authenticate_soe_sessionid = unknown,
+	unknown
+---------------------------------------------------------------
+recv_base_authenticate_soe_r = 0x174A,
+	res.WriteInt32(0);
+    res.WriteInt32(0);
+---------------------------------------------------------------
+recv_base_authenticate_r  = 0x15C7,
+	res.WriteInt32(0);
+    res.WriteInt32(0);
+---------------------------------------------------------------
+recv_base_authenticate_niconico_app_r = 0x6B79,
+	res.WriteInt32(0);
+    res.WriteInt32(0);
+---------------------------------------------------------------
+recv_base_authenticate_netville_r = 0xA778,
+	res.WriteInt32(0);
+    res.WriteInt32(0);
+---------------------------------------------------------------
+recv_base_authenticate_hangame_r = 0xA53,
+	res.WriteInt32(0);
+	res.WriteInt32(0);

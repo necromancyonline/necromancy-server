@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Arrowgene.Logging;
 using Necromancy.Server.Logging;
-using Necromancy.Server.Model.ItemModel;
 using Necromancy.Server.Packet;
 
 namespace Necromancy.Server.Model
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Model
             Identity = "";
             Soul = new Soul();
             Character = new Character();
-            //Inventory = new Inventory();
+            BodyCollection = new Dictionary<uint,NecClient>();
         }
 
         public DateTime Creation { get; }
@@ -28,11 +28,11 @@ namespace Necromancy.Server.Model
         public Character Character { get; set; }
         public Channel Channel { get; set; }
         public Map Map { get; set; }
-        public Inventory Inventory { get; set; }
         public Union.Union Union { get; set; }
         public NecConnection AuthConnection { get; set; }
         public NecConnection MsgConnection { get; set; }
         public NecConnection AreaConnection { get; set; }
+        public Dictionary<uint, NecClient> BodyCollection { get; set; }
 
         public void Send(NecPacket packet)
         {

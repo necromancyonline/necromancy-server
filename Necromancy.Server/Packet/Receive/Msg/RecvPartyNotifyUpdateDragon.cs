@@ -7,16 +7,18 @@ namespace Necromancy.Server.Packet.Receive.Msg
 {
     public class RecvPartyNotifyUpdateDragon : PacketResponse
     {
-        public RecvPartyNotifyUpdateDragon()
+        private uint _id;
+        public RecvPartyNotifyUpdateDragon(uint id)
             : base((ushort) MsgPacketId.recv_party_notify_update_dragon, ServerType.Msg)
         {
+            _id = id;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteByte(0);
+            res.WriteUInt32(_id);
+            res.WriteByte(1);
             return res;
         }
     }

@@ -41,8 +41,8 @@ namespace Necromancy.Server.Packet.Area
             SendEventEnd(client);
 
             IBuffer res2 = BufferProvider.Provide();
-            res2.WriteUInt32(client.Character.InstanceId);
-            res2.WriteCString("IsThisMyChannel?????"); //Length to be Found
+            res2.WriteInt32(channelId); //Channel ID
+            res2.WriteCString($"Channel {channelId}"); //Length to be Found
             Router.Send(Server.Clients.GetAll(), (ushort) AreaPacketId.recv_channel_notify, res2, ServerType.Area);
         }
 

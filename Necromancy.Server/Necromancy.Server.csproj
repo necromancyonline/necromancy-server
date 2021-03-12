@@ -29,4 +29,7 @@
             <TargetPath>Client\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
         </ContentWithTargetPath>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Model\ItemModel\" />
+    </ItemGroup>
 </Project>

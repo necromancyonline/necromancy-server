@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvBattleReportNotifyRaise : PacketResponse
     {
-        public RecvBattleReportNotifyRaise()
+        private uint _instanceId;
+        public RecvBattleReportNotifyRaise(uint instanceId)
             : base((ushort) AreaPacketId.recv_battle_report_notify_raise, ServerType.Area)
         {
+            _instanceId = instanceId;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteUInt32(_instanceId);
             return res;
         }
     }

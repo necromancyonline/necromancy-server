@@ -7,19 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSelfMoneyNotify : PacketResponse
     {
-        private readonly long _gold;
-
-        public RecvSelfMoneyNotify(long gold)
+        private readonly long _currentGold;
+        public RecvSelfMoneyNotify(NecClient client, long currentGold)
             : base((ushort) AreaPacketId.recv_self_money_notify, ServerType.Area)
         {
-            _gold = gold;
+            _currentGold = currentGold;
+            Clients.Add(client);
         }
-
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(_gold);
-
+            res.WriteInt64(_currentGold);
             return res;
         }
     }

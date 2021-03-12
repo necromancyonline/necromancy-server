@@ -22,6 +22,7 @@ namespace Necromancy.Server.Packet.Msg
             {
                 res.WriteInt32(1); //  Error: 0 - Success, other vales (maybe) error code   
                 res.WriteByte(0); // 0 = OK | 1 = need to change soul name (bool type) true = other values, false - 0
+                res.WriteCString("");
                 Router.Send(client, (ushort) MsgPacketId.recv_soul_authenticate_passwd_r, res, ServerType.Msg);
                 client.Close();
                 return;
@@ -29,6 +30,7 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteInt32(0); //  Error: 0 - Success, other vales (maybe) error code
             res.WriteByte(0); // 0 = OK | 1 = need to change soul name (bool type) true = other values, false - 0
+            res.WriteCString("");
             Router.Send(client, (ushort) MsgPacketId.recv_soul_authenticate_passwd_r, res, ServerType.Msg);
         }
     }

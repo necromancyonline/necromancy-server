@@ -75,15 +75,20 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteFixedString($"{character.Name}", 0x5B); //size is 0x5B
                 res.WriteUInt32(character.ClassId);
                 res.WriteByte(character.Level);
+                res.WriteByte(0);//new
                 res.WriteInt32(character.MapId); // Location of your Union Member
                 res.WriteInt32(69); //Area of Map, somehow. or Channel;
                 res.WriteFixedString($"Channel {character.Channel}", 0x61); // Channel location
                 res.WriteUInt32(unionMemberList.MemberPriviledgeBitMask); //permissions bitmask  obxxxx1 = invite | obxxx1x = kick | obxx1xx = News | 0bxx1xxxxx = General Storage | 0bx1xxxxxx = Deluxe Storage
+                res.WriteByte(0);//new
                 res.WriteUInt32(unionMemberList.Rank); //Rank  3 = beginner 2 = member, 1 = sub-leader 0 = leader
                 res.WriteInt32(onlineStatus); //online status. 0 = online, 1 = offline, 2 = away
                 res.WriteInt32(69); //Date Joined in seconds since unix time
                 res.WriteInt32(Util.GetRandomNumber(0, 0));
                 res.WriteInt32(Util.GetRandomNumber(0, 0));
+                res.WriteInt32(0);//new
+                res.WriteFixedString("", 0x181); //size is 0x181
+
                 Router.Send(client, (ushort)MsgPacketId.recv_union_notify_member_state, res, ServerType.Msg);
             }
             

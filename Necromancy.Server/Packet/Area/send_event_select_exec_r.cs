@@ -10,8 +10,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Arrowgene.Logging;
 using Necromancy.Server.Logging;
-using Necromancy.Server.Model.ItemModel;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -115,6 +115,7 @@ namespace Necromancy.Server.Packet.Area
                             {x => x == 74013071, () => ChangeMap(client, ggateSpawn.SerialId)},
                             {x => x == 74013161, () => ChangeMap(client, ggateSpawn.SerialId)},
                             {x => x == 74013271, () => ChangeMap(client, ggateSpawn.SerialId)},
+                            {x => x == 7500001, () => ModelLibraryWarp(client, ggateSpawn)},
 
                             {x => x < 900000100, () => Logger.Debug("Yea, Work in progress still.")}
                         };
@@ -168,9 +169,8 @@ namespace Necromancy.Server.Packet.Area
                 }
                 else
                 {
-                    IBuffer res22 = BufferProvider.Provide();
-                    res22.WriteCString("etc/heal_fountain"); // find max size 
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/heal_fountain", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay, client);
 
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("You drink The water and it replenishes you"); // Length 0xC01
@@ -375,6 +375,8 @@ namespace Necromancy.Server.Packet.Area
                     case 0:
                         if (client.Soul.Level > 3)
                         {
+                            res9.WriteCString($"Our sincerest apologies. That's only for new souls."); // Length 0xC01
+                            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res9, ServerType.Area); // show system message on middle of the screen.
                             SendEventEnd(client);
                             client.Character.eventSelectExtraSelectionCode = 0;
                             client.Character.eventSelectExecCode = 0;
@@ -451,6 +453,9 @@ namespace Necromancy.Server.Packet.Area
                     case 0:
                         if (client.Soul.Level > 3)
                         {
+                            res9 = BufferProvider.Provide();
+                            res9.WriteCString($"Sorry big guy. That's only for new souls."); // Length 0xC01
+                            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res9, ServerType.Area); // show system message on middle of the screen.
                             SendEventEnd(client);
                             client.Character.eventSelectExtraSelectionCode = 0;
                             client.Character.eventSelectExecCode = 0;
@@ -504,16 +509,17 @@ namespace Necromancy.Server.Packet.Area
             if (client.Character.eventSelectExecCode == 0)
             {
                 int[] HPandMPperChoice = new int[] {100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100};
-                int[] ConditionPerChoice = new int[] {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
-                int[] GoldCostPerChoice = new int[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
+                byte[] ConditionPerChoice = new byte[] {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
+                ulong[] GoldCostPerChoice = new ulong[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
                 Logger.Debug($"The selection you have made is {client.Character.eventSelectExtraSelectionCode}");
 
                 client.Character.Hp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode],
                     true);
                 client.Character.Mp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode],
                     true);
-                /*client.Character.condition*/
+                client.Character.Condition.setCurrent(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
                 client.Character.Od.toMax();
+                client.Character.Gp.toMax();
                 client.Character.AdventureBagGold -= GoldCostPerChoice[client.Character.eventSelectExtraSelectionCode];
                 if (client.Character.Hp.current >= client.Character.Hp.max) client.Character.Hp.toMax();
                 if (client.Character.Mp.current >= client.Character.Mp.current) client.Character.Mp.toMax();
@@ -526,15 +532,15 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt32(client.Character.Mp.current);
                 Router.Send(client, (ushort) AreaPacketId.recv_chara_update_mp, res, ServerType.Area);
                 res = BufferProvider.Provide();
-                res.WriteByte((byte) ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
+                res.WriteByte(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
                 Router.Send(client, (ushort) AreaPacketId.recv_chara_update_con, res, ServerType.Area);
                 res = BufferProvider.Provide();
-                res.WriteInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
+                res.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
                 Router.Send(client, (ushort) AreaPacketId.recv_self_money_notify, res, ServerType.Area);
 
-                IBuffer res22 = BufferProvider.Provide();
-                res22.WriteCString("inn/fade_bgm"); // find max size 
-                Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+                RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("inn/fade_bgm", client.Character.InstanceId);
+                Router.Send(recvEventScriptPlay, client);
+
             }
             else
             {
@@ -576,58 +582,36 @@ namespace Necromancy.Server.Packet.Area
 
         private void RandomItemGuy(NecClient client, NpcSpawn npcSpawn)
         {
+            ItemSpawnParams spawmParam = new ItemSpawnParams();
+            spawmParam.ItemStatuses = ItemStatuses.Unidentified;
+            ItemService itemService = new ItemService(client.Character);
+            ItemInstance itemInstance = null;
+
+            IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(2);
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
             if (client.Character.eventSelectExecCode == 0)
             {
-                List<Item> Weaponlist = new System.Collections.Generic.List<Item>();
-                foreach (Item weapon in Server.Items.Values)
-                { 
-                    if(weapon.Id > 10100101 & weapon.Id < 15300101)
+                List<ItemInfoSetting> Weaponlist = new List<ItemInfoSetting>();
+                foreach (ItemInfoSetting weapon in Server.SettingRepository.ItemInfo.Values)
+                {
+                    if (weapon.Id > 10100101 & weapon.Id < 15300101)
                     {
                         Weaponlist.Add(weapon);
                     }
                 }
 
-                Item item = Weaponlist[Util.GetRandomNumber(0,Weaponlist.Count)];
+                int baseId = Weaponlist[Util.GetRandomNumber(0, Weaponlist.Count)].Id;
+                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                    Character character = client.Character;
-
-                    // Create InventoryItem
-                    InventoryItem inventoryItem = new InventoryItem();
-                    inventoryItem.Item = item;
-                    inventoryItem.ItemId = item.Id;
-                    inventoryItem.Quantity = 1;
-                    inventoryItem.CurrentDurability = item.Durability;
-                    inventoryItem.CharacterId = character.Id;
-                    inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                    inventoryItem.State = 0;
-
-                    Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-                    client.Character.Inventory.AddInventoryItem(inventoryItem);
-                    if (!Server.Database.InsertInventoryItem(inventoryItem))
-                    {
-                        IBuffer res13 = BufferProvider.Provide();
-                        res13.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
-                        Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13, ServerType.Area); // show system message on middle of the screen.
-                        return;
-                    }
-
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
-                    Router.Send(recvItemInstance, client);
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                    Router.Send(recvItemInstanceUnidentified, client);
-
-                    itemStats(inventoryItem, client);
-                
-                    IBuffer res12 = BufferProvider.Provide();
-                    res12.WriteCString($"Enjoy your new {item.Name}"); // Length 0xC01
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12, ServerType.Area); // show system message on middle of the screen.
-                
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else if (client.Character.eventSelectExecCode == 1)
             {
-                List<Item> ArmorList = new System.Collections.Generic.List<Item>();
-                foreach (Item armor in Server.Items.Values)
+                List<ItemInfoSetting> ArmorList = new List<ItemInfoSetting>();
+                foreach (ItemInfoSetting armor in Server.SettingRepository.ItemInfo.Values)
                 {
                     if (armor.Id > 16100101 & armor.Id < 30499901)
                     {
@@ -635,158 +619,114 @@ namespace Necromancy.Server.Packet.Area
                     }
                 }
 
-                Item item = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)];
+                int baseId = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)].Id;
+                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                Character character = client.Character;
-
-                // Create InventoryItem
-                InventoryItem inventoryItem = new InventoryItem();
-                inventoryItem.Item = item;
-                inventoryItem.ItemId = item.Id;
-                inventoryItem.Quantity = 1;
-                inventoryItem.CurrentDurability = item.Durability;
-                inventoryItem.CharacterId = character.Id;
-                inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                inventoryItem.State = 0;
-
-                Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-                client.Character.Inventory.AddInventoryItem(inventoryItem);
-                if (!Server.Database.InsertInventoryItem(inventoryItem))
-                {
-                    IBuffer res13 = BufferProvider.Provide();
-                    res13.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13, ServerType.Area); // show system message on middle of the screen.
-                    return;
-                }
-
-                RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
-                Router.Send(recvItemInstance, client);
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                Router.Send(recvItemInstanceUnidentified, client);
-
-                itemStats(inventoryItem, client);
-
-                IBuffer res12 = BufferProvider.Provide();
-                res12.WriteCString($"Enjoy your new {item.Name}"); // Length 0xC01
-                Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12, ServerType.Area); // show system message on middle of the screen.
-
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else if (client.Character.eventSelectExecCode == 2)
             { //50401040,Moist Cudgel
-                Item item = Server.Items[50401040]; //This can select from a small array of items, and a small array of custom names
+                int baseId = 50401040; //This can select from a small array of items, and a small array of custom names
+                spawmParam.ItemStatuses = ItemStatuses.Identified;
+                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                Character character = client.Character;
-
-                // Create InventoryItem
-                InventoryItem inventoryItem = new InventoryItem();
-                inventoryItem.Item = item;
-                inventoryItem.ItemId = item.Id;
-                inventoryItem.Quantity = 1;
-                inventoryItem.CurrentDurability = item.Durability;
-                inventoryItem.CharacterId = character.Id;
-                inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                inventoryItem.State = 0;
-
-                Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-
-                client.Character.Inventory.AddInventoryItem(inventoryItem);
-                if (!Server.Database.InsertInventoryItem(inventoryItem))
-                {
-                    IBuffer res13 = BufferProvider.Provide();
-                    res13.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13, ServerType.Area); // show system message on middle of the screen.
-                    return;
-                }
-
-                RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
-                Router.Send(recvItemInstance, client);
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                Router.Send(recvItemInstanceUnidentified, client);
-
-                itemStats(inventoryItem, client);
-
-                IBuffer res12 = BufferProvider.Provide();
-                res12.WriteCString($"Enjoy your new Super {item.Name}"); // Length 0xC01
-                Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12, ServerType.Area); // show system message on middle of the screen.
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                Router.Send(client, recvItemInstance.ToPacket());
             }
 
+            if (itemInstance == null)
+            {
+                res = BufferProvider.Provide();
+                res.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
+                Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
+                res = BufferProvider.Provide();
+                Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+                RecvEventEnd(client); //End The Event 
+                return;
+            }
+            res = BufferProvider.Provide();
+            res.WriteCString($"Enjoy your new Super {itemInstance.UnidentifiedName}"); // Length 0xC01
+            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
 
+            res = BufferProvider.Provide();
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             RecvEventEnd(client); //End The Event 
         }
 
-        public void itemStats(InventoryItem inventoryItem, NecClient client)
+        private void ModelLibraryWarp(NecClient client, GGateSpawn ggateSpawn)
         {
-            Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-            if (itemLibrarySetting == null) return;
-
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.Durability); // MaxDura points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_maxdur, res, ServerType.Area);
+            switch (client.Character.eventSelectExecCode)
+            {
+                case 0:
+                    res = BufferProvider.Provide();
+                    res.WriteCString($"Seriously?! Walk across the bridge. Why so Lazy?"); // Length 0xC01
+                    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
 
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.Durability - 10); // Durability points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_durability, res, ServerType.Area);
+                    break;
+                case 1:
+                    res = BufferProvider.Provide();
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay, client);
+                    Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
+                    (t1 =>
+                        {
+                            res = BufferProvider.Provide();
+                            res.WriteUInt32(client.Character.InstanceId);
+                            res.WriteFloat(1574);
+                            res.WriteFloat(26452);
+                            res.WriteFloat(-1145);
+                            res.WriteByte(client.Character.Heading);
+                            res.WriteByte(client.Character.movementAnim);
+                            Router.Send(client.Map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                        }
+                    );
+                    break;
+                case 2:
+                    res = BufferProvider.Provide();
+                    RecvEventScriptPlay recvEventScriptPlay2 = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay2, client);
+                    Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
+                    (t1 =>
+                        {
+                            res = BufferProvider.Provide();
+                            res.WriteUInt32(client.Character.InstanceId);
+                            res.WriteFloat(21);
+                            res.WriteFloat(39157);
+                            res.WriteFloat(-1838);
+                            res.WriteByte(client.Character.Heading);
+                            res.WriteByte(client.Character.movementAnim);
+                            Router.Send(client.Map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                        }
+                    );
+                    break;
+                case 3:
+                    res = BufferProvider.Provide();
+                    RecvEventScriptPlay recvEventScriptPlay3 = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay3, client);
+                    Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
+                    (t1 =>
+                        {
+                            res = BufferProvider.Provide();
+                            res.WriteUInt32(client.Character.InstanceId);
+                            res.WriteFloat(0);
+                            res.WriteFloat(47829);
+                            res.WriteFloat(-2538);
+                            res.WriteByte(client.Character.Heading);
+                            res.WriteByte(client.Character.movementAnim);
+                            Router.Send(client.Map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                        }
+                    );
+                    break;
+                case 4:
+                    res = BufferProvider.Provide();
+                    res.WriteCString($"Turn around genius"); // Length 0xC01
+                    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
+                    break;
 
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32((int)itemLibrarySetting.Weight * 100); // Weight points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_weight, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt16((short)itemLibrarySetting.PhysicalAttack); // Defense and attack points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_physics, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt16((short)itemLibrarySetting.MagicalAttack); // Magic def and attack Points
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_magic, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(itemLibrarySetting.SpecialPerformance); // for the moment i don't know what it change
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_enchantid, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt16((short)Util.GetRandomNumber(50, 100)); // Shwo GP on certain items
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(1); // for the moment i don't know what it change
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_date_end_protect, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteByte((byte)itemLibrarySetting.Hardness); // Hardness
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_hardness, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteByte(1); //Level requirement
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_level, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteByte(0); //sp Level requirement
-            Router.Send(client, (ushort)AreaPacketId.recv_item_update_sp_level, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id);
-            res.WriteInt32(0b000000); // State bitmask
-                                      //Router.Send(client, (ushort)AreaPacketId.recv_item_update_state, res, ServerType.Area);
-
-            res = BufferProvider.Provide();
-            res.WriteInt64(inventoryItem.Id); // id?
-            res.WriteInt64(Util.GetRandomNumber(10, 10000)); // price
-            res.WriteInt64(Util.GetRandomNumber(10, 100)); // identify
-            res.WriteInt64(Util.GetRandomNumber(10, 1000)); // curse?
-            res.WriteInt64(Util.GetRandomNumber(10, 500)); // repair?
-            Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item_sell_price, res, ServerType.Area);
+            }
+            RecvEventEnd(client); //End The Event 
 
         }
 

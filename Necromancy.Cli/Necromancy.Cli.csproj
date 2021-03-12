@@ -11,6 +11,9 @@
         <LangVersion>8</LangVersion>
     </PropertyGroup>
     <ItemGroup>
+      <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\Necromancy.Server\Necromancy.Server.csproj" />
     </ItemGroup>
 </Project>

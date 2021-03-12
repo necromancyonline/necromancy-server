@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemUseNotify : PacketResponse
     {
-        public RecvItemUseNotify()
+        private long _itemId; //Item instance ID
+        private float _coolTime;
+        public RecvItemUseNotify(long itemId, float coolTime)
             : base((ushort) AreaPacketId.recv_item_use_notify, ServerType.Area)
         {
+            _itemId = itemId;
+            _coolTime = coolTime;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(0);
-            res.WriteFloat(0);
+            res.WriteInt64(_itemId);
+            res.WriteFloat(_coolTime);
             return res;
         }
     }

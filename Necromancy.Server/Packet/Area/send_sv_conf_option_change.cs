@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);//Success?
-            Router.Send(client, (ushort)AreaPacketId.recv_sv_conf_option_change, res, ServerType.Area);
+            Router.Send(client, (ushort)AreaPacketId.recv_sv_conf_option_change_r, res, ServerType.Area);
 
 
         }

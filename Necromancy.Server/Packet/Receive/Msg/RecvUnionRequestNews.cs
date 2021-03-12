@@ -16,15 +16,16 @@ namespace Necromancy.Server.Packet.Receive.Msg
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteInt32(0x3E8); //less than or equal to 0x3E8
-            for (int i = 0; i < 0x3E8; i++) //limit is the int32 above
+            int numEntries = 0x3E8;
+            res.WriteInt32(numEntries);//Less than or equal to 0x3E8
+            for (int i = 0; i < numEntries; i++)
             {
                 res.WriteInt32(0);
-                res.WriteFixedString("", 0x31); //soul name?
-                res.WriteFixedString("", 0x5B); //character name?
+                res.WriteFixedString("", 0x31); //Fixed string of size 0x31
+                res.WriteFixedString("", 0x5B); //Fixed string of size 0x5B
                 res.WriteInt32(0);
-                res.WriteFixedString("", 0x49);
-                res.WriteFixedString("", 0x49);
+                res.WriteFixedString("", 0x49); //Fixed string of size 0x49
+                res.WriteFixedString("", 0x49); //Fixed string of size 0x49
                 res.WriteInt32(0);
             }
             return res;

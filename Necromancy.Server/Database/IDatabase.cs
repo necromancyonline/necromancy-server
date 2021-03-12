@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.ItemModel;
 using Necromancy.Server.Model.MapModel;
 using Necromancy.Server.Model.Union;
 
@@ -63,23 +62,7 @@ namespace Necromancy.Server.Database
         List<MonsterSpawn> SelectMonsterSpawns();
         List<MonsterSpawn> SelectMonsterSpawnsByMapId(int mapId);
         bool UpdateMonsterSpawn(MonsterSpawn monsterSpawn);
-        bool DeleteMonsterSpawn(int monsterSpawnId);
-
-        // Item
-        bool InsertItem(Item item);
-        Item SelectItemById(int itemsId);
-        List<Item> SelectItems();
-        bool UpdateItem(Item item);
-        bool DeleteItem(int itemsId);
-
-        // Inventory Item
-        bool InsertInventoryItem(InventoryItem inventoryItem);
-        InventoryItem SelectInventoryItemById(int inventoryItemId);
-        List<InventoryItem> SelectInventoryItemsByCharacterId(int characterId);
-        List<InventoryItem> SelectInventoryItemsByCharacterIdEquipped(int characterId);
-        List<InventoryItem> SelectInventoryItemsBySoulIdCloakRoom(int soulId);
-        bool UpdateInventoryItem(InventoryItem inventoryItem);
-        bool DeleteInventoryItem(int inventoryItemId);
+        bool DeleteMonsterSpawn(int monsterSpawnId);       
 
         // ShortcutBar
         void InsertOrReplaceShortcutItem(Character character, int barNumber, int slotNumber, ShortcutItem shortcutItem);

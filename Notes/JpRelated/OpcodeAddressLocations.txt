@@ -1,0 +1,3 @@
+Auth: 0x00513310 : 12 opcodes
+Msg: 0x00516D00	 : 135 opcodes
+Area: 0x00497420 : 957 opcodes

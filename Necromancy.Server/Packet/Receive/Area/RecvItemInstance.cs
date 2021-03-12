@@ -1,70 +1,149 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.ItemModel;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Systems.Item;
+using System;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemInstance : PacketResponse
     {
-        private readonly InventoryItem _inventoryItem;
+        private readonly ItemInstance _itemInstance;
         private readonly NecClient _client;
 
-        public RecvItemInstance(InventoryItem inventoryItem, NecClient client)
+        public RecvItemInstance(NecClient client, ItemInstance itemInstance)
             : base((ushort)AreaPacketId.recv_item_instance, ServerType.Area)
         {
-            _inventoryItem = inventoryItem;
+            _itemInstance = itemInstance;
             _client = client;
+            Clients.Add(_client);
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt64((ulong)_inventoryItem.Id);
-            res.WriteInt32(_inventoryItem.Item.Id); //item Icon  
-            res.WriteByte(_inventoryItem.Quantity);
-            res.WriteUInt32(_client.Character.Alignmentid);
-            res.WriteFixedString($"{_inventoryItem.Item.ItemType}", 0x10);
-            res.WriteByte(_inventoryItem.StorageType); // 0 = adventure bag. 1 = character equipment 2 = Royal bag.
-            res.WriteByte(_inventoryItem.BagId); // 0~2
-            res.WriteInt16(_inventoryItem.BagSlotIndex);
-            res.WriteInt32(_inventoryItem.State); //bit mask. This indicates where to put items. 
-            res.WriteInt32((int)_inventoryItem.Item.EquipmentSlotType); //spirit eq mask???
-            res.WriteByte(3); //enchantment level
-            res.WriteByte((byte)_client.Character.Alignmentid);
-            res.WriteCString($"{_inventoryItem.Item.Id}"); // _inventoryItem.Item.Name
-            res.WriteInt16((short)_client.Character.Alignmentid);
-            res.WriteInt16((short)_client.Character.Alignmentid);
-            res.WriteInt32((0b1 >> _inventoryItem.BagSlotIndex));
-            res.WriteByte((byte)_client.Character.Alignmentid);
-            res.WriteInt32((0b1 >> _inventoryItem.BagSlotIndex));
+            res.WriteUInt64(_itemInstance.InstanceID);                  //INSTANCE ID
+            res.WriteInt32(_itemInstance.BaseID);                       //BASE ID
+            res.WriteByte(_itemInstance.Quantity);                      //QUANTITY
+            res.WriteInt32((int)_itemInstance.Statuses);                //STATUSES
+            res.WriteFixedString("", 0x10);                             //Carmellia 128 bit encryption key for the item row.
+            res.WriteByte((byte)_itemInstance.Location.ZoneType);       //STORAGE ZONE
+            res.WriteByte(_itemInstance.Location.Container);            //BAG
+            res.WriteInt16(_itemInstance.Location.Slot);                //SLOT
+            res.WriteInt32(Util.GetRandomNumber(1, 10));                                          //UNKNOWN
+            res.WriteInt32((int)_itemInstance.CurrentEquipSlot);        //CURRENT EQUIP SLOT
+            res.WriteInt32(_itemInstance.CurrentDurability);            //CURRENT DURABILITY
+            res.WriteByte(_itemInstance.EnhancementLevel);              //ENHANCEMENT LEVEL?
+            res.WriteByte(_itemInstance.SpecialForgeLevel);             //?SPECIAL FORGE LEVEL?
+            res.WriteCString(_itemInstance.TalkRingName);               //TALK RING NAME
+            res.WriteInt16(_itemInstance.Physical);                     //PHYSICAL
+            res.WriteInt16(_itemInstance.Magical);                      //MAGICAL
+            res.WriteInt32(_itemInstance.MaximumDurability);            //MAX DURABILITY
+            res.WriteByte(_itemInstance.Hardness);                      //HARDNESS
+            res.WriteInt32(_itemInstance.Weight/10);                       //WEIGHT IN THOUSANDTHS
+
             int numEntries = 2;
-            res.WriteInt32(numEntries); // less than or equal to 2
-            for (int i = 0; i < numEntries; i++)
+            res.WriteInt32(numEntries);                                 //less than or equal to 2?
+            for (int j = 0; j < numEntries; j++)
             {
-                res.WriteUInt32(_client.Character.Alignmentid); //Shop related? "can not equip items listed in your shop"
+                res.WriteInt32((byte)0);                                //UNKNOWN
             }
 
-            numEntries = 3; //gem SLOTS
-            res.WriteInt32(numEntries); // Count of Gem Slots. less than or equal to 3
-            for (int i = 0; i < numEntries; i++)
+            int numOfGemSlots = _itemInstance.GemSlots.Length;
+            res.WriteInt32(numOfGemSlots);                              //NUMBER OF GEM SLOTS
+            for (int j = 0; j < numOfGemSlots; j++)
             {
-                res.WriteByte((byte)(Util.GetRandomNumber(0, 2))); //Gem in slot : yes or no
-                res.WriteInt32(i + 1); //slot type 1 round, 2 triangle, 3 diamond
-                res.WriteInt32(1111);// theory GEM ID 1
-                res.WriteInt32(2222);// theory gem id 2.  Diamonds were two Gems combined to one
+                byte isFilled = _itemInstance.GemSlots[j].IsFilled ? (byte) 1 : (byte) 0;
+                res.WriteByte(isFilled);                                //IS FILLED
+                res.WriteInt32((int)_itemInstance.GemSlots[j].Type);    //GEM TYPE
+                res.WriteInt32(_itemInstance.GemSlots[j].Gem.BaseID);   //GEM BASE ID
+                res.WriteInt32(0);                                      //UNKNOWN maybe gem item 2 id for diamon 2 gem combine 
+            }
+            
+            res.WriteInt32(_itemInstance.ProtectUntil);                 //PROTECT UNTIL DATE IN SECONDS
+            res.WriteInt64(Util.GetRandomNumber(1,10));                                          //UNKNOWN
+            res.WriteInt16(0xff);                                       //0 = green (in shop for sale)  0xFF = normal /*item.ShopStatus*/
+            res.WriteInt32(_itemInstance.EnchantId);                    //UNKNOWN - ENCHANT ID? 1 IS GUARD
+            res.WriteInt16(_itemInstance.GP);                           //GP
+
+            numEntries = 5; //new
+            //equip skill related
+            res.WriteInt32(numEntries); // less than or equal to 5 - must be 5 or crashes as of now
+            for (int j = 0; j < numEntries; j++)
+            {
+                res.WriteInt32(801011);  //unknown
+                res.WriteByte((byte)10);   //unknown
+                res.WriteByte((byte)10);   //unknown
+                res.WriteInt16((short)10);  //unknown
+                res.WriteInt16((short)10);  //unknown
+            }
+            //Item_Update_Parameter  section
+            res.WriteInt64(Util.GetRandomNumber(1, 100));              //Plus sale value??
+            res.WriteInt16(_itemInstance.PlusPhysical);                 //+PHYSICAL
+            res.WriteInt16(_itemInstance.PlusMagical);                  //+MAGICAL
+            res.WriteInt16((short)(_itemInstance.PlusWeight/10));       //+WEIGHT IN THOUSANTHS, DISPLAYS AS HUNDREDTHS
+            res.WriteInt16(_itemInstance.PlusDurability);               //+DURABILITY
+            res.WriteInt16(_itemInstance.PlusGP);                       //+GP
+            res.WriteInt16(_itemInstance.PlusRangedEff);                //+Ranged Efficiency
+            res.WriteInt16(_itemInstance.PlusReservoirEff);             //+Resevior Efficiency
+
+            //UNIQUE EFFECTS
+            res.WriteInt32(Util.GetRandomNumber(1,10));  //V|EFFECT1 TYPE - 0 IS NONE - PULLED FROM STR_TABLE?
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT2 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT3 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT4 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT5 TYPE - 0 IS NONE
+
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT1 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT2 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT3 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT4 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT5 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+
+            //UNKNOWN
+            for (int j = 0; j < numEntries; j++)
+            {
+                res.WriteInt32(j);//UNKNOWN
+                res.WriteFixedString("Ok", 0x2); //could be two bytes, not a fixed string. 
+                res.WriteInt16((short)1);//UNKNOWN
+                res.WriteInt16((short)1);//UNKNOWN
+            }
+            //End Update Parameter.
+            res.WriteInt16(_itemInstance.RangedEffDist);            //Ranged Efficiency/distance - need better translation
+            res.WriteInt16(_itemInstance.ReservoirLoadPerf);        //Resevior/loading Efficiency/performance - need better translation
+            res.WriteByte(_itemInstance.NumOfLoads);                //Number of loads - need better translation
+            res.WriteByte(_itemInstance.SPCardColor);               //Soul Partner card type color, pulled from str_table 100,1197,add 1 to sent value to find match
+
+            res.WriteInt64(Util.GetRandomNumber(1, 10));//UNKNOWN
+
+            //base enchant display on bottom
+            res.WriteInt16((short)0);  //Base Enchant Scroll ID
+
+            res.WriteInt32(0);                  //misc field for displaying enchant removal / extraction I think: 0 - off, 1 - on, 5 percent sign, 6 remove, 7- extract
+            res.WriteInt32(0);                  //enchantment effect statement, 100,1250,{stringID
+            res.WriteInt16(0);           //enchantment effect value            
+            res.WriteInt16(0);           //unknown
+
+            res.WriteInt32(0);                  //misc field for displaying enchant removal / extraction I think: 0 - off, 1 - on, 5 percent sign, 6 remove, 7- extract
+            res.WriteInt32(0);                  //enchantment effect statement, 100,1250,{stringID
+            res.WriteInt16(0);           //enchantment effect value            
+            res.WriteInt16(0);     //unknown            
+
+            //sub enchantment, values hidden unless viewed at enchant shop maybe
+            numEntries = 5;
+            for (int j = 0; j < numEntries; j++)
+            {
+                res.WriteInt16(0);          //Sub Enchant Scroll ID
+                res.WriteInt32(0);                  //misc field for displaying enchant removal / extraction I think: 0 - off, 1 - on, 5 percent sign, 6 remove, 7- extract
+                res.WriteInt32(0);                  //enchantment effect statement, 100,1250,{stringID
+                res.WriteInt16(0);           //enchantment effect value            
+                res.WriteInt16(0);           //unknown
             }
 
-            res.WriteInt32((0b1 >> _inventoryItem.BagSlotIndex));
-            res.WriteInt32((0b1 >> _inventoryItem.BagSlotIndex));
-            res.WriteInt16(0xff); //0 = green (in shop for sale)  0xFF = normal /*item.ShopStatus*/
-            res.WriteInt32(1); //1 here lables the item "Gaurd".   no effect from higher numbers
-            res.WriteInt16(1);
+            res.WriteInt16(0);                  //enchant max cost allowance
 
-
-
-            return res;
+            return res;            
         }
     }
 }

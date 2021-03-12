@@ -1,35 +1,33 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.ItemModel;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemUpdatePlaceChange : PacketResponse
     {
-        private readonly int _instanceId;
-        private readonly InventoryItem _moveItem;
-
-        public RecvItemUpdatePlaceChange(int instanceId, InventoryItem moveItem)
+        private readonly ItemInstance _originItem;
+        private readonly ItemInstance _destItem;
+        public RecvItemUpdatePlaceChange(NecClient client, ItemInstance originItem, ItemInstance destItem)
             : base((ushort) AreaPacketId.recv_item_update_place_change, ServerType.Area)
         {
-            _instanceId = instanceId;
-            _moveItem = moveItem;
+            _originItem = originItem;
+            _destItem = destItem;
+            Clients.Add(client);
         }
-
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-         //   res.WriteInt64(_moveItem.InstanceId);
-         //   res.WriteByte(_moveItem.fromStoreType);
-         //   res.WriteByte(_moveItem.fromBagId);
-         //   res.WriteInt16(_moveItem.fromSlot);
-         //   res.WriteInt64(_moveItem.InstanceId);
-         //   res.WriteByte(_moveItem.toStoreType);
-         //   res.WriteByte(_moveItem.toBagId);
-         //   res.WriteInt16(_moveItem.toSlot);
-
+            res.WriteUInt64(_originItem.InstanceID);
+            res.WriteByte((byte)_originItem.Location.ZoneType);
+            res.WriteByte(_originItem.Location.Container);
+            res.WriteInt16(_originItem.Location.Slot);
+            res.WriteUInt64(_destItem.InstanceID);
+            res.WriteByte((byte)_destItem.Location.ZoneType);
+            res.WriteByte(_destItem.Location.Container);
+            res.WriteInt16(_destItem.Location.Slot);
             return res;
         }
     }

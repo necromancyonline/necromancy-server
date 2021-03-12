@@ -12,7 +12,7 @@ namespace Necromancy.Server.Data.Setting
         {
             if (!int.TryParse(properties[0], out int id))
             {
-                Logger.Debug("First entry empty!!");
+                //Logger.Debug("First entry empty!!");
                 return null;
             }
 

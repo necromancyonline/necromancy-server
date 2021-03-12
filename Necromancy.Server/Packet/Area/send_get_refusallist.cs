@@ -18,15 +18,22 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(1);
 
-            res.WriteInt32(2);
+            int numEntries = 1 /*client.RefusalList.Count()*/;
+            res.WriteInt32(numEntries);//less than or equal to 0xC8
 
-            res.WriteInt32(3);
-            res.WriteFixedString("soul name", 49);
+            for (int i = 0; i < numEntries; i++)
+            {
+                res.WriteInt32(i);
+                res.WriteFixedString("soul name", 49);
+            }
 
-            res.WriteInt32(5);
+            res.WriteInt32(numEntries);
 
-            res.WriteInt32(3);
-            res.WriteFixedString("soul name", 49);
+            for (int i = 0; i < numEntries; i++)
+            {
+                res.WriteInt32(i);
+                res.WriteFixedString("soul name", 49);
+            }
 
             Router.Send(client, (ushort)AreaPacketId.recv_get_refusallist_r, res, ServerType.Area);
         }

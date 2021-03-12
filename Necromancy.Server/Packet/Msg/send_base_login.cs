@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Msg
 
         public override ushort Id => (ushort) MsgPacketId.send_base_login;
 
-        public const int SoulCount = 2;
+        public const int SoulCount = 8;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
@@ -44,20 +44,21 @@ namespace Necromancy.Server.Packet.Msg
         private void SendResponse(NecConnection connection, NecClient client)
         {
             List<Soul> souls = Database.SelectSoulsByAccountId(client.Account.Id);
+            client.Soul.Name = souls[0].Name;
             if (souls.Count <= 0)
             {
                 IBuffer resq = BufferProvider.Provide();
                 resq.WriteInt32(0); //  Error
-                resq.WriteByte(0);
-                resq.WriteFixedString(String.Empty, 49); // Soul Name
-                resq.WriteByte(0); // Soul Level
-                resq.WriteByte(0); // bool - if use value 1, can't join in msg server character list
-                resq.WriteByte(0);
-                resq.WriteFixedString(String.Empty, 49); // Soul Name
-                resq.WriteByte(0); // Soul Level
-                resq.WriteByte(0); // bool - if use value 1, can't join in msg server character list
-                resq.WriteByte(0); // bool
-                resq.WriteByte(0);
+                for(int i = 0; i < 8; i++)
+                {  
+                    resq.WriteByte(1);
+                    resq.WriteFixedString(String.Empty, 49); // Soul Name
+                    resq.WriteByte(client.Soul.Level); // Soul Level
+                    resq.WriteByte(0); // bool - if use value 1, can't join in msg server character list
+                }
+                resq.WriteInt32(0);
+                resq.WriteByte(0); //bool
+                resq.WriteByte(0); 
                 Router.Send(client, (ushort) MsgPacketId.recv_base_login_r, resq, ServerType.Msg);
                 return;
             }
@@ -68,11 +69,11 @@ namespace Necromancy.Server.Packet.Msg
             {
                 if (souls.Count > i)
                 {
-                    Soul soul = souls[i];
+                    Soul soul = souls[0];
                     res.WriteByte(1);
                     res.WriteFixedString(soul.Name, 49);
                     res.WriteByte(soul.Level);
-                    res.WriteByte(0); // bool - if use value 1, can't join in msg server character list
+                    res.WriteByte(1); // bool - if use value 1, can't join in msg server character list
                 }
                 else
                 {
@@ -82,9 +83,9 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteByte(0); // bool - if use value 1, can't join in msg server character list
                 }
             }
-
-            res.WriteByte(0); // bool
-            res.WriteByte(0);
+            res.WriteInt32(1);
+            res.WriteByte(1); // bool
+            res.WriteByte(1);
 
             Router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
         }

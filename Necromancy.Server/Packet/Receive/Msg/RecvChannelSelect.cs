@@ -15,15 +15,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteInt32(0);
-            res.WriteInt32(0);
-            res.WriteFixedString("", 0x41);// size is 0x41
-            res.WriteInt16(0);
-            res.WriteFloat(0);
-            res.WriteFloat(0);
-            res.WriteFloat(0);
-            res.WriteByte(0);
+            //missing
             return res;
         }
     }

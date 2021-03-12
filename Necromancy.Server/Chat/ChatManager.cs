@@ -105,7 +105,7 @@ namespace Necromancy.Server.Chat
         private void RespondPostMessage(NecClient client, ChatErrorType chatErrorType)
         {
             RecvChatPostMessageR postMessageResponse = new RecvChatPostMessageR(chatErrorType);
-            postMessageResponse.AddClients(client);
+            postMessageResponse.Clients.Add(client);
             _server.Router.Send(postMessageResponse);
         }
     }

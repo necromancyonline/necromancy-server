@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using Arrowgene.Buffers;
 using Arrowgene.Logging;
+using Necromancy.Server.Common;
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Chat.Command.Commands
@@ -19,6 +22,8 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             //this.server = server;
         }
+
+        int i = 0;
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -78,6 +83,15 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
             Router.Send(client.Map, monsterData);
+
+            IBuffer res = BufferProvider.Provide();
+
+            res.WriteUInt32((uint)monsterSetting.Id);
+            //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing). 
+            res.WriteInt32(i);
+            i++;
+
+            Router.Send(client, (ushort)AreaPacketId.recv_monster_state_update_notify, res, ServerType.Area);
         }
 
 

@@ -24,5 +24,7 @@ namespace Necromancy.Server.Packet.Id
         send_base_get_worldlist = 0x53CF,
         send_base_check_version = 0x5705,
         send_base_authenticate = 0xAD93,
+        send_base_authenticate_hangame = 0x0,
+        send_base_authenticate_niconico_app = 0x0,
     }
 }

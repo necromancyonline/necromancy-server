@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort Id => (ushort)AreaPacketId.send_event_tresurebox_end;
+        public override ushort Id => (ushort)AreaPacketId.send_event_treasurebox_end;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

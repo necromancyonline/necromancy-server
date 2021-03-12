@@ -3,6 +3,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -28,17 +29,16 @@ namespace Necromancy.Server.Chat.Command.Commands
             res1.WriteInt32(numEntries);
             for (int i = 0; i < numEntries; i++)
             {
-                res1.WriteInt32(100101);
+                res1.WriteInt32(10001 + i);
             }
 
-            Router.Send(client, (ushort) AreaPacketId.recv_event_tresurebox_begin, res1, ServerType.Area);
+            Router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_begin, res1, ServerType.Area);
 
 
             IBuffer res4 = BufferProvider.Provide();
             res4.WriteInt32(0); // 1 = Error reported by SV,  1 = sucess
-            Router.Send(client, (ushort) AreaPacketId.recv_event_tresurebox_select_r, res4, ServerType.Area);
-
-
+            Router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_select_r, res4, ServerType.Area);
+            
             /*   IBuffer res4 = BufferProvider.Provide();
                res4.WriteByte(3);
                Router.Send(client, (ushort)AreaPacketId.recv_event_end, res4); */

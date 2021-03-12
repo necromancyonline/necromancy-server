@@ -15,9 +15,9 @@ namespace Necromancy.Server.Packet.Auth
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int numEntries = 7;
+            int numEntries = 1;
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(numEntries);
+            res.WriteInt32(numEntries); //Less than or equal to 10
             for (int i = 1; i <= numEntries; i++)
             {
                 res.WriteInt32(i); // World ID
@@ -27,10 +27,7 @@ namespace Necromancy.Server.Packet.Auth
                 res.WriteInt16(0); //Current Player
             }
 
-            res.WriteByte(1); //cmp with worldID
-            res.WriteByte(7);
-            res.WriteByte(8);
-            res.WriteByte(9);
+            res.WriteInt32(0);
             res.WriteByte(0); // 1 = Server merge notice
 
             Router.Send(client, (ushort) AuthPacketId.recv_base_get_worldlist_r, res, ServerType.Auth);

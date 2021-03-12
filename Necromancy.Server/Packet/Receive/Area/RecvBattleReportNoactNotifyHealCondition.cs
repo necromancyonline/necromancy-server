@@ -5,20 +5,20 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class RecvBattleReportNoactNotifyHealCondition : PacketResponse
-    {
-        public RecvBattleReportNoactNotifyHealCondition()
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_heal_condition, ServerType.Area)
-        {
-        }
+    //public class RecvBattleReportNoactNotifyHealCondition : PacketResponse
+    //{
+    //    public RecvBattleReportNoactNotifyHealCondition()
+    //        : base((ushort) AreaPacketId.recv_battle_report_noact_notify_heal_condition, ServerType.Area)
+    //    {
+    //    }
 
-        protected override IBuffer ToBuffer()
-        {
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+    //    protected override IBuffer ToBuffer()
+    //    {
+    //        IBuffer res = BufferProvider.Provide();
+    //        res.WriteInt32(0);
 
-            res.WriteInt32(0);
-            return res;
-        }
-    }
+    //        res.WriteInt32(0);
+    //        return res;
+    //    }
+    //}
 }

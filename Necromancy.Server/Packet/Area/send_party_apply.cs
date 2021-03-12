@@ -4,6 +4,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Msg;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -19,30 +20,19 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int PartyLeaderInstanceId = packet.Data.ReadInt32();
+            int errorCheck = packet.Data.ReadInt32();
             uint targetPartyInstanceId = packet.Data.ReadUInt32();
-            Logger.Debug($"{client.Character.Name}Applied to party {targetPartyInstanceId}");
+            Logger.Debug($"{client.Character.Name}Applied to party {targetPartyInstanceId} with sys_msg {errorCheck}. 0 is good");
 
             Party myParty = Server.Instances.GetInstance(targetPartyInstanceId) as Party;
             NecClient myPartyLeaderClient = Server.Clients.GetByCharacterInstanceId(myParty.PartyLeaderId);
 
-
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(myParty.PartyLeaderId);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_party_apply_r, res, ServerType.Area);
+            res.WriteInt32(errorCheck);
+            Router.Send(client, (ushort) AreaPacketId.recv_party_apply_r, res, ServerType.Area);
 
-            IBuffer res2 = BufferProvider.Provide();
-            res2.WriteUInt32(client.Character.partyId); //Party ID?
-            res2.WriteUInt32(client.Character.InstanceId);
-            res2.WriteFixedString($"{client.Soul.Name}", 0x31);
-            res2.WriteFixedString($"{client.Character.Name}", 0x5B);
-            res2.WriteUInt32(client.Character.ClassId);
-            res2.WriteByte(client.Character.Level);
-            res2.WriteByte(client.Character.criminalState); //Criminal Status
-            res2.WriteByte(1); //Beginner Protection (bool) 
-            res2.WriteByte(1); //Membership Status
-            res2.WriteByte(1);
-            Router.Send(myPartyLeaderClient, (ushort) MsgPacketId.recv_party_notify_apply, res2, ServerType.Msg);
+            RecvPartyNotifyApply recvPartyNotifyApply = new RecvPartyNotifyApply(client);
+            Router.Send(recvPartyNotifyApply, myPartyLeaderClient); //Send the application to the party leader.
         }
     }
 }

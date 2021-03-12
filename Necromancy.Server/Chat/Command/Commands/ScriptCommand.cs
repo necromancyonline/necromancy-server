@@ -40,7 +40,8 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     IBuffer res22 = BufferProvider.Provide();
 
-                    res22.WriteCString(command[1]); // find max size 
+                    res22.WriteCString(command[1]); // lable
+                    res22.WriteUInt32(client.Character.InstanceId); //newjp  ObjectId
                     Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
 
                     break;

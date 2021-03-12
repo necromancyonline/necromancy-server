@@ -17,6 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteInt32(0);
+            res.WriteInt32(0);
             return res;
         }
     }

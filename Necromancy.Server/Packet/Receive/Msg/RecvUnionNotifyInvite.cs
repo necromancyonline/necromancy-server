@@ -21,6 +21,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteFixedString("", 0x5B); //size is 0x5B
             res.WriteInt32(0);
             res.WriteByte(0);
+            res.WriteByte(0);
             res.WriteCString("");//max size 0x31
             return res;
         }

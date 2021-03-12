@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemDrop : PacketResponse
     {
-        public RecvItemDrop()
+        private readonly int _error;
+        public RecvItemDrop(NecClient client, int error)
             : base((ushort) AreaPacketId.recv_item_drop_r, ServerType.Area)
         {
+            _error = error;
+            Clients.Add(client);
         }
-
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_error);
             return res;
         }
     }

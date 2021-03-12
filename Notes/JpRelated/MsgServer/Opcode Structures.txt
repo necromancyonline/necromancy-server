@@ -1,0 +1,1066 @@
+0x00516D00 location for opcode section, 135 opcodes, 136 strings (1 dupe?)
+---------------------------------------------------------------
+5 opcodes are missing strings, these 5 strings are missing opcodes, they may line up.
+recv_xigncode_packet_cl
+recv_union_notify_growth
+recv_union_request_set_member_comment_r
+recv_party_notify_cancel_recruit
+recv_channel_select_r
+---------------------------------------------------------------
+recv_union_notify_disband = 0x7DB1
+	no structure
+---------------------------------------------------------------
+recv_union_reply_to_invite_r = 0x392F
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_mp = 0x1AF3
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_pos = 0xC87
+	res.WriteInt32(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_cash_buy_premium_r = 0x6FF
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_select_back_r = 0x1C9
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_request_invite_target_r = 0x19C
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_request_set_info_r = 0x1C6
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_get_createinfo_r = 0xAF33
+	res.WriteInt32(8);//Less than or equal to 0x80
+	for (int i = 0; i < 8; i++)//(int32 above)
+		res.WriteByte(0);
+		
+	res.WriteInt32(8);//Less than or equal to 0x80
+	for (int i = 0; i < 8; i++)//(int32 above)
+		res.WriteByte(0);
+		
+	res.WriteInt32(8);//Less than or equal to 0x80
+	for (int i = 0; i < 8; i++)//(int32 above)
+		res.WriteByte(0);
+		
+	res.WriteInt32(5);//Less than or equal to 0x5
+	for (int i = 0; i < 5; i++)//(int32 above)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		for (int j = 0; j < 7; j++)
+			res.WriteInt16(0);
+	}
+	
+	res.WriteInt32(0x10);//Less than or equal to 0x10
+	for (int i = 0; i < 0x10; i++)//(int32 above)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteByte(0);//Bool
+		for (int j = 0; j < 0x19; j++)
+			res.WriteInt32(0);
+		for (int k = 0; k < 0x19; k++)
+		{
+			res.WriteInt32(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			
+			res.WriteInt32(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0); //bool
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+		}
+		for (int l = 0; l < 0x19; l++)
+			res.WriteInt32(0);
+		res.WriteByte(0);
+	}
+	
+	res.WriteInt32(0x1); //Less than or equal to 0x96
+	for (int i = 0; i < 0x1; i++)//(int32 above)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		for (int j = 0; j < 0x19; j++)
+			res.WriteInt32(0);
+		for (int k = 0; k < 0x19; k++)
+		{
+			res.WriteInt32(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			
+			res.WriteInt32(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);//bool
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+			res.WriteByte(0);
+		}
+		for (int l = 0; l < 0x19; l++)
+			res.WriteInt32(0);
+		res.WriteByte(0);
+	}
+	
+	res.WriteInt32(4);//Less than or equal to 0xF
+	for (int i = 0; i < 4; i++)//(int32 above)
+	{
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		for (int j = 0; j < 7; j++)
+			res.WriteInt16(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		for (int j = 0; j < 7; j++)
+			res.WriteInt16(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteByte(0);
+	}
+---------------------------------------------------------------
+recv_party_notify_update_maxap = 0x96DB
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_member_state = 0x8D3A
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x61); //size is 0x61
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x181); //size is 0x181
+---------------------------------------------------------------
+recv_party_notify_invite = 0x8B76
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	
+	for(int i = 0; i < 6; i++)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteFixedString("", 0x31);
+		res.WriteFixedString("", 0x5B);
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+	}
+	
+	res.WriteByte(0);
+	res.WriteByte(0); //Bool
+	res.WriteFixedString("", 0xB5);
+---------------------------------------------------------------
+recv_0x831C = 0x831C //Still has no recv string.
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_notify_delete_member_souldelete = 0x7E3A
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_expelled_member = 0x7F64
+	no structure
+---------------------------------------------------------------
+recv_base_ping_r = 0xD2D6
+	no structure
+---------------------------------------------------------------
+recv_soul_select_r = 0xC561
+	res.WriteInt32(0);
+	res.WriteByte(0); //Bool
+---------------------------------------------------------------
+recv_cash_get_url_r = 0xBE62
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_friend_notify_link_invite = 0xBA8B
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_soul_set_passwd_r = 0xB2B7
+	res.WriteInt32(0);
+	res.WriteByte(0); //Bool
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_cpf_authenticate = 0xBA73
+	int numEntries = 0x80;
+	res.WriteInt32(numEntries); //less than or equal to 0x80
+	for(int i = 0; i < numEntries; i++)
+	{
+		res.WriteByte(0);
+	}
+---------------------------------------------------------------
+recv_party_notify_update_hp = 0xEEB6
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_cash_update_r = 0xE2BE
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_maxmp = 0xD9D7
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_cash_get_url_common_r = 0xD6AD
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_party_notify_cancel_invitation = 0xD6ED
+	no structure
+---------------------------------------------------------------
+recv_party_notify_get_item = 0xF7F0
+	res.WriteInt32(0);
+	res.WriteCString("");
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_base_check_version_r = 0xEFDD
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_soulrank = 0xF2C3
+	res.WriteInt32(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_union_request_member_priv_r = 0xF5BF
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_system_notify_announce = 0xF8B4
+	res.WriteInt32(0);
+	res.WriteCString("");
+	res.WriteInt32(0);
+	res.WriteFloat(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_union_result_reply_invitat2 = 0xF94C
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_dragon = 0xFC36
+	res.WriteInt32(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_union_request_expel_member_r = 0xE4DE
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_thread_always_get_r = 0xE970
+	res.WriteInt32(0);
+	int numEntries = 0xA;
+	res.WriteInt32(numEntries); //less than or equal to 0xA
+	for(int i = 0; i < numEntries; i++)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteFixedString("",0x25);
+		res.WriteFixedString("",0xC1);
+	}
+---------------------------------------------------------------
+recv_system_register_error_report_r = 0xEB6E
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_notify_delete_member = 0xDA1F
+	res.WriteInt32(0);
+	res.WriteByte(0); //Bool
+---------------------------------------------------------------
+recv_party_mentor_notify_create = 0xC947
+	no structure
+---------------------------------------------------------------
+recv_union_notify_levelup = 0xC8D0
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt16(0);
+	res.WriteFixedString("", 0x196); //size is 0x196
+	for (int i = 0; i < 8; i++)
+		res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_detail = 0xC5F1
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt16(0);
+	res.WriteFixedString("", 0x196); //size is 0x196
+	for (int i = 0; i < 8; i++)
+		res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_create_r = 0xC680
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_request_set_news_filter_r = 0xC991
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_establish = 0xD0AC
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	
+	for(int i = 0; i < 6; i++)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteFixedString("", 0x31);
+		res.WriteFixedString("", 0x5B);
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+	}
+	res.WriteByte(0);
+	res.WriteByte(0); //Bool
+---------------------------------------------------------------
+recv_party_notify_change_mode = 0xD1A8
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_decline_to_invite = 0xC8D2
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chat_notify_message = 0xC003
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31);
+	res.WriteFixedString("", 0x25);
+
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x301);
+---------------------------------------------------------------
+recv_easy_friend_notify_delete_member = 0xC1E6
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_stage = 0xC307
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_request_link_target_r = 0xBD6B
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_cash_buy_start_r = 0x9E49
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_level = 0x9C7D
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_raise = 0x9AD4
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_0x9A9B = 0x9A9B
+	res.WriteCString("");
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31);
+	res.WriteFixedString("", 0x25);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x301);
+---------------------------------------------------------------
+recv_chara_delete_r = 0x9AD1
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chat_get_talker_state_r = 0xA5FD
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_secede_member = 0xA0E8
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_select_channel_r = 0xA535 
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt16(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	
+	for(int i = 0; i < 5; i++)
+	{
+		res.WriteByte(0); //bool
+		res.WriteByte(0);
+		res.WriteInt16(0);
+		res.WriteInt16(0);
+		res.WriteInt32(0);
+		for(int j = 0; j < 0x80; j++)
+		{
+			res.WriteInt32(0);
+			res.WriteFixedString("", 0x61);
+			res.WriteByte(0); //bool
+			res.WriteInt16(0);
+			res.WriteInt16(0);
+			res.WriteByte(0);
+		}
+		res.WriteByte(0);
+	}
+	
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_chara_notify_data = 0xA57C
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x5B);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	for(int i = 0; i < 0x19; i++) //item stuff
+		res.WriteInt32(0);
+		
+	for(int i = 0; i < 0x19; i++) //Item stuff
+	{
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		
+		res.WriteInt32(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0); //bool
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		res.WriteByte(0);
+		
+		res.WriteByte(0);
+		res.WriteByte(0);
+	}
+	
+	for(int i = 0; i < 0x19; i++) //item stuff
+		res.WriteInt32(0);
+	
+	for(int i = 0; i < 0x19; i++) //item stuff
+		res.WriteInt32(0);
+		
+	for(int i = 0; i < 0x19; i++) //
+		res.WriteByte(0);
+		
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteFixedString("", 0x5B);
+	
+---------------------------------------------------------------
+recv_base_login_r = 0xA68E
+	res.WriteInt32(0);
+	for(int i = 0; i < 8; i++)
+	{
+		res.WriteByte(0);
+		res.WriteFixedString("", 0x31);
+		res.WriteByte(0);
+		res.WriteByte(0); //bool
+	}
+	res.WriteInt32(0);
+	res.WriteByte(0); //bool
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_union_notify_mantle = 0xA878
+	res.WriteInt16(0);
+---------------------------------------------------------------
+recv_union_notify_invite = 0xAAB5
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31);
+	res.WriteFixedString("", 0x5B);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_cash_buy_chara_rename_r = 0x9D50
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_cancel_invitat = 0x9D6A
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_dbg_message = 0x9DE2
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_friend_request_delete_friend_r = 0x9BFE
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_notify_cancel_link = 0x8FB2
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_kick = 0x8E0A
+	no structure
+---------------------------------------------------------------
+recv_party_notify_apply = 0x8D52
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31);
+	res.WriteFixedString("", 0x5B);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_0x8D74 = 0x8D74
+	res.WriteCString("");
+	res.WriteCString("");
+	res.WriteInt16(0);
+---------------------------------------------------------------
+recv_chara_select_back_soul_select_r = 0x91EE
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_0x95E6 = 0x95E6
+	res.WriteCString("");
+	res.WriteCString("");
+	res.WriteInt16(0);
+---------------------------------------------------------------
+recv_party_notify_remove_member = 0x95FE
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_decline_to_apply = 0x8EEE
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_result_reply_link2 = 0x8BB1
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_sync_level = 0x8CFE
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_detail_member = 0x8D24
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x61); //size is 0x61
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x181); //size is 0x181
+---------------------------------------------------------------
+recv_union_request_change_role_r = 0x853F
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_member_comment = 0x5E08
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_party_notify_change_leader = 0x542B //Has two strings, one with and one without an object id.
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_accept_to_apply = 0x4CD5
+	no structure
+---------------------------------------------------------------
+recv_cash_get_url_commerce_r = 0x4426
+	res.WriteInt32(0);
+	res.WriteCString("");
+	res.WriteCString("");
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_soul_update_premium_flags = 0x3B93
+	res.WriteInt64(0);
+---------------------------------------------------------------
+recv_party_notify_update_map = 0x4090
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteCString("");
+	res.WriteInt32(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_friend_notify_member_state = 0x7205
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteFixedString("", 0x61); //size is 0x61
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_cash_get_url_web_goods_r = 0x689B
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_cash_get_url_common_steam_r = 0x64B5
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteCString("");
+	res.WriteCString("");
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_union_request_disband_r = 0x5F0A
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_disband = 0x5F9A
+	no structure
+---------------------------------------------------------------
+recv_xigncode_packet_sv = 0x7646
+	int numEntries = 0xA00;
+	res.WriteInt32(numEntries); //Less than or equal to 0xA00
+	for(int i = 0; i < numEntries; i++)
+		res.WriteByte(0);
+---------------------------------------------------------------
+recv_cpf_notify_error = 0x73D7
+	no structure
+---------------------------------------------------------------
+recv_union_notify_info = 0x755C
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_easy_friend_notify_add_member = 0x7566
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteByte(0); //bool
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_changed_role = 0x7A60
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_notify_member = 0x7AC9
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteFixedString("", 0x61); //size is 0x61
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_soul_rename_r = 0x7C40
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_thread_always_post_r = 0x6A10
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_draw_bonuspoint_r = 0x6AC0
+	res.WriteInt32(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_0x6C94 = 0x6C94
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_detach_buff = 0x680C
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_soul_delete_r = 0x5B32
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_soul_authenticate_passwd_r = 0x5652
+	res.WriteInt32(0);
+	res.WriteByte(0); //bool
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_union_request_set_mantle_r = 0x557F
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_ap = 0x55FF
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_request_detail_r = 0x51EB
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_notify_joined_member = 0x5315
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x61); //size is 0x61
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x181); //size is 0x181
+---------------------------------------------------------------
+recv_refusallist_notify_remove_user_souldelete = 0x5386
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_thread_get_r = 0x446D
+	res.WriteInt32(0);
+	int numEntries = 0x64;
+	res.WriteInt32(numEntries);//Less than or equal to 0x64
+	for(int i = 0; i < numEntries; i++)
+	{
+		res.WriteInt32(0);
+		res.WriteInt32(0);
+		res.WriteFixedString("", 0x25); //Fixed string of size 0x25
+		res.WriteFixedString("", 0xC1); //Fixed string of size 0xC1
+	}
+---------------------------------------------------------------
+recv_friend_request_set_comment_r = 0x2DE8
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_friend_reply_to_link_r = 0x213A
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_request_secede_r = 0x1E68
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_body_pos = 0x1D09
+	res.WriteInt32(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_party_notify_get_money = 0x1DC4
+	res.WriteInt32(0);
+	res.WriteInt64(0);
+---------------------------------------------------------------
+recv_chara_get_list_r = 0x3310
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_attach_buff = 0x2E98
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_premium_service_notify_flag = 0x31B4
+	res.WriteInt32(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_party_notify_cancel_application = 0x32FA
+	no structure
+---------------------------------------------------------------
+recv_party_mentor_notify_remove = 0x348C
+	no structure
+---------------------------------------------------------------
+recv_friend_notify_comment = 0x377B
+	res.WriteInt32(0);
+	res.WriteCString("");
+---------------------------------------------------------------
+recv_chara_notify_data_complete = 0x3784
+	res.WriteByte(0); //bool
+	res.WriteInt32(0);
+	res.WriteInt64(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_thread_post_r = 0x2264
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_add_member = 0x2C1C
+	res.WriteInt32(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //Fixed string of size 0x31
+	res.WriteFixedString("", 0x5B); //Fixed string of size 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x61); //Fixed string of size 0x61
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_party_notify_update_maxhp = 0x2D92
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_get_inheritinfo_r = 0x1EC8
+	res.WriteInt32(0);
+	int numEntries = 0x64;
+	res.WriteInt32(numEntries);//Less than or equal to 0x64
+	for(int i = 0; i < numEntries; i++)
+	{
+		res.WriteInt32(0);
+		res.WriteFixedString("", 0x10); //Fixed string of size 0x10
+	}
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x10); //Fixed string of size 0x10
+	res.WriteByte(0);
+---------------------------------------------------------------
+recv_easy_friend_notify_member_state = 0x1688
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteByte(0); //bool
+	res.WriteByte(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_select_switch_slot_r = 0x1274
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_deadstate = 0xE51
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_mentor_notify_update_level =  0xEF7
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_notify_add_member_r = 0x1817
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteFixedString("", 0x31); //size is 0x31
+	res.WriteFixedString("", 0x5B); //size is 0x5B
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0);
+	
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteFixedString("", 0x61); //size is 0x61
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_dead = 0x182B
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_union_request_news_r = 0x1935
+	res.WriteInt32(0);
+	int numEntries = 0x3E8;
+	res.WriteInt32(numEntries);//Less than or equal to 0x3E8
+	for(int i = 0; i < numEntries; i++)
+	{
+		res.WriteInt32(0);
+		res.WriteFixedString("", 0x31); //Fixed string of size 0x31
+		res.WriteFixedString("", 0x5B); //Fixed string of size 0x5B
+		res.WriteInt32(0);
+		res.WriteFixedString("", 0x49); //Fixed string of size 0x49
+		res.WriteFixedString("", 0x49); //Fixed string of size 0x49
+		res.WriteInt32(0);
+	}
+---------------------------------------------------------------
+recv_party_notify_update_ac = 0x1421
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_soul_create_r = 0x763
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_party_notify_update_job = 0xAD3
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_friend_request_load_r = 0xB7D
+	res.WriteInt32(0);
+---------------------------------------------------------------
+recv_chara_select_r = 0x482
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteInt32(0);
+	res.WriteByte(0);
+	res.WriteByte(0); //Bool
+	res.WriteFixedString("", 0x41); //Fixed string of size 0x41
+	res.WriteInt16(0);
+	
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteFloat(0);
+	res.WriteByte(0);

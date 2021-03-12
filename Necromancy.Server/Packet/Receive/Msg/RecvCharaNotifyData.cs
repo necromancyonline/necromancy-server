@@ -11,13 +11,13 @@ namespace Necromancy.Server.Packet.Receive.Msg
             : base((ushort) MsgPacketId.recv_chara_notify_data, ServerType.Msg)
         {
         }
-
+        //ToDo,  figure out why this is in Msg.  could be a big deal actually
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
             res.WriteInt32(0);
-            res.WriteFixedString("", 0x5B); //size is 0x5B
+            res.WriteFixedString("", 0x5B);
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
@@ -27,18 +27,24 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteByte(0);
             res.WriteByte(0);
             res.WriteByte(0);
-            for (int i = 0; i < 19; i++)
+            res.WriteByte(0);
+            res.WriteByte(0);
+
+            for (int i = 0; i < 0x19; i++) //item stuff
                 res.WriteInt32(0);
-            for (int i = 0; i < 19; i++)
+
+            for (int i = 0; i < 0x19; i++) //Item stuff
             {
                 res.WriteInt32(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
+
                 res.WriteInt32(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
+
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0); //bool
@@ -46,14 +52,26 @@ namespace Necromancy.Server.Packet.Receive.Msg
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
+
+                res.WriteByte(0);
                 res.WriteByte(0);
             }
-            for (int i = 0; i < 19; i++)
+
+            for (int i = 0; i < 0x19; i++) //item stuff
                 res.WriteInt32(0);
-            for (int i = 0; i < 19; i++)
+
+            for (int i = 0; i < 0x19; i++) //item stuff
                 res.WriteInt32(0);
+
+            for (int i = 0; i < 0x19; i++) //
+                res.WriteByte(0);
+
             res.WriteByte(0);
             res.WriteInt32(0);
+            res.WriteInt32(0);
+            res.WriteByte(0);
+            res.WriteByte(0);
+            res.WriteFixedString("", 0x5B);
             return res;
         }
     }

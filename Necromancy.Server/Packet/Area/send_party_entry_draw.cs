@@ -19,9 +19,14 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.InstanceId);
+            res.WriteUInt32(client.Character.InstanceId);            
 
             Router.Send(client, (ushort) AreaPacketId.recv_party_entry_draw_r, res, ServerType.Area);
+
+            //TODO TEST REMOVE
+            res = BufferProvider.Provide();
+            res.WriteInt64(targetItemId);
+            Router.Send(client, (ushort)AreaPacketId.recv_party_notify_remove_draw_item, res, ServerType.Area);
         }
     }
 }

@@ -7,15 +7,18 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvShopIdentify : PacketResponse
     {
-        public RecvShopIdentify()
+        private readonly int _error;
+        public RecvShopIdentify(NecClient client, int error)
             : base((ushort) AreaPacketId.recv_shop_identify_r, ServerType.Area)
         {
+            _error = error;
+            Clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_error);
             return res;
         }
     }

@@ -1,6 +1,7 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
@@ -18,10 +19,18 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.InstanceId); //Character ID
+            Router.Send(client, (ushort)AreaPacketId.recv_battle_guard_end_self, res, ServerType.Area);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_dbg_battle_guard_end_notify, res, ServerType.Area,
-                client);
+            res.WriteInt32(0);
+            Router.Send(client, (ushort) AreaPacketId.recv_battle_guard_end_r, res, ServerType.Area);
+
+            client.Character.ClearStateBit(CharacterState.BlockPose);
+
+
+            res = BufferProvider.Provide();
+            res.WriteUInt32(client.Character.InstanceId);
+            Router.Send(client.Map, (ushort)AreaPacketId.recv_dbg_battle_guard_end_notify, res, ServerType.Area);
+
         }
     }
 }
