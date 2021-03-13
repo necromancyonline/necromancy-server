@@ -24,6 +24,7 @@ namespace Necromancy.Server.Packet.Area.SendChatPostMessage
 
             ChatMessageType messageType = (ChatMessageType) messageTypeValue;
             string recipient = packet.Data.ReadCString();
+            int unknown = packet.Data.ReadInt32(); //Not sure what this is, it is new from JP client. Might be talk ring related.
             string message = packet.Data.ReadCString();
 
             return new ChatMessage(messageType, recipient, message);
