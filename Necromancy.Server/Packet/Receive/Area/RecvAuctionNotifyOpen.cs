@@ -34,6 +34,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
                 res.WriteInt64(0);
                 res.WriteInt32(0);
+                res.WriteInt32(0);
             }
 
             numEntries = 0xE;
@@ -69,6 +70,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 res.WriteInt16(0);
+                res.WriteInt16(0);
                 res.WriteInt64(0);
                 res.WriteByte(0);
                 res.WriteByte(0); //Bool
@@ -100,9 +102,10 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt64(0);
                 res.WriteFixedString("fs0xC1V2", 0xC1);//Fixed string of 0xC1 or 0xC1 bytes.
                 res.WriteByte(0);
+                res.WriteByte(0);
             }
 
-            res.WriteInt32(0);
+            res.WriteByte(0); //Bool
             res.WriteInt32(0);
             return res;
         }
