@@ -25,13 +25,13 @@ namespace Necromancy.Server.Packet.Area
                 ItemLocation location = new ItemLocation(zone, bag, slot);
                 itemLocations.Add(location);                
             }
-            long repairFee = packet.Data.ReadInt64();
+            ulong repairFee = packet.Data.ReadUInt64();
 
             ItemService itemService = new ItemService(client.Character);            
             int error = 0;
             try
             {                
-                long currentGold = itemService.SubtractGold(repairFee); //TODO ignore the "repair fee" and check server side
+                ulong currentGold = itemService.SubtractGold(repairFee); //TODO ignore the "repair fee" and check server side
                 RecvSelfMoneyNotify recvSelfMoneyNotify = new RecvSelfMoneyNotify(client, currentGold);
                 Router.Send(recvSelfMoneyNotify);
 

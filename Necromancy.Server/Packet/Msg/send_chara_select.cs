@@ -3,6 +3,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
@@ -21,6 +22,7 @@ namespace Necromancy.Server.Packet.Msg
         {
             int characterId = packet.Data.ReadInt32();
             Character character = Database.SelectCharacterById(characterId);
+
             if (character == null)
             {
                 Logger.Error(client, $"No character for CharacterId: {characterId}");

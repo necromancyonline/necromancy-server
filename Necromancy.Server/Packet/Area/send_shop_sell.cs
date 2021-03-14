@@ -17,8 +17,8 @@ namespace Necromancy.Server.Packet.Area
             ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte();
             byte bag = packet.Data.ReadByte();
             short slot = packet.Data.ReadInt16();
-            long saleGold = packet.Data.ReadInt64(); //irrelevant, check sale price server side
-            byte quantity = packet.Data.ReadByte(); //TODO maybe quantity
+            ulong saleGold = packet.Data.ReadUInt64(); //irrelevant, check sale price server side
+            byte quantity = packet.Data.ReadByte(); 
 
             ItemLocation location = new ItemLocation(zone, bag, slot);
             ItemService itemService = new ItemService(client.Character);            
@@ -26,9 +26,14 @@ namespace Necromancy.Server.Packet.Area
 
             try
             {
-                long currentGold = itemService.Sell(location, quantity);
+                //ulong currentGold = itemService.Sell(location, quantity);
+                ulong currentGold = itemService.AddGold(saleGold);
                 RecvSelfMoneyNotify recvSelfMoneyNotify = new RecvSelfMoneyNotify(client, currentGold);
                 Router.Send(recvSelfMoneyNotify);
+
+                ItemInstance itemInstance = itemService.Remove(new ItemLocation(zone, bag, slot), quantity);
+                RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
+                Router.Send(recvItemRemove);
             }
             catch (ItemException e) { error = (int) e.ExceptionType; }
 

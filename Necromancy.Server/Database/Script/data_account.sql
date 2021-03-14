@@ -1,8 +1,8 @@
 INSERT INTO "account" ("id","name","normal_name","hash","mail","mail_verified","mail_verified_at","mail_token","password_token","state","last_login","created") 
 VALUES 
- (1,'Admin','Admin','$2a$10$bwsKv/VUUvOT.JB0AFGS7uQ5LQ3xpvbqyrw0dKAPOxrXvNP/fuk7G','Admin',0,NULL,NULL,NULL,1,NULL,'2019-11-19 15:58:21.1738355'),
+ (1,'Admin','Admin','$2a$10$bwsKv/VUUvOT.JB0AFGS7uQ5LQ3xpvbqyrw0dKAPOxrXvNP/fuk7G','Admin',0,NULL,NULL,NULL,100,NULL,'2019-11-19 15:58:21.1738355'),
  (2,'1234','1234','$2a$10$gHAWndIPBBGuTcsyOL2KFufzvPDI/evj18DygBv/QelpLENzALcBi','1234',0,NULL,NULL,NULL,100,NULL,'2019-11-19 16:03:55.2889936'),
- (3,'ff','ff','$2a$10$GhZE/d8hTdh92URBeP5k6eH9HbCWhoDknupYegGpgdcIOfRUoGodq','ff',0,NULL,NULL,NULL,1,NULL,'2019-11-19 16:13:35.4028315'),
+ (3,'ff','ff','$2a$10$GhZE/d8hTdh92URBeP5k6eH9HbCWhoDknupYegGpgdcIOfRUoGodq','ff',0,NULL,NULL,NULL,100,NULL,'2019-11-19 16:13:35.4028315'),
  (4,'wolf','wolf','$2a$10$MoaRYlEbvjm/F2pr0FMrgewdd3TMQzbfOXW5o73C5C1kQPtO2rFeG','wolf',0,NULL,NULL,NULL,1,NULL,'2020-01-22 18:45:35.4028315'),
  (6,'aiko','aiko','$2a$10$HrEue5SiNe7h6cpmkp6.6OIjZB6c583Q.XYBRh2WCy7fnk.4.wnAq','aiko',0,NULL,NULL,NULL,1,NULL,'2020-02-11 14:46:18.1770021'),
  (7,'afflatus','afflatus','$2a$10$xwQkMp90yAKbqTxB2Ph6POkCQQXhcNWAOnOjGN/2nCT4sX0nA/1zm','afflatus',0,NULL,NULL,NULL,1,NULL,'2020-02-11 15:05:03.0611675'),
@@ -14,7 +14,7 @@ VALUES
  (21,'b','b','$2a$10$bwsKv/VUUvOT.JB0AFGS7uQ5LQ3xpvbqyrw0dKAPOxrXvNP/fuk7G','b',0,NULL,NULL,NULL,1,NULL,'2019-11-19 15:58:21.1738355'),
  (22,'c','c','$2a$10$bwsKv/VUUvOT.JB0AFGS7uQ5LQ3xpvbqyrw0dKAPOxrXvNP/fuk7G','c',0,NULL,NULL,NULL,1,NULL,'2019-11-19 15:58:21.1738355'),
  (23,'d','d','$2a$10$bwsKv/VUUvOT.JB0AFGS7uQ5LQ3xpvbqyrw0dKAPOxrXvNP/fuk7G','d',0,NULL,NULL,NULL,1,NULL,'2019-11-19 15:58:21.1738355'),
- (24,'desu','desu','$2a$10$8JcA2TCiKsJ7YOYEjPhPZ.42K9vKfE4ing9XqGqgWhtSYzEWKW/K.','desu',0,NULL,NULL,NULL,1,NULL,'2021-02-08 13:17:23.8494811');
+ (24,'desu','desu','$2a$10$8JcA2TCiKsJ7YOYEjPhPZ.42K9vKfE4ing9XqGqgWhtSYzEWKW/K.','desu',0,NULL,NULL,NULL,100,NULL,'2021-02-08 13:17:23.8494811');
 
 INSERT INTO "nec_soul" ("id","account_id","name","level","created","password","experience_current","warehouse_gold","points_lawful","points_neutral","points_chaos","criminal_level","points_current","material_life","material_reincarnation","material_lawful","material_chaos") 
 VALUES 

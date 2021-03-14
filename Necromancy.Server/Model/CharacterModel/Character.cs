@@ -101,6 +101,7 @@ namespace Necromancy.Server.Model
         public uint eventSelectReadyCode { get; set; }
         public int eventSelectExecCode { get; set; }
         public int eventSelectExtraSelectionCode { get; set; }
+        public int[] shopItemIndex { get; set; }
         public bool helperText { get; set; }
         public bool helperTextBlacksmith { get; set; }
         public bool helperTextDonkey { get; set; }
@@ -144,11 +145,11 @@ namespace Necromancy.Server.Model
             activeModel = 0;
             deadType = 0;
             modelScale = 100;
-            AdventureBagGold = 80706050;
+            AdventureBagGold = 0;
             ExperienceCurrent = 0;
             SkillPoints = 0;
             eventSelectExecCode = -1;
-            Hp = new BaseStat(1000, 1000);
+            Hp = new BaseStat(10, 10);
             Mp = new BaseStat(450, 500);
             Od = new BaseStat(150, 200);
             Gp = new BaseStat(0, 0);

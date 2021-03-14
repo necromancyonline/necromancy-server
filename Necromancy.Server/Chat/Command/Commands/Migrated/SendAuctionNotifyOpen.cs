@@ -65,7 +65,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client, (ushort) AreaPacketId.recv_auction_notify_open, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "auct";
     }
 }

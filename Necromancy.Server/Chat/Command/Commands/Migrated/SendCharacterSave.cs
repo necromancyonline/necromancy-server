@@ -15,7 +15,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Server.Database.UpdateCharacter(client.Character);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "charsave";
     }
 }

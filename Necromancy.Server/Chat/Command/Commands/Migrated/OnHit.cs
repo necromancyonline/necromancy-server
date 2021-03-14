@@ -21,7 +21,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "OnHit";
     }
 }

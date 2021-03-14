@@ -25,7 +25,7 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "itm";
         public override string HelpText => "usage: `/itm [itemId] (optional)u`";
 
