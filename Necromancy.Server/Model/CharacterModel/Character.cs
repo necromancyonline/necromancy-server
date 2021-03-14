@@ -145,7 +145,7 @@ namespace Necromancy.Server.Model
             activeModel = 0;
             deadType = 0;
             modelScale = 100;
-            AdventureBagGold = 80706050;
+            AdventureBagGold = 0;
             ExperienceCurrent = 0;
             SkillPoints = 0;
             eventSelectExecCode = -1;
