@@ -230,6 +230,8 @@ namespace Necromancy.Server.Database.Sql.Core
             character.Luck = GetByte(reader, "luck");
             character.ClassId = GetByte(reader, "class_id");
             character.Level = GetByte(reader, "level");
+            character.Hp.setMax(GetInt32(reader, "hp_current")); //Temporary until Max HP calc is created
+            character.Mp.setMax(GetInt32(reader, "mp_current")); //Temporary until Max HP calc is created
             character.Hp.setCurrent(GetInt32(reader, "hp_current"));
             character.Mp.setCurrent(GetInt32(reader, "mp_current"));
             character.AdventureBagGold = GetUInt64(reader, "gold");

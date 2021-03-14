@@ -1,14 +1,11 @@
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive;
 using Necromancy.Server.Systems.Item;
-using System;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -32,6 +29,10 @@ namespace Necromancy.Server.Packet.Area
             client.Character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
             _equippedItems = new ItemInstance[client.Character.EquippedItems.Count];
             client.Character.EquippedItems.Values.CopyTo(_equippedItems, 0);
+
+            Attribute attribute = new Attribute();
+            attribute.DefaultClassAtributes(client.Character.RaceId);
+            client.Character.Hp.setMax(attribute.Hp * (client.Character.Level)); //make better after HP calc exists
 
             SendDataGetSelfCharaData(client);
 

@@ -148,7 +148,7 @@ namespace Necromancy.Server.Model
             ExperienceCurrent = 0;
             SkillPoints = 0;
             eventSelectExecCode = -1;
-            Hp = new BaseStat(1000, 1000);
+            Hp = new BaseStat(10, 10);
             Mp = new BaseStat(450, 500);
             Od = new BaseStat(150, 200);
             Gp = new BaseStat(0, 0);
