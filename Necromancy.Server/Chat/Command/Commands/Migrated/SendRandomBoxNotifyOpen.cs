@@ -56,7 +56,7 @@ namespace Necromancy.Server.Chat.Command.Commands
         //    return inventoryItem.Id;
         //}
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "rbox";
     }
 }

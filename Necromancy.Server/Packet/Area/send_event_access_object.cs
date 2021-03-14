@@ -29,8 +29,7 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             uint instanceId = packet.Data.ReadUInt32();
-            client.Character.eventSelectReadyCode =
-                instanceId; //Sends the NpcID to 'send_event_select_exec_r  logic gate.
+            client.Character.eventSelectReadyCode = instanceId; //Sends the NpcID to 'send_event_select_exec_r  logic gate.
             client.Character.takeover = false;
 
             //Begin Event for all cases
@@ -567,8 +566,7 @@ namespace Necromancy.Server.Packet.Area
                 IBuffer res2 = BufferProvider.Provide();
                 res2.WriteCString($"{npcSpawn.Name}"); //Name
                 res2.WriteCString($"{npcSpawn.Title}"); //Title (inside chat box)
-                res2.WriteCString(
-                    "Wee! There's plenty of weapons and armor at the specialty shops. The weapon and armor shops are in Bustling Market. *Hiccup*"); //Text block
+                res2.WriteCString("Wee! There's plenty of weapons and armor at the specialty shops. The weapon and armor shops are in Bustling Market. *Hiccup*"); //Text block
                 Router.Send(client, (ushort)AreaPacketId.recv_event_message_no_object, res2, ServerType.Area);
 
                 IBuffer res6 = BufferProvider.Provide();
@@ -581,6 +579,8 @@ namespace Necromancy.Server.Packet.Area
                 int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101, 15300003 };
                 int[] DonkeyPrices = new int[] { 100, 02, 100, 10, 500, 500, 400, 280, 350, 1100, 1000, 1000, 500, 450, 450, 300, 350, 250, 450, 400, 450, 1450, 1500, 1400, 1550, 1000, 1500, 1500 };
                 int numItems = DonkeyItems.Count();
+                client.Character.shopItemIndex = DonkeyItems;
+
                 IBuffer res = BufferProvider.Provide();
                 //recv_shop_notify_open = 0x52FD, // Parent = 0x5243 // Range ID = 02
                 res.WriteInt16((short)ShopType.Donkey); //Shop type, 1 = remove curse; 2 = purchase list; 3 = 1 and 2; 4 = sell; 5 = 1 and 4; 6 = 2 and 4; 7 = 1, 2, and 4; 8 = identify; 14 = purchase, sell, identify; 16 = repair;

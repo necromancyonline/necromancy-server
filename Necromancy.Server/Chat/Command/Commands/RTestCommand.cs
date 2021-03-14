@@ -262,7 +262,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             //Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "rtest";
 
         public override string HelpText =>

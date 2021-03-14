@@ -44,7 +44,6 @@ namespace Necromancy.Server.Packet.Msg
         private void SendResponse(NecConnection connection, NecClient client)
         {
             List<Soul> souls = Database.SelectSoulsByAccountId(client.Account.Id);
-            client.Soul.Name = souls[0].Name;
             if (souls.Count <= 0)
             {
                 IBuffer resq = BufferProvider.Provide();

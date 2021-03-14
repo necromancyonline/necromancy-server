@@ -20,7 +20,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client.Map, (ushort) AreaPacketId.recv_soulmaterial_shop_notify_open, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "soul";
     }
 }

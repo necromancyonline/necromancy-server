@@ -52,7 +52,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             //  client.MsgConnection.Send(byteArr);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "logout";
     }
 }

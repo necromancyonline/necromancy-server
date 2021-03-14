@@ -48,7 +48,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "tp";
         public override string HelpText => "usage: `/tp x, y, z` - Moves character to location x, y, z.";
     }

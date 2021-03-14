@@ -74,7 +74,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "arrange";
         public override string HelpText => "usage: `/arrange parts` - whatever chara arrange does.";
     }
