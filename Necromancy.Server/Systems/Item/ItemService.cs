@@ -263,7 +263,7 @@ namespace Necromancy.Server.Systems.Item
             }
             return item;
         }
-        public long Sell(ItemLocation location, byte quantity)
+        public ulong Sell(ItemLocation location, byte quantity)
         {
             throw new NotImplementedException();
         }
@@ -510,13 +510,15 @@ namespace Necromancy.Server.Systems.Item
             }
             return ItemInstances;
         }
-        public long SubtractGold(long amount)
+        public ulong SubtractGold(ulong amount)
         {
-            return 0;//throw new NotImplementedException();
+            _character.AdventureBagGold -= amount;
+            return _character.AdventureBagGold;
         }
-        public long AddGold(long amount)
+        public ulong AddGold(ulong amount)
         {
-            throw new NotImplementedException();
+            _character.AdventureBagGold += amount;
+            return _character.AdventureBagGold;
         }
 
         public List<PacketResponse> GetMoveResponses(NecClient client, MoveResult moveResult)

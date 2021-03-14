@@ -101,6 +101,7 @@ namespace Necromancy.Server.Model
         public uint eventSelectReadyCode { get; set; }
         public int eventSelectExecCode { get; set; }
         public int eventSelectExtraSelectionCode { get; set; }
+        public int[] shopItemIndex { get; set; }
         public bool helperText { get; set; }
         public bool helperTextBlacksmith { get; set; }
         public bool helperTextDonkey { get; set; }

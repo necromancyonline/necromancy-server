@@ -107,19 +107,19 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> items = itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
-            RecvSituationStart recvSituationStart = new RecvSituationStart();
-            RecvSituationEnd recvSituationEnd = new RecvSituationEnd();
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(2);
-            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
+            RecvSituationStart recvSituationStart = new RecvSituationStart(2);
+            Router.Send(client, recvSituationStart.ToPacket());
+
             foreach (ItemInstance itemInstance in items)
             {
                 Logger.Debug(itemInstance.Type.ToString());
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
                 Router.Send(client, recvItemInstance.ToPacket());
             }
-            res = BufferProvider.Provide();
-            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+
+            RecvSituationEnd recvSituationEnd = new RecvSituationEnd();
+            Router.Send(client, recvSituationEnd.ToPacket());
         }
     }
 }
