@@ -43,7 +43,7 @@ namespace Necromancy.Server.Chat.Command.Commands
               Router.Send(client, (ushort)AreaPacketId.recv_event_end, res1); */
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "stor";
     }
 }

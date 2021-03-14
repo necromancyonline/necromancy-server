@@ -438,7 +438,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "chara";
 
         public override string HelpText =>

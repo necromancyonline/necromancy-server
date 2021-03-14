@@ -104,7 +104,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(_client, brList);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "battle";
         public override string HelpText => "usage: `/battle [command]` - Does something battle related.";
     }

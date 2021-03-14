@@ -67,7 +67,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client.Map, npcData);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "npc";
         public override string HelpText => "usage: `/npc [npcId] [modelId]` - Spawns an NPC";
     }

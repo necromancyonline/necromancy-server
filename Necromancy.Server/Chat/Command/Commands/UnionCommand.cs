@@ -232,7 +232,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "union";
         public override string HelpText => "usage: `/union [command]` - Does something Union related.";
     }

@@ -63,7 +63,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "honor";
         public override string HelpText => "usage: `/honor 10010101` - gives you the novice monster hunter title.";
     }

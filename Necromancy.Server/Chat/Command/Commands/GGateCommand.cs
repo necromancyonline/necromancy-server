@@ -264,7 +264,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "ggate";
 
         public override string HelpText =>
