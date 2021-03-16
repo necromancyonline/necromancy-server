@@ -138,7 +138,8 @@ namespace Necromancy.Server.Packet.Area
                 Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
                 (t1 =>
                 {
-                    RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId, (ulong)CharacterState.NormalForm);
+                    client.Character.ClearStateBit(CharacterState.InvulnerableForm);
+                    RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.Character.InstanceId, (ulong)client.Character.State);
                     Router.Send(client.Map, recvCharaNotifyStateflag.ToPacket()); 
                 }
                 );

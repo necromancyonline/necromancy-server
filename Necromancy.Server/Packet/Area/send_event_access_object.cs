@@ -89,7 +89,6 @@ namespace Necromancy.Server.Packet.Area
                         },
                         {x => (x == 10000112 || x == 10000316 || x == 10000003 || x == 10000706 || x == 10000911 || x == 10000209),
                             () => PlayerRevive(client, npcSpawn)},
-
                         {x => x < 10, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
                         {x => x < 100, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
                         {
@@ -140,6 +139,7 @@ namespace Necromancy.Server.Packet.Area
                         {x => x == 74013271, () => SendGetWarpTarget(client, ggateSpawn)},
                         {x => x == 7500001, () => ModelLibraryWarp(client, ggateSpawn)},
                         {x => (x == 7500001) || (x == 7500002) || (x == 7500003) || (x == 7500004),() => MapHomeWarp(client, ggateSpawn)},
+                        {x => (x == 1900001 ), () => ResurectionStatue(client, ggateSpawn)},
                         {x => x < 900000100, () => WorkInProgressGGate(client, ggateSpawn) }
                     };
 
@@ -1024,6 +1024,39 @@ namespace Necromancy.Server.Packet.Area
             res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
             res15.WriteInt16(0); //Dimento medal addition %
             Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+        }
+
+        private void ResurectionStatue(NecClient client, GGateSpawn gGateSpawn)
+        {
+            if (client.Character.HasDied == false)
+            {
+                string name, title, text;
+                name = gGateSpawn.Name;
+                title = gGateSpawn.Title;
+                text = "The torch is lit silently";
+                RecvEventMessageNoObject eventText = new RecvEventMessageNoObject(name, title, text);
+                Router.Send(eventText, client);
+
+                RecvEventSync eventSync = new RecvEventSync();
+                Router.Send(eventSync, client);
+
+            }
+            else
+            {
+                IBuffer res0 = BufferProvider.Provide();
+                res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
+                res0.WriteByte(0);
+                Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+
+                IBuffer res15 = BufferProvider.Provide();
+                //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
+                res15.WriteInt16(75); //Basic revival rate %
+                res15.WriteInt16(0); //Penalty %
+                res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
+                res15.WriteInt16(0); //Dimento medal addition %
+                Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+            }
+
         }
 
         private void SpareEventParts(NecClient client, NpcSpawn npcSpawn)
