@@ -93,7 +93,7 @@ namespace Necromancy.Server.Tasks
             currentDest = new Vector3();
         }
 
-        public override string TaskName => "MonsterTask";
+        public override string TaskName => $"MonsterTask : {_monster.InstanceId} - {_monster.Name}";
         public override TimeSpan TaskTimeSpan { get; }
         protected override bool TaskRunAtStart => false;
 
