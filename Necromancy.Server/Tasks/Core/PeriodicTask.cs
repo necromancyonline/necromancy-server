@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Arrowgene.Logging;
@@ -84,8 +84,9 @@ namespace Necromancy.Server.Tasks.Core
             }
             catch (Exception ex)
             {
-                Logger.Error($"Task {TaskName} crashed");
+                Logger.Error($"Task {TaskName} crashed.  Stopping Task");
                 Logger.Exception(ex);
+                Stop();
             }
         }
     }

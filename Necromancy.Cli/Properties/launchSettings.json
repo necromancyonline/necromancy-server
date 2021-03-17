@@ -18,6 +18,10 @@
     "Start/w --MaxPacket64 - Whitelist": {
       "commandName": "Project",
       "commandLineArgs": "server start --max-packet-size=64 --w-list=0x1B5C,0x99D"
+    },
+    "Start Live Settings": {
+      "commandName": "Project",
+      "commandLineArgs": "server start --max-packet-size=16 --b-list=3:0x2E64,0xFFFC,0xFFFD,0xFFFE,0xFFFF,3:0x6A72,3:0xE4AE,3:0x8D92,3:0x6B6A,0x8BB4,0x2470,0x2BA4,0x6A7A,0xEEF0,0xFDB8,0xB3F7,0xFC75,0x1DBE,0x179D,0xD133,0x904,0x7CB2 --log-level=20"
     }
   }
 }

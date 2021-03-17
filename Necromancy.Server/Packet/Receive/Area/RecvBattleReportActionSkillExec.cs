@@ -19,6 +19,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(_skillId);
+            res.WriteInt32(90009000); //ObjectID  //todo //NewJp
             return res;
         }
     }

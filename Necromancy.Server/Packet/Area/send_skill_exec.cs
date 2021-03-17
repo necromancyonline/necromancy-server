@@ -60,11 +60,9 @@ namespace Necromancy.Server.Packet.Area
             {
                 {x => (x > 114100 && x < 114199), () => ThiefSkill(client, skillId, targetId)},
                 {x => (x > 114300 && x < 114399), () => ThiefSkill(client, skillId, targetId)},
-                {x => x == 114607, () => ThiefSkill(client, skillId, targetId)},
+                {x => x == 114607               , () => ThiefSkill(client, skillId, targetId)},
                 {x => (x > 113000 && x < 113999), () => MageSkill(client, skillId, targetId)},
-                {
-                    x => (x > 1 && x < 999999), () => MageSkill(client, skillId, targetId)
-                } //this is a default catch statement for unmapped skills to prevent un-handled exceptions 
+                {x => (x > 1 && x < 999999), () => MageSkill(client, skillId, targetId)} //this is a default catch statement for unmapped skills to prevent un-handled exceptions 
             };
 
             eventSwitchPerObjectID.First(sw => sw.Key(skillLookup)).Value();

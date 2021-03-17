@@ -40,13 +40,14 @@ namespace Necromancy.Server.Tasks
             _tickCounter = 0;
         }
 
-        public override string TaskName => "CharacterTask";
+        public override string TaskName => $"CharacterTask : {_client.Soul.Name}";
         public override TimeSpan TaskTimeSpan { get; }
         protected override bool TaskRunAtStart => false;
 
         protected override void Execute()
         {
             Thread.Sleep(5000); //fix null ref on chara select. 
+            if(_client == null) this.Stop(); //crash/disconnect handling
             while (_client.Character.characterActive)
             {
                 if (_logoutTime != DateTime.MinValue)
