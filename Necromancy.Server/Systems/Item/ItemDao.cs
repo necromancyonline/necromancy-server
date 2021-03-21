@@ -228,7 +228,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id IN ({0})";
 
-        private const string SqlSelectOwneditemInstances = @"
+        private const string SqlSelectOwnedInventoryItems = @"
             SELECT 
                 * 
             FROM 
@@ -484,13 +484,18 @@ namespace Necromancy.Server.Systems.Item
             {
                 Logger.Error($"Query: {SqlUpdateItemQuantity}");
                 Exception(ex);
-            }            
+            }
         }
 
-        public List<ItemInstance> SelectOwneditemInstances(int ownerId)
+        /// <summary>
+        /// This selects only the items in the player's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and Avatar inventory.
+        /// </summary>
+        /// <param name="ownerId">Owner of items.</param>
+        /// <returns></returns>
+        public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
         {
             List<ItemInstance> owneditemInstances = new List<ItemInstance>();
-            ExecuteReader(SqlSelectOwneditemInstances,
+            ExecuteReader(SqlSelectOwnedInventoryItems,
                 command =>
                 {
                     AddParameter(command, "@owner_id", ownerId);
@@ -533,27 +538,27 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, "@plus_ranged_eff", spawnParams[i].plus_ranged_eff);
                     AddParameter(command, "@plus_reservoir_eff", spawnParams[i].plus_reservoir_eff);
 
-                    if (spawnParams[i].GemSlots.Length > 0) 
+                    if (spawnParams[i].GemSlots.Length > 0)
                         AddParameter(command, "@gem_slot_1_type", (int)spawnParams[i].GemSlots[0].Type);
                     else
                         AddParameter(command, "@gem_slot_1_type", 0);
 
-                    if (spawnParams[i].GemSlots.Length > 1) 
+                    if (spawnParams[i].GemSlots.Length > 1)
                         AddParameter(command, "@gem_slot_2_type", (int)spawnParams[i].GemSlots[1].Type);
                     else
-                        AddParameter(command, "@gem_slot_2_type",0);
+                        AddParameter(command, "@gem_slot_2_type", 0);
 
-                    if (spawnParams[i].GemSlots.Length > 2) 
+                    if (spawnParams[i].GemSlots.Length > 2)
                         AddParameter(command, "@gem_slot_3_type", (int)spawnParams[i].GemSlots[2].Type);
                     else
-                        AddParameter(command, "@gem_slot_3_type",0);
+                        AddParameter(command, "@gem_slot_3_type", 0);
 
-                    if (spawnParams[i].GemSlots.Length > 0) 
+                    if (spawnParams[i].GemSlots.Length > 0)
                         AddParameter(command, "@gem_id_slot_1", (int)spawnParams[i].GemSlots[0].Type);
                     else
                         AddParameterNull(command, "@gem_id_slot_1");
 
-                    if (spawnParams[i].GemSlots.Length > 1) 
+                    if (spawnParams[i].GemSlots.Length > 1)
                         AddParameter(command, "@gem_id_slot_2", (int)spawnParams[i].GemSlots[1].Type);
                     else
                         AddParameterNull(command, "@gem_id_slot_2");
@@ -591,7 +596,7 @@ namespace Necromancy.Server.Systems.Item
         }
 
         private ItemInstance MakeItemInstance(DbDataReader reader)
-        {    
+        {
             ulong instanceId = (ulong)reader.GetInt64("id");
             ItemInstance itemInstance = new ItemInstance(instanceId);
 
@@ -623,7 +628,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.PlusPhysical = reader.GetInt16("plus_physical");
             itemInstance.PlusMagical = reader.GetInt16("plus_magical");
             itemInstance.PlusGP = reader.GetInt16("plus_gp");
-            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight")*10); //maybe make this a double
+            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight") * 10); //maybe make this a double
             itemInstance.PlusRangedEff = reader.GetInt16("plus_ranged_eff");
             itemInstance.PlusReservoirEff = reader.GetInt16("plus_reservoir_eff");
 
@@ -639,7 +644,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.EnchantId = reader.GetInt32("enchant_id");
             itemInstance.GP = reader.GetInt16("plus_gp");
             itemInstance.Type = (ItemType)Enum.Parse(typeof(ItemType), reader.GetString("item_type"));
-            itemInstance.Quality = (ItemQualities)Enum.Parse(typeof(ItemQualities), reader.GetString("quality"),true);
+            itemInstance.Quality = (ItemQualities)Enum.Parse(typeof(ItemQualities), reader.GetString("quality"), true);
             itemInstance.MaxStackSize = reader.GetByte("max_stack_size");
 
             if (reader.GetBoolean("es_hand_r")) itemInstance.EquipAllowedSlots |= ItemEquipSlots.RightHand;
@@ -743,7 +748,7 @@ namespace Necromancy.Server.Systems.Item
 
             itemInstance.ObjectType = reader.GetString("object_type"); //not sure what this is for
             itemInstance.EquipSlot2 = reader.GetString("equip_slot"); //not sure what this is for
-            
+
             itemInstance.IsUseableInTown = !reader.GetBoolean("no_use_in_town"); //not sure what this is for
             itemInstance.IsStorable = !reader.GetBoolean("no_storage");
             itemInstance.IsDiscardable = !reader.GetBoolean("no_discard");
@@ -755,7 +760,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.IsGoldBorder = reader.GetBoolean("gold_border");
 
             //itemInstance.Lore = reader.GetString("lore");
-            
+
             itemInstance.IconId = reader.GetInt32("icon");
 
             itemInstance.TalkRingName = "";
@@ -764,11 +769,10 @@ namespace Necromancy.Server.Systems.Item
 
             //grade,
             //weight
-            itemInstance.Weight = (int)(reader.GetDouble("weight")*10000);
+            itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000);
 
             return itemInstance;
         }
 
-        
     }
 }

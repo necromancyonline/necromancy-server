@@ -182,12 +182,12 @@ namespace Necromancy.Server.Model
             StepCount = 0;
             lootNotify = new ItemLocation((ItemZoneType)0, 0, 0);
             OdRecoveryRate = 0;
-            StatusEffects = new uint[4] 
+            StatusEffects = new uint[4]
             {
                 (uint)Statuses.Attack_Aura405,
                 (uint)Statuses.Mosquito_Buzz200,
                 (uint)Statuses.Porkul_Cake_Whole,
-                (uint)Statuses._Chimera_Killer_Hot_Mode 
+                (uint)Statuses._Chimera_Killer_Hot_Mode
             };
         }
 

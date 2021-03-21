@@ -18,7 +18,13 @@ namespace Necromancy.Server.Systems.Item
         public void UpdateItemEnhancementLevel(ulong instanceId, int level);
         public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability);
         public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses);
-        public List<ItemInstance> SelectOwneditemInstances(int ownerId);
-        
+
+        /// <summary>
+        /// This selects only the items in the player's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and Avatar inventory.
+        /// </summary>
+        /// <param name="ownerId">Owner of items.</param>
+        /// <returns></returns>
+        public List<ItemInstance> SelectOwnedInventoryItems(int ownerId);
+
     }
 }

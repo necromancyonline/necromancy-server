@@ -45,7 +45,6 @@ namespace Necromancy.Server.Systems.Item
             if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
             { 
                 item.Statuses &= ~ItemStatuses.Unidentified;
-                _itemDao.UpdateItemOwnerAndStatus(item.InstanceID, _character.Id, (int)item.Statuses);
             }
             return item;
         }
@@ -168,7 +167,7 @@ namespace Necromancy.Server.Systems.Item
         {
             //Clear Equipped Items from send_data_get_self_chara_data_request
             _character.EquippedItems.Clear();
-            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
+            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
             //load bags first
             foreach (ItemInstance item in ownedItems)
             {
@@ -222,7 +221,7 @@ namespace Necromancy.Server.Systems.Item
         public void LoadEquipmentModels()
         {
             _character.EquippedItems.Clear();
-            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
+            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
             foreach (ItemInstance item in ownedItems)
             {
                 if (item.CurrentEquipSlot != ItemEquipSlots.None)

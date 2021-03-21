@@ -2,6 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -17,14 +18,21 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             byte exhibitSlot = packet.Data.ReadByte();
-            byte zone = packet.Data.ReadByte(); 
+
+            ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte(); 
             byte bag = packet.Data.ReadByte(); 
-            short slot = packet.Data.ReadInt16(); 
+            short slot = packet.Data.ReadInt16();
+            ItemLocation itemLocation = new ItemLocation(zone, bag, slot);
+
             byte quantity = packet.Data.ReadByte(); 
             int time = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:16 hours 3:24 hours
             ulong minBidPrice = packet.Data.ReadUInt64(); 
             ulong buyoutPrice = packet.Data.ReadUInt64(); 
-            string comment = packet.Data.ReadCString(); 
+            string comment = packet.Data.ReadCString();
+
+            ItemService itemService = new ItemService(client.Character);
+            ItemInstance itemToExhibit = itemService.GetIdentifiedItem(itemLocation);
+            //itemService.m
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //error check.
