@@ -16,22 +16,20 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte myAuctionSlot = packet.Data.ReadByte(); // 0-4  for slots 1-5
-            short unknown = packet.Data.ReadInt16(); // not sure 00-00
-            short unknown2 = packet.Data.ReadInt16(); // not sure 03-00
-
-            byte itemCount = packet.Data.ReadByte(); //count of items in auction slot
-
-            int auctionTime = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:16 hours 3:24 hours
-
-            int MinimumBidPrice = packet.Data.ReadInt32(); //Minimum Bid
-            int sellNowPrice = packet.Data.ReadInt32(); //Buy it now price
-            string auctionComment = packet.Data.ReadCString(); //Comment for selling item
+            byte exhibitSlot = packet.Data.ReadByte();
+            byte zone = packet.Data.ReadByte(); 
+            byte bag = packet.Data.ReadByte(); 
+            short slot = packet.Data.ReadInt16(); 
+            byte quantity = packet.Data.ReadByte(); 
+            int time = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:16 hours 3:24 hours
+            ulong minBidPrice = packet.Data.ReadUInt64(); 
+            ulong buyoutPrice = packet.Data.ReadUInt64(); 
+            string comment = packet.Data.ReadCString(); 
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //error check.
-            res.WriteInt32(sellNowPrice);
-            res.WriteInt64(10200101);
+            res.WriteInt32(0);
+            res.WriteInt64(0);
             Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_exhibit_r, res, ServerType.Area);
         }
 
