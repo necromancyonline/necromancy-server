@@ -37,7 +37,6 @@ namespace Necromancy.Server.Model
         public uint SalvagerId { get; set; }
 
         //Inventory
-        public ItemManager ItemManager { get; set; } = new ItemManager(); //TODO make item service
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems;
 
         public DeadBody()

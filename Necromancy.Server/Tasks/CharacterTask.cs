@@ -153,7 +153,6 @@ namespace Necromancy.Server.Tasks
             deadBody.Level = _client.Character.Level;
             deadBody.ClassId = _client.Character.ClassId;
             deadBody.EquippedItems = _client.Character.EquippedItems;
-            deadBody.ItemManager = _client.Character.ItemManager;
             deadBody.ConnectionState = 1;
             _clients = _client.Map.ClientLookup.GetAll();
             _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
