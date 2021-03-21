@@ -162,13 +162,13 @@ namespace Necromancy.Server.Packet.Area
                 client.Map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
             }
 
-            IBuffer res7 = BufferProvider.Provide();
-            res7.WriteByte(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res7, ServerType.Area);
-
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive
             Router.Send(client, (ushort)AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
+
+            IBuffer res7 = BufferProvider.Provide();
+            res7.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res7, ServerType.Area);
         }
     }
 }
