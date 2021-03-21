@@ -220,6 +220,7 @@ namespace Necromancy.Server.Packet.Area
             res7.WriteInt32(numEntries);
             for (int i = 0; i < numEntries; i++)
             {
+                Map map = Server.Maps.Get(mapIDs[i]);
                 //sub_494c50
                 res7.WriteInt32(mapIDs[i]); //Map ID.  Cross Refrences Dungeun_info.csv to get X/Y value for map icon, and dungeun description. 
                 ; //Recommended Level
@@ -241,19 +242,19 @@ namespace Necromancy.Server.Packet.Area
 
                     for (int j = 0; j < 0x80; j++) //j max 0x80
                     {
-                        res7.WriteInt32(mapIDs[i]);
+                        res7.WriteInt32(mapIDs[i]);  //Probably a unique identified for each map/channel combo
                         res7.WriteFixedString($"Channel-{j}", 0x61); //Channel Names.  Variables let you know what Loop Iteration you're on
-                        res7.WriteByte(0); //Channel Full bool.   0 no, 1 yes
-                        res7.WriteInt16((short)Util.GetRandomNumber(0, 50)); //Current players for 'fullness bar'
-                        res7.WriteInt16((short)Util.GetRandomNumber(0, 40));//Max Players 'for fullness bar'
+                        res7.WriteByte(1); //Channel Full bool.   0 no, 1 yes
+                        res7.WriteInt16(20); //Max Players count for fullness bar
+                        res7.WriteInt16((short)map.ClientLookup.GetCount());//current Players 'for fullness bar'
                         res7.WriteByte((byte)Util.GetRandomNumber(0,6)); //channel Emoticon - 6 for a Happy Face
                     }
-                    res7.WriteByte(5); //number of channels to display
+                    res7.WriteByte(4); //number of channels to display
                 }
                 
                 res7.WriteByte(1); //
             }
-            res7.WriteInt32(100);
+            res7.WriteInt32(1);
 
             Router.Send(client, (ushort) AreaPacketId.recv_event_select_map_and_channel, res7, ServerType.Area);
         }
