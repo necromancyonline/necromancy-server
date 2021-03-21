@@ -1,15 +1,8 @@
-using Necromancy.Server.Auction.Database;
-using Necromancy.Server.Database;
 using Necromancy.Server.Model;
-using Necromancy.Server.Systems.Auction_House.Data_Access;
-using Necromancy.Server.Systems.Auction_House.Logic;
-using Necromancy.Server.Systems.Auction_House.Messages.Receive;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using static Necromancy.Server.Systems.Auction_House.Logic.AuctionException;
+using static Necromancy.Server.Systems.Auction.AuctionException;
 
-namespace Necromancy.Server.Systems.Auction_House
+namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionService
     {
@@ -119,7 +112,7 @@ namespace Necromancy.Server.Systems.Auction_House
             throw new NotImplementedException();
         }
 
-        public AuctionLot Exhibit(AuctionLot auctionItem, int bagNumber, int bagSlot)
+        public AuctionLot Exhibit(ulong itemInstanceId, byte quantity, int time, ulong minBid, ulong buyoutPrice, string comment)
         {            
             int currentNumLots = GetLots().Length;
             if (currentNumLots >= MAX_LOTS)
@@ -146,9 +139,9 @@ namespace Necromancy.Server.Systems.Auction_House
             //InventoryService iManager = new InventoryService(_client); //remove this 
             //iManager.SubtractGold((int) Math.Ceiling(auctionItem.BuyoutPrice * LISTING_FEE_PERCENT)); 
 
-            _auctionDao.InsertItem(auctionItem);
+            //_auctionDao.InsertItem(auctionItem);
 
-            return auctionItem;
+            return new AuctionLot();
         }
 
         public AuctionLot[] Search(SearchCriteria searchCritera)

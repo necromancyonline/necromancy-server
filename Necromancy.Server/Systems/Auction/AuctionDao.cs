@@ -1,15 +1,15 @@
 using Necromancy.Server.Model;
 using Necromancy.Server.Systems;
-using Necromancy.Server.Systems.Auction_House;
-using Necromancy.Server.Systems.Auction_House.Data_Access;
-using Necromancy.Server.Systems.Auction_House.Logic;
+using Necromancy.Server.Systems.Auction;
+using Necromancy.Server.Systems.Auction.Data_Access;
+using Necromancy.Server.Systems.Auction.Logic;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Text;
 
-namespace Necromancy.Server.Auction.Database
+namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionDao : DatabaseAccessObject, IAuctionDao
     {

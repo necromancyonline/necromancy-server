@@ -5,11 +5,11 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Systems.Auction_House.Logic;
+using Necromancy.Server.Systems.Auction.Logic;
 using System;
 using System.Text;
 
-namespace Necromancy.Server.Systems.Auction_House
+namespace Necromancy.Server.Systems.Auction
 {
     public class send_auction_search : ClientHandler
     {

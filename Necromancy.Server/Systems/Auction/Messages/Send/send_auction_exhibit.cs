@@ -3,9 +3,9 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Systems.Auction_House.Logic;
+using Necromancy.Server.Systems.Auction.Logic;
 
-namespace Necromancy.Server.Systems.Auction_House
+namespace Necromancy.Server.Systems.Auction
 {
     public class send_auction_exhibit : ClientHandler
     {

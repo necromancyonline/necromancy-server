@@ -1,9 +1,6 @@
-using Necromancy.Server.Chat.Command.Commands;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Necromancy.Server.Systems.Auction_House.Logic
+namespace Necromancy.Server.Systems.Auction
 {
     [Serializable()]
     public class AuctionException : Exception

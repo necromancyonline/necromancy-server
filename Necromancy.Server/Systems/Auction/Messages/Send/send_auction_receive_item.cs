@@ -4,7 +4,7 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
 
-namespace Necromancy.Server.Systems.Auction_House
+namespace Necromancy.Server.Systems.Auction
 {
     public class send_auction_receive_item : ClientHandler
     {

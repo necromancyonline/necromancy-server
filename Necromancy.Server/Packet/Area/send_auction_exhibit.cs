@@ -2,7 +2,10 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Systems.Auction;
 using Necromancy.Server.Systems.Item;
+using System.Collections.Generic;
+using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -17,22 +20,34 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte exhibitSlot = packet.Data.ReadByte();
-
+            byte exhibitSlot = packet.Data.ReadByte();            
             ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte(); 
             byte bag = packet.Data.ReadByte(); 
             short slot = packet.Data.ReadInt16();
-            ItemLocation itemLocation = new ItemLocation(zone, bag, slot);
-
             byte quantity = packet.Data.ReadByte(); 
             int time = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:16 hours 3:24 hours
             ulong minBidPrice = packet.Data.ReadUInt64(); 
             ulong buyoutPrice = packet.Data.ReadUInt64(); 
             string comment = packet.Data.ReadCString();
 
+            ItemLocation auctionLoc = new ItemLocation(ItemZoneType.TempAuctionZone, 0, exhibitSlot);
+            ItemLocation fromLoc = new ItemLocation(zone, bag, slot);
             ItemService itemService = new ItemService(client.Character);
-            ItemInstance itemToExhibit = itemService.GetIdentifiedItem(itemLocation);
-            //itemService.m
+            
+
+            ItemInstance auctionItemInstance = itemService.GetIdentifiedItem(fromLoc);
+            int auctionError = 0;
+
+            int moveError = 0;
+            try
+            {
+                MoveResult moveResult = itemService.Move(fromLoc, auctionLoc, quantity);
+                List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
+                Router.Send(client, responses);
+            }
+            catch (ItemException e) { moveError = (int)e.ExceptionType; }
+
+            AuctionService auctionService = new AuctionService(client);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //error check.

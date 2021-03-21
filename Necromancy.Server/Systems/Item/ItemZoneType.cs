@@ -17,9 +17,9 @@ namespace Necromancy.Server.Systems.Item
         WarehouseSp     = 10,
         AvatarInventory = 12,
         TreasureBox     = 66,
-        LootingBodyAdventureBag  = 71,
-        LootingBodyEquippedBags = 72,
-        LootingBodyPremiumBag = 74,
+        CorpseAdventureBag  = 71,
+        CorpseEquippedBags = 72,
+        CorpsePremiumBag = 74,
 
         TempAuctionZone = 99
 

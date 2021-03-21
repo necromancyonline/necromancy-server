@@ -1,10 +1,6 @@
 using Necromancy.Server.Model;
-using Necromancy.Server.Systems.Auction_House.Logic;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Necromancy.Server.Systems.Auction_House.Data_Access
+namespace Necromancy.Server.Systems.Auction
 {
     public interface IAuctionDao
     {
