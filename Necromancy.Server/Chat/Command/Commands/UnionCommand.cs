@@ -7,6 +7,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -88,7 +89,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res35.WriteByte(0);
                     Router.Send(client, (ushort)AreaPacketId.recv_event_start, res35, ServerType.Area);
                     //Open union storage
-                    res36.WriteInt64(client.Soul.WarehouseGold); //todo make union gold variable
+                    res36.WriteUInt64(client.Soul.WarehouseGold); //todo make union gold variable
                     res36.WriteInt64(500); //??
                     Router.Send(client, (ushort) AreaPacketId.recv_event_union_storage_open, res36,
                         ServerType.Area);
@@ -212,12 +213,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res21.WriteByte(255);
                     Router.Send(client, (ushort) AreaPacketId.recv_event_start, res21, ServerType.Area);
 
-                    IBuffer res22 = BufferProvider.Provide();
-
-                    res22.WriteCString(
-                        "tutorial/tutorial_soul"); //ReadScript query to ...\Data\script\event\. Will play if found
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
-
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("tutorial/tutorial_soul", client.Character.InstanceId);
+                    Router.Send(recvEventScriptPlay, client);
 
                     break;
 
@@ -235,7 +232,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "union";
         public override string HelpText => "usage: `/union [command]` - Does something Union related.";
     }

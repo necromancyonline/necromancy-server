@@ -55,7 +55,7 @@ namespace Necromancy.Server.Tasks
             Logger.Debug($"trap._trapTime [{trap._trapTime}]");
         }
 
-        public override string TaskName => "TrapTask";
+        public override string TaskName => $"TrapTask {ownerInstanceId}";
         public override TimeSpan TaskTimeSpan { get; }
         protected override bool TaskRunAtStart => false;
 

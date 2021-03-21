@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -37,7 +39,7 @@ namespace Necromancy.Server.Model.Skills
         {
             Logger.Debug($"CastingTime : {_skillSetting.CastingTime}");
             RecvSkillStartCastSelf startCast = new RecvSkillStartCastSelf(_skillid, _skillSetting.CastingTime);
-            _server.Router.Send(_client.Map, startCast);
+            _server.Router.Send(_client, startCast.ToPacket());  //do not send "Self"  recvs to map. that breaks things.
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.InstanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
@@ -61,22 +63,33 @@ namespace Necromancy.Server.Model.Skills
             brList.Add(brEnd);
             _server.Router.Send(_client.Map, brList);
 
-            IBuffer res11 = BufferProvider.Provide();
 
-            res11.WriteUInt32(_client.Character.InstanceId);
-            
-            if (_client.Character.IsStealthed())
+            Task.Delay(TimeSpan.FromSeconds(_skillSetting.CastingTime)).ContinueWith
+            (t1 =>
             {
-                _client.Character.ClearStateBit(CharacterState.StealthForm);
+                //make other players not able to see you
+                _client.Character.AddStateBit(CharacterState.InvisibleForm);
+                RecvCharaNotifyStateflag stateFlag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (ulong)_client.Character.State);
+                _server.Router.Send(_client.Map, stateFlag, _client);
+
+                //Make it so you can kinda see yourself
+                _client.Character.AddStateBit(CharacterState.InvulnerableForm); //todo. fix stealth form
+                RecvCharaNotifyStateflag myStateFlag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (ulong)_client.Character.State);
+                _server.Router.Send(_client, myStateFlag.ToPacket());
             }
-            else
+            );
+
+
+            //clear stealth after 10 seconds.   //ToDo  ,  change seconds to skills effective time.
+            Task.Delay(TimeSpan.FromSeconds(_skillSetting.EffectTime+_skillSetting.CastingTime)).ContinueWith
+            (t1 =>
             {
-                _client.Character.AddStateBit(CharacterState.StealthForm);
+                _client.Character.ClearStateBit(CharacterState.InvisibleForm);
+                _client.Character.ClearStateBit(CharacterState.InvulnerableForm);
+                RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (ulong)_client.Character.State);
+                _server.Router.Send(_client.Map, recvCharaNotifyStateflag.ToPacket());
             }
-            res11.WriteUInt32((uint)_client.Character.State);
-            
-            RecvCharaNotifyStateflag stateFlag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (uint)_client.Character.State);
-            //_server.Router.Send(_client.Map, stateFlag);   //fix stealth bug bby disabling stealth for now
+            );
 
             //0bxxxxxxx1 - 1 Soul Form / 0 Normal  | (Soul form is Glowing with No armor) 
             //0bxxxxxx1x - 1 Battle Pose / 0 Normal

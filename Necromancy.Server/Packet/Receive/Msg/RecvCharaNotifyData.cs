@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             : base((ushort) MsgPacketId.recv_chara_notify_data, ServerType.Msg)
         {
         }
-
+        //ToDo,  figure out why this is in Msg.  could be a big deal actually
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

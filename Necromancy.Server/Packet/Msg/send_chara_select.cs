@@ -3,6 +3,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
@@ -21,6 +22,7 @@ namespace Necromancy.Server.Packet.Msg
         {
             int characterId = packet.Data.ReadInt32();
             Character character = Database.SelectCharacterById(characterId);
+
             if (character == null)
             {
                 Logger.Error(client, $"No character for CharacterId: {characterId}");
@@ -30,6 +32,7 @@ namespace Necromancy.Server.Packet.Msg
             Server.Instances.AssignInstance(character); 
 
             client.Character = character;
+            client.Character.criminalState = client.Soul.CriminalLevel;
             client.UpdateIdentity();
             client.Character.CreateTask(Server, client);
 
@@ -39,10 +42,7 @@ namespace Necromancy.Server.Packet.Msg
             res3.WriteInt32(0); //ERR-CHARSELECT error check
             res3.WriteUInt32(client.Character.InstanceId);
 
-            //sub_4E4210_2341  // 
-            //res3.WriteInt32(0);//client.Character.MapId); //MapSerialID //passeed to Send_Map_Entry
-            //res3.WriteInt32(0);//client.Character.MapId); //MapID
-
+            //sub_4E4210_2341 
             res3.WriteInt32(client.Character.MapId);
             res3.WriteInt32(client.Character.MapId);
             res3.WriteInt32(client.Character.MapId);
@@ -64,25 +64,14 @@ namespace Necromancy.Server.Packet.Msg
             */
 
 
-            //Logic to support your dead body //Do Dead Body IDs need to be persistant, or can they change at each login?  TODO...
+            //Logic to support your dead body //Make this static.  need a predictable deadbody instance ID to support disconnect/reconnet
             DeadBody deadBody = new DeadBody();
+            deadBody.Id = character.Id;
             Server.Instances.AssignInstance(deadBody);
             character.DeadBodyInstanceId = deadBody.InstanceId;
             deadBody.CharacterInstanceId = character.InstanceId;
-            character.movementId = character.InstanceId;
-            Logger.Debug(
-                $"Dead Body Instance ID {deadBody.InstanceId}   |  Character Instance ID {character.InstanceId}");
-            deadBody.CharaName = character.Name;
-            deadBody.MapId = character.MapId;
-            deadBody.X = character.X;
-            deadBody.Y = character.Y;
-            deadBody.Z = character.Z;
-            deadBody.Heading = character.Heading;
-            deadBody.RaceId = character.RaceId;
-            deadBody.SexId = character.SexId;
-            deadBody.HairStyle = character.HairId;
-            deadBody.HairColor = character.HairColorId;
-            deadBody.FaceId = character.FaceId;
+            Logger.Debug($"Dead Body Instance ID {deadBody.InstanceId}   |  Character Instance ID {character.InstanceId}");
+
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "itemi";
         public override string HelpText => "usage: `/itemi [itemId]`";
 
@@ -61,7 +61,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteByte(5);                           //V|HARDNESS
                 res.WriteInt32(2000);                       //V|WEIGHT IN THOUSANTHS, DISPLAYS AS HUNDREDTHS
 
-                const int MAX_WHATEVER_SLOTS = 2;
                 int numEntries = 2;
                 res.WriteInt32(numEntries);                  //less than or equal to 2?
                 for (int j = 0; j < numEntries; j++)

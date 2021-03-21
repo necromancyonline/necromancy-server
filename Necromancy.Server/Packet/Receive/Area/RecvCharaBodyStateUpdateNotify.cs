@@ -7,16 +7,23 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyStateUpdateNotify : PacketResponse
     {
-        public RecvCharaBodyStateUpdateNotify()
+        /// <summary>
+        /// Use this to modify charabody state on disconnect / reconnect / and body collection.
+        /// </summary>
+        private uint _id;
+        private int _stateFlag;
+        public RecvCharaBodyStateUpdateNotify(uint id, int stateFlag)
             : base((ushort) AreaPacketId.recv_charabody_state_update_notify, ServerType.Area)
         {
+            _stateFlag = stateFlag;
+            _id = id;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteInt32(0);
+            res.WriteUInt32(_id); //body instance Id
+            res.WriteInt32(_stateFlag); //0b0 = disconnected backpack, 0b1 = normal, 0b100 = title:On 0b10000=invisible. nothing above ob1 << 5
             return res;
         }
     }

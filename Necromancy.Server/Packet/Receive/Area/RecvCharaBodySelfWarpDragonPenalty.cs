@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfWarpDragonPenalty : PacketResponse
     {
-        public RecvCharaBodySelfWarpDragonPenalty()
+        private uint _time;
+        public RecvCharaBodySelfWarpDragonPenalty(uint time)
             : base((ushort) AreaPacketId.recv_charabody_self_warpdragon_penalty, ServerType.Area)
         {
+            _time = time;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteUInt32(_time); //time
             return res;
         }
     }

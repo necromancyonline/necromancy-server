@@ -28,6 +28,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(0);
             res.WriteInt32(0);
             res.WriteInt16(0);
+            res.WriteInt16(0);
+            res.WriteInt16(0);
             return res;
         }
     }

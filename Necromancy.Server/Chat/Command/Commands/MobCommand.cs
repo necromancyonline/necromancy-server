@@ -217,33 +217,13 @@ namespace Necromancy.Server.Chat.Command.Commands
                     Router.Send(client.Map, (ushort) AreaPacketId.recv_data_notify_gimmick_data, resI, ServerType.Area);
                     break;
 
-                case "debug":
-                    //recv_data_notify_debug_object_data = 0x6510,
-                    IBuffer resJ = BufferProvider.Provide();
-                    resJ.WriteUInt32(monsterSpawn.InstanceId);
-                    int numEntries = 0x20;
-                    resJ.WriteInt32(numEntries); //less than or equal to 0x20
-                    for (int i = 0; i < numEntries; i++)
-                    {
-                        resJ.WriteFloat(1);
-                        resJ.WriteFloat(x);
-                        resJ.WriteFloat(3);
-                    }
-
-                    resJ.WriteByte(1);
-                    resJ.WriteByte(2);
-                    resJ.WriteByte(3);
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_data_notify_debug_object_data, resJ,
-                        ServerType.Area);
-                    break;
-
                 default:
                     Logger.Error($"There is no recv of type : {command[0]} ");
                     break;
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "mob";
 
         public override string HelpText =>

@@ -31,7 +31,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte((byte)_itemInstance.Location.ZoneType);       //STORAGE ZONE
             res.WriteByte(_itemInstance.Location.Container);            //BAG
             res.WriteInt16(_itemInstance.Location.Slot);                //SLOT
-            res.WriteInt32(0);                                          //UNKNOWN
+            res.WriteInt32(Util.GetRandomNumber(1, 10));                                          //UNKNOWN
             res.WriteInt32((int)_itemInstance.CurrentEquipSlot);        //CURRENT EQUIP SLOT
             res.WriteInt32(_itemInstance.CurrentDurability);            //CURRENT DURABILITY
             res.WriteByte(_itemInstance.EnhancementLevel);              //ENHANCEMENT LEVEL?
@@ -41,9 +41,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt16(_itemInstance.Magical);                      //MAGICAL
             res.WriteInt32(_itemInstance.MaximumDurability);            //MAX DURABILITY
             res.WriteByte(_itemInstance.Hardness);                      //HARDNESS
-            res.WriteInt32(_itemInstance.Weight);                       //WEIGHT IN THOUSANDTHS
+            res.WriteInt32(_itemInstance.Weight/10);                       //WEIGHT IN THOUSANDTHS
 
-            const int MAX_WHATEVER_SLOTS = 2;
             int numEntries = 2;
             res.WriteInt32(numEntries);                                 //less than or equal to 2?
             for (int j = 0; j < numEntries; j++)
@@ -63,7 +62,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             }
             
             res.WriteInt32(_itemInstance.ProtectUntil);                 //PROTECT UNTIL DATE IN SECONDS
-            res.WriteInt64(0);                                          //UNKNOWN
+            res.WriteInt64(Util.GetRandomNumber(1,10));                                          //UNKNOWN
             res.WriteInt16(0xff);                                       //0 = green (in shop for sale)  0xFF = normal /*item.ShopStatus*/
             res.WriteInt32(_itemInstance.EnchantId);                    //UNKNOWN - ENCHANT ID? 1 IS GUARD
             res.WriteInt16(_itemInstance.GP);                           //GP
@@ -79,45 +78,44 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16((short)10);  //unknown
                 res.WriteInt16((short)10);  //unknown
             }
-
-            res.WriteInt64(Int64.MaxValue);              //unknown
+            //Item_Update_Parameter  section
+            res.WriteInt64(Util.GetRandomNumber(1, 100));              //Plus sale value??
             res.WriteInt16(_itemInstance.PlusPhysical);                 //+PHYSICAL
             res.WriteInt16(_itemInstance.PlusMagical);                  //+MAGICAL
-            res.WriteInt16(_itemInstance.PlusWeight);                   //+WEIGHT IN THOUSANTHS, DISPLAYS AS HUNDREDTHS
+            res.WriteInt16((short)(_itemInstance.PlusWeight/10));       //+WEIGHT IN THOUSANTHS, DISPLAYS AS HUNDREDTHS
             res.WriteInt16(_itemInstance.PlusDurability);               //+DURABILITY
             res.WriteInt16(_itemInstance.PlusGP);                       //+GP
             res.WriteInt16(_itemInstance.PlusRangedEff);                //+Ranged Efficiency
             res.WriteInt16(_itemInstance.PlusReservoirEff);             //+Resevior Efficiency
 
             //UNIQUE EFFECTS
-            res.WriteInt32(0);  //V|EFFECT1 TYPE - 0 IS NONE - PULLED FROM STR_TABLE?
-            res.WriteInt32(0);  //V|EFFECT2 TYPE - 0 IS NONE
-            res.WriteInt32(0);  //V|EFFECT3 TYPE - 0 IS NONE
-            res.WriteInt32(0);  //V|EFFECT4 TYPE - 0 IS NONE
-            res.WriteInt32(0);  //V|EFFECT5 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1,10));  //V|EFFECT1 TYPE - 0 IS NONE - PULLED FROM STR_TABLE?
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT2 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT3 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT4 TYPE - 0 IS NONE
+            res.WriteInt32(Util.GetRandomNumber(1, 10));  //V|EFFECT5 TYPE - 0 IS NONE
 
-            res.WriteInt32(0);  //V|EFFECT1 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
-            res.WriteInt32(0);  //V|EFFECT2 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
-            res.WriteInt32(0);  //V|EFFECT3 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
-            res.WriteInt32(0);  //V|EFFECT4 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
-            res.WriteInt32(0);  //V|EFFECT5 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT1 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT2 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT3 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT4 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
+            res.WriteInt32(Util.GetRandomNumber(10, 100));  //V|EFFECT5 VALUE - IF ENABLED MUST BE GREATER THAN ZERO OR DISPLAY ERROR
 
             //UNKNOWN
             for (int j = 0; j < numEntries; j++)
             {
-                res.WriteInt32(1);//UNKNOWN
-                res.WriteByte((byte)1);//UNKNOWN
-                res.WriteByte((byte)1);//UNKNOWN
+                res.WriteInt32(j);//UNKNOWN
+                res.WriteFixedString("Ok", 0x2); //could be two bytes, not a fixed string. 
                 res.WriteInt16((short)1);//UNKNOWN
                 res.WriteInt16((short)1);//UNKNOWN
             }
-
+            //End Update Parameter.
             res.WriteInt16(_itemInstance.RangedEffDist);            //Ranged Efficiency/distance - need better translation
             res.WriteInt16(_itemInstance.ReservoirLoadPerf);        //Resevior/loading Efficiency/performance - need better translation
             res.WriteByte(_itemInstance.NumOfLoads);                //Number of loads - need better translation
             res.WriteByte(_itemInstance.SPCardColor);               //Soul Partner card type color, pulled from str_table 100,1197,add 1 to sent value to find match
 
-            res.WriteInt64(Int64.MaxValue);//UNKNOWN
+            res.WriteInt64(Util.GetRandomNumber(1, 10));//UNKNOWN
 
             //base enchant display on bottom
             res.WriteInt16((short)0);  //Base Enchant Scroll ID

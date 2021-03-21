@@ -19,13 +19,16 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            //if (command[0] == "")
-            //{
-            //    responses.Add(ChatResponse.CommandError(client, $"Invalid opcode: {command[0]}"));
-            //    return;
-            //}
-
             IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(2);
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
+            res.WriteInt32(1); // 0 = normal 1 = cinematic
+            res.WriteByte(0);
+            //Router.Send(client, (ushort)AreaPacketId.recv_event_start, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
 
             //no int32 section
             Router.Send(client, (ushort)AreaPacketId.recv_0x166B, res, ServerType.Area); Thread.Sleep(2000);
@@ -37,7 +40,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client, (ushort)AreaPacketId.recv_0xEDE7, res, ServerType.Area); Thread.Sleep(2000);
 
             //one int32 section
-            res.WriteInt32(0);
+            res.WriteInt32(200000002);
 
             Router.Send(client, (ushort)MsgPacketId.recv_0x6C94, res, ServerType.Msg); Thread.Sleep(2000);
             Router.Send(client, (ushort)MsgPacketId.recv_0x831C, res, ServerType.Msg); Thread.Sleep(2000);
@@ -69,7 +72,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             //double int32 section
             res = BufferProvider.Provide(); Thread.Sleep(2000);
             res.WriteInt32(0); Thread.Sleep(2000);
-            res.WriteInt32(0); Thread.Sleep(2000);
+            res.WriteInt32(200000002); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x4D12, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x1489, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x692A, res, ServerType.Area); Thread.Sleep(2000);
@@ -84,13 +87,13 @@ namespace Necromancy.Server.Chat.Command.Commands
             //int32 int 16 sectons
             res = BufferProvider.Provide();
             res.WriteUInt32(client.Character.InstanceId);
-            res.WriteInt16(0); 
+            res.WriteInt16(15); 
             Router.Send(client, (ushort)AreaPacketId.recv_0x4ABB, res, ServerType.Area); Thread.Sleep(2000);
 
             //int32 byte section
             res = BufferProvider.Provide(); 
             res.WriteUInt32(client.Character.InstanceId);
-            res.WriteByte(0);
+            res.WriteByte(1);
             Router.Send(client, (ushort)AreaPacketId.recv_0x7B86, res, ServerType.Area); Thread.Sleep(2000);
 
             Router.Send(client, (ushort)AreaPacketId.recv_0xEEB7, res, ServerType.Area); Thread.Sleep(2000);
@@ -99,12 +102,17 @@ namespace Necromancy.Server.Chat.Command.Commands
             //cstring section
             res = BufferProvider.Provide(); Thread.Sleep(2000);
             res.WriteCString("This is not the greatest test in the world! ohh no, this is just a Tribuuuute"); Thread.Sleep(2000);//find max size
-            Router.Send(client, (ushort)AreaPacketId.recv_0xE983, res, ServerType.Area); 
+            Router.Send(client, (ushort)AreaPacketId.recv_0xE983, res, ServerType.Area);
 
+            res = BufferProvider.Provide();
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
 
+            res = BufferProvider.Provide();
+            res.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "nstest";
         public override string HelpText => "usage: `/nstest` - Quickly test all non string protocols.";
     }

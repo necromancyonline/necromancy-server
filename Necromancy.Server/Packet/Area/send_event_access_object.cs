@@ -11,6 +11,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -28,8 +29,7 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
             uint instanceId = packet.Data.ReadUInt32();
-            client.Character.eventSelectReadyCode =
-                instanceId; //Sends the NpcID to 'send_event_select_exec_r  logic gate.
+            client.Character.eventSelectReadyCode = instanceId; //Sends the NpcID to 'send_event_select_exec_r  logic gate.
             client.Character.takeover = false;
 
             //Begin Event for all cases
@@ -72,7 +72,7 @@ namespace Necromancy.Server.Packet.Area
                                  (x == 10000702),
                             () => Blacksmith(client, npcSpawn)
                         },
-                        //{x => x == 10000010, () => DonkeysItems(client, npcSpawn)},
+                        {x => x == 10000010, () => DonkeysItems(client, npcSpawn)},
                         {x => x == 80000003, () => CloakRoomShopClerk(client, npcSpawn)},
                         {x => x == 10000002, () => RegularInn(client, npcSpawn)},
                         {x => x == 10000703, () => CrimInn(client, npcSpawn)},
@@ -87,7 +87,8 @@ namespace Necromancy.Server.Packet.Area
                             x => (x == 1900002) || (x == 1900003),
                             () => RandomItemGuy(client, npcSpawn)
                         },
-
+                        {x => (x == 10000112 || x == 10000316 || x == 10000003 || x == 10000706 || x == 10000911 || x == 10000209),
+                            () => PlayerRevive(client, npcSpawn)},
                         {x => x < 10, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
                         {x => x < 100, () => Logger.Debug($" Event Object switch for NPC ID {npcSpawn.NpcId} reached")},
                         {
@@ -138,6 +139,7 @@ namespace Necromancy.Server.Packet.Area
                         {x => x == 74013271, () => SendGetWarpTarget(client, ggateSpawn)},
                         {x => x == 7500001, () => ModelLibraryWarp(client, ggateSpawn)},
                         {x => (x == 7500001) || (x == 7500002) || (x == 7500003) || (x == 7500004),() => MapHomeWarp(client, ggateSpawn)},
+                        {x => (x == 1900001 ), () => ResurectionStatue(client, ggateSpawn)},
                         {x => x < 900000100, () => WorkInProgressGGate(client, ggateSpawn) }
                     };
 
@@ -559,13 +561,12 @@ namespace Necromancy.Server.Packet.Area
 
         private void DonkeysItems(NecClient client, NpcSpawn npcSpawn)
         {
-            //if (client.Character.helperTextDonkey)
+            if (client.Character.helperTextDonkey)
             {
                 IBuffer res2 = BufferProvider.Provide();
                 res2.WriteCString($"{npcSpawn.Name}"); //Name
                 res2.WriteCString($"{npcSpawn.Title}"); //Title (inside chat box)
-                res2.WriteCString(
-                    "Wee! There's plenty of weapons and armor at the specialty shops. The weapon and armor shops are in Bustling Market. *Hiccup*"); //Text block
+                res2.WriteCString("Wee! There's plenty of weapons and armor at the specialty shops. The weapon and armor shops are in Bustling Market. *Hiccup*"); //Text block
                 Router.Send(client, (ushort)AreaPacketId.recv_event_message_no_object, res2, ServerType.Area);
 
                 IBuffer res6 = BufferProvider.Provide();
@@ -573,11 +574,13 @@ namespace Necromancy.Server.Packet.Area
 
                 client.Character.helperTextDonkey = false;
             }
-            /*else
+            else
             {
-                int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101,15300003 };
-                int[] DonkeyPrices = new int[] {100,02,100,10,500,500,400,280,350,1100,1000,1000,500,450,450,300,350,250,450,400,450,1450,1500,1400,1550,1000,1500,1500 };
+                int[] DonkeyItems = new int[] { 100101, 50100301, 50100302, 50100401, 50100402, 70000301, 100101, 110101, 120101, 200101, 210101, 220101, 300101, 310101, 320101, 400101, 410101, 420101, 500101, 510101, 520101, 10200101, 10300101, 11000101, 11300101, 10210003, 15000101, 15300003 };
+                int[] DonkeyPrices = new int[] { 100, 02, 100, 10, 500, 500, 400, 280, 350, 1100, 1000, 1000, 500, 450, 450, 300, 350, 250, 450, 400, 450, 1450, 1500, 1400, 1550, 1000, 1500, 1500 };
                 int numItems = DonkeyItems.Count();
+                client.Character.shopItemIndex = DonkeyItems;
+
                 IBuffer res = BufferProvider.Provide();
                 //recv_shop_notify_open = 0x52FD, // Parent = 0x5243 // Range ID = 02
                 res.WriteInt16((short)ShopType.Donkey); //Shop type, 1 = remove curse; 2 = purchase list; 3 = 1 and 2; 4 = sell; 5 = 1 and 4; 6 = 2 and 4; 7 = 1, 2, and 4; 8 = identify; 14 = purchase, sell, identify; 16 = repair;
@@ -587,41 +590,37 @@ namespace Necromancy.Server.Packet.Area
                 Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_open, res, ServerType.Area);
                 Character _character = client.Character;
                 NecClient _client = client;
+                ItemService itemService = new ItemService(client.Character);
                 for (int i = 0; i < numItems; i++)
                 {
-                    Item item = Server.Items[DonkeyItems[i]];
+                    Server.SettingRepository.ItemLibrary.TryGetValue(DonkeyItems[i], out ItemLibrarySetting item);
                     // Create InventoryItem
-                    InventoryItem inventoryItem = new InventoryItem();
-                    inventoryItem.Id = item.Id;
-                    inventoryItem.Item = item;
-                    inventoryItem.ItemId = item.Id;
-                    inventoryItem.Quantity = 1;
-                    inventoryItem.CurrentDurability = item.Durability;
-                    inventoryItem.CharacterId = client.Character.Id;
-                    inventoryItem.CurrentEquipmentSlotType = EquipmentSlotType.NONE;
-                    inventoryItem.State = 0;
-                    inventoryItem.StorageType = (int)BagType.AvatarInventory;
-                    _character.Inventory.AddAvatarItem(inventoryItem);
+                    ItemInstance inventoryItem = new ItemInstance((ulong)DonkeyItems[i])
+                    {
+                        BaseID = item.Id,
+                        Quantity = 1,
+                        CurrentDurability = item.Durability,
+                        OwnerID = 0,
+                        CurrentEquipSlot = ItemEquipSlots.None,
+                        Location = new ItemLocation(ItemZoneType.UNKNOWN4, 0, (short)i),
+                        Statuses = ItemStatuses.Identified
+                        //add in all the stats here using Item Library Setting, or make a database query
+                        //probably best to have the ItemLibrary Table loaded in to memory in setting Repository
+                    };
 
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(inventoryItem, client);
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, inventoryItem);
                     Router.Send(recvItemInstance, client);
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(inventoryItem, client);
-                    Router.Send(recvItemInstanceUnidentified, client);
-
-                    itemStats(inventoryItem, client);
-
 
                     res = BufferProvider.Provide();
-                    res.SetPositionStart();
                     res.WriteByte((byte)i); //idx
                     res.WriteInt32(DonkeyItems[i]); // item Serial id
                     res.WriteInt64(DonkeyPrices[i]); // item price
                     res.WriteInt64(69); // new
                     res.WriteInt64(692); // new
-                    res.WriteByte(1); //Bool new
-                    res.WriteFixedString($"{inventoryItem.Item.Name}", 0x10); // ?
-                    res.WriteInt32(6969); //new
-                    res.WriteInt16(15); //new
+                    res.WriteByte((byte)(Util.GetRandomNumber(0,2))); //Bool new
+                    res.WriteFixedString($"{inventoryItem.UnidentifiedName}", 0x10); // //should be identified name.
+                    res.WriteInt32((int)inventoryItem.Statuses); //new
+                    res.WriteInt16(1); //new
                     Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item, res, ServerType.Area);
 
                 }
@@ -629,7 +628,7 @@ namespace Necromancy.Server.Packet.Area
                 IBuffer res5 = BufferProvider.Provide();
                 res5.WriteCString($"{npcSpawn.Name}'s Goods");
                 Router.Send(client, (ushort)AreaPacketId.recv_shop_title_push, res5, ServerType.Area);
-            }*/
+            }
         }
         private void AuctionHouse(NecClient client, NpcSpawn npcSpawn)
         {
@@ -990,9 +989,8 @@ namespace Necromancy.Server.Packet.Area
         private void MapHomeWarp(NecClient client, GGateSpawn ggateSpawn)
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteCString("etc/warp_samemap"); // find max size 
-            res.WriteUInt32(client.Character.InstanceId); //newJp
-            Router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res, ServerType.Area);
+            RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("etc/warp_samemap", client.Character.InstanceId);
+            Router.Send(recvEventScriptPlay, client);
             Task.Delay(TimeSpan.FromMilliseconds(1500)).ContinueWith
             (t1 =>
                 {
@@ -1012,6 +1010,54 @@ namespace Necromancy.Server.Packet.Area
 
         }
 
+        private void PlayerRevive(NecClient client, NpcSpawn npcSpawn)
+        {
+            IBuffer res0 = BufferProvider.Provide();
+            res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
+            res0.WriteByte(0);
+            Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+
+            IBuffer res15 = BufferProvider.Provide();
+            //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
+            res15.WriteInt16(75); //Basic revival rate %
+            res15.WriteInt16(0); //Penalty %
+            res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
+            res15.WriteInt16(0); //Dimento medal addition %
+            Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+        }
+
+        private void ResurectionStatue(NecClient client, GGateSpawn gGateSpawn)
+        {
+            if (client.Character.HasDied == false)
+            {
+                string name, title, text;
+                name = gGateSpawn.Name;
+                title = gGateSpawn.Title;
+                text = "The torch is lit silently";
+                RecvEventMessageNoObject eventText = new RecvEventMessageNoObject(name, title, text);
+                Router.Send(eventText, client);
+
+                RecvEventSync eventSync = new RecvEventSync();
+                Router.Send(eventSync, client);
+
+            }
+            else
+            {
+                IBuffer res0 = BufferProvider.Provide();
+                res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
+                res0.WriteByte(0);
+                Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+
+                IBuffer res15 = BufferProvider.Provide();
+                //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
+                res15.WriteInt16(75); //Basic revival rate %
+                res15.WriteInt16(0); //Penalty %
+                res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
+                res15.WriteInt16(0); //Dimento medal addition %
+                Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+            }
+
+        }
 
         private void SpareEventParts(NecClient client, NpcSpawn npcSpawn)
         {
@@ -1208,81 +1254,6 @@ namespace Necromancy.Server.Packet.Area
             100999  ,  /*	Azzam's Trial Ground	*/
 
         };
-
-        //public void itemStats(InventoryItem inventoryItem, NecClient client)
-        //{
-        //    Server.SettingRepository.ItemLibrary.TryGetValue(inventoryItem.Item.Id, out ItemLibrarySetting itemLibrarySetting);
-        //    if (itemLibrarySetting == null) return;
-
-        //    IBuffer res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(itemLibrarySetting.Durability); // MaxDura points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_maxdur, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(itemLibrarySetting.Durability - 10); // Durability points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_durability, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32((int)itemLibrarySetting.Weight * 100); // Weight points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_weight, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt16((short)itemLibrarySetting.PhysicalAttack); // Defense and attack points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_physics, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt16((short)itemLibrarySetting.MagicalAttack); // Magic def and attack Points
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_magic, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(itemLibrarySetting.SpecialPerformance); // for the moment i don't know what it change
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_enchantid, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt16((short)Util.GetRandomNumber(50, 100)); // Shwo GP on certain items
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(1); // for the moment i don't know what it change
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_date_end_protect, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteByte((byte)itemLibrarySetting.Hardness); // Hardness
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_hardness, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteByte(1); //Level requirement
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_level, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteByte(1); //sp Level requirement
-        //    Router.Send(client, (ushort)AreaPacketId.recv_item_update_sp_level, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id);
-        //    res.WriteInt32(0b1111111111111111111111111111110); // State bitmask
-        //                              Router.Send(client, (ushort)AreaPacketId.recv_item_update_state, res, ServerType.Area);
-
-        //    res = BufferProvider.Provide();
-        //    res.WriteInt64(inventoryItem.Id); // id?
-        //    res.WriteInt64(Util.GetRandomNumber(10, 10000)); // price
-        //    res.WriteInt64(Util.GetRandomNumber(10, 100)); // identify
-        //    res.WriteInt64(Util.GetRandomNumber(10, 1000)); // curse?
-        //    res.WriteInt64(Util.GetRandomNumber(10, 500)); // repair?
-        //    Router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item_sell_price, res, ServerType.Area);
-
-        //}
 
     }
 }

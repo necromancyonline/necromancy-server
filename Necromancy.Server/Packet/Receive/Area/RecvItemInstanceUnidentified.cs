@@ -10,12 +10,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly ItemInstance _itemInstance;
         private readonly NecClient _client;
+        private readonly byte _itemZoneOverride;
 
-        public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance)
+        public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance, byte itemZoneOverride)
             : base((ushort) AreaPacketId.recv_item_instance_unidentified, ServerType.Area)
         {
             _itemInstance = itemInstance;
             _client = client;
+            _itemZoneOverride = itemZoneOverride;
         }
 
         protected override IBuffer ToBuffer()
@@ -42,26 +44,26 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(0); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
             
             res.WriteByte(10); //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
-            res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // alternate model?  equip_ref.csv
-            res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // id-n alternate tex?
-            res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // id-c alternate tex?
-            res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // id-s alternate tex?
+            res.WriteByte(1); // alternate model?  equip_ref.csv
+            res.WriteByte(1); // id-n alternate tex?
+            res.WriteByte(1); // id-c alternate tex?
+            res.WriteByte(1); // id-s alternate tex?
             res.WriteByte(0); //Alternate texture for item model  0 normal : 1 Pink 
 
-            res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // separate in assembly
-            res.WriteByte((byte)Util.GetRandomNumber(0, 0)); // separate in assembly
+            res.WriteByte(0); // separate in assembly
+            res.WriteByte(0); // separate in assembly
 
 
-            res.WriteByte((byte)_itemInstance.Location.ZoneType); 
+            res.WriteByte(_itemZoneOverride/*(byte)_itemInstance.Location.ZoneType*/); 
             res.WriteByte(_itemInstance.Location.Container); 
             res.WriteInt16(_itemInstance.Location.Slot);
             res.WriteInt32((int)_itemInstance.CurrentEquipSlot); //CURRENT EQUIP SLOT
-            res.WriteInt64(0); //unknown
-            res.WriteUInt32(1);//unknown
+            res.WriteInt64(Util.GetRandomNumber(1, 10)); //unknown
+            res.WriteInt32(Util.GetRandomNumber(1, 10));//unknown
             res.WriteInt16(5);//unknown
-            res.WriteUInt32(1); //unknown
+            res.WriteInt32(Util.GetRandomNumber(1, 10)); //unknown
 
-            res.WriteFixedString($"", 16); //unknown
+            res.WriteFixedString($"", 16); // Camilia decrypt key (unused)
 
             return res;
         }

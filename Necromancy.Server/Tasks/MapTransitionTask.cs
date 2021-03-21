@@ -52,7 +52,7 @@ namespace Necromancy.Server.Tasks
             _id = id;
         }
 
-        public override string TaskName => "MapTransitionTask";
+        public override string TaskName => $"MapTransitionTask : {_map.Id}";
         public override TimeSpan TaskTimeSpan { get; }
         protected override bool TaskRunAtStart =>  false;
 

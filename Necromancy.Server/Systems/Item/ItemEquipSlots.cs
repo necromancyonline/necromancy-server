@@ -15,6 +15,7 @@ namespace Necromancy.Server.Systems.Item
         Arms        = 1 << 6,
         Feet        = 1 << 7,
         Cloak       = 1 << 8,
+        Mantle      = 1 << 8,
         Ring        = 1 << 9,
         Earring     = 1 << 10,
         Necklace    = 1 << 11,

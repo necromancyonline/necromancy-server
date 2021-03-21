@@ -108,7 +108,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "tpto";
         public override string HelpText => "usage: `/tpto [instance id]` - Moves character to [instance id]'s location";
     }

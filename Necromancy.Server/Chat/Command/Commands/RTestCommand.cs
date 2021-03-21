@@ -52,6 +52,14 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 responses.Add(ChatResponse.CommandError(client, $"Good Job!"));
             }
+            IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(2);
+            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
+            res.WriteInt32(0); // 0 = normal 1 = cinematic
+            res.WriteByte(0);
+           //Router.Send(client, (ushort)AreaPacketId.recv_event_start, res, ServerType.Area);
 
             switch (command[0])
             {
@@ -105,7 +113,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     RecvPartyNotifyGetItem recvPartyNotifyGetItem = new RecvPartyNotifyGetItem(client.Character.InstanceId);
                     Router.Send(recvPartyNotifyGetItem, client);
                     //message recv
-                    IBuffer res = BufferProvider.Provide();
+                    res = BufferProvider.Provide();
                     res.WriteUInt32(client.Character.InstanceId);
                     res.WriteCString(" a Dagger or any long string named object ");
                     res.WriteByte(20);
@@ -137,6 +145,16 @@ namespace Necromancy.Server.Chat.Command.Commands
                     Router.Send(client.Map, recvPartyNotifyUpdateSyncLevel);
                     break;
 
+                case "ap":
+                    RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(Util.GetRandomNumber(0,200));
+                    Router.Send(client.Map, recvCharaUpdateAp);
+                    client.Character.Gp.setCurrent(25);
+                    break;
+
+                case "ac":
+                    RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(Util.GetRandomNumber(0, 200));
+                    Router.Send(client.Map, recvCharaUpdateAc);
+                    break;
 
                 case "iobject":
                     //SendDataNotifyItemObjectData
@@ -184,6 +202,45 @@ namespace Necromancy.Server.Chat.Command.Commands
                     
                     break;
 
+                case "selectraise":
+                    RecvDbgSelectRaise recvDbgSelectRaise = new RecvDbgSelectRaise();
+                    Router.Send(client.Map, recvDbgSelectRaise);
+                    break;
+
+                case "dragonpos":
+                    RecvSelfDragonPosNotify recvSelfDragonPosNotify = new RecvSelfDragonPosNotify(client, (byte)x);
+                    Router.Send(client.Map, recvSelfDragonPosNotify);
+                    break;
+
+                case "dragonwarp":
+                    RecvSelfDragonWarpNotify recvSelfDragonWarpNotify = new RecvSelfDragonWarpNotify((int)client.Character.InstanceId+100);
+                    Router.Send(client.Map, recvSelfDragonWarpNotify);
+                    break;
+                    
+                case "exdragon":
+                    RecvDataNotifyNpcExDragon recvDataNotifyNpcExDragon = new RecvDataNotifyNpcExDragon((uint)x);
+                    Router.Send(client.Map, recvDataNotifyNpcExDragon);
+                    break;
+
+                case "debug":
+                    //recv_data_notify_debug_object_data = 0x6510,
+                    IBuffer resJ = BufferProvider.Provide();
+                    resJ.WriteUInt32(400000221);
+                    int numEntries = 0x20;
+                    resJ.WriteInt32(numEntries); //less than or equal to 0x20
+                    for (int i = 0; i < numEntries; i++)
+                    {
+                        resJ.WriteFloat(client.Character.X+Util.GetRandomNumber(10,50));
+                        resJ.WriteFloat(client.Character.Y + Util.GetRandomNumber(10, 50));
+                        resJ.WriteFloat(client.Character.Z + Util.GetRandomNumber(10, 50));
+                    }
+
+                    resJ.WriteByte(0);
+                    resJ.WriteByte(0);
+                    resJ.WriteByte(0);
+                    Router.Send(client.Map, (ushort)AreaPacketId.recv_data_notify_debug_object_data, resJ,
+                        ServerType.Area);
+                    break;
 
                 default: //you don't know what you're doing do you?
                     Logger.Error($"There is no recv of type : {command[0]} ");
@@ -192,10 +249,20 @@ namespace Necromancy.Server.Chat.Command.Commands
                             $"{command[0]} is not a valid command."));
                     }
                     break;
+
+
             }
+
+            res = BufferProvider.Provide();
+            //Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
+            res.WriteByte(0);
+            //Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
+            //Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "rtest";
 
         public override string HelpText =>

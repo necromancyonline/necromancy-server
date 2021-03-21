@@ -20,7 +20,7 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "genitems";
         public override string HelpText => "usage: `/genitems [package]`";
 
@@ -75,7 +75,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         private void spawnBags(NecClient client)
         {
-            int[] itemIds = new int[10];
+            int[] itemIds = new int[18];
             itemIds[0] = 50100501;
             itemIds[1] = 50100502;
             itemIds[2] = 50100503;
@@ -84,9 +84,16 @@ namespace Necromancy.Server.Chat.Command.Commands
             itemIds[5] = 50100506;
             itemIds[6] = 50100507;
             itemIds[7] = 50100511;
-            itemIds[8] = 90012001; //royal bag 16 slots
-            itemIds[9] = 90012002; //deluxe royal bag - 24 slots??
-            
+            itemIds[8] = 50100512;
+            itemIds[9] = 50100513;
+            itemIds[10] = 50100521;
+            itemIds[11] = 50100599;
+            itemIds[12] = 90012001; //royal bag 16 slots
+            itemIds[13] = 90012002; //deluxe royal bag - 24 slots??
+            itemIds[14] = 90012003;
+            itemIds[15] = 90012051;
+            itemIds[16] = 90012052;
+            itemIds[17] = 90012053;
             SendItems(client, itemIds);
         }
 
@@ -100,19 +107,19 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> items = itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
-            RecvSituationStart recvSituationStart = new RecvSituationStart();
-            RecvSituationEnd recvSituationEnd = new RecvSituationEnd();
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(2);
-            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
+            RecvSituationStart recvSituationStart = new RecvSituationStart(2);
+            Router.Send(client, recvSituationStart.ToPacket());
+
             foreach (ItemInstance itemInstance in items)
             {
                 Logger.Debug(itemInstance.Type.ToString());
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
                 Router.Send(client, recvItemInstance.ToPacket());
             }
-            res = BufferProvider.Provide();
-            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+
+            RecvSituationEnd recvSituationEnd = new RecvSituationEnd();
+            Router.Send(client, recvSituationEnd.ToPacket());
         }
     }
 }

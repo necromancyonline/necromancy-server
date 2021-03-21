@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Arrowgene.Logging;
 using Arrowgene.Networking.Tcp.Server.AsyncEvent;
 using Necromancy.Server.Chat;
@@ -32,6 +33,7 @@ using Necromancy.Server.Database;
 using Necromancy.Server.Discord;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Model.MapModel;
 using Necromancy.Server.Model.Union;
 using Necromancy.Server.Packet;
@@ -41,6 +43,7 @@ using Necromancy.Server.Packet.Area.SendCmdExec;
 using Necromancy.Server.Packet.Auth;
 using Necromancy.Server.Packet.Custom;
 using Necromancy.Server.Packet.Msg;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Setting;
 
 namespace Necromancy.Server
@@ -157,10 +160,102 @@ namespace Necromancy.Server
             {
                 return;
             }
-
+            //Try to update the character stats.
+            if (!this.Database.UpdateCharacter(client.Character))
+            {
+                Logger.Error("Could not update the database with character details before disconnect");
+            }
+            if (!this.Database.UpdateSoul(client.Soul))
+            {
+                Logger.Error("Could not update the database with soul details before disconnect");
+            }
             Clients.Remove(client);
 
+            //I disconnected while my dead body was being carried around by another player
+            if (client.Character.HasDied == true) 
+            {
+                DeadBody deadBody = this.Instances.GetInstance(client.Character.DeadBodyInstanceId) as DeadBody;
+                if (deadBody.SalvagerId != 0)
+                {
+                    NecClient mySalvager = this.Clients.GetByCharacterInstanceId(deadBody.SalvagerId);
+                    if (mySalvager != null)
+                    {
+                        deadBody.X = mySalvager.Character.X;
+                        deadBody.Y = mySalvager.Character.Y;
+                        deadBody.Z = mySalvager.Character.Z;
+                        deadBody.MapId = mySalvager.Character.MapId;
+                        deadBody.ConnectionState = 0;
+                        mySalvager.BodyCollection.Remove(deadBody.InstanceId);
+
+                        mySalvager.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+                        RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                        if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                        {
+                            Router.Send(mySalvager.Map, cBodyData.ToPacket(), client);
+                        }
+                        
+                        //must occur after the charaBody notify.
+                        RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.InstanceId, 5);
+                        Router.Send(mySalvager, recvCharaBodySalvageEnd.ToPacket());
+                    }
+                }
+            }
+
+            //while i was dead and being carried around, the player carrying me disconnected
+            foreach (NecClient collectedBody in client.BodyCollection.Values)
+            {
+                DeadBody deadBody = this.Instances.GetInstance(collectedBody.Character.DeadBodyInstanceId) as DeadBody;
+
+                RecvCharaBodySelfSalvageEnd recvCharaBodySelfSalvageEnd = new RecvCharaBodySelfSalvageEnd(3);
+                Router.Send(collectedBody, recvCharaBodySelfSalvageEnd.ToPacket());
+
+
+                deadBody.X = client.Character.X;
+                deadBody.Y = client.Character.Y;
+                deadBody.Z = client.Character.Z;
+                collectedBody.Character.X = client.Character.X;
+                collectedBody.Character.Y = client.Character.Y;
+                collectedBody.Character.Z = client.Character.Z;
+                //ToDo  add Town checking.  if map.ID.toString()[0]==1 skip deadbody rendering
+                deadBody.MapId = client.Character.MapId;
+
+                client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+                RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                {
+                    Router.Send(client.Map, cBodyData.ToPacket());
+                }
+
+                //send your soul to all the other souls runnin around
+                RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(collectedBody.Character, collectedBody.Soul.Name);
+                foreach (NecClient soulStateClient in client.Map.ClientLookup.GetAll())
+                {
+                    if (soulStateClient.Character.State == CharacterState.SoulForm) this.Router.Send(soulStateClient, cData.ToPacket());
+                }
+            }                
+
             Map map = client.Map;
+
+            //If i was dead, toggle my deadBody to a Rucksack
+            if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+            {
+                map.DeadBodies.TryGetValue(client.Character.DeadBodyInstanceId, out DeadBody deadBody);
+                deadBody.ConnectionState = 0;
+                RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
+                Router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
+
+                Task.Delay(TimeSpan.FromSeconds(600)).ContinueWith
+                (t1 =>
+                    {
+                        if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                        {
+                            RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.DeadBodyInstanceId);
+                            Router.Send(client.Map, recvObjectDisappearNotify.ToPacket(), client);
+                            map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
+                        }
+                    }
+                );
+            }
             if (map != null)
             {
                 map.Leave(client);
@@ -199,8 +294,6 @@ namespace Necromancy.Server
             Chat.CommandHandler.AddCommand(new StatusCommand(this));
             Chat.CommandHandler.AddCommand(new NpcCommand(this));
             Chat.CommandHandler.AddCommand(new MonsterCommand(this));
-            Chat.CommandHandler.AddCommand(new AdminConsoleRecvItemInstance(this));
-            Chat.CommandHandler.AddCommand(new AdminConsoleRecvItemInstanceUnidentified(this));
             Chat.CommandHandler.AddCommand(new ChangeFormMenu(this));
             Chat.CommandHandler.AddCommand(new Died(this));
             Chat.CommandHandler.AddCommand(new LogOut(this));
@@ -230,7 +323,6 @@ namespace Necromancy.Server
             Chat.CommandHandler.AddCommand(new MobCommand(this));
             Chat.CommandHandler.AddCommand(new CharaCommand(this));
             Chat.CommandHandler.AddCommand(new ItemCommand(this));
-            // Chat.CommandHandler.AddCommand(new BagCommand(this));
             Chat.CommandHandler.AddCommand(new TeleportCommand(this));
             Chat.CommandHandler.AddCommand(new TeleportToCommand(this));
             Chat.CommandHandler.AddCommand(new GetCommand(this));
@@ -502,6 +594,13 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_soul_partner_status_open(this));
             _areaConsumer.AddHandler(new send_party_mentor_create(this));
             _areaConsumer.AddHandler(new send_party_mentor_remove(this));
+            _areaConsumer.AddHandler(new send_forge_execute(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start2(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_complete2(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start3(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_complete3(this));
+            _areaConsumer.AddHandler(new send_charabody_loot_start2_cancel(this));
+            _areaConsumer.AddHandler(new send_charabody_self_salvage_abort(this));            
         }
     }
 }

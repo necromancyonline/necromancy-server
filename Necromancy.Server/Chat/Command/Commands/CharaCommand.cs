@@ -84,30 +84,20 @@ namespace Necromancy.Server.Chat.Command.Commands
                     //recv_battle_report_noact_notify_dead = 0xCDC9,
                     IBuffer res2 = BufferProvider.Provide();
                     res2.WriteUInt32(character2.InstanceId);
-                    res2.WriteInt32(
-                        y); // death type? 1 = death, 2 = death and message, 3 = unconscious, beyond that = nothing
-                    res2.WriteInt32(0);
-                    res2.WriteInt32(0);
+                    res2.WriteInt32(2); // death type? 1 = death, 2 = death and message, 3 = unconscious, beyond that = nothing
+                    res2.WriteInt32(2);
+                    res2.WriteInt32(y);
                     Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_noact_notify_dead, res2,
                         ServerType.Area);
                     SendBattleReportEndNotify(client, character2);
                     break;
 
-                case "pose":
-                    IBuffer res3 = BufferProvider.Provide();
-                    //recv_battle_attack_pose_start_notify = 0x7CB2,
-                    res3.WriteInt32(y);
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_attack_pose_start_notify, res3,
-                        ServerType.Area);
-                    break;
 
                 case "pose2":
                     IBuffer res4 = BufferProvider.Provide();
                     res4.WriteUInt32(character2.InstanceId); //Character ID
                     res4.WriteInt32(y); //Character pose
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_pose_notify, res4, ServerType.Area,
-                        client);
-
+                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_pose_notify, res4, ServerType.Area);
                     break;
 
                 case "emotion":
@@ -121,10 +111,9 @@ namespace Necromancy.Server.Chat.Command.Commands
                 case "deadstate":
                     //recv_charabody_notify_deadstate = 0xCC36, // Parent = 0xCB94 // Range ID = 03
                     IBuffer res6 = BufferProvider.Provide();
-                    res6.WriteUInt32(character2.InstanceId);
-                    res6.WriteInt32(
-                        y); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
-                    res6.WriteInt32(y);
+                    res6.WriteUInt32(character2.DeadBodyInstanceId);
+                    res6.WriteInt32(y); //4 changes body to ash pile, 5 causes a mist to happen and disappear
+                    res6.WriteInt32(y); // change type. unknown impact.
                     Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_notify_deadstate, res6,
                         ServerType.Area);
                     break;
@@ -145,29 +134,13 @@ namespace Necromancy.Server.Chat.Command.Commands
                     Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_end_notify, res8, ServerType.Area);
                     break;
 
-                case "gimmick":
-                    //recv_data_notify_gimmick_data = 0xBFE9,
-                    IBuffer res9 = BufferProvider.Provide();
-                    res9.WriteInt32(y); //Gimmick instance id
-                    res9.WriteFloat(client.Character.X + 100);
-                    res9.WriteFloat(client.Character.Y);
-                    res9.WriteFloat(client.Character.Z);
-                    res9.WriteByte(client.Character.Heading);
-                    res9.WriteInt32(y); //Gimmick number (from gimmick.csv)
-                    res9.WriteInt32(0); //Gimmick State
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_data_notify_gimmick_data, res9, ServerType.Area);
-                    break;
-
                 case "bodystate": ///State of your dead body
                     //recv_charabody_state_update_notify = 0x1A0F, 
                     IBuffer res10 = BufferProvider.Provide();
-                    res10.WriteUInt32(character2.InstanceId);
-                    res10.WriteInt32(y);
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_state_update_notify, res10,
-                        ServerType.Area);
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"setting bodyState to {y} for character {character2.Name}"));
-
+                    res10.WriteUInt32(character2.DeadBodyInstanceId); 
+                    res10.WriteInt32(y); //0b0 = disconnected backpack, 0b1 = normal, 0b100 = title:On 0b10000=invisible. nothing above ob1 << 5
+                    Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_state_update_notify, res10, ServerType.Area);
+                    responses.Add(ChatResponse.CommandError(client, $"setting bodyState to {y} for character {character2.Name}"));
                     break;
 
                 case "charastate": //state of your regular body
@@ -181,11 +154,12 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "spirit":
-                    //recv_charabody_notify_spirit = 0x36A6, 
+                    //recv_charabody_notify_spirit = 0x36A6, // Dead-Body online status toggle.  0 = disconnected client. 1 = connected
+                    NecClient necClient = client.Map.ClientLookup.GetByCharacterInstanceId(character2.InstanceId);
                     IBuffer res12 = BufferProvider.Provide();
-                    res12.WriteUInt32(character2.InstanceId);
+                    res12.WriteUInt32(character2.DeadBodyInstanceId);
                     res12.WriteByte((byte) y);
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_notify_spirit, res12, ServerType.Area);
+                    Router.Send(necClient, (ushort) AreaPacketId.recv_charabody_notify_spirit, res12, ServerType.Area);
                     break;
 
                 case "abyss": //lil marker in soul form of where you died if you jump off the map
@@ -253,22 +227,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                         ServerType.Area);
                     break;
 
-                case "scaleopen":
-                    IBuffer res0 = BufferProvider.Provide();
-                    res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
-                    res0.WriteByte(0);
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_start, res0, ServerType.Area);
-
-                    IBuffer res15 = BufferProvider.Provide();
-                    //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
-                    res15.WriteInt16(1); //Basic revival rate %
-                    res15.WriteInt16(5); //Penalty %
-                    res15.WriteInt16(
-                        (short) y); //Offered item % (this probably changes with recv_raisescale_update_success_per)
-                    res15.WriteInt16(4); //Dimento medal addition %
-                    Router.Send(client, (ushort) AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
-                    break;
-
                 case "event":
                     IBuffer res16 = BufferProvider.Provide();
                     //recv_event_start = 0x1B5C, 
@@ -312,33 +270,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                     //recv_auction_receive_item_r = 0xB1CA,
                     res24.WriteInt32(y);
                     Router.Send(client, (ushort) AreaPacketId.recv_auction_receive_gold_r, res24, ServerType.Area);
-                    break;
-
-                case "string":
-                    IBuffer res26 = BufferProvider.Provide();
-                    //recv_charabody_notify_loot_item = 0x8CDE, // Parent = 0x8CC6 // Range ID = 01
-                    res26.WriteByte(0); //storage type
-                    res26.WriteByte(0); //bag
-                    res26.WriteInt16(5); //slot
-
-                    res26.WriteInt16((short) y); //Item count
-                    res26.WriteCString("PersonWhostoleIt"); // Length 0x31 
-                    res26.WriteCString("ItemStolenName"); // Length 0x5B
-                    Router.Send(client, (ushort) AreaPacketId.recv_charabody_notify_loot_item, res26, ServerType.Area);
-                    break;
-
-                case "ac":
-                    IBuffer res27 = BufferProvider.Provide();
-                    //recv_item_update_ac 
-                    res27.WriteInt64(10200101);
-                    res27.WriteInt16((short)y);
-                    Router.Send(client, (ushort)AreaPacketId.recv_item_update_ac, res27, ServerType.Area);
-                    break;
-
-                case "ap": //Sets your 'OD'
-                    res = BufferProvider.Provide();
-                    res.WriteInt32(123);
-                    Router.Send(client, (ushort)AreaPacketId.recv_chara_update_ap, res, ServerType.Area);
                     break;
 
                 case "atk":  //udates settings 1-22 on the attribute tab
@@ -392,20 +323,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                     Router.Send(client, (ushort) AreaPacketId.recv_shop_notify_open, res29, ServerType.Area);
                     break;
 
-                case "dura":
-
-                    IBuffer res30 = BufferProvider.Provide();
-                    res30.WriteInt64(10200101);
-                    res30.WriteInt32(y); // MaxDura points
-                    Router.Send(client, (ushort) AreaPacketId.recv_item_update_maxdur, res30, ServerType.Area);
-
-                    //recv_item_update_durability = 0x1F5A, 
-                    IBuffer res31 = BufferProvider.Provide();
-                    res31.WriteInt64(10200101);
-                    res31.WriteInt32(y - 1);
-                    Router.Send(client, (ushort) AreaPacketId.recv_item_update_durability, res31, ServerType.Area);
-                    break;
-
                 case "sc":
                     IBuffer res32 = BufferProvider.Provide();
                     //recv_shop_sell_check_r = 0x4E8D,
@@ -421,36 +338,12 @@ namespace Necromancy.Server.Chat.Command.Commands
                         ServerType.Area);
                     break;
 
-                case "itemnum":
-                    IBuffer res34 = BufferProvider.Provide();
-                    //recv_item_update_num = 0x5F8, 
-                    res34.WriteInt64(10200101);
-                    res34.WriteByte(25);
-                    Router.Send(client, (ushort) AreaPacketId.recv_item_update_num, res34, ServerType.Area);
-                    break;
-
                 case "damage":
                     int hp = character2.Hp.current;
                     client.Character.Hp.Modify(-hp, character2.InstanceId);
                     IBuffer res35 = BufferProvider.Provide();
                     res35.WriteInt32(hp - hp);
                     Router.Send(client, (ushort) AreaPacketId.recv_chara_update_hp, res35, ServerType.Area);
-                    break;
-
-                case "union":
-                    IBuffer res36 = BufferProvider.Provide();
-                    res36.WriteUInt32(client.Character.InstanceId);
-                    res36.WriteInt32(8888 /*client.Character.UnionId*/);
-                    res36.WriteCString("Trade_Union");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
-                    break;
-
-                case "xunion":
-                    IBuffer res37 = BufferProvider.Provide();
-                    res37.WriteUInt32(client.Character.InstanceId);
-                    res37.WriteInt32(0 /*client.Character.UnionId*/);
-                    res37.WriteCString("");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_notify_union_data, res37, ServerType.Area);
                     break;
 
                 case "itemforth":
@@ -486,10 +379,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res40.WriteByte((byte) y);
                     client.Character.criminalState = (byte) y;
                     Logger.Debug($"Setting crime level for Character {crimeClient.Character.Name} to {y}");
-                    Router.Send(crimeClient, (ushort) AreaPacketId.recv_chara_update_notify_crime_lv, res40,
-                        ServerType.Area);
-                    Router.Send(crimeClient.Map, (ushort) AreaPacketId.recv_charabody_notify_crime_lv, res40,
-                        ServerType.Area, crimeClient);
+                    Router.Send(crimeClient, (ushort) AreaPacketId.recv_chara_update_notify_crime_lv, res40, ServerType.Area);
+                    Router.Send(crimeClient.Map, (ushort) AreaPacketId.recv_charabody_notify_crime_lv, res40, ServerType.Area, crimeClient); 
                     Thread.Sleep(400);
                 }
                     break;
@@ -519,12 +410,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                 }
                     break;
 
-                case "unequip":
-                    //recv_item_unequip_r = 0x9A79,
-                    IBuffer res42 = BufferProvider.Provide();
-                    res42.WriteInt32(y);
-                    Router.Send(client, (ushort)AreaPacketId.recv_item_unequip_r, res42, ServerType.Area);
-                    break;
                 case "seqmask":
                     IBuffer res43 = BufferProvider.Provide();
                     //95 torso ?
@@ -546,20 +431,14 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res43.WriteInt32(y);
                     Router.Send(client.Map, (ushort)AreaPacketId.recv_item_update_spirit_eqmask, res43, ServerType.Area);
                     break;
-                case "istate":
-                    IBuffer res44 = BufferProvider.Provide();
-                    //recv_item_update_state = 0x3247, 
-                    res44.WriteInt64(10200101); //item instance id
-                    res44.WriteInt32(y); //item state flag, same as inside SendItemInstance and SendItemInstanceUnidentified
-                    Router.Send(client, (ushort)AreaPacketId.recv_item_update_state, res44, ServerType.Area);
-                    break;
+
                 default:
                     Logger.Error($"There is no recv of type : {command[0]} ");
                     break;
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "chara";
 
         public override string HelpText =>

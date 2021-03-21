@@ -82,6 +82,11 @@ namespace Necromancy.Server.Chat.Command.Commands
                     Router.Send(client.Map, recvPartyNotifyGetMoney);
                     break;
 
+                case "ac":
+                    RecvBattleReportNotifyDamageAc recvBattleReportNotifyDamageAc = new RecvBattleReportNotifyDamageAc(client.Character.InstanceId, Util.GetRandomNumber(0,250));
+                    brList.Add(recvBattleReportNotifyDamageAc);
+                    break;
+
 
 
                 default:
@@ -96,10 +101,10 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
             //always end your battle reports
             //brList.Add(brEnd);
-            Router.Send(_client.Map, brList);
+            Router.Send(_client, brList);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
+        public override AccountStateType AccountState => AccountStateType.Admin;
         public override string Key => "battle";
         public override string HelpText => "usage: `/battle [command]` - Does something battle related.";
     }

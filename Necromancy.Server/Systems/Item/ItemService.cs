@@ -1,7 +1,10 @@
+using Arrowgene.Logging;
+using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Receive.Area;
-using Necromancy.Server.Systems.Item;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +12,8 @@ namespace Necromancy.Server.Systems.Item
 {
     public class ItemService
     {
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ItemService));
+
         private readonly Character _character;
         private readonly IItemDao _itemDao;
 
@@ -36,7 +41,13 @@ namespace Necromancy.Server.Systems.Item
 
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
-            throw new NotImplementedException();
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
+            { 
+                item.Statuses &= ~ItemStatuses.Unidentified;
+                _itemDao.UpdateItemOwnerAndStatus(item.InstanceID, _character.Id, (int)item.Statuses);
+            }
+            return item;
         }
 
         public enum MoveType
@@ -65,15 +76,38 @@ namespace Necromancy.Server.Systems.Item
         {
             ItemInstance item = _character.ItemManager.GetItem(location);
             item.CurrentEquipSlot = equipSlot;
-            if (_character.EquippedItems.ContainsKey(equipSlot)){
+            if (_character.EquippedItems.ContainsKey(equipSlot))
+            {
                 _character.EquippedItems[equipSlot] = item;
-            } else
+            } 
+            else
             {
                 _character.EquippedItems.Add(equipSlot, item);
             }
             _itemDao.UpdateItemEquipMask(item.InstanceID, equipSlot);
             return item;
         }
+        public ItemInstance CheckAlreadyEquipped(ItemEquipSlots equipmentSlotType)
+        {
+            ItemInstance itemInstance = null;
+            if (equipmentSlotType == ItemEquipSlots.LeftHand | equipmentSlotType == ItemEquipSlots.RightHand)
+            {
+                if (_character.EquippedItems.ContainsKey(ItemEquipSlots.LeftHand | ItemEquipSlots.RightHand))
+                {
+                    _character.EquippedItems.TryGetValue((ItemEquipSlots.LeftHand | ItemEquipSlots.RightHand), out itemInstance);
+                }
+                else
+                {
+                    _character.EquippedItems.TryGetValue(equipmentSlotType, out itemInstance);
+                }
+            }
+            else
+            {
+                _character.EquippedItems.TryGetValue(equipmentSlotType, out itemInstance);
+            }
+            return itemInstance;
+        }
+        /// <returns></returns>
         public ItemInstance Unequip(ItemEquipSlots equipSlot)
         {
 
@@ -82,6 +116,36 @@ namespace Necromancy.Server.Systems.Item
             item.CurrentEquipSlot = ItemEquipSlots.None;
             _itemDao.UpdateItemEquipMask(item.InstanceID, ItemEquipSlots.None);
             return item;
+        }
+        internal ItemInstance GetLootedItem(ItemLocation location)
+        {
+            ItemInstance item = _character.ItemManager.GetItem(location);
+            if (item.CurrentEquipSlot != ItemEquipSlots.None)
+            {
+                Unequip(item.CurrentEquipSlot);
+            }
+            return item;
+        }
+        public ItemInstance PutLootedItem(ItemInstance itemInstance) 
+        {
+            ItemInstance myNewItem = itemInstance;
+
+            //ToDo,  make this find space in more than just your adventure bag.
+            ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
+            myNewItem.Location = nextOpenLocation;
+            _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
+            _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
+            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
+            return myNewItem;
+        }
+
+        public ItemInstance SpawnItemInstance(ItemZoneType itemZoneType, int baseId, ItemSpawnParams spawnParam)
+        {
+            int[] itemIds = new int[] { baseId };
+            ItemSpawnParams[] spawmParams = new ItemSpawnParams[1];
+            spawmParams[0] = spawnParam;
+            List<ItemInstance> items = SpawnItemInstances(itemZoneType, itemIds, spawmParams);
+            return items[0];
         }
 
         public List<ItemInstance> SpawnItemInstances(ItemZoneType itemZoneType, int[] baseIds, ItemSpawnParams[] spawnParams)
@@ -100,9 +164,11 @@ namespace Necromancy.Server.Systems.Item
         /// 
         /// </summary>
         /// <returns>A list of items in your adventure bag, equipped bags, bag slot, premium bag, and avatar inventory.</returns>
-        public List<ItemInstance> LoadOwnedInventoryItems()
+        public List<ItemInstance> LoadOwneditemInstances(NecServer server)
         {
-            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
+            //Clear Equipped Items from send_data_get_self_chara_data_request
+            _character.EquippedItems.Clear();
+            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
             //load bags first
             foreach (ItemInstance item in ownedItems)
             {
@@ -113,21 +179,66 @@ namespace Necromancy.Server.Systems.Item
                     _character.ItemManager.PutItem(location, item);
                 }
             }
-            foreach (ItemInstance item in ownedItems)
+            foreach (ItemInstance itemInstance in ownedItems)
             {
 
-                if (item.Location.ZoneType != ItemZoneType.BagSlot)
+                if (itemInstance.Location.ZoneType != ItemZoneType.BagSlot)
                 {
-                    ItemLocation location = item.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
-                    item.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
-                    _character.ItemManager.PutItem(location, item);
+                    ItemLocation location = itemInstance.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
+                    itemInstance.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
+
+                    //Temporary ItemLibrary.CSV lookup until Item_decrypted.csv and Table are fully mapped/ populated
+                     server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
+                    if (itemLibrarySetting != null)
+                    {
+                        itemInstance.MaximumDurability = itemLibrarySetting.Durability; //Temporary until we get durability in itemLibrary
+                        if (itemInstance.CurrentDurability > itemInstance.MaximumDurability) { itemInstance.CurrentDurability = itemInstance.MaximumDurability; }
+                        if (itemInstance.Weight == 0) { itemInstance.Weight += 1234; }
+                        if (itemInstance.Type == ItemType.SHIELD_LARGE || itemInstance.Type == ItemType.SHIELD_MEDIUM || itemInstance.Type == ItemType.SHIELD_SMALL)
+                        {
+                            if (itemInstance.GP == 0) itemInstance.GP += 50;
+                            if (itemInstance.MaximumDurability <= 0) itemInstance.MaximumDurability = 55;
+                        }
+                    }
+                    //update items base stats per enchantment level.
+                    ForgeMultiplier forgeMultiplier = this.LoginLoadMultiplier(itemInstance.EnhancementLevel);
+                    itemInstance.Physical = (short)(itemInstance.Physical * forgeMultiplier.Factor);
+                    itemInstance.Magical = (short)(itemInstance.Magical * forgeMultiplier.Factor);
+                    itemInstance.MaximumDurability = (short)(itemInstance.MaximumDurability * forgeMultiplier.Durability);
+                    itemInstance.Hardness = (byte)(itemInstance.Hardness + forgeMultiplier.Hardness);
+                    itemInstance.Weight = (short)(itemInstance.Weight - forgeMultiplier.Weight);
+                    if (itemInstance.Weight < 0) { itemInstance.Weight = 0; } //this is lazy, fix the weight math issue.
+
+                    _character.ItemManager.PutItem(location, itemInstance);
                 }
-                if (item.CurrentEquipSlot != ItemEquipSlots.None)
+                if (itemInstance.CurrentEquipSlot != ItemEquipSlots.None)
                 {
-                    _character.EquippedItems.Add(item.CurrentEquipSlot, item);
+                    _character.EquippedItems.Add(itemInstance.CurrentEquipSlot, itemInstance);
                 }
             }
             return ownedItems;
+        }
+
+        public void LoadEquipmentModels()
+        {
+            _character.EquippedItems.Clear();
+            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
+            foreach (ItemInstance item in ownedItems)
+            {
+                if (item.CurrentEquipSlot != ItemEquipSlots.None)
+                {
+                    if (!_character.EquippedItems.ContainsKey(item.CurrentEquipSlot))
+                    {
+                        _character.EquippedItems.Add(item.CurrentEquipSlot, item);
+                    }
+                    else
+                    {
+                        //Clean up duplicate equipped items since we don't have a unique constraint on table
+                        item.CurrentEquipSlot = ItemEquipSlots.None;
+                        _itemDao.UpdateItemEquipMask(item.InstanceID, ItemEquipSlots.None);
+                    }
+                }
+            }
         }
         public ItemInstance Remove(ItemLocation location, byte quantity)
         {
@@ -152,7 +263,7 @@ namespace Necromancy.Server.Systems.Item
             }
             return item;
         }
-        public long Sell(ItemLocation location, byte quantity)
+        public ulong Sell(ItemLocation location, byte quantity)
         {
             throw new NotImplementedException();
         }
@@ -329,17 +440,85 @@ namespace Necromancy.Server.Systems.Item
             return moveResult;
         }
 
+        public ForgeMultiplier LoginLoadMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0:     factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1:     factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2:     factor = 1.15; durability = 1.2; hardness = 0; break;
+                case 3:     factor = 1.27; durability = 1.3; hardness = 0; break;
+                case 4:     factor = 1.39; durability = 1.4; hardness = 0; break;
+                case 5:     factor = 1.54; durability = 1.5; hardness = 1; break;
+                case 6:     factor = 1.69; durability = 1.6; hardness = 0; break;
+                case 7:     factor = 1.84; durability = 1.7; hardness = 0; break;
+                case 8:     factor = 1.99; durability = 1.8; hardness = 0; break;
+                case 9:     factor = 2.14; durability = 1.9; hardness = 0; break;
+                case 10:    factor = 2.29; durability = 2.0; hardness = 2; break;
+                default: break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+        public ForgeMultiplier ForgeMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
+                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
+                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
+                default: factor = 1.00; durability = 1.0; hardness = 0; break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+        public void UpdateEnhancementLevel(ItemInstance itemInstance)
+        {
+            _itemDao.UpdateItemEnhancementLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
+        }
+
         public List<ItemInstance> Repair(List<ItemLocation> locations)
         {
-            throw new NotImplementedException();
+            List<ItemInstance> ItemInstances = new List<ItemInstance>();
+            foreach (ItemLocation location in locations)
+            {
+                ItemInstance itemInstance = _character.ItemManager.GetItem(location);
+                ItemInstances.Add(itemInstance);
+                _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
+            }
+            return ItemInstances;
         }
-        public long SubtractGold(long amount)
+        public ulong SubtractGold(ulong amount)
         {
-            throw new NotImplementedException();
+            _character.AdventureBagGold -= amount;
+            return _character.AdventureBagGold;
         }
-        public long AddGold(long amount)
+        public ulong AddGold(ulong amount)
         {
-            throw new NotImplementedException();
+            _character.AdventureBagGold += amount;
+            return _character.AdventureBagGold;
         }
 
         public List<PacketResponse> GetMoveResponses(NecClient client, MoveResult moveResult)
@@ -378,5 +557,58 @@ namespace Necromancy.Server.Systems.Item
             }
             return responses;
         }
+
+        public List<PacketResponse>CalculateBattleStats(NecClient client)
+        {
+            List<PacketResponse> responses = new List<PacketResponse>();
+            BattleParam battleParam = new BattleParam();
+
+            client.Character.ConditionBonus();
+            client.Character.Weight.setCurrent(0);
+            client.Character.Gp.setMax(0);
+            bool ShieldCheck = false;
+
+            foreach (ItemInstance itemInstance in client.Character.EquippedItems.Values)
+            {
+                if (itemInstance.CurrentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance.CurrentEquipSlot == ItemEquipSlots.Quiver)
+                {
+                    battleParam.PlusPhysicalAttack += (short)(itemInstance.Physical + itemInstance.PlusPhysical);
+                    battleParam.PlusMagicalAttack += (short)(itemInstance.Magical + itemInstance.PlusMagical);
+                }
+                else
+                {
+                    battleParam.PlusPhysicalDefence += (short)(itemInstance.Physical + itemInstance.PlusPhysical);
+                    battleParam.PlusMagicalDefence += (short)(itemInstance.Magical + itemInstance.PlusMagical);
+                }
+                client.Character.Gp.setMax(client.Character.Gp.max + itemInstance.GP + itemInstance.PlusGP);
+                client.Character.Weight.Modify(itemInstance.Weight + itemInstance.PlusWeight);
+                if (itemInstance.Type == ItemType.SHIELD_LARGE | itemInstance.Type == ItemType.SHIELD_MEDIUM | itemInstance.Type == ItemType.SHIELD_SMALL)
+                { ShieldCheck = true; }
+            }
+
+            //if you dont have a shield on,  set your GP to 0.  no blocking for you
+            if (ShieldCheck == false) 
+            { 
+                client.Character.Gp.setMax(0);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.Character.Gp.max);
+                responses.Add(recvCharaUpdateAc);
+            }
+
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Weight.max/10, client.Character.Weight.current/10/*Weight.Diff*/);
+            responses.Add(recvCharaUpdateMaxWeight);
+
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current/10);
+            responses.Add(recvCharaUpdateWeight);
+
+            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);
+            responses.Add(recvCharaUpdateMaxAc);
+
+            RecvCharaUpdateBattleBaseParam recvCharaUpdateBattleBaseParam = new RecvCharaUpdateBattleBaseParam(client.Character, battleParam);
+            responses.Add(recvCharaUpdateBattleBaseParam);
+
+            return responses;
+        }
+
+
     }
 }

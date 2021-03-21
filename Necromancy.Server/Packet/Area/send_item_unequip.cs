@@ -27,15 +27,22 @@ namespace Necromancy.Server.Packet.Area
             Logger.Debug(equipSlot.ToString());
             try
             {
-                ItemInstance unequippedItem = itemService.Unequip(equipSlot);
+                ItemInstance unequippedItem = itemService.CheckAlreadyEquipped(equipSlot);
+                unequippedItem = itemService.Unequip(unequippedItem.CurrentEquipSlot);
                 RecvItemUpdateEqMask recvItemUpdateEqMask = new RecvItemUpdateEqMask(client, unequippedItem);
                 Router.Send(recvItemUpdateEqMask);
+
+                //notify other players of your new look
+                RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
+                Router.Send(client.Map, myCharacterData, client);
             }
             catch (ItemException e) { error = (int) e.ExceptionType; }
 
             RecvItemUnequip recvItemUnequip = new RecvItemUnequip(client, error);
             Router.Send(recvItemUnequip);
-            
+
+            //Re-do all your stats
+            Router.Send(client, itemService.CalculateBattleStats(client));
         }
     }
 }

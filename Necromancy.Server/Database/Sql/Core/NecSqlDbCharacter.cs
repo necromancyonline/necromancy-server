@@ -8,28 +8,29 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string SqlInsertCharacter =
-            "INSERT INTO `nec_character` (`account_id`, `soul_id`, `slot`, `map_id`, `x`, `y`, `z`, `name`, `race_id`, `sex_id`, `hair_id`, `hair_color_id`, `face_id`, `alignment_id`, `strength`, `vitality`, `dexterity`, `agility`, `intelligence`, `piety`, `luck`, `class_id`, `level`, `created`) VALUES (@account_id, @soul_id, @slot, @map_id, @x, @y, @z, @name, @race_id, @sex_id, @hair_id, @hair_color_id, @face_id, @alignment_id, @strength, @vitality, @dexterity, @agility, @intelligence, @piety, @luck, @class_id, @level, @created);";
+        private const string SqlInsertCharacter =@"
+            INSERT INTO nec_character(account_id,soul_id,slot,map_id,x,y,z,name,race_id,sex_id,hair_id,hair_color_id,face_id,strength,vitality,dexterity,agility,intelligence,piety,luck,class_id,level,created,hp_current,mp_current,gold,condition_current,channel,face_arrange_id,voice_id,experience_current,skill_points)
+            VALUES(@account_id,@soul_id,@slot,@map_id,@x,@y,@z,@name,@race_id,@sex_id,@hair_id,@hair_color_id,@face_id,@strength,@vitality,@dexterity,@agility,@intelligence,@piety,@luck,@class_id,@level,@created,@hp_current,@mp_current,@gold,@condition_current,@channel,@face_arrange_id,@voice_id,@experience_current,@skill_points)";
 
-        private const string SqlSelectCharacterById =
-            "SELECT `id`, `account_id`, `soul_id`, `slot`, `map_id`, `x`, `y`, `z`, `name`, `race_id`, `sex_id`, `hair_id`, `hair_color_id`, `face_id`, `alignment_id`, `strength`, `vitality`, `dexterity`, `agility`, `intelligence`, `piety`, `luck`, `class_id`, `level`, `created` FROM `nec_character` WHERE `id`=@id;";
+        private const string SqlSelectCharacterById =@"
+            SELECT * FROM nec_character WHERE id=@id";
 
-        private const string SqlSelectCharactersByAccountId =
-            "SELECT `id`, `account_id`, `soul_id`, `slot`, `map_id`, `x`, `y`, `z`, `name`, `race_id`, `sex_id`, `hair_id`, `hair_color_id`, `face_id`, `alignment_id`, `strength`, `vitality`, `dexterity`, `agility`, `intelligence`, `piety`, `luck`, `class_id`, `level`, `created` FROM `nec_character` WHERE `account_id`=@account_id;";
+        private const string SqlSelectCharactersByAccountId =@"
+            SELECT * FROM nec_character WHERE account_id=@account_id";
 
-        private const string SqlSelectCharactersBySoulId =
-            "SELECT `id`, `account_id`, `soul_id`, `slot`, `map_id`, `x`, `y`, `z`, `name`, `race_id`, `sex_id`, `hair_id`, `hair_color_id`, `face_id`, `alignment_id`, `strength`, `vitality`, `dexterity`, `agility`, `intelligence`, `piety`, `luck`, `class_id`, `level`, `created` FROM `nec_character` WHERE `soul_id`=@soul_id;";
+        private const string SqlSelectCharactersBySoulId =@"
+            SELECT * FROM nec_character WHERE soul_id=@soul_id";
 
-        private const string SqlSelectCharacterBySlot =
-            "SELECT `id`, `account_id`, `soul_id`, `slot`, `map_id`, `x`, `y`, `z`, `name`, `race_id`, `sex_id`, `hair_id`, `hair_color_id`, `face_id`, `alignment_id`, `strength`, `vitality`, `dexterity`, `agility`, `intelligence`, `piety`, `luck`, `class_id`, `level`, `created` FROM `nec_character` WHERE `soul_id`=@soul_id AND `slot`=@slot;";
+        private const string SqlSelectCharacterBySlot =@"
+            SELECT * FROM nec_character WHERE soul_id=@soul_id AND slot=@slot";
 
         private const string SqlUpdateCharacter =
-            "UPDATE `nec_character` SET `account_id`=@account_id, `soul_id`=@soul_id, `slot`=@slot, `map_id`=@map_id, `x`=@x, `y`=@y, `z`=@z, `name`=@name, `race_id`=@race_id, `sex_id`=@sex_id, `hair_id`=@hair_id, `hair_color_id`=@hair_color_id, `face_id`=@face_id, `alignment_id`=@alignment_id, `strength`=@strength, `vitality`=@vitality, `dexterity`=@dexterity, `agility`=@agility, `intelligence`=@intelligence, `piety`=@piety, `luck`=@luck, `class_id`=@class_id, `level`=@level, `created`=@created WHERE `id`=@id;";
+            "UPDATE `nec_character` SET `account_id`=@account_id, `soul_id`=@soul_id, `slot`=@slot, `map_id`=@map_id, `x`=@x, `y`=@y, `z`=@z, `name`=@name, `race_id`=@race_id, `sex_id`=@sex_id, `hair_id`=@hair_id, `hair_color_id`=@hair_color_id, `face_id`=@face_id, `strength`=@strength, `vitality`=@vitality, `dexterity`=@dexterity, `agility`=@agility, `intelligence`=@intelligence, `piety`=@piety, `luck`=@luck, `class_id`=@class_id, `level`=@level, `created`=@created, `hp_current`=@hp_current, `mp_current`=@mp_current, `gold`=@gold, `condition_current`=@condition_current, `channel`=@channel, `face_arrange_id`=@face_arrange_id, `voice_id`=@voice_id, `experience_current`=@experience_current, `skill_points`=@skill_points WHERE `id`=@id;";
 
         private const string SqlDeleteCharacter =
             "DELETE FROM `nec_character` WHERE `id`=@id;";
         private const string SqlSelectCharacters =
-            "SELECT `id`, `account_id`, `soul_id`, `slot`, `map_id`, `x`, `y`, `z`, `name`, `race_id`, `sex_id`, `hair_id`, `hair_color_id`, `face_id`, `alignment_id`, `strength`, `vitality`, `dexterity`, `agility`, `intelligence`, `piety`, `luck`, `class_id`, `level`, `created` FROM `nec_character`;";
+            "SELECT * FROM `nec_character`;";
 
         public bool InsertCharacter(Character character)
         {
@@ -48,7 +49,6 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@hair_id", character.HairId);
                 AddParameter(command, "@hair_color_id", character.HairColorId);
                 AddParameter(command, "@face_id", character.FaceId);
-                AddParameter(command, "@alignment_id", character.AlignmentId);
                 AddParameter(command, "@strength", character.Strength);
                 AddParameter(command, "@vitality", character.Vitality);
                 AddParameter(command, "@dexterity", character.Dexterity);
@@ -59,6 +59,15 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@class_id", character.ClassId);
                 AddParameter(command, "@level", character.Level);
                 AddParameter(command, "@created", character.Created);
+                AddParameter(command, "@hp_current", character.Hp.current);
+                AddParameter(command, "@mp_current", character.Mp.current);
+                AddParameter(command, "@gold", character.AdventureBagGold);
+                AddParameter(command, "@condition_current", character.Condition.current);
+                AddParameter(command, "@channel", character.Channel);
+                AddParameter(command, "@face_arrange_id", character.FaceArrangeId);
+                AddParameter(command, "@voice_id", character.VoiceId);
+                AddParameter(command, "@experience_current", character.ExperienceCurrent);
+                AddParameter(command, "@skill_points", character.SkillPoints);
             }, out long autoIncrement);
             if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
             {
@@ -148,7 +157,6 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@hair_id", character.HairId);
                 AddParameter(command, "@hair_color_id", character.HairColorId);
                 AddParameter(command, "@face_id", character.FaceId);
-                AddParameter(command, "@alignment_id", character.AlignmentId);
                 AddParameter(command, "@strength", character.Strength);
                 AddParameter(command, "@vitality", character.Vitality);
                 AddParameter(command, "@dexterity", character.Dexterity);
@@ -159,6 +167,15 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@class_id", character.ClassId);
                 AddParameter(command, "@level", character.Level);
                 AddParameter(command, "@created", character.Created);
+                AddParameter(command, "@hp_current", character.Hp.current);
+                AddParameter(command, "@mp_current", character.Mp.current);
+                AddParameter(command, "@gold", character.AdventureBagGold);
+                AddParameter(command, "@condition_current", character.Condition.current);
+                AddParameter(command, "@channel", character.Channel);
+                AddParameter(command, "@face_arrange_id", character.FaceArrangeId);
+                AddParameter(command, "@voice_id", character.VoiceId);
+                AddParameter(command, "@experience_current", character.ExperienceCurrent);
+                AddParameter(command, "@skill_points", character.SkillPoints);
                 AddParameter(command, "@id", character.Id);
             });
             return rowsAffected > NoRowsAffected;
@@ -204,7 +221,6 @@ namespace Necromancy.Server.Database.Sql.Core
             character.HairId = GetByte(reader, "hair_id");
             character.HairColorId = GetByte(reader, "hair_color_id");
             character.FaceId = GetByte(reader, "face_id");
-            character.AlignmentId = GetByte(reader, "alignment_id");
             character.Strength = GetByte(reader, "strength");
             character.Vitality = GetByte(reader, "vitality");
             character.Dexterity = GetByte(reader, "dexterity");
@@ -214,6 +230,17 @@ namespace Necromancy.Server.Database.Sql.Core
             character.Luck = GetByte(reader, "luck");
             character.ClassId = GetByte(reader, "class_id");
             character.Level = GetByte(reader, "level");
+            character.Hp.setMax(GetInt32(reader, "hp_current")); //Temporary until Max HP calc is created
+            character.Mp.setMax(GetInt32(reader, "mp_current")); //Temporary until Max HP calc is created
+            character.Hp.setCurrent(GetInt32(reader, "hp_current"));
+            character.Mp.setCurrent(GetInt32(reader, "mp_current"));
+            character.AdventureBagGold = GetUInt64(reader, "gold");
+            character.Condition.setCurrent(GetInt32(reader, "condition_current"));
+            character.Channel = GetInt32(reader, "channel");
+            character.FaceArrangeId = GetByte(reader, "face_arrange_id");
+            character.VoiceId = GetByte(reader, "voice_id");
+            character.ExperienceCurrent = GetUInt64(reader, "experience_current");
+            character.SkillPoints = GetUInt32(reader, "skill_points");
             return character;
         }
     }
