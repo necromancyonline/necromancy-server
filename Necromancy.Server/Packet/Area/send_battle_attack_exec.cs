@@ -35,14 +35,15 @@ namespace Necromancy.Server.Packet.Area
             Logger.Debug($"Just attacked Target {client.Character.eventSelectReadyCode}");
 
 
-            int damage = 0;
+            int damage = client.Character.battleParam.PlusPhysicalAttack;
             int seed = Util.GetRandomNumber(0, 20);
             if (seed < 2)
-                damage = Util.GetRandomNumber(1, 4); // Light hit
+                damage += Util.GetRandomNumber(1, 4); // Light hit
             else if (seed < 19)
-                damage = Util.GetRandomNumber(16, 24); // Normal hit
+                damage += Util.GetRandomNumber(16, 24); // Normal hit
             else
-                damage = Util.GetRandomNumber(32, 48); // Critical hit
+                damage *= 2;
+                damage += Util.GetRandomNumber(32, 48); // Critical hit
             if (client.Character.Id == 2) damage *= 100; //testing death and revival is slow with low dmg. 
             //Testing some aoe damage stuff.......  Takes a long time to process.
             AttackObjectsInRange(client, damage);
@@ -73,7 +74,9 @@ namespace Necromancy.Server.Packet.Area
             //Damage Players in range
             foreach (NecClient targetClient in client.Map.ClientLookup.GetAll())
             {
-                if (targetClient == client) continue;
+                if (targetClient == client) continue; //skip damaging yourself
+                if (targetClient.Character.partyId == client.Character.partyId && client.Character.partyId != 0) continue; //skip damaging party members
+                //if (targetClient.Soul.CriminalLevel == 0 && client.CriminalOnlyDamage == true) continue; //skip attacking non criminal players.  TODO
 
                 double distanceToCharacter = distance(targetClient.Character.X, targetClient.Character.Y,
                     client.Character.X, client.Character.Y);
@@ -88,6 +91,9 @@ namespace Necromancy.Server.Packet.Area
                 {
                     continue;
                 }
+
+                damage -= targetClient.Character.battleParam.PlusPhysicalDefence;
+                if (damage < 0) damage = 1; //pity damage
 
                 targetClient.Character.Hp.Modify(-damage, client.Character.InstanceId);
                 perHp = (float) targetClient.Character.Hp.current / targetClient.Character.Hp.max * 100;
