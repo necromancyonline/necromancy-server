@@ -608,6 +608,17 @@ namespace Necromancy.Server.Systems.Item
             return responses;
         }
 
+        public List<ItemInstance> getLootableItems(uint characterId)
+        {
+            //TODO ADD PROTECTIONS TO SQL CALL SO ALL ITEMS CANT BE LOOTED
+            List<ItemInstance> lootableItems = _itemDao.SelectLootableInventoryItems(characterId);
+            foreach(ItemInstance itemInstance in lootableItems)
+            {
+                itemInstance.Statuses &= ItemStatuses.Unidentified;
+            }
+            return lootableItems;
+        }
+
 
     }
 }

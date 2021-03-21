@@ -8,6 +8,7 @@ namespace Necromancy.Server.Systems.Item
     /// <summary>
     /// Holds item cache in memory.<br/> <br/>
     /// Stores information about published items, and their locations. <b>Does not validate any actions.</b>
+    /// Do not access from other clients, does not function.
     /// </summary>
     public class ItemManager
     {
@@ -60,32 +61,7 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
             ZoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
         }
-        public List<ItemInstance> GetLootableItems()
-        {
-            List<ItemInstance> itemInstances = new List<ItemInstance>();
 
-            foreach (ItemZoneType itemZoneType in ZoneMap.Keys)
-            {
-                if (itemZoneType == ItemZoneType.AdventureBag | itemZoneType == ItemZoneType.EquippedBags | itemZoneType == ItemZoneType.PremiumBag)
-                {
-                    ZoneMap.TryGetValue(itemZoneType, out ItemZone itemZone);
-                    foreach (Container container in itemZone._containers)
-                    {
-                        if (container != null)
-                        {
-                            foreach (ItemInstance itemInstance in container._slots)
-                            {
-                                if (itemInstance != null)
-                                {
-                                    itemInstances.Add(itemInstance);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return itemInstances;
-        }
         public ItemInstance GetItem(ItemLocation loc)
         {
             if (loc.Equals(ItemLocation.InvalidLocation)) return null;

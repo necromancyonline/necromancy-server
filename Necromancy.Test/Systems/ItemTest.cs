@@ -57,11 +57,6 @@ namespace Necromancy.Test.Systems
                 throw new NotImplementedException();
             }
 
-            public List<ItemInstance> SelectOwneditemInstances(int ownerId)
-            {
-                throw new NotImplementedException();
-            }
-
             public void UpdateItemEquipMask(ulong instanceId, ItemEquipSlots equipSlots)
             {
                 throw new NotImplementedException();
@@ -90,7 +85,17 @@ namespace Necromancy.Test.Systems
             }
             public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses)
             {
-                //curse you DummyItemDAO!!! 
+                //curse you DummyItemDAO!!! muahaha
+            }
+
+            public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<ItemInstance> SelectLootableInventoryItems(uint ownerId)
+            {
+                throw new NotImplementedException();
             }
         }
 

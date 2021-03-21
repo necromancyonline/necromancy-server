@@ -238,6 +238,16 @@ namespace Necromancy.Server.Systems.Item
             AND 
                 zone IN (0,1,2,8,12)"; //adventure bag, equipped bags,royal bag, bag slot, avatar inventory
 
+        private const string SqlSelectLootableInventoryItems = @"
+            SELECT 
+                * 
+            FROM 
+                item_instance 
+            WHERE 
+                owner_id = @owner_id 
+            AND 
+                zone IN (0,1,2)"; //adventure bag, equipped bags,royal bag
+
         private const string SqlUpdateItemLocation = @"
             UPDATE 
                 nec_item_instance 
@@ -494,7 +504,7 @@ namespace Necromancy.Server.Systems.Item
         /// <returns></returns>
         public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
         {
-            List<ItemInstance> owneditemInstances = new List<ItemInstance>();
+            List<ItemInstance> ownedItemInstances = new List<ItemInstance>();
             ExecuteReader(SqlSelectOwnedInventoryItems,
                 command =>
                 {
@@ -503,10 +513,10 @@ namespace Necromancy.Server.Systems.Item
                 {
                     while (reader.Read())
                     {
-                        owneditemInstances.Add(MakeItemInstance(reader));
+                        ownedItemInstances.Add(MakeItemInstance(reader));
                     }
                 });
-            return owneditemInstances;
+            return ownedItemInstances;
         }
 
         public List<ItemInstance> InsertItemInstances(int ownerId, ItemLocation[] locs, int[] baseId, ItemSpawnParams[] spawnParams)
@@ -774,5 +784,21 @@ namespace Necromancy.Server.Systems.Item
             return itemInstance;
         }
 
+        public List<ItemInstance> SelectLootableInventoryItems(uint ownerId)
+        {
+            List<ItemInstance> lootableItemInstances = new List<ItemInstance>();
+            ExecuteReader(SqlSelectOwnedInventoryItems,
+                command =>
+                {
+                    AddParameter(command, "@owner_id", ownerId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        lootableItemInstances.Add(MakeItemInstance(reader));
+                    }
+                });
+            return lootableItemInstances;
+        }
     }
 }

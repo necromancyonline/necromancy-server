@@ -62,7 +62,7 @@ namespace Necromancy.Server.Packet.Area
                 //put the item in the new owners inventory
                 itemService.PutLootedItem(iteminstance);
 
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, iteminstance, (byte)iteminstance.Location.ZoneType);
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, iteminstance);
                 Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
         }
