@@ -24,15 +24,12 @@ namespace Necromancy.Server.Packet.Area
             _necClients = client.Map.ClientLookup.GetAll();
             //if (client.Character.soulFormState == 1)
             {
-                client.Character.Hp.toMax();
                 client.Character.State = CharacterState.InvulnerableForm;
                 client.Character.HasDied = false;
                 client.Character.Hp.depleted = false;
                 client.Character.deadType = 0;
+                client.Character.Hp.toMax();
 
-                IBuffer res = BufferProvider.Provide();
-                res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive
-                Router.Send(client, (ushort)AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
 
                 IBuffer res1 = BufferProvider.Provide();
                 res1.WriteInt32(0); //Has to be 0 or else you DC
@@ -84,7 +81,7 @@ namespace Necromancy.Server.Packet.Area
                 Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                 (t1 =>
                 {
-                    RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.current);
+                    RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.Character.Hp.max);
                     Router.Send(client, cHpUpdate.ToPacket());
 
                     //if you are not dead, do normal stuff.  else...  do dead person stuff
@@ -168,6 +165,10 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res7 = BufferProvider.Provide();
             res7.WriteByte(0);
             Router.Send(client, (ushort)AreaPacketId.recv_event_end, res7, ServerType.Area);
+
+            IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive
+            Router.Send(client, (ushort)AreaPacketId.recv_raisescale_request_revive_r, res, ServerType.Area); //responsible for camera movement
         }
     }
 }

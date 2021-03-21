@@ -64,24 +64,25 @@ namespace Necromancy.Server.Model.Skills
             _server.Router.Send(_client.Map, brList);
 
 
-            Task.Delay(TimeSpan.FromSeconds(_skillSetting.CastingTime)).ContinueWith
+            Task.Delay(TimeSpan.FromSeconds(_skillSetting.RigidityTime)).ContinueWith
             (t1 =>
             {
+                //Make it so you can kinda see yourself
+                _client.Character.AddStateBit(CharacterState.InvulnerableForm); //todo. fix stealth form
+                RecvCharaNotifyStateflag myStateFlag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (ulong)_client.Character.State);
+                _server.Router.Send(_client, myStateFlag.ToPacket());
+
                 //make other players not able to see you
                 _client.Character.AddStateBit(CharacterState.InvisibleForm);
                 RecvCharaNotifyStateflag stateFlag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (ulong)_client.Character.State);
                 _server.Router.Send(_client.Map, stateFlag, _client);
 
-                //Make it so you can kinda see yourself
-                _client.Character.AddStateBit(CharacterState.InvulnerableForm); //todo. fix stealth form
-                RecvCharaNotifyStateflag myStateFlag = new RecvCharaNotifyStateflag(_client.Character.InstanceId, (ulong)_client.Character.State);
-                _server.Router.Send(_client, myStateFlag.ToPacket());
             }
             );
 
 
             //clear stealth after 10 seconds.   //ToDo  ,  change seconds to skills effective time.
-            Task.Delay(TimeSpan.FromSeconds(_skillSetting.EffectTime+_skillSetting.CastingTime)).ContinueWith
+            Task.Delay(TimeSpan.FromSeconds(_skillSetting.EffectTime+_skillSetting.RigidityTime)).ContinueWith
             (t1 =>
             {
                 _client.Character.ClearStateBit(CharacterState.InvisibleForm);
