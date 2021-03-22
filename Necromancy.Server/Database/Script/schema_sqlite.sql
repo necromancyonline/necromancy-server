@@ -494,6 +494,7 @@ CREATE TABLE `nec_item_instance` (
 
 CREATE TABLE IF NOT EXISTS "nec_auction" (
 	"id"	        	INTEGER NOT NULL,
+    "slot"               INTEGER NOT NULL,
 	"instance_id"		INTEGER NOT NULL,
 	"quantity"			INTEGER NOT NULL,
 	"expiry_datetime"	INTEGER NOT NULL,

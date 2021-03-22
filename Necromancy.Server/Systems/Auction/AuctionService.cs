@@ -1,4 +1,5 @@
 using Necromancy.Server.Model;
+using Necromancy.Server.Systems.Item;
 using System;
 using static Necromancy.Server.Systems.Auction.AuctionException;
 
@@ -112,7 +113,7 @@ namespace Necromancy.Server.Systems.Auction
             throw new NotImplementedException();
         }
 
-        public AuctionLot Exhibit(ulong itemInstanceId, byte quantity, int time, ulong minBid, ulong buyoutPrice, string comment)
+        public AuctionLot Exhibit(ulong itemInstanceId, byte quantity, int auctionTimeSelector, ulong minBid, ulong buyoutPrice, string comment)
         {            
             int currentNumLots = GetLots().Length;
             if (currentNumLots >= MAX_LOTS)
@@ -134,12 +135,27 @@ namespace Necromancy.Server.Systems.Auction
             if (false)
                 throw new AuctionException(AuctionExceptionType.ItemAlreadyListed);
 
-            int gold = _auctionDao.SelectGold(_client.Character);
+            //int gold = _auctionDao.SelectGold(_client.Character);
 
             //InventoryService iManager = new InventoryService(_client); //remove this 
             //iManager.SubtractGold((int) Math.Ceiling(auctionItem.BuyoutPrice * LISTING_FEE_PERCENT)); 
 
-            //_auctionDao.InsertItem(auctionItem);
+            AuctionLot auctionLot = new AuctionLot();
+            auctionLot.ItemInstanceId = itemInstanceId;
+            auctionLot.MinimumBid = minBid;
+            auctionLot.Quantity = quantity;
+            auctionLot.BuyoutPrice = buyoutPrice;
+            auctionLot.Comment = comment;
+
+            int auctionTimeInSecondsFromNow = 0;
+            const int SECONDS_PER_FOUR_HOURS = 60 * 60 * 4;
+            for (int i = 0; i < auctionTimeSelector; i++)
+            {
+                auctionTimeInSecondsFromNow = (i + 1) * SECONDS_PER_FOUR_HOURS;
+            }
+            auctionLot.SecondsUntilExpiryTime = auctionTimeInSecondsFromNow;
+
+            _auctionDao.InsertLot(auctionLot);
 
             return new AuctionLot();
         }

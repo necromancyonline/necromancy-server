@@ -21,49 +21,49 @@ namespace Necromancy.Server.Chat.Command.Commands
             AuctionLot[] lots = new AuctionLot[0]; //TODO auctionHouse.GetLots();
             AuctionLot[] bids = new AuctionLot[0]; //TODO auctionHouse.GetBids();
             const byte isInMaintenanceMode = 0x0;
-            
+
+            //IBuffer res = BufferProvider.Provide();
+            //res.WriteInt32(lots.Length);
+
+            //for (int i = 0; i < lots.Length; i++)
+            //{
+            //    res.WriteByte((byte)i); // row number?
+            //    res.WriteInt32(i); // row number ??
+            //    res.WriteInt64(lots[i].ItemID); //spawned item id
+            //    res.WriteInt32(lots[i].MinimumBid);
+            //    res.WriteInt32(lots[i].BuyoutPrice);
+            //    res.WriteFixedString(lots[i].ConsignerName, 49);
+            //    res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
+            //    res.WriteFixedString(lots[i].Comment, 385);
+            //    res.WriteInt16((short)lots[i].CurrentBid); // Bid why convert to short?
+            //    res.WriteInt32(lots[i].SecondsUntilExpiryTime);
+
+            //    res.WriteInt32(0); // unknown
+            //    res.WriteInt32(0); // unknown
+            //}
+
+            //res.WriteInt32(bids.Length); // must be< = 8 | why?
+
+            //for (int i = 0; i < bids.Length; i++)
+            //{
+            //    res.WriteByte((byte)i); // row number?
+            //    res.WriteInt32(i); // row number ??
+            //    res.WriteInt64(bids[i].ItemID);
+            //    res.WriteInt32(bids[i].MinimumBid); // Lowest
+            //    res.WriteInt32(bids[i].BuyoutPrice); // Buy Now
+            //    res.WriteFixedString(bids[i].ConsignerName, 49);
+            //    res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
+            //    res.WriteFixedString(bids[i].Comment, 385); // Comment in the item information
+            //    res.WriteInt16((short)bids[i].CurrentBid); // Bid why convert to short?
+            //    res.WriteInt32(bids[i].SecondsUntilExpiryTime);
+
+            //    res.WriteInt32(0); // unknown
+            //    res.WriteInt32(0); // unknown
+            //}
+
+            //res.WriteByte(isInMaintenanceMode); // bool  IsInMaintenanceMode
+
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(lots.Length);
-
-            for (int i = 0; i < lots.Length; i++)
-            {
-                res.WriteByte((byte)i); // row number?
-                res.WriteInt32(i); // row number ??
-                res.WriteInt64(lots[i].ItemID); //spawned item id
-                res.WriteInt32(lots[i].MinimumBid);
-                res.WriteInt32(lots[i].BuyoutPrice);
-                res.WriteFixedString(lots[i].ConsignerName, 49);
-                res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
-                res.WriteFixedString(lots[i].Comment, 385);
-                res.WriteInt16((short)lots[i].CurrentBid); // Bid why convert to short?
-                res.WriteInt32(lots[i].SecondsUntilExpiryTime);
-
-                res.WriteInt32(0); // unknown
-                res.WriteInt32(0); // unknown
-            }
-
-            res.WriteInt32(bids.Length); // must be< = 8 | why?
-
-            for (int i = 0; i < bids.Length; i++)
-            {
-                res.WriteByte((byte)i); // row number?
-                res.WriteInt32(i); // row number ??
-                res.WriteInt64(bids[i].ItemID);
-                res.WriteInt32(bids[i].MinimumBid); // Lowest
-                res.WriteInt32(bids[i].BuyoutPrice); // Buy Now
-                res.WriteFixedString(bids[i].ConsignerName, 49);
-                res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
-                res.WriteFixedString(bids[i].Comment, 385); // Comment in the item information
-                res.WriteInt16((short)bids[i].CurrentBid); // Bid why convert to short?
-                res.WriteInt32(bids[i].SecondsUntilExpiryTime);
-
-                res.WriteInt32(0); // unknown
-                res.WriteInt32(0); // unknown
-            }
-
-            res.WriteByte(isInMaintenanceMode); // bool  IsInMaintenanceMode
-
-            res = BufferProvider.Provide();
             int numEntries = 0;
             res.WriteInt32(numEntries); //Less than or equal to 0xF
 
@@ -72,8 +72,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteByte((byte)i); // row number?
                 res.WriteInt32(i); // row number ??
                 res.WriteInt64(bids[i].ItemID);
-                res.WriteInt64(bids[i].MinimumBid); // Lowest
-                res.WriteInt64(bids[i].BuyoutPrice); // Buy Now
+                res.WriteUInt64(bids[i].MinimumBid); // Lowest
+                res.WriteUInt64(bids[i].BuyoutPrice); // Buy Now
                 res.WriteFixedString(bids[i].ConsignerName, 49);
                 res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
                 res.WriteFixedString(bids[i].Comment, 385); // Comment in the item information

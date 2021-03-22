@@ -14,44 +14,47 @@ namespace Necromancy.Server.Systems.Auction
 		            id, 
                     consigner_id, 
 		            consigner_name, 
-		            spawn_id, 
+		            instance_id, 
 		            quantity, 
 		            expiry_datetime, 
 		            min_bid, 
 		            buyout_price, 
 		            current_bid, 
 		            bidder_id, 
-		            comment
+		            comment,
+                    is_cancellable
 	            )
             AS
             SELECT 			
-                nec_auction_item.id,
+                nec_auction.id,
                 consigner.id,
                 consigner.name,
-                nec_auction_item.item_spawn_id, 
-                nec_auction_item.quantity,
-                nec_auction_item.expiry_datetime, 
-                nec_auction_item.min_bid,
-                nec_auction_item.buyout_price, 
-                nec_auction_item.current_bid, 
-                nec_auction_item.bidder_id,
-                nec_auction_item.comment
+                nec_auction.instance_id, 
+                nec_auction.quantity,
+                nec_auction.expiry_datetime, 
+                nec_auction.min_bid,
+                nec_auction.buyout_price, 
+                nec_auction.current_bid, 
+                nec_auction.bidder_id,
+                nec_auction.comment,
+                nec_auction.is_cancellable
             FROM 
-                nec_auction_item
+                nec_auction
 			INNER JOIN
-				nec_item_spawn spawn
+				nec_item_instance item_instance
 			ON
-				nec_auction_item.item_spawn_id = spawn.id
+				nec_auction.instance_id = item_instance.id
             INNER JOIN 
                 nec_character consigner
             ON 
-                spawn.character_id = consigner.id";
+                item_instance.owner_id = consigner.id";
 
-        private const string SqlInsertItem = @"
+        private const string SqlInsertLot = @"
             INSERT INTO 
-                nec_auction_item 
+                nec_auction 
                 ( 
-                    item_spawn_id, 
+                    slot
+                    instance_id, 
                     quantity, 
                     expiry_datetime, 
                     min_bid, 
@@ -60,7 +63,8 @@ namespace Necromancy.Server.Systems.Auction
                 ) 
             VALUES 
                 (
-                    @item_spawn_id, 
+                    @slot
+                    @instance_id, 
                     @quantity, 
                     @expiry_datetime, 
                     @min_bid, 
@@ -115,17 +119,17 @@ namespace Necromancy.Server.Systems.Auction
             ExecuteNonQuery(SqlCreateItemsUpForAuctionView, command => { });
         }
 
-        public bool InsertItem(AuctionLot auctionItem)
+        public bool InsertLot(AuctionLot auctionLot)
         {           
-              int rowsAffected = ExecuteNonQuery(SqlInsertItem, command =>
+              int rowsAffected = ExecuteNonQuery(SqlInsertLot, command =>
                 {
-                    AddParameter(command, "@character_id", auctionItem.ConsignerId);
-                    AddParameter(command, "@item_spawn_id", auctionItem.ItemInstanceId);
-                    AddParameter(command, "@quantity", auctionItem.Quantity);
-                    AddParameter(command, "@expiry_datetime", CalcExpiryTime(auctionItem.SecondsUntilExpiryTime));
-                    AddParameter(command, "@min_bid", auctionItem.MinimumBid);
-                    AddParameter(command, "@buyout_price", auctionItem.BuyoutPrice);
-                    AddParameter(command, "@comment", auctionItem.Comment);
+                    AddParameter(command, "@slot", auctionLot.Slot);
+                    AddParameter(command, "@instance_id", auctionLot.ItemInstanceId);
+                    AddParameter(command, "@quantity", auctionLot.Quantity);
+                    AddParameter(command, "@expiry_datetime", CalcExpiryTime(auctionLot.SecondsUntilExpiryTime));
+                    AddParameter(command, "@min_bid", auctionLot.MinimumBid);
+                    AddParameter(command, "@buyout_price", auctionLot.BuyoutPrice);
+                    AddParameter(command, "@comment", auctionLot.Comment);
                 });
             return rowsAffected > 0;
         }
@@ -139,7 +143,7 @@ namespace Necromancy.Server.Systems.Auction
                     AddParameter(command, "@id", auctionItemId);
                 }, reader =>
                 {
-                    MakeAuctionItem(reader);
+                    MakeAuctionLot(reader);
                 });
             return auctionItem;
         }
@@ -167,7 +171,7 @@ namespace Necromancy.Server.Systems.Auction
                     while (reader.Read())
                     {
                         if (i >= AuctionService.MAX_BIDS) break;
-                        AuctionLot bid = MakeAuctionItem(reader);
+                        AuctionLot bid = MakeAuctionLot(reader);
                         bids[i] = bid;
                         i++;
                     }
@@ -190,7 +194,7 @@ namespace Necromancy.Server.Systems.Auction
                     while (reader.Read())
                     {
                         if (i >= AuctionService.MAX_LOTS) break;
-                        AuctionLot lot = MakeAuctionItem(reader);
+                        AuctionLot lot = MakeAuctionLot(reader);
                         lots[i] = lot;
                         i++;
                     }
@@ -200,17 +204,17 @@ namespace Necromancy.Server.Systems.Auction
             return truncatedLots;
         }
 
-        private AuctionLot MakeAuctionItem(DbDataReader reader)
+        private AuctionLot MakeAuctionLot(DbDataReader reader)
         {
             AuctionLot auctionItem = new AuctionLot();
             auctionItem.Id = reader.GetInt32("id");
             auctionItem.ConsignerId = reader.GetInt32("consigner_id");
             auctionItem.ConsignerName = reader.GetString("consigner_name");
-            auctionItem.ItemInstanceId = reader.GetInt64("spawn_id");
+            auctionItem.ItemInstanceId = (ulong) reader.GetInt64("spawn_id");
             auctionItem.Quantity = reader.GetInt32("quantity");
             auctionItem.SecondsUntilExpiryTime = CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
-            auctionItem.MinimumBid = reader.GetInt32("min_bid");
-            auctionItem.BuyoutPrice = reader.GetInt32("buyout_price");
+            auctionItem.MinimumBid = (ulong) reader.GetInt64("min_bid");
+            auctionItem.BuyoutPrice = (ulong) reader.GetInt64("buyout_price");
             auctionItem.CurrentBid = reader.GetInt32("current_bid");
             auctionItem.BidderId = reader.GetInt32("bidder_id");
             auctionItem.Comment = reader.GetString("comment");

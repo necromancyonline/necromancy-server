@@ -4,7 +4,7 @@ namespace Necromancy.Server.Systems.Auction
 {
     public interface IAuctionDao
     {
-        public bool InsertItem(AuctionLot insertItem);
+        public bool InsertLot(AuctionLot insertItem);
 
         public bool UpdateBid(AuctionLot updateBidItem);
 

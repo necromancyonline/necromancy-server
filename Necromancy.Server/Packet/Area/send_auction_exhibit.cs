@@ -59,8 +59,8 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(auctionError); //error check.
-            res.WriteUInt64(buyoutPrice);
-            res.WriteUInt64(auctionItemInstance.InstanceID);
+            res.WriteInt32((int) buyoutPrice); //unknown
+            res.WriteUInt64(auctionItemInstance.InstanceID); //unknown
             Router.Send(client.Map, (ushort)AreaPacketId.recv_auction_exhibit_r, res, ServerType.Area);
         }
 
