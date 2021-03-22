@@ -191,7 +191,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.Character.MapId); //MapSerialID
             res.WriteInt32(client.Character.MapId); //MapID ?floor
             res.WriteInt32(client.Character.MapId); //MapID ?
-            res.WriteByte((byte)(client.Character.criminalState + 5));//new??
+            res.WriteByte(client.Soul.CriminalLevel);//new??
             res.WriteByte(1); //Beginner Protection (bool) ???
             res.WriteFixedString(Settings.DataAreaIpAddress, 65); //IP
             res.WriteUInt16(Settings.AreaPort); //Port

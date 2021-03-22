@@ -81,9 +81,11 @@ namespace Necromancy.Server.Tasks
 
         private void CriminalRepent()
         {
-            _client.Soul.CriminalLevel --;
+            _client.Soul.CriminalLevel--;
             if (_client.Soul.CriminalLevel <= 0) _client.Soul.CriminalLevel = 0;
+
             _client.Character.criminalState = _client.Soul.CriminalLevel;
+
         }
         private void SoulMaterialIncrease()
         {
@@ -154,6 +156,7 @@ namespace Necromancy.Server.Tasks
             deadBody.ClassId = _client.Character.ClassId;
             deadBody.EquippedItems = _client.Character.EquippedItems;
             deadBody.ItemManager = _client.Character.ItemManager;
+            deadBody.CriminalStatus = _client.Character.criminalState;
             deadBody.ConnectionState = 1;
             _clients = _client.Map.ClientLookup.GetAll();
             _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);

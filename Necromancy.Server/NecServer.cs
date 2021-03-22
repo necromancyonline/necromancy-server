@@ -237,24 +237,27 @@ namespace Necromancy.Server
             Map map = client.Map;
 
             //If i was dead, toggle my deadBody to a Rucksack
-            if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+            if (map != null)
             {
-                map.DeadBodies.TryGetValue(client.Character.DeadBodyInstanceId, out DeadBody deadBody);
-                deadBody.ConnectionState = 0;
-                RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
-                Router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
+                if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                {
+                    map.DeadBodies.TryGetValue(client.Character.DeadBodyInstanceId, out DeadBody deadBody);
+                    deadBody.ConnectionState = 0;
+                    RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
+                    Router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
 
-                Task.Delay(TimeSpan.FromSeconds(600)).ContinueWith
-                (t1 =>
-                    {
-                        if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                    Task.Delay(TimeSpan.FromSeconds(600)).ContinueWith
+                    (t1 =>
                         {
-                            RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.DeadBodyInstanceId);
-                            Router.Send(client.Map, recvObjectDisappearNotify.ToPacket(), client);
-                            map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
+                            if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                            {
+                                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.DeadBodyInstanceId);
+                                Router.Send(client.Map, recvObjectDisappearNotify.ToPacket(), client);
+                                map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
+                            }
                         }
-                    }
-                );
+                    );
+                }
             }
             if (map != null)
             {

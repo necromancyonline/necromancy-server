@@ -606,6 +606,8 @@ namespace Necromancy.Server.Systems.Item
             RecvCharaUpdateBattleBaseParam recvCharaUpdateBattleBaseParam = new RecvCharaUpdateBattleBaseParam(client.Character, battleParam);
             responses.Add(recvCharaUpdateBattleBaseParam);
 
+            client.Character.battleParam = battleParam;
+
             return responses;
         }
 

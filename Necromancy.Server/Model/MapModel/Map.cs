@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Data.Setting;
@@ -247,10 +248,20 @@ namespace Necromancy.Server.Model
             ClientLookup.Add(client);
             Logger.Debug($"Client Lookup count is now : {ClientLookup.GetAll().Count}  for map  {this.Id} ");
             Logger.Debug($"Character State for character {client.Character.Name} is {client.Character.State}");
-             //ToDo  move all this rendering logic to Send_Map_Entry.   We dont need a copy of this logic on every map instance.
             //Send your character data to the other living or dead players on the map.
+
+            //on successful map entry, update the client database position
+            if (!_server.Database.UpdateCharacter(client.Character))
+            {
+                Logger.Error("Could not update the database with current known player position");
+            }
+            if (!_server.Database.UpdateSoul(client.Soul))
+            {
+                Logger.Error("Could not update the database with soul details ");
+            }
+
+            //ToDo  move all this rendering logic to Send_Map_Entry.   We dont need a copy of this logic on every map instance.
             RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
-            //_server.Router.Send(this, myCharacterData, client); //replaced by below logic
 
             //dead
             //you are dead here.  only getting soul form characters. sorry bro.             
@@ -283,47 +294,42 @@ namespace Necromancy.Server.Model
                 RecvDataNotifyUnionData myUnionData = new RecvDataNotifyUnionData(client.Character, client.Union.Name);
                 _server.Router.Send(this, myUnionData, client);
             }
-
-            foreach (MonsterSpawn monsterSpawn in this.MonsterSpawns.Values)
-            {
-                if (monsterSpawn.Active == true)
+            Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+            (t1 =>
                 {
-                    monsterSpawn.SpawnActive = true;
-                    if (!monsterSpawn.TaskActive)
+                    foreach (MonsterSpawn monsterSpawn in this.MonsterSpawns.Values)
                     {
-                        MonsterTask monsterTask = new MonsterTask(_server, monsterSpawn);
-                        if (monsterSpawn.defaultCoords)
-                            monsterTask.monsterHome = monsterSpawn.monsterCoords[0];
-                        else
-                            monsterTask.monsterHome = monsterSpawn.monsterCoords.Find(x => x.CoordIdx == 64);
-                        monsterTask.Start();
-                    }
-                    else
-                    {
-                        if (monsterSpawn.MonsterVisible)
+                        if (monsterSpawn.Active == true)
                         {
-                            Logger.Debug($"MonsterTask already running for [{monsterSpawn.Name}]");
-                            RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
-                            _server.Router.Send(monsterData, client);
-                            if (!monsterSpawn.GetAgro())
+                            monsterSpawn.SpawnActive = true;
+                            if (!monsterSpawn.TaskActive)
                             {
-                                monsterSpawn.MonsterMove(_server, client, monsterSpawn.MonsterWalkVelocity, (byte) 2,
-                                    (byte) 0);
+                                MonsterTask monsterTask = new MonsterTask(_server, monsterSpawn);
+                                if (monsterSpawn.defaultCoords)
+                                    monsterTask.monsterHome = monsterSpawn.monsterCoords[0];
+                                else
+                                    monsterTask.monsterHome = monsterSpawn.monsterCoords.Find(x => x.CoordIdx == 64);
+                                monsterTask.Start();
+                            }
+                            else
+                            {
+                                if (monsterSpawn.MonsterVisible)
+                                {
+                                    Logger.Debug($"MonsterTask already running for [{monsterSpawn.Name}]");
+                                    RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
+                                    _server.Router.Send(monsterData, client);
+                                    if (!monsterSpawn.GetAgro())
+                                    {
+                                        monsterSpawn.MonsterMove(_server, client, monsterSpawn.MonsterWalkVelocity, (byte) 2,
+                                            (byte) 0);
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
+            );
 
-            //on successful map entry, update the client database position
-            if (!_server.Database.UpdateCharacter(client.Character))
-            {
-                Logger.Error("Could not update the database with current known player position");
-            }
-            if (!_server.Database.UpdateSoul(client.Soul))
-            {
-                Logger.Error("Could not update the database with soul details ");
-            }
         }
 
         public void Leave(NecClient client)

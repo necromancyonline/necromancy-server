@@ -38,8 +38,8 @@ namespace Necromancy.Server.Packet.Msg
             res2.WriteByte(0); //bool Result
             res2.WriteUInt32(0); //Wanted_dead_CharaId - for when a char got sent to prison.  Slot of character in prison
             res2.WriteInt64(0b1111111111111111); //Soul Premium Flags
-            res2.WriteByte(5/*client.Soul.CrimeLevel*/); //Crime Level. Temporary hardcode until moved to soul and databased
-            res2.WriteUInt32(1); //Soul State
+            res2.WriteByte(client.Soul.CriminalLevel); //Crime Level. 
+            res2.WriteUInt32(0); //Soul State
             Router.Send(client, (ushort)MsgPacketId.recv_chara_notify_data_complete, res2, ServerType.Msg);
         }
 
@@ -64,7 +64,7 @@ namespace Necromancy.Server.Packet.Msg
 
                 res.WriteInt32(character.deadType); // 0 = Alive | 1,2,3, = Dead 4 = ash, 5 = lost
                 res.WriteInt32(character.Level); //character level stat
-                res.WriteInt32(Util.GetRandomNumber(0,4)); //todo (unknown)
+                res.WriteInt32(0); //todo (unknown)
                 res.WriteUInt32(character.ClassId); //class stat 
 
                 res.WriteUInt32(character.RaceId); //race

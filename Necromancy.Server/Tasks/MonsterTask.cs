@@ -519,7 +519,13 @@ namespace Necromancy.Server.Tasks
             _monster.Hp.toMax();
             respawnTime = _monster.RespawnTime;
             RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(_monster);
-            _server.Router.Send(Map, monsterData);
+            foreach (NecClient client in Map.ClientLookup.GetAll())
+            {
+                if (client.Character.HasDied == false)
+                {
+                    _server.Router.Send(client, monsterData.ToPacket());
+                }
+            }
             spawnMonster = false;
             _monster.MonsterVisible = true;
             _monster.ClearAgroList();
