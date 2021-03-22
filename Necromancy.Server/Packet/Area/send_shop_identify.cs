@@ -30,7 +30,7 @@ namespace Necromancy.Server.Packet.Area
                 identifiedItem = itemService.GetIdentifiedItem(location);
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, identifiedItem);
                 Router.Send(recvItemInstance);
-            } catch(ItemException e) { error = (int) e.ExceptionType; }
+            } catch(ItemException e) { error = (int) e.Type; }
 
             RecvShopIdentify recvShopIdentify = new RecvShopIdentify(client, error);
             Router.Send(recvShopIdentify);            

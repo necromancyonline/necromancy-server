@@ -16,44 +16,52 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_auction_exhibit;
+        public override ushort Id => (ushort)AreaPacketId.send_auction_exhibit;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte exhibitSlot = packet.Data.ReadByte();            
-            ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte(); 
-            byte bag = packet.Data.ReadByte(); 
+            byte exhibitSlot = packet.Data.ReadByte();
+            ItemZoneType zone = (ItemZoneType)packet.Data.ReadByte();
+            byte bag = packet.Data.ReadByte();
             short slot = packet.Data.ReadInt16();
-            byte quantity = packet.Data.ReadByte(); 
+            byte quantity = packet.Data.ReadByte();
             int time = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:16 hours 3:24 hours
-            ulong minBidPrice = packet.Data.ReadUInt64(); 
-            ulong buyoutPrice = packet.Data.ReadUInt64(); 
+            ulong minBid = packet.Data.ReadUInt64();
+            ulong buyoutPrice = packet.Data.ReadUInt64();
             string comment = packet.Data.ReadCString();
 
             ItemLocation auctionLoc = new ItemLocation(ItemZoneType.TempAuctionZone, 0, exhibitSlot);
             ItemLocation fromLoc = new ItemLocation(zone, bag, slot);
             ItemService itemService = new ItemService(client.Character);
-            
-
-            ItemInstance auctionItemInstance = itemService.GetIdentifiedItem(fromLoc);
-            int auctionError = 0;
-
-            int moveError = 0;
-            try
-            {
-                MoveResult moveResult = itemService.Move(fromLoc, auctionLoc, quantity);
-                List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
-                Router.Send(client, responses);
-            }
-            catch (ItemException e) { moveError = (int)e.ExceptionType; }
 
             AuctionService auctionService = new AuctionService(client);
+            ItemInstance auctionItemInstance = itemService.GetItem(fromLoc);
+            int auctionError = 0;
+            try
+            {
+                auctionService.Exhibit(auctionItemInstance.InstanceID, quantity, time, minBid, buyoutPrice, comment);
+            }
+            catch (AuctionException e) { auctionError = (int)e.Type; }
+
+            if (auctionError == 0)
+            {
+                int moveError = 0;
+                try
+                {
+                    MoveResult moveResult = itemService.Move(fromLoc, auctionLoc, quantity);
+                    List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
+                    Router.Send(client, responses);
+                }
+                catch (ItemException e) { moveError = (int)e.Type; }
+                if (moveError != 0) auctionError = (int)AuctionExceptionType.Generic;
+            }
+            
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); //error check.
-            res.WriteInt32(0);
-            res.WriteInt64(0);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_exhibit_r, res, ServerType.Area);
+            res.WriteInt32(auctionError); //error check.
+            res.WriteUInt64(buyoutPrice);
+            res.WriteUInt64(auctionItemInstance.InstanceID);
+            Router.Send(client.Map, (ushort)AreaPacketId.recv_auction_exhibit_r, res, ServerType.Area);
         }
 
         /*

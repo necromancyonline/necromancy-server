@@ -143,7 +143,7 @@ namespace Necromancy.Test.Systems
 
                 ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, quantity));
 
-                Assert.Equal(ItemExceptionType.Generic, e.ExceptionType);
+                Assert.Equal(ItemExceptionType.Generic, e.Type);
             }
 
             [Fact]
@@ -160,7 +160,7 @@ namespace Necromancy.Test.Systems
 
                 ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, moveQuantity));
 
-                Assert.Equal(ItemExceptionType.Amount, e.ExceptionType);
+                Assert.Equal(ItemExceptionType.Amount, e.Type);
             }
 
             [Fact]
@@ -284,7 +284,7 @@ namespace Necromancy.Test.Systems
 
                 ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, moveQuantity));
 
-                Assert.Equal(ItemExceptionType.BagLocation, e.ExceptionType);
+                Assert.Equal(ItemExceptionType.BagLocation, e.Type);
             }
 
             [Fact]
@@ -387,7 +387,7 @@ namespace Necromancy.Test.Systems
 
                 ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(bagLoc, toLoc, quantity));
 
-                Assert.Equal(ItemExceptionType.BagLocation, e.ExceptionType);
+                Assert.Equal(ItemExceptionType.BagLocation, e.Type);
             }
         }
         public class TestRemove
@@ -447,7 +447,7 @@ namespace Necromancy.Test.Systems
 
                 ItemException e = Assert.Throws<ItemException>(() => _itemService.Remove(loc, quantityToRemove));
 
-                Assert.Equal(ItemExceptionType.Amount, e.ExceptionType);
+                Assert.Equal(ItemExceptionType.Amount, e.Type);
             }
         }
 

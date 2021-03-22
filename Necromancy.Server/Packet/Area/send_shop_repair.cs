@@ -42,7 +42,7 @@ namespace Necromancy.Server.Packet.Area
                     RecvItemUpdateDurability recvItemUpdateDurability = new RecvItemUpdateDurability(client, repairedItem);
                     Router.Send(recvItemUpdateDurability);
                 }                                
-            } catch (ItemException e) { error = (int) e.ExceptionType; }
+            } catch (ItemException e) { error = (int) e.Type; }
 
             RecvShopRepair recvShopRepair = new RecvShopRepair(client, error);
             Router.Send(recvShopRepair);

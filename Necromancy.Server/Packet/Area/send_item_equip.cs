@@ -72,7 +72,7 @@ namespace Necromancy.Server.Packet.Area
                 RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
                 Router.Send(client.Map, myCharacterData, client);
             }
-            catch (ItemException e) { error = (int) e.ExceptionType; }
+            catch (ItemException e) { error = (int) e.Type; }
 
             //tell the send if everything went well or not.  notify the client chat of any errors
             RecvItemEquip recvItemEquip = new RecvItemEquip(client, error);

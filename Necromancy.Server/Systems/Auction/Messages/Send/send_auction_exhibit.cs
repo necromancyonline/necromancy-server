@@ -3,7 +3,6 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Systems.Auction.Logic;
 
 namespace Necromancy.Server.Systems.Auction
 {
@@ -43,17 +42,17 @@ namespace Necromancy.Server.Systems.Auction
             }
             auctionItem.SecondsUntilExpiryTime = auctionTimeInSecondsFromNow;
 
-            AuctionService auctionService = new AuctionService(client);
-            int auctionException = 0;
-            try { 
-            auctionItem = auctionService.Exhibit(auctionItem, bagNumber, bagSlot);
-            } catch(AuctionException e)
-            {
-                auctionException = (int) e.Type;
-            }
+            //AuctionService auctionService = new AuctionService(client);
+            //int auctionException = 0;
+            //try { 
+            //auctionItem = auctionService.Exhibit(auctionItem, bagNumber, bagSlot);
+            //} catch(AuctionException e)
+            //{
+            //    auctionException = (int) e.Type;
+            //}
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(auctionException); //error check.
+            res.WriteInt32(0); //error check.
             res.WriteInt32(auctionItem.BuyoutPrice);
             res.WriteInt64(auctionItem.ItemID); //spawn id
             Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_exhibit_r, res, ServerType.Area);

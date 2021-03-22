@@ -3,7 +3,6 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Systems.Auction.Logic;
 using Newtonsoft.Json.Serialization;
 
 namespace Necromancy.Server.Systems.Auction

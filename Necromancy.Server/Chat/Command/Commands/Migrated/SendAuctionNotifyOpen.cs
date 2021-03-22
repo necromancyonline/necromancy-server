@@ -4,7 +4,6 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Auction;
-using Necromancy.Server.Systems.Auction.Logic;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {

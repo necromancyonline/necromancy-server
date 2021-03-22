@@ -39,6 +39,11 @@ namespace Necromancy.Server.Systems.Item
             }
         }
 
+        internal ItemInstance GetItem(ItemLocation location)
+        {
+            return _character.ItemManager.GetItem(location);
+        }
+
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
             ItemInstance item = _character.ItemManager.GetItem(location);
