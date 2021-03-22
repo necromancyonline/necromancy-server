@@ -38,7 +38,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
+        public override AccountStateType AccountState => AccountStateType.User;
         public override string Key => "jump";
         public override string HelpText => "usage: `/jump [# of units]` - Moves character x units upward.";
     }

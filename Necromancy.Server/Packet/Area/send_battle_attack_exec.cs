@@ -44,7 +44,7 @@ namespace Necromancy.Server.Packet.Area
             else
                 damage *= 2;
                 damage += Util.GetRandomNumber(32, 48); // Critical hit
-            if (client.Character.Id == 2) damage *= 100; //testing death and revival is slow with low dmg. 
+            if (client.Account.State == AccountStateType.Admin) damage *= 100; //testing death and revival is slow with low dmg. 
             //Testing some aoe damage stuff.......  Takes a long time to process.
             AttackObjectsInRange(client, damage);
 
