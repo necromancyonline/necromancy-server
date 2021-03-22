@@ -1013,18 +1013,34 @@ namespace Necromancy.Server.Packet.Area
 
         private void PlayerRevive(NecClient client, NpcSpawn npcSpawn)
         {
-            IBuffer res0 = BufferProvider.Provide();
-            res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
-            res0.WriteByte(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+            if (client.Character.HasDied == false)
+            {
+                string name, title, text;
+                name = npcSpawn.Name;
+                title = npcSpawn.Title;
+                text = "Come see me if you're ever in need of revival";
+                RecvEventMessageNoObject eventText = new RecvEventMessageNoObject(name, title, text);
+                Router.Send(eventText, client);
 
-            IBuffer res15 = BufferProvider.Provide();
-            //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
-            res15.WriteInt16(75); //Basic revival rate %
-            res15.WriteInt16(0); //Penalty %
-            res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
-            res15.WriteInt16(0); //Dimento medal addition %
-            Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+                RecvEventSync eventSync = new RecvEventSync();
+                Router.Send(eventSync, client);
+
+            }
+            else
+            {
+                IBuffer res0 = BufferProvider.Provide();
+                res0.WriteInt32(0); //1 = cinematic, 0 Just start the event without cinematic
+                res0.WriteByte(0);
+                Router.Send(client, (ushort)AreaPacketId.recv_event_start, res0, ServerType.Area);
+
+                IBuffer res15 = BufferProvider.Provide();
+                //recv_raisescale_view_open = 0xC25D, // Parent = 0xC2E5 // Range ID = 01  // was 0xC25D
+                res15.WriteInt16(75); //Basic revival rate %
+                res15.WriteInt16(0); //Penalty %
+                res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
+                res15.WriteInt16(0); //Dimento medal addition %
+                Router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
+            }
         }
 
         private void ResurectionStatue(NecClient client, GGateSpawn gGateSpawn)
