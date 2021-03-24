@@ -1,31 +1,9 @@
 using System;
 
-namespace Necromancy.Server.Systems.Auction
+namespace Necromancy.Server.Systems.Item
 {
-    public class SearchCriteria
+    public class AuctionSearchCriteria
     {
-        [Flags]
-        public enum Qualities
-        {              
-            Poor        = 0x1 << 0,  
-            Normal      = 0x1 << 1,  
-            Good        = 0x1 << 2,  
-            Master      = 0x1 << 3,
-            Legend      = 0x1 << 4,
-            Artifact    = 0x1 << 5,
-            All         = Poor & Normal & Good & Master & Legend & Artifact
-        }
-
-        [Flags]
-        public enum Classes
-        {
-            None    = 0x0 << 0,
-            Fighter = 0x1 << 0,
-            Thief   = 0x1 << 1,
-            Priest  = 0x1 << 2,
-            Mage    = 0x1 << 3,
-            All     = Fighter & Thief & Priest & Mage
-        }
 
         private const int MIN_SOUL_RANK = 0;
         private const int MAX_SOUL_RANK = 99;
@@ -36,7 +14,7 @@ namespace Necromancy.Server.Systems.Auction
         public int SoulRankMax { get; set; }
         public int ForgePriceMin { get; set; }
         public int ForgePriceMax { get; set; }
-        public Qualities Quality { get; set; }
+        public ItemQualities Quality { get; set; }
         public Classes Class { get;set; }
 
         public bool HasdValidClass()
@@ -46,7 +24,7 @@ namespace Necromancy.Server.Systems.Auction
 
         public bool HasValidQuality()
         {
-            return (Quality & Qualities.All) == Quality;
+            return (Quality & ItemQualities.All) == Quality;
         }
 
         public bool HasValidSoulRankMin()

@@ -4,7 +4,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Systems.Auction;
+using Necromancy.Server.Systems.Item;
 using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
@@ -22,19 +22,19 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
 
-            SearchCriteria searchCriteria = new SearchCriteria();
+            AuctionSearchCriteria searchCriteria = new AuctionSearchCriteria();
             searchCriteria.SoulRankMin = packet.Data.ReadByte();
             searchCriteria.SoulRankMax = packet.Data.ReadByte();
             searchCriteria.ForgePriceMin = packet.Data.ReadByte();
             searchCriteria.ForgePriceMax = packet.Data.ReadByte();
-            searchCriteria.Quality = (SearchCriteria.Qualities)packet.Data.ReadInt16();
-            searchCriteria.Class = (SearchCriteria.Classes)packet.Data.ReadInt16();
+            searchCriteria.Quality = (ItemQualities)packet.Data.ReadInt16();
+            searchCriteria.Class = (Classes)packet.Data.ReadInt16();
 
             Logger.Info("YEFAS2F");
             int NUMBER_OF_ITEMS_DEBUG = 20;
 
-            AuctionService auctionService = new AuctionService(client);
-            //List<AuctionLot> auctionList = auctionService.Search(searchCriteria);
+            ItemService itemService = new ItemService(client.Character);
+            List<ItemInstance> auctionList = itemService.SearchAuction(searchCriteria);
 
             //IBuffer res = BufferProvider.Provide();
             //res.WriteInt32(0);

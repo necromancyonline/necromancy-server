@@ -593,13 +593,13 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000);
 
             //auction
-            itemInstance.ConsignerName = reader.GetString("consigner_name");
-            itemInstance.SecondsUntilExpiryTime = CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
-            itemInstance.MinimumBid = (ulong)reader.GetInt64("min_bid");
-            itemInstance.BuyoutPrice = (ulong)reader.GetInt64("buyout_price");
-            itemInstance.CurrentBid = reader.GetInt32("current_bid");
-            itemInstance.BidderId = reader.GetInt32("bidder_id");
-            itemInstance.Comment = reader.GetString("comment");
+            itemInstance.ConsignerName = reader.IsDBNull("consigner_name") ? null : reader.GetString("consigner_name");
+            itemInstance.SecondsUntilExpiryTime = reader.IsDBNull("expiry_datetime") ? 0 : CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
+            itemInstance.MinimumBid = reader.IsDBNull("min_bid") ? 0 : (ulong)reader.GetInt64("min_bid");
+            itemInstance.BuyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");
+            itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
+            itemInstance.BidderId = reader.IsDBNull("bidder_id") ? 0 : reader.GetInt32("bidder_id");
+            itemInstance.Comment = reader.IsDBNull("comment") ? null : reader.GetString("comment");
             if (itemInstance.BidderId > 0) itemInstance.IsCancellable = false;
 
             return itemInstance;

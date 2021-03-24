@@ -11,6 +11,7 @@ namespace Necromancy.Server.Systems.Item
         Good        = 1 << 3,
         Master      = 1 << 4,
         Legend      = 1 << 5,
-        Artifact    = 1 << 6
+        Artifact    = 1 << 6,
+        All = Poor & Normal & Good & Master & Legend & Artifact
     }
 }

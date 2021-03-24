@@ -89,7 +89,6 @@ namespace Necromancy.Server.Systems.Item
         public byte SPCardColor { get; internal set; }
 
         //Auction properties
-        public byte ConsignmentSlot { get; set; } 
         public string ConsignerName { get; set; }
         public int SecondsUntilExpiryTime { get; set; }
         public ulong MinimumBid { get; set; }

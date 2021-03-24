@@ -633,6 +633,11 @@ namespace Necromancy.Server.Systems.Item
             return _character.AdventureBagGold;
         }
 
+        public List<ItemInstance> SearchAuction(AuctionSearchCriteria searchCriteria)
+        {
+            throw new NotImplementedException();
+        }
+
         //auction functions
         public MoveResult Exhibit(ItemLocation itemLocation, byte exhibitSlot, byte quantity, int auctionTimeSelector, ulong minBid, ulong buyoutPrice, string comment)
         {
