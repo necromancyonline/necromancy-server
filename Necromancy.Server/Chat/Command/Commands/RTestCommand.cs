@@ -285,17 +285,66 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 case "level":
                     RecvEventStart recvEventStart = new RecvEventStart(0, 0);
+                    Router.Send(recvEventStart, client);
                     Experience experience = new Experience();
+                    client.Character.Level++;
+                    client.Character.Hp.setMax(client.Character.Hp.max + 10);
+                    client.Character.Mp.setMax(client.Character.Mp.max + 10);
+                    client.Character.Strength += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Vitality += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Dexterity += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Agility += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Intelligence += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Piety += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Luck += (ushort)Util.GetRandomNumber(0, 2);
+                    int luckyShot = Util.GetRandomNumber(0, client.Character.Luck);
+                    if (luckyShot > (client.Character.Luck * .8))
+                    {
+                        client.Character.Hp.setMax(client.Character.Hp.max + 10);
+                        client.Character.Mp.setMax(client.Character.Mp.max + 10);
+                        client.Character.Strength       = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Strength );
+                        client.Character.Vitality       = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Vitality);
+                        client.Character.Dexterity      = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Dexterity );
+                        client.Character.Agility        = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Agility );
+                        client.Character.Intelligence   = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Intelligence );
+                        client.Character.Piety          = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Piety );
+                        client.Character.Luck           = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Luck );
+                    }
+
                     RecvCharaUpdateLvDetailStart recvCharaUpdateLvDetailStart = new RecvCharaUpdateLvDetailStart();
                     RecvCharaUpdateLv recvCharaUpdateLv = new RecvCharaUpdateLv(client.Character);
+                    RecvCharaUpdateLvDetail recvCharaUpdateLvDetail = new RecvCharaUpdateLvDetail(client.Character, experience);
                     RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.Character, experience);
                     RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
 
-                    Router.Send(recvEventStart, client);
+                    RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.Character.Hp.max);
+                    RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.Character.Mp.max);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityStr = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._str, client.Character.Strength, client.Character.battleParam.PlusStrength);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityVit = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._vit, client.Character.Vitality, client.Character.battleParam.PlusVitality);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityDex = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._dex, client.Character.Dexterity, client.Character.battleParam.PlusDexterity);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityAgi = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._agi, client.Character.Agility, client.Character.battleParam.PlusAgility);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityInt = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._int, client.Character.Intelligence, client.Character.battleParam.PlusIntelligence);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityPie = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._pie, client.Character.Piety, client.Character.battleParam.PlusPiety);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityLuk = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._luk, client.Character.Luck, client.Character.battleParam.PlusLuck);
+
                     Router.Send(recvCharaUpdateLvDetailStart, client);
+
+
+                    Router.Send(recvCharaUpdateMaxHp, client);
+                    Router.Send(recvCharaUpdateMaxMp, client);
+                    Router.Send(recvCharaUpdateAbilityStr, client);
+                    Router.Send(recvCharaUpdateAbilityVit, client);
+                    Router.Send(recvCharaUpdateAbilityDex, client);
+                    Router.Send(recvCharaUpdateAbilityAgi, client);
+                    Router.Send(recvCharaUpdateAbilityInt, client);
+                    Router.Send(recvCharaUpdateAbilityPie, client);
+                    Router.Send(recvCharaUpdateAbilityLuk, client);
+
                     Router.Send(recvCharaUpdateLv, client);
+                    Router.Send(recvCharaUpdateLvDetail, client);
                     Router.Send(recvCharaUpdateLvDetail2, client);
                     Router.Send(recvCharaUpdateLvDetailEnd, client);
+
                     break;
 
                 case "questworks":
