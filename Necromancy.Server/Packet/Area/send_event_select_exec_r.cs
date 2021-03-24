@@ -532,24 +532,27 @@ namespace Necromancy.Server.Packet.Area
                 Router.Send(recvSelfMoneyNotify, client);
                 RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("inn/fade_bgm", client.Character.InstanceId);
                 Router.Send(recvEventScriptPlay, client);
-                
+                Experience experience = new Experience();
+
                 //Level up stuff after inn cutscene
                 Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
                 (t1 =>
                 {
-                    RecvEventStart recvEventStart = new RecvEventStart(0, 0);
-                    Router.Send(recvEventStart, client);
-
-                    LevelUpCheck(client);
-
-                    Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
-                    (t1 =>
+                    if (client.Character.ExperienceCurrent > experience.CalculateLevelUp((uint)client.Character.Level + 1).CumulativeExperience)
                     {
-                        RecvEventEnd recvEventEnd = new RecvEventEnd(0);
-                        //Router.Send(recvEventEnd, client);  //Need a better way to end the event at the right time.
-                    }
-                    );
+                        RecvEventStart recvEventStart = new RecvEventStart(0, 0);
+                        Router.Send(recvEventStart, client);
 
+                        LevelUpCheck(client);
+
+                        Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+                        (t1 =>
+                        {
+                            RecvEventEnd recvEventEnd = new RecvEventEnd(0);
+                            Router.Send(recvEventEnd, client);  //Need a better way to end the event at the right time.
+                        }
+                        );
+                    }
                 }
                 );
 
