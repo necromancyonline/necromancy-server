@@ -540,8 +540,13 @@ namespace Necromancy.Server.Packet.Area
 
                 RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("inn/fade_bgm", client.Character.InstanceId);
                 Router.Send(recvEventScriptPlay, client);
+                Task.Delay(TimeSpan.FromMilliseconds(2500)).ContinueWith
+                (t1 =>
+                {
+                    LevelUpCheck(client);
+                }
+                );
 
-                LevelUpCheck(client);
             }
             else
             {
@@ -582,9 +587,22 @@ namespace Necromancy.Server.Packet.Area
                     client.Character.Piety += (ushort)Util.GetRandomNumber(-1, 1);
                     client.Character.Luck += (ushort)Util.GetRandomNumber(-1, 1);
                 }
-                RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.Character, experience);
-                Router.Send(recvCharaUpdateLvDetail2, client);
-                LevelUpCheck(client); //in case you leveled up more than once.
+
+                        RecvEventStart recvEventStart = new RecvEventStart(0, 0);
+                        RecvCharaUpdateLvDetailStart recvCharaUpdateLvDetailStart = new RecvCharaUpdateLvDetailStart();
+                        RecvCharaUpdateLv recvCharaUpdateLv = new RecvCharaUpdateLv(client.Character);
+                        RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.Character, experience);
+                        RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
+                        RecvEventEnd recvEventEnd = new RecvEventEnd(0);
+                        Router.Send(recvEventStart, client);
+                        Router.Send(recvCharaUpdateLvDetailStart, client);
+                        Router.Send(recvCharaUpdateLv, client);
+                        Router.Send(recvCharaUpdateLvDetail2, client);
+                        Router.Send(recvCharaUpdateLvDetailEnd, client);
+                        Router.Send(recvEventEnd, client);
+                        LevelUpCheck(client); //in case you leveled up more than once.
+
+
             }
         }
 

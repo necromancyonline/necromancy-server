@@ -51,7 +51,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client, (ushort)AreaPacketId.recv_0x3C1F, res, ServerType.Area); Thread.Sleep(2000);
             //Router.Send(client, (ushort)AreaPacketId.recv_0x3F2F, res, ServerType.Area); Thread.Sleep(2000); //Not a JP Op code
 
-            Router.Send(client, (ushort)AreaPacketId.recv_chara_status_set_look_switch_r, res, ServerType.Area);Thread.Sleep(2000);
+            Router.Send(client, (ushort)AreaPacketId.recv_chara_status_set_look_switch_r, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x50D1, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x735E, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x8364, res, ServerType.Area); Thread.Sleep(2000);
@@ -70,9 +70,9 @@ namespace Necromancy.Server.Chat.Command.Commands
             Router.Send(client, (ushort)AreaPacketId.recv_0xFB79, res, ServerType.Area); Thread.Sleep(2000);
 
             //double int32 section
-            res = BufferProvider.Provide(); Thread.Sleep(2000);
-            res.WriteInt32(0); Thread.Sleep(2000);
-            res.WriteInt32(200000002); Thread.Sleep(2000);
+            res = BufferProvider.Provide(); 
+            res.WriteInt32(200000002); 
+            res.WriteInt32(200000002);
             Router.Send(client, (ushort)AreaPacketId.recv_0x4D12, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x1489, res, ServerType.Area); Thread.Sleep(2000);
             Router.Send(client, (ushort)AreaPacketId.recv_0x692A, res, ServerType.Area); Thread.Sleep(2000);
