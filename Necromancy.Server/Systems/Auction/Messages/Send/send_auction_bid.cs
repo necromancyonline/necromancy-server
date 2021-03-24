@@ -5,7 +5,7 @@ using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
 using Newtonsoft.Json.Serialization;
 
-namespace Necromancy.Server.Systems.Auction
+namespace Necromancy.Server.Systems.Item
 {
     public class send_auction_bid : ClientHandler
     {
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Systems.Auction
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            AuctionService auctionService = new AuctionService(client);
+            //AuctionService auctionService = new AuctionService(client);
             int error = 0;
             try
             {

@@ -1,14 +1,19 @@
 using Arrowgene.Buffers;
+using Arrowgene.Logging;
 using Necromancy.Server.Common;
+using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Systems.Auction;
+using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
     public class send_auction_search : ClientHandler
     {
-        public send_auction_search(NecServer server) : base(server)
-        {
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_auction_search));
+
+        public send_auction_search(NecServer server) : base(server)        {
         }
 
 
@@ -16,27 +21,40 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
 
-            res.WriteInt32(0x64); // cmp to 0x64 = 100
+            SearchCriteria searchCriteria = new SearchCriteria();
+            searchCriteria.SoulRankMin = packet.Data.ReadByte();
+            searchCriteria.SoulRankMax = packet.Data.ReadByte();
+            searchCriteria.ForgePriceMin = packet.Data.ReadByte();
+            searchCriteria.ForgePriceMax = packet.Data.ReadByte();
+            searchCriteria.Quality = (SearchCriteria.Qualities)packet.Data.ReadInt16();
+            searchCriteria.Class = (SearchCriteria.Classes)packet.Data.ReadInt16();
 
-            int numEntries4 = 0x64;
-            for (int i = 0; i < numEntries4; i++)
-            {
-                res.WriteInt32(0); // 0 = bid, 1 = re-bid 
-                res.WriteInt64(0); // 1 = add, 2 blue icons, what is this ?
-                res.WriteInt32(0); // Lowest
-                res.WriteInt32(0); // Buy Now
-                res.WriteFixedString($"{client.Soul.Name}", 49); // Soul Name Of Sellers
-                res.WriteByte(
-                    0); // 0 = nothing.    Other = Logo appear. maybe it's effect or rank, or somethiung else ?
-                res.WriteFixedString("what's this item ?", 385); // Item Comment
-                res.WriteInt16(0); // Bid
-                res.WriteInt32(0); // Item remaining time
-            }
+            Logger.Info("YEFAS2F");
+            int NUMBER_OF_ITEMS_DEBUG = 20;
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_search_r, res, ServerType.Area);
+            AuctionService auctionService = new AuctionService(client);
+            //List<AuctionLot> auctionList = auctionService.Search(searchCriteria);
+
+            //IBuffer res = BufferProvider.Provide();
+            //res.WriteInt32(0);
+            //res.WriteInt32(auctionList.Count); // cmp to 0x64 = 100
+            //int i = 0;
+            //foreach(AuctionLot auctionLot in auctionList)
+            //{
+            //    res.WriteInt32(i); // 0 = bid, 1 = re-bid 
+            //    res.WriteUInt64(auctionLot.ItemInstance.InstanceID); // 1 = add, 2 blue icons, what is this ?
+            //    res.WriteUInt64(auctionLot.MinimumBid); // Lowest
+            //    res.WriteUInt64(auctionLot.BuyoutPrice); // Buy Now
+            //    res.WriteFixedString(auctionLot.ConsignerName, 49); // Soul Name Of Sellers
+            //    res.WriteByte(
+            //        0); // 0 = nothing.    Other = Logo appear. maybe it's effect or rank, or somethiung else ?
+            //    res.WriteFixedString(auctionLot.Comment, 385); // Item Comment
+            //    res.WriteInt16(8); // Bid?
+            //    res.WriteInt32(auctionLot.SecondsUntilExpiryTime); // Item remaining time
+            //}
+
+            //Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_search_r, res, ServerType.Area);
         }
     }
 }

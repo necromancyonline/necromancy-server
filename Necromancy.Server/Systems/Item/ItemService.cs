@@ -444,87 +444,6 @@ namespace Necromancy.Server.Systems.Item
             return moveResult;
         }
 
-        public ForgeMultiplier LoginLoadMultiplier(int level)
-        {
-            double factor = 1;
-            double durability = 1;
-            int hardness = 0;
-            switch (level)
-            {
-                case 0:     factor = 1.00; durability = 1.0; hardness = 0; break;
-                case 1:     factor = 1.05; durability = 1.1; hardness = 0; break;
-                case 2:     factor = 1.15; durability = 1.2; hardness = 0; break;
-                case 3:     factor = 1.27; durability = 1.3; hardness = 0; break;
-                case 4:     factor = 1.39; durability = 1.4; hardness = 0; break;
-                case 5:     factor = 1.54; durability = 1.5; hardness = 1; break;
-                case 6:     factor = 1.69; durability = 1.6; hardness = 0; break;
-                case 7:     factor = 1.84; durability = 1.7; hardness = 0; break;
-                case 8:     factor = 1.99; durability = 1.8; hardness = 0; break;
-                case 9:     factor = 2.14; durability = 1.9; hardness = 0; break;
-                case 10:    factor = 2.29; durability = 2.0; hardness = 2; break;
-                default: break;
-            }
-            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
-            forgeMultiplier.Factor = factor;
-            forgeMultiplier.Durability = durability;
-            forgeMultiplier.Hardness = hardness;
-            forgeMultiplier.Weight = 100; //toDo
-            return forgeMultiplier;
-        }
-        public ForgeMultiplier ForgeMultiplier(int level)
-        {
-            double factor = 1;
-            double durability = 1;
-            int hardness = 0;
-            switch (level)
-            {
-                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
-                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
-                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
-                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
-                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
-                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
-                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
-                default: factor = 1.00; durability = 1.0; hardness = 0; break;
-            }
-            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
-            forgeMultiplier.Factor = factor;
-            forgeMultiplier.Durability = durability;
-            forgeMultiplier.Hardness = hardness;
-            forgeMultiplier.Weight = 100; //toDo
-            return forgeMultiplier;
-        }
-        public void UpdateEnhancementLevel(ItemInstance itemInstance)
-        {
-            _itemDao.UpdateItemEnhancementLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
-        }
-
-        public List<ItemInstance> Repair(List<ItemLocation> locations)
-        {
-            List<ItemInstance> ItemInstances = new List<ItemInstance>();
-            foreach (ItemLocation location in locations)
-            {
-                ItemInstance itemInstance = _character.ItemManager.GetItem(location);
-                ItemInstances.Add(itemInstance);
-                _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
-            }
-            return ItemInstances;
-        }
-        public ulong SubtractGold(ulong amount)
-        {
-            _character.AdventureBagGold -= amount;
-            return _character.AdventureBagGold;
-        }
-        public ulong AddGold(ulong amount)
-        {
-            _character.AdventureBagGold += amount;
-            return _character.AdventureBagGold;
-        }
-
         public List<PacketResponse> GetMoveResponses(NecClient client, MoveResult moveResult)
         {
             List<PacketResponse> responses = new List<PacketResponse>();
@@ -562,6 +481,7 @@ namespace Necromancy.Server.Systems.Item
             return responses;
         }
 
+        //TODO no character stats should be calculated, should be updated on equip and unequip / buff application move
         public List<PacketResponse>CalculateBattleStats(NecClient client)
         {
             List<PacketResponse> responses = new List<PacketResponse>();
@@ -625,5 +545,141 @@ namespace Necromancy.Server.Systems.Item
         }
 
 
+
+        //TODO What is this for?
+        public ForgeMultiplier LoginLoadMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2: factor = 1.15; durability = 1.2; hardness = 0; break;
+                case 3: factor = 1.27; durability = 1.3; hardness = 0; break;
+                case 4: factor = 1.39; durability = 1.4; hardness = 0; break;
+                case 5: factor = 1.54; durability = 1.5; hardness = 1; break;
+                case 6: factor = 1.69; durability = 1.6; hardness = 0; break;
+                case 7: factor = 1.84; durability = 1.7; hardness = 0; break;
+                case 8: factor = 1.99; durability = 1.8; hardness = 0; break;
+                case 9: factor = 2.14; durability = 1.9; hardness = 0; break;
+                case 10: factor = 2.29; durability = 2.0; hardness = 2; break;
+                default: break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+
+        //TODO What is this for?
+        public ForgeMultiplier ForgeMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
+                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
+                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
+                default: factor = 1.00; durability = 1.0; hardness = 0; break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+        public void UpdateEnhancementLevel(ItemInstance itemInstance)
+        {
+            _itemDao.UpdateItemEnhancementLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
+        }
+
+        //todo add checks
+        public List<ItemInstance> Repair(List<ItemLocation> locations)
+        {
+            List<ItemInstance> ItemInstances = new List<ItemInstance>();
+            foreach (ItemLocation location in locations)
+            {
+                ItemInstance itemInstance = _character.ItemManager.GetItem(location);
+                ItemInstances.Add(itemInstance);
+                _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
+            }
+            return ItemInstances;
+        }
+
+        //TODO remove and move to utils
+        public ulong SubtractGold(ulong amount)
+        {
+            _character.AdventureBagGold -= amount;
+            return _character.AdventureBagGold;
+        }
+        public ulong AddGold(ulong amount)
+        {
+            _character.AdventureBagGold += amount;
+            return _character.AdventureBagGold;
+        }
+
+        //auction functions
+        public MoveResult Exhibit(ItemLocation itemLocation, byte exhibitSlot, byte quantity, int auctionTimeSelector, ulong minBid, ulong buyoutPrice, string comment)
+        {
+            const int MAX_LOTS = 10; //TODO update with dimento?
+            ItemInstance fromItem = _character.ItemManager.GetItem(itemLocation);
+            ItemLocation exhibitLocation = new ItemLocation(ItemZoneType.TempAuctionZone, 0, exhibitSlot);
+            bool hasToItem = _character.ItemManager.HasItem(exhibitLocation);
+            MoveResult moveResult = new MoveResult();
+
+            //check possible errors. these should only occur if client is compromised
+            if (hasToItem) throw new AuctionException(AuctionExceptionType.InvalidListing);
+            //if (currentNumLots >= MAX_LOTS) throw new AuctionException(AuctionExceptionType.LotSlotsFull); //TODO check later if too many slots
+            if (_character.EquippedItems.ContainsValue(fromItem)) throw new AuctionException(AuctionExceptionType.EquipListing); //TODO Might not work because equipment hasn't been fleshed out            
+            //if (false) throw new AuctionException(AuctionExceptionType.InvalidListing); //TODO CHECK IF INVALID ITEM like protect or no trade            
+            //if (false) throw new AuctionException(AuctionExceptionType.LotDimentoMedalExpired); //TODO CHECK DIMETO MEDAL ROYAL ACCOUNT STATUS
+            //if (false) throw new AuctionException(AuctionExceptionType.ItemAlreadyListed); //TODO CHECK ITEM ALREADY_LISTED items must have a unique instance ID! 
+            if (fromItem is null || quantity == 0) throw new AuctionException(AuctionExceptionType.Generic);
+            if (quantity > fromItem.Quantity) throw new AuctionException(AuctionExceptionType.IllegalItemAmount);
+
+            //int gold = _auctionDao.SelectGold(_client.Character); //TODO CHECK GOLD AMOUNT AND SUBTRACT, WAIT FOR UTIL FUNCTION
+            //InventoryService iManager = new InventoryService(_client); //remove this 
+            //iManager.SubtractGold((int) Math.Ceiling(auctionItem.BuyoutPrice * LISTING_FEE_PERCENT));             
+
+            if (quantity == fromItem.Quantity)
+            {
+                moveResult = MoveItemPlace(exhibitLocation, fromItem);
+            }
+            else if (quantity < fromItem.Quantity)
+            {
+                moveResult = MoveItemPlaceQuantity(exhibitLocation, fromItem, quantity);
+            }
+
+            moveResult.DestItem.ConsignerName = _character.Name;
+            moveResult.DestItem.MinimumBid = minBid;
+            moveResult.DestItem.BuyoutPrice = buyoutPrice;
+            moveResult.DestItem.Comment = comment;
+
+            int auctionTimeInSecondsFromNow = 0;
+            const int SECONDS_PER_FOUR_HOURS = 60 * 60 * 4;
+            for (int i = 0; i < auctionTimeSelector; i++)
+            {
+                auctionTimeInSecondsFromNow = (i + 1) * SECONDS_PER_FOUR_HOURS;
+            }
+            moveResult.DestItem.SecondsUntilExpiryTime = auctionTimeInSecondsFromNow;
+
+            _itemDao.UpdateAuctionExhibit(moveResult.DestItem);
+            return moveResult;
+        }
     }
 }

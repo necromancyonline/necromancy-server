@@ -4,7 +4,7 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
 
-namespace Necromancy.Server.Systems.Auction
+namespace Necromancy.Server.Systems.Item
 {
     public class send_auction_cancel_bid : ClientHandler
     {
@@ -17,7 +17,7 @@ namespace Necromancy.Server.Systems.Auction
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            AuctionService auctionService = new AuctionService(client);
+            //AuctionService auctionService = new AuctionService(client);
             int error = 0;
             try
             {

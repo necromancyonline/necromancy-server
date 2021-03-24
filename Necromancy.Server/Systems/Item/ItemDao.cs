@@ -9,194 +9,7 @@ using System.Data.SQLite;
 namespace Necromancy.Server.Systems.Item
 {
     class ItemDao : DatabaseAccessObject, IItemDao
-    {
-        private const string SqlSpawnedView = @"
-            DROP VIEW IF EXISTS item_instance;
-            CREATE VIEW IF NOT EXISTS 
-                item_instance 
-            AS
-			SELECT  nec_item_instance.id,
-                    owner_id,
-                    zone,
-                    container,
-                    slot,
-                    base_id,
-                    quantity,
-                    statuses,
-                    current_equip_slot,
-                    current_durability,
-                    plus_maximum_durability,
-                    enhancement_level,
-                    special_forge_level,
-                    nec_item_library.physical,
-                    nec_item_library.magical,
-                    nec_item_library.hardness,
-					gem_slot_1_type,
-                    gem_slot_2_type,
-                    gem_slot_3_type,
-                    gem_id_slot_1,
-                    gem_id_slot_2,
-                    gem_id_slot_3,
-                    enchant_id,
-					item_type,
-                    quality,
-                    _item_name_necromancy,
-                    max_stack_size,
-                    '3',
-                    es_hand_r,
-                    es_hand_l,
-                    es_quiver,
-                    es_head,
-                    es_body,
-                    es_legs,
-                    es_arms,
-                    es_feet,
-                    es_mantle,
-                    es_ring,
-                    es_earring,
-                    es_necklace,
-                    es_belt,
-                    es_talkring,
-                    es_avatar_head,
-                    es_avatar_body,
-                    es_avatar_legs,
-                    es_avatar_arms,
-                    es_avatar_feet,
-                    es_avatar_mantle,
-                    req_hum_m,
-                    req_hum_f,
-                    req_elf_m,
-                    req_elf_f,
-                    req_dwf_m,
-                    req_dwf_f,
-                    req_por_m,
-                    req_por_f,
-                    req_gnm_m,
-                    req_gnm_f,
-                    req_fighter,
-                    req_thief,
-                    req_mage,
-                    req_priest,
-                    req_lawful,
-                    req_neutral,
-                    req_chaotic,
-                    '40',
-                    '41',
-                    req_str,
-                    req_vit,
-                    req_dex,
-                    req_agi,
-                    req_int,
-                    req_pie,
-                    req_luk,
-                    req_soul_rank,
-                    req_lvl,
-					'51',
-                    '52',
-                    '53',
-                    phys_slash,
-                    phys_strike,
-                    phys_pierce,
-                    '56',
-                    pdef_fire,
-                    pdef_water,
-                    pdef_wind,
-                    pdef_earth,
-                    pdef_light,
-                    pdef_dark,
-                    '63',
-                    '64',
-                    '65',
-                    matk_fire,
-                    matk_water,
-                    matk_wind,
-                    matk_earth,
-                    matk_light,
-                    matk_dark,
-                    '72',
-                    '73',
-                    '74',
-                    '75',
-                    '76',
-                    seffect_hp,
-                    seffect_mp,
-                    seffect_str,
-                    seffect_vit,
-                    seffect_dex,
-                    seffect_agi,
-                    seffect_int,
-                    seffect_pie,
-                    seffect_luk,
-                    res_poison,
-                    res_paralyze,
-                    res_petrified,
-                    res_faint,
-                    res_blind,
-                    res_sleep,
-                    res_silent,
-                    res_charm,
-                    res_confusion,
-                    res_fear,
-                    '96',
-                    status_malus,
-                    status_percent,
-                    num_of_bag_slots,
-                    object_type,
-                    equip_slot,
-                    '102',
-                    '103',
-                    '104',
-                    no_use_in_town,
-                    no_storage,
-                    no_discard,
-                    no_sell,
-                    no_trade,
-                    no_trade_after_used,
-                    no_stolen,
-                    gold_border,
-                    lore,
-                    icon,
-                    field118,
-                    field119,
-                    field120,
-                    field121,
-                    field122,
-                    field123,
-                    field124,
-                    field125,
-                    field126,
-                    field127,
-                    field128,
-                    field129,
-                    field130,
-                    req_samurai,
-                    req_ninja,
-                    req_bishop,
-                    req_lord,
-                    field135,
-                    field136,
-                    field137,
-                    field138,
-                    field139,
-                    req_clown,
-                    req_alchemist,
-                    grade,
-                    nec_item_library.hardness,
-                    scroll_id,
-                    weight,
-                    plus_physical,
-                    plus_magical,
-                    plus_hardness,
-                    plus_gp,
-                    plus_weight,
-                    plus_ranged_eff,
-                    plus_reservoir_eff
-                FROM 
-                    nec_item_instance 
-                INNER JOIN 
-                    nec_item_library 
-                ON 
-                    nec_item_instance.base_id = nec_item_library.id";
+    {    
 
         private const string SqlSelectItemInstanceById = @"
             SELECT
@@ -352,16 +165,14 @@ namespace Necromancy.Server.Systems.Item
                                     );
             SELECT last_insert_rowid()";
 
+        private const string SqlUpdateExhibit = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment 
+            WHERE 
+                id = @id";
 
-        public ItemDao() : base()
-        {
-            CreateView();
-        }
-
-        private void CreateView()
-        {
-            ExecuteNonQuery(SqlSpawnedView, command => { });
-        }
         public ItemInstance InsertItemInstance(int baseId)
         {
             throw new NotImplementedException();
@@ -781,6 +592,16 @@ namespace Necromancy.Server.Systems.Item
             //weight
             itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000);
 
+            //auction
+            itemInstance.ConsignerName = reader.GetString("consigner_name");
+            itemInstance.SecondsUntilExpiryTime = CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
+            itemInstance.MinimumBid = (ulong)reader.GetInt64("min_bid");
+            itemInstance.BuyoutPrice = (ulong)reader.GetInt64("buyout_price");
+            itemInstance.CurrentBid = reader.GetInt32("current_bid");
+            itemInstance.BidderId = reader.GetInt32("bidder_id");
+            itemInstance.Comment = reader.GetString("comment");
+            if (itemInstance.BidderId > 0) itemInstance.IsCancellable = false;
+
             return itemInstance;
         }
 
@@ -799,6 +620,32 @@ namespace Necromancy.Server.Systems.Item
                     }
                 });
             return lootableItemInstances;
+        }
+
+        private int CalcSecondsToExpiry(long unixTimeSecondsExpiry)
+        {
+            DateTime dNow = DateTime.Now;
+            DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
+            return ((int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds()));
+        }
+
+        private long CalcExpiryTime(int secondsToExpiry)
+        {
+            DateTime dNow = DateTime.Now;
+            DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
+            return dOffsetNow.ToUnixTimeSeconds() + secondsToExpiry;
+        }
+
+        public void UpdateAuctionExhibit(ItemInstance itemInstance)
+        {
+            ExecuteNonQuery(SqlUpdateExhibit, command =>
+            {
+                AddParameter(command, "@consigner_name", itemInstance.ConsignerName);
+                AddParameter(command, "@expiry_datetime", CalcExpiryTime(itemInstance.SecondsUntilExpiryTime));
+                AddParameter(command, "@min_bid", itemInstance.MinimumBid);
+                AddParameter(command, "@buyout_price", itemInstance.BuyoutPrice);
+                AddParameter(command, "@comment", itemInstance.Comment);
+            });
         }
     }
 }

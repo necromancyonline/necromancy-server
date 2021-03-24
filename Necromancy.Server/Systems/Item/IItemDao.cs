@@ -33,5 +33,8 @@ namespace Necromancy.Server.Systems.Item
         /// <returns>A list of unidentified lootable items.</returns>
         public List<ItemInstance> SelectLootableInventoryItems(uint ownerId);
 
+        //Auction Methods
+        public void UpdateAuctionExhibit(ItemInstance itemInstance);
+
     }
 }

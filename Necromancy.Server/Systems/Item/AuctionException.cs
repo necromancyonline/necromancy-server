@@ -1,6 +1,6 @@
 using System;
 
-namespace Necromancy.Server.Systems.Auction
+namespace Necromancy.Server.Systems.Item
 {
     [Serializable()]
     public class AuctionException : Exception

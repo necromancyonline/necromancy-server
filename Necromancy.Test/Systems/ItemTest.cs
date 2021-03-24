@@ -97,6 +97,11 @@ namespace Necromancy.Test.Systems
             {
                 throw new NotImplementedException();
             }
+
+            public void UpdateAuctionExhibit(ItemInstance itemInstance)
+            {
+                throw new NotImplementedException();
+            }
         }
 
             public class TestMove

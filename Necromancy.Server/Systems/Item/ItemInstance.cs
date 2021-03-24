@@ -88,6 +88,18 @@ namespace Necromancy.Server.Systems.Item
 
         public byte SPCardColor { get; internal set; }
 
+        //Auction properties
+        public byte ConsignmentSlot { get; set; } 
+        public string ConsignerName { get; set; }
+        public int SecondsUntilExpiryTime { get; set; }
+        public ulong MinimumBid { get; set; }
+        public ulong BuyoutPrice { get; set; }
+        public int BidderId { get; set; }
+        public string BidderName { get; set; }
+        public int CurrentBid { get; set; }
+        public string Comment { get; set; }
+        public bool IsCancellable { get; set; } = true;
+
 
         /// <summary>
         /// Helper function to check if the item is identified or not.

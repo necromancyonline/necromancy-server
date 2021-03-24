@@ -5,7 +5,7 @@ using System.Data.Common;
 
 namespace Necromancy.Server.Systems.Auction
 {
-    public class AuctionDao : DatabaseAccessObject, IAuctionDao
+    public class AuctionDao : DatabaseAccessObject
     {
         private const string SqlCreateItemsUpForAuctionView = @"
             DROP VIEW IF EXISTS items_up_for_auction;
@@ -119,107 +119,107 @@ namespace Necromancy.Server.Systems.Auction
             ExecuteNonQuery(SqlCreateItemsUpForAuctionView, command => { });
         }
 
-        public bool InsertLot(AuctionLot auctionLot)
-        {           
-              int rowsAffected = ExecuteNonQuery(SqlInsertLot, command =>
-                {
-                    AddParameter(command, "@slot", auctionLot.Slot);
-                    AddParameter(command, "@instance_id", auctionLot.ItemInstanceId);
-                    AddParameter(command, "@quantity", auctionLot.Quantity);
-                    AddParameter(command, "@expiry_datetime", CalcExpiryTime(auctionLot.SecondsUntilExpiryTime));
-                    AddParameter(command, "@min_bid", auctionLot.MinimumBid);
-                    AddParameter(command, "@buyout_price", auctionLot.BuyoutPrice);
-                    AddParameter(command, "@comment", auctionLot.Comment);
-                });
-            return rowsAffected > 0;
-        }
+        //public bool InsertLot(ItemInstance auctionLot)
+        //{           
+        //      int rowsAffected = ExecuteNonQuery(SqlInsertLot, command =>
+        //        {
+        //            AddParameter(command, "@slot", auctionLot.Slot);
+        //            AddParameter(command, "@instance_id", auctionLot.ItemInstanceId);
+        //            AddParameter(command, "@quantity", auctionLot.Quantity);
+        //            AddParameter(command, "@expiry_datetime", CalcExpiryTime(auctionLot.SecondsUntilExpiryTime));
+        //            AddParameter(command, "@min_bid", auctionLot.MinimumBid);
+        //            AddParameter(command, "@buyout_price", auctionLot.BuyoutPrice);
+        //            AddParameter(command, "@comment", auctionLot.Comment);
+        //        });
+        //    return rowsAffected > 0;
+        //}
 
-        public AuctionLot SelectItem(int auctionItemId)
-        {
-            AuctionLot auctionItem = new AuctionLot();
-            ExecuteReader(SqlSelectItem,
-                command =>
-                {
-                    AddParameter(command, "@id", auctionItemId);
-                }, reader =>
-                {
-                    MakeAuctionLot(reader);
-                });
-            return auctionItem;
-        }
+        //public AuctionLot SelectItem(int auctionItemId)
+        //{
+        //    AuctionLot auctionItem = new AuctionLot();
+        //    ExecuteReader(SqlSelectItem,
+        //        command =>
+        //        {
+        //            AddParameter(command, "@id", auctionItemId);
+        //        }, reader =>
+        //        {
+        //            MakeAuctionLot(reader);
+        //        });
+        //    return auctionItem;
+        //}
 
-        public bool UpdateBid(AuctionLot auctionItem)
-        {
-            int rowsAffected = ExecuteNonQuery(SqlUpdateBid, command =>
-            {
-                AddParameter(command, "@bidder_id", auctionItem.BidderId);
-                AddParameter(command, "@current_bid", auctionItem.CurrentBid);
-            });
-            return rowsAffected > 0;
-        }
+        //public bool UpdateBid(AuctionLot auctionItem)
+        //{
+        //    int rowsAffected = ExecuteNonQuery(SqlUpdateBid, command =>
+        //    {
+        //        AddParameter(command, "@bidder_id", auctionItem.BidderId);
+        //        AddParameter(command, "@current_bid", auctionItem.CurrentBid);
+        //    });
+        //    return rowsAffected > 0;
+        //}
 
-        public AuctionLot[] SelectBids(Character character)
-        {
-            AuctionLot[] bids = new AuctionLot[AuctionService.MAX_BIDS];
-            int i = 0;
-            ExecuteReader(SqlSelectBids,
-                command =>
-                {
-                    AddParameter(command, "@character_id", character.Id);
-                }, reader =>
-                {
-                    while (reader.Read())
-                    {
-                        if (i >= AuctionService.MAX_BIDS) break;
-                        AuctionLot bid = MakeAuctionLot(reader);
-                        bids[i] = bid;
-                        i++;
-                    }
-                });
-            AuctionLot[] truncatedBids = new AuctionLot[i];
-            Array.Copy(bids, truncatedBids, i);
-            return truncatedBids;
-        }
+        //public AuctionLot[] SelectBids(Character character)
+        //{
+        //    AuctionLot[] bids = new AuctionLot[AuctionService.MAX_BIDS];
+        //    int i = 0;
+        //    ExecuteReader(SqlSelectBids,
+        //        command =>
+        //        {
+        //            AddParameter(command, "@character_id", character.Id);
+        //        }, reader =>
+        //        {
+        //            while (reader.Read())
+        //            {
+        //                if (i >= AuctionService.MAX_BIDS) break;
+        //                AuctionLot bid = MakeAuctionLot(reader);
+        //                bids[i] = bid;
+        //                i++;
+        //            }
+        //        });
+        //    AuctionLot[] truncatedBids = new AuctionLot[i];
+        //    Array.Copy(bids, truncatedBids, i);
+        //    return truncatedBids;
+        //}
 
-        public AuctionLot[] SelectLots(Character character)
-        {
-            AuctionLot[] lots = new AuctionLot[AuctionService.MAX_LOTS];
-            int i = 0;
-            ExecuteReader(SqlSelectLots,
-                command =>
-                {
-                    AddParameter(command, "@character_id", character.Id);
-                }, reader =>
-                {                    
-                    while (reader.Read())
-                    {
-                        if (i >= AuctionService.MAX_LOTS) break;
-                        AuctionLot lot = MakeAuctionLot(reader);
-                        lots[i] = lot;
-                        i++;
-                    }
-                });
-            AuctionLot[] truncatedLots = new AuctionLot[i];
-            Array.Copy(lots, truncatedLots, i);
-            return truncatedLots;
-        }
+        //public AuctionLot[] SelectLots(Character character)
+        //{
+        //    AuctionLot[] lots = new AuctionLot[AuctionService.MAX_LOTS];
+        //    int i = 0;
+        //    ExecuteReader(SqlSelectLots,
+        //        command =>
+        //        {
+        //            AddParameter(command, "@character_id", character.Id);
+        //        }, reader =>
+        //        {                    
+        //            while (reader.Read())
+        //            {
+        //                if (i >= AuctionService.MAX_LOTS) break;
+        //                AuctionLot lot = MakeAuctionLot(reader);
+        //                lots[i] = lot;
+        //                i++;
+        //            }
+        //        });
+        //    AuctionLot[] truncatedLots = new AuctionLot[i];
+        //    Array.Copy(lots, truncatedLots, i);
+        //    return truncatedLots;
+        //}
 
-        private AuctionLot MakeAuctionLot(DbDataReader reader)
-        {
-            AuctionLot auctionItem = new AuctionLot();
-            auctionItem.Id = reader.GetInt32("id");
-            auctionItem.ConsignerId = reader.GetInt32("consigner_id");
-            auctionItem.ConsignerName = reader.GetString("consigner_name");
-            auctionItem.ItemInstanceId = (ulong) reader.GetInt64("spawn_id");
-            auctionItem.Quantity = reader.GetInt32("quantity");
-            auctionItem.SecondsUntilExpiryTime = CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
-            auctionItem.MinimumBid = (ulong) reader.GetInt64("min_bid");
-            auctionItem.BuyoutPrice = (ulong) reader.GetInt64("buyout_price");
-            auctionItem.CurrentBid = reader.GetInt32("current_bid");
-            auctionItem.BidderId = reader.GetInt32("bidder_id");
-            auctionItem.Comment = reader.GetString("comment");
-            return auctionItem;
-        }
+        //private AuctionLot MakeAuctionLot(DbDataReader reader)
+        //{
+        //    AuctionLot auctionItem = new AuctionLot();
+        //    auctionItem.Id = reader.GetInt32("id");
+        //    auctionItem.ConsignerId = reader.GetInt32("consigner_id");
+        //    auctionItem.ConsignerName = reader.GetString("consigner_name");
+        //    auctionItem.ItemInstanceId = (ulong) reader.GetInt64("spawn_id");
+        //    auctionItem.Quantity = reader.GetInt32("quantity");
+        //    auctionItem.SecondsUntilExpiryTime = CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
+        //    auctionItem.MinimumBid = (ulong) reader.GetInt64("min_bid");
+        //    auctionItem.BuyoutPrice = (ulong) reader.GetInt64("buyout_price");
+        //    auctionItem.CurrentBid = reader.GetInt32("current_bid");
+        //    auctionItem.BidderId = reader.GetInt32("bidder_id");
+        //    auctionItem.Comment = reader.GetString("comment");
+        //    return auctionItem;
+        //}
 
         private int CalcSecondsToExpiry(long unixTimeSecondsExpiry)
         {
@@ -250,20 +250,20 @@ namespace Necromancy.Server.Systems.Auction
             throw new NotImplementedException();
         }
 
-        public AuctionLot[] SelectItemsByCriteria(SearchCriteria searchCriteria)
-        {
-            AuctionLot[] results = new AuctionLot[1];
-            ExecuteReader(SqlSelectItemsByCriteria,
-                command =>
-                {
+        //public AuctionLot[] SelectItemsByCriteria(SearchCriteria searchCriteria)
+        //{
+        //    AuctionLot[] results = new AuctionLot[1];
+        //    ExecuteReader(SqlSelectItemsByCriteria,
+        //        command =>
+        //        {
                     
-                }, reader =>
-                {
-                    while (reader.Read()) { 
-                    //TODO do something
-                    }
-                });
-            throw new NotImplementedException();
-        }
+        //        }, reader =>
+        //        {
+        //            while (reader.Read()) { 
+        //            //TODO do something
+        //            }
+        //        });
+        //    throw new NotImplementedException();
+        //}
     }
 }

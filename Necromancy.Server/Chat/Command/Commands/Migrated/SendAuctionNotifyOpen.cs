@@ -4,6 +4,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Auction;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -18,8 +19,8 @@ namespace Necromancy.Server.Chat.Command.Commands
             List<ChatResponse> responses)
         {
             //AuctionService auctionHouse = new AuctionService(client);
-            AuctionLot[] lots = new AuctionLot[0]; //TODO auctionHouse.GetLots();
-            AuctionLot[] bids = new AuctionLot[0]; //TODO auctionHouse.GetBids();
+            ItemInstance[] lots = new ItemInstance[0]; //TODO auctionHouse.GetLots();
+            ItemInstance[] bids = new ItemInstance[0]; //TODO auctionHouse.GetBids();
             const byte isInMaintenanceMode = 0x0;
 
             //IBuffer res = BufferProvider.Provide();
@@ -71,7 +72,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 res.WriteByte((byte)i); // row number?
                 res.WriteInt32(i); // row number ??
-                res.WriteInt64(bids[i].ItemID);
+                res.WriteInt64(bids[i].BaseID);
                 res.WriteUInt64(bids[i].MinimumBid); // Lowest
                 res.WriteUInt64(bids[i].BuyoutPrice); // Buy Now
                 res.WriteFixedString(bids[i].ConsignerName, 49);

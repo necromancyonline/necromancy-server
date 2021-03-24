@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Necromancy.Server.Systems.Auction
+namespace Necromancy.Server.Systems.Item
 {
     public enum AuctionExceptionType
     {        
