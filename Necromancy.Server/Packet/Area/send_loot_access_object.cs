@@ -46,13 +46,21 @@ namespace Necromancy.Server.Packet.Area
 
             if (result == 0)
             {
+                IBuffer res = BufferProvider.Provide();
+                res.WriteInt32(2);
+                Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+
                 int itemId = monster.loot.DropTableItemSerialIds[monster.loot.ItemCountRNG];
                 ItemSpawnParams spawmParam = new ItemSpawnParams();
+                spawmParam.ItemStatuses = ItemStatuses.Identified;
                 ItemInstance itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, itemId, spawmParam);
                 Logger.Debug(itemInstance.Type.ToString());
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
-                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                Router.Send(client, recvItemInstance.ToPacket());
                 monster.loot.ItemCountRNG--; //decrement available items
+
+                res = BufferProvider.Provide();
+                Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             }
 
 

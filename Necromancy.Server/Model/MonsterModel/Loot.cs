@@ -16,7 +16,7 @@ namespace Necromancy.Server.Model
             Gold = (ulong)(level * Util.GetRandomNumber(1,5));
             Experience = (ulong)(level * level * level + level); //yea, make a better Exp calc, or find an exp table.
             ItemCountRNG = (byte) Util.GetRandomNumber(0,5); //number of items from loot table you get to loot
-            DropTableItemSerialIds = new int[] { 50100302, 51000101, 61100017, 100111, 200102 , 210311 }; //Temporary.  reference an actual loot table by serial ID later.
+            DropTableItemSerialIds = new int[] { 50100302, 51000401, 90039902, 100111, 50100504, 210311 }; //Temporary.  reference an actual loot table by serial ID later.
 
         }
 
