@@ -30,6 +30,8 @@
         </ContentWithTargetPath>
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Model\ItemModel\" />
+      <Compile Remove="Model\ItemModel\**" />
+      <EmbeddedResource Remove="Model\ItemModel\**" />
+      <None Remove="Model\ItemModel\**" />
     </ItemGroup>
 </Project>

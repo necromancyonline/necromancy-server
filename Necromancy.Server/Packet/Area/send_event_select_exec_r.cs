@@ -541,6 +541,7 @@ namespace Necromancy.Server.Packet.Area
                 RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("inn/fade_bgm", client.Character.InstanceId);
                 Router.Send(recvEventScriptPlay, client);
 
+                LevelUpCheck(client);
             }
             else
             {
@@ -551,6 +552,40 @@ namespace Necromancy.Server.Packet.Area
             client.Character.eventSelectExecCode = 0;
             client.Character.eventSelectReadyCode = 0;
             client.Character.secondInnAccess = false;
+        }
+
+        private void LevelUpCheck(NecClient client)
+        {
+            Experience experience = new Experience();
+            if (client.Character.ExperienceCurrent > experience.CalculateLevelUp((uint)client.Character.Level+1).CumulativeExperience)
+            {
+                client.Character.Level++;
+                client.Character.Hp.setMax(client.Character.Hp.max + 10);
+                client.Character.Mp.setMax(client.Character.Mp.max + 10);
+                client.Character.Strength += (ushort)Util.GetRandomNumber(0, 1);
+                client.Character.Vitality += (ushort)Util.GetRandomNumber(0, 1);
+                client.Character.Dexterity += (ushort)Util.GetRandomNumber(0, 1);
+                client.Character.Agility += (ushort)Util.GetRandomNumber(0, 1);
+                client.Character.Intelligence += (ushort)Util.GetRandomNumber(0, 1);
+                client.Character.Piety += (ushort)Util.GetRandomNumber(0, 1);
+                client.Character.Luck += (ushort)Util.GetRandomNumber(0, 1);
+                int luckyShot = Util.GetRandomNumber(0, client.Character.Luck);
+                if (luckyShot > (client.Character.Luck * .8))
+                {
+                    client.Character.Hp.setMax(client.Character.Hp.max + 10);
+                    client.Character.Mp.setMax(client.Character.Mp.max + 10);
+                    client.Character.Strength += (ushort)Util.GetRandomNumber(-1, 1);
+                    client.Character.Vitality += (ushort)Util.GetRandomNumber(-1, 1);
+                    client.Character.Dexterity += (ushort)Util.GetRandomNumber(-1, 1);
+                    client.Character.Agility += (ushort)Util.GetRandomNumber(-1, 1);
+                    client.Character.Intelligence += (ushort)Util.GetRandomNumber(-1, 1);
+                    client.Character.Piety += (ushort)Util.GetRandomNumber(-1, 1);
+                    client.Character.Luck += (ushort)Util.GetRandomNumber(-1, 1);
+                }
+                RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.Character, experience);
+                Router.Send(recvCharaUpdateLvDetail2, client);
+                LevelUpCheck(client); //in case you leveled up more than once.
+            }
         }
 
         private void SoulRankNPC(NecClient client, int objectId, NpcSpawn npcSpawn)

@@ -5,6 +5,8 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive;
+using Necromancy.Server.Packet.Receive.Area;
+using Necromancy.Server.Systems.Item;
 using System;
 
 namespace Necromancy.Server.Packet.Area
@@ -24,24 +26,36 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
+            ItemService itemService = new ItemService(client.Character);
+            int result = 0;
             int instanceID = packet.Data.ReadInt32();
-            //MonsterSpawn monster = client.Map.GetMonsterByInstanceId((uint) instanceID);
+            MonsterSpawn monster = client.Map.GetMonsterByInstanceId((uint) instanceID);
             Logger.Debug($"{client.Character.Name} is trying to loot object {instanceID}");
 
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(1000);
-            res.WriteByte(0);//bool
-            Router.Send(client, (ushort)AreaPacketId.recv_self_exp_notify, res, ServerType.Area);
+            if (monster == null) result = -10;
+            else if (monster.loot.ItemCountRNG == 0) result = -1;
+            else if (client.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag) < 1) result = -207; //expand to all inventory. TODO            
 
             IBuffer res2 = BufferProvider.Provide();
-            res2.WriteInt32(0);
+            res2.WriteInt32(result);
             Router.Send(client, (ushort) AreaPacketId.recv_loot_access_object_r, res2, ServerType.Area);
             //LOOT, -1, I don't have anything. , SYSTEM_WARNING,
             //LOOT, -10, no route target, SYSTEM_WARNING,
             //LOOT, -207, There is no space in the inventory. , SYSTEM_WARNING,
             //LOOT, -1500, no root authority. , SYSTEM_WARNING,
 
-     
+            if (result == 0)
+            {
+                int itemId = monster.loot.DropTableItemSerialIds[monster.loot.ItemCountRNG];
+                ItemSpawnParams spawmParam = new ItemSpawnParams();
+                ItemInstance itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, itemId, spawmParam);
+                Logger.Debug(itemInstance.Type.ToString());
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                monster.loot.ItemCountRNG--; //decrement available items
+            }
+
+
         }
     }
 }
