@@ -1,5 +1,6 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
+using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -39,6 +40,9 @@ namespace Necromancy.Server.Packet.Area
 
             int luckyChance = Util.GetRandomNumber(0, client.Character.Luck); //the more luck you have, the better your chances
             if (luckyChance < 5) result = 2;
+            if ((result == 2) & (forgeItemCount > 1) && Util.GetRandomNumber(0, client.Character.Luck) < 4) result = 1; // use 2 forge stone, get a 2nd chance
+            if ((result == 2) & (forgeItemCount > 2) && Util.GetRandomNumber(0, client.Character.Luck) < 3) result = 1; // use 3 forge stone, get a 3rd chance
+            //if ((result == 2) & (forgeItemCount > 2) && Util.GetRandomNumber(0, client.Character.Luck) < 5) result = 1; // use 3 forge stone, get a 4th chance
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);// 0 is a pass, anything but 0 is a fail; seems like a check for if you can still upgrade the weapon
@@ -80,10 +84,46 @@ namespace Necromancy.Server.Packet.Area
             itemService.UpdateEnhancementLevel(itemInstance);
 
             }
-            else
+            else if (supportItemCount == 0)
             {
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
                 Router.Send(recvItemRemove);
+            }
+            else if (itemInstance.EnhancementLevel > 4) //if forge fails but gaurd exists, do not lose item.
+            {
+                itemInstance.EnhancementLevel = 4;
+
+                ForgeMultiplier forgeDehancementMultiplier = itemService.LoginLoadMultiplier(itemInstance.EnhancementLevel);
+                Server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting); //ToDo,  load Nec_Item_Library into memory for queries like this.
+                if (itemLibrarySetting != null)
+                {
+                    itemInstance.Physical = (short)itemLibrarySetting.PhysicalAttack;
+                    itemInstance.Magical = (short)itemLibrarySetting.MagicalAttack;
+                    itemInstance.MaximumDurability = itemLibrarySetting.Durability;
+                    itemInstance.Hardness = (byte)itemLibrarySetting.Hardness;
+                    itemInstance.Weight = (int)itemLibrarySetting.Weight;
+                }
+
+                itemInstance.Physical = (short)(itemInstance.Physical * forgeDehancementMultiplier.Factor);
+                itemInstance.Magical = (short)(itemInstance.Magical * forgeDehancementMultiplier.Factor);
+                itemInstance.MaximumDurability = (short)(itemInstance.MaximumDurability * forgeDehancementMultiplier.Durability);
+                itemInstance.Hardness = (byte)(itemInstance.Hardness + forgeDehancementMultiplier.Hardness);
+                itemInstance.Weight = (short)(itemInstance.Weight - forgeDehancementMultiplier.Weight);
+
+                RecvItemUpdateLevel recvItemUpdateLevel = new RecvItemUpdateLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
+                Router.Send(client, recvItemUpdateLevel.ToPacket());
+                RecvItemUpdatePhysics recvItemUpdatePhysics = new RecvItemUpdatePhysics(itemInstance.InstanceID, itemInstance.Physical);
+                Router.Send(client, recvItemUpdatePhysics.ToPacket());
+                RecvItemUpdateMagic recvItemUpdateMagic = new RecvItemUpdateMagic(itemInstance.InstanceID, itemInstance.Magical);
+                Router.Send(client, recvItemUpdateMagic.ToPacket());
+                RecvItemUpdateMaxDur recvItemUpdateMaxDur = new RecvItemUpdateMaxDur(itemInstance.InstanceID, itemInstance.MaximumDurability);
+                Router.Send(client, recvItemUpdateMaxDur.ToPacket());
+                RecvItemUpdateHardness recvItemUpdateHardness = new RecvItemUpdateHardness(itemInstance.InstanceID, itemInstance.Hardness);
+                Router.Send(client, recvItemUpdateHardness.ToPacket());
+                RecvItemUpdateWeight recvItemUpdateWeight = new RecvItemUpdateWeight(itemInstance.InstanceID, itemInstance.Weight);
+                Router.Send(client, recvItemUpdateWeight.ToPacket());
+
+                itemService.UpdateEnhancementLevel(itemInstance);
             }
             for (int i = 0; i < forgeItemCount; i++)
             {
