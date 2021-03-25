@@ -513,10 +513,8 @@ namespace Necromancy.Server.Packet.Area
                 ulong[] GoldCostPerChoice = new ulong[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
                 Logger.Debug($"The selection you have made is {client.Character.eventSelectExtraSelectionCode}");
 
-                client.Character.Hp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode],
-                    true);
-                client.Character.Mp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode],
-                    true);
+                client.Character.Hp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode], true);
+                client.Character.Mp.setCurrent((sbyte) HPandMPperChoice[client.Character.eventSelectExtraSelectionCode], true);
                 client.Character.Condition.setCurrent(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
                 client.Character.Od.toMax();
                 client.Character.Gp.toMax();
@@ -524,22 +522,39 @@ namespace Necromancy.Server.Packet.Area
                 if (client.Character.Hp.current >= client.Character.Hp.max) client.Character.Hp.toMax();
                 if (client.Character.Mp.current >= client.Character.Mp.current) client.Character.Mp.toMax();
 
-
-                IBuffer res = BufferProvider.Provide();
-                res.WriteInt32(client.Character.Hp.current);
-                Router.Send(client, (ushort) AreaPacketId.recv_chara_update_hp, res, ServerType.Area);
-                res = BufferProvider.Provide();
-                res.WriteInt32(client.Character.Mp.current);
-                Router.Send(client, (ushort) AreaPacketId.recv_chara_update_mp, res, ServerType.Area);
-                res = BufferProvider.Provide();
-                res.WriteByte(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
-                Router.Send(client, (ushort) AreaPacketId.recv_chara_update_con, res, ServerType.Area);
-                res = BufferProvider.Provide();
-                res.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
-                Router.Send(client, (ushort) AreaPacketId.recv_self_money_notify, res, ServerType.Area);
-
+                RecvCharaUpdateHp recvCharaUpdateHp = new RecvCharaUpdateHp(client.Character.Hp.current);
+                Router.Send(recvCharaUpdateHp, client);
+                RecvCharaUpdateMp recvCharaUpdateMp = new RecvCharaUpdateMp(client.Character.Mp.current);
+                Router.Send(recvCharaUpdateMp, client);
+                RecvCharaUpdateCon recvCharaUpdateCon = new RecvCharaUpdateCon(ConditionPerChoice[client.Character.eventSelectExtraSelectionCode]);
+                Router.Send(recvCharaUpdateCon, client);
+                RecvSelfMoneyNotify recvSelfMoneyNotify = new RecvSelfMoneyNotify(client, client.Character.AdventureBagGold);
+                Router.Send(recvSelfMoneyNotify, client);
                 RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("inn/fade_bgm", client.Character.InstanceId);
                 Router.Send(recvEventScriptPlay, client);
+                Experience experience = new Experience();
+
+                //Level up stuff after inn cutscene
+                Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
+                (t1 =>
+                {
+                    if (client.Character.ExperienceCurrent > experience.CalculateLevelUp((uint)client.Character.Level + 1).CumulativeExperience)
+                    {
+                        RecvEventStart recvEventStart = new RecvEventStart(0, 0);
+                        Router.Send(recvEventStart, client);
+
+                        LevelUpCheck(client);
+
+                        Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+                        (t1 =>
+                        {
+                            RecvEventEnd recvEventEnd = new RecvEventEnd(0);
+                            Router.Send(recvEventEnd, client);  //Need a better way to end the event at the right time.
+                        }
+                        );
+                    }
+                }
+                );
 
             }
             else
@@ -551,6 +566,77 @@ namespace Necromancy.Server.Packet.Area
             client.Character.eventSelectExecCode = 0;
             client.Character.eventSelectReadyCode = 0;
             client.Character.secondInnAccess = false;
+        }
+
+        private void LevelUpCheck(NecClient client)
+        {
+            Experience experience = new Experience();
+            Task.Delay(TimeSpan.FromSeconds(1)).ContinueWith
+            (t1 =>
+            {
+                while (client.Character.ExperienceCurrent > experience.CalculateLevelUp((uint)client.Character.Level+1).CumulativeExperience)
+                {
+                    client.Character.Level++;
+                    client.Character.Hp.setMax(client.Character.Hp.max + 10);
+                    client.Character.Mp.setMax(client.Character.Mp.max + 10);
+                    client.Character.Strength += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Vitality += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Dexterity += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Agility += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Intelligence += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Piety += (ushort)Util.GetRandomNumber(0, 2);
+                    client.Character.Luck += (ushort)Util.GetRandomNumber(0, 2);
+                    int luckyShot = Util.GetRandomNumber(0, client.Character.Luck);
+                    if (luckyShot > (client.Character.Luck * .8))
+                    {
+                        client.Character.Hp.setMax(client.Character.Hp.max + 10);
+                        client.Character.Mp.setMax(client.Character.Mp.max + 10);
+                        client.Character.Strength       = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Strength );
+                        client.Character.Vitality       = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Vitality);
+                        client.Character.Dexterity      = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Dexterity );
+                        client.Character.Agility        = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Agility );
+                        client.Character.Intelligence   = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Intelligence );
+                        client.Character.Piety          = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Piety );
+                        client.Character.Luck           = (ushort)(Util.GetRandomNumber(-2, 2) + client.Character.Luck );
+                    }
+
+                    RecvCharaUpdateLvDetailStart recvCharaUpdateLvDetailStart = new RecvCharaUpdateLvDetailStart();
+                    RecvCharaUpdateLv recvCharaUpdateLv = new RecvCharaUpdateLv(client.Character);
+                    RecvCharaUpdateLvDetail recvCharaUpdateLvDetail = new RecvCharaUpdateLvDetail(client.Character, experience);
+                    RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.Character, experience);
+                    RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
+
+                    RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.Character.Hp.max);
+                    RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.Character.Mp.max);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityStr = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._str, client.Character.Strength, client.Character.battleParam.PlusStrength);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityVit = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._vit, client.Character.Vitality, client.Character.battleParam.PlusVitality);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityDex = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._dex, client.Character.Dexterity, client.Character.battleParam.PlusDexterity);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityAgi = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._agi, client.Character.Agility, client.Character.battleParam.PlusAgility);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityInt = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._int, client.Character.Intelligence, client.Character.battleParam.PlusIntelligence);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityPie = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._pie, client.Character.Piety, client.Character.battleParam.PlusPiety);
+                    RecvCharaUpdateAbility recvCharaUpdateAbilityLuk = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.ability._luk, client.Character.Luck, client.Character.battleParam.PlusLuck);
+
+                    Router.Send(recvCharaUpdateLvDetailStart, client);
+
+
+                    Router.Send(recvCharaUpdateMaxHp, client);
+                    Router.Send(recvCharaUpdateMaxMp, client);
+                    Router.Send(recvCharaUpdateAbilityStr, client);
+                    Router.Send(recvCharaUpdateAbilityVit, client);
+                    Router.Send(recvCharaUpdateAbilityDex, client);
+                    Router.Send(recvCharaUpdateAbilityAgi, client);
+                    Router.Send(recvCharaUpdateAbilityInt, client);
+                    Router.Send(recvCharaUpdateAbilityPie, client);
+                    Router.Send(recvCharaUpdateAbilityLuk, client);
+
+                    Router.Send(recvCharaUpdateLv, client);
+                    Router.Send(recvCharaUpdateLvDetail, client);
+                    Router.Send(recvCharaUpdateLvDetail2, client);
+                    Router.Send(recvCharaUpdateLvDetailEnd, client);
+
+                }
+            }
+            );
         }
 
         private void SoulRankNPC(NecClient client, int objectId, NpcSpawn npcSpawn)

@@ -281,9 +281,9 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 case "ability":  //udates settings 1-7 on the ability tab
                     res = BufferProvider.Provide();
-                    res.WriteInt32(y);
-                    res.WriteInt16(10);
-                    res.WriteInt16(25);
+                    res.WriteInt32(y); //attribute
+                    res.WriteInt16(10); //base
+                    res.WriteInt16(25); //total 
                     Router.Send(client, (ushort)AreaPacketId.recv_chara_update_ability, res, ServerType.Area);
                     break;
 

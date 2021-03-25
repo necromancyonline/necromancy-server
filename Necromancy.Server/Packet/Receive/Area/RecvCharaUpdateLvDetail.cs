@@ -7,19 +7,22 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateLvDetail : PacketResponse
     {
-        public RecvCharaUpdateLvDetail()
+        Character _character;
+        Experience _experience;
+        public RecvCharaUpdateLvDetail(Character character, Experience experience)
             : base((ushort) AreaPacketId.recv_chara_update_lv_detail, ServerType.Area)
         {
+            _character = character;
+            _experience = experience;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt16(0); // new level
+            res.WriteInt16(_character.Level); // new level
 
-            res.WriteInt64(0); // start exp
-
-            res.WriteInt64(0); // exp needed for next level
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level - 1).CumulativeExperience); // exp start
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level - 0).CumulativeExperience); // exp next
             return res;
         }
     }
