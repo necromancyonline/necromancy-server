@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0); //Bool
             res.WriteCString("");
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_login_news_url_notify, res, ServerType.Area);
+            Router.Send(client, (ushort) AreaPacketId.recv_login_news_url_notify, res, ServerType.Area);
         }
     }
 }
