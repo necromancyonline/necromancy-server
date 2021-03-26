@@ -21,8 +21,8 @@ namespace Necromancy.Server.Packet.Area
             RecvShopClose shopClose = new RecvShopClose();
             Router.Send(shopClose, client);
 
-            RecvShopNotifyClose notifyClose = new RecvShopNotifyClose();
-            Router.Send(client.Map, notifyClose, client);
+            //RecvShopNotifyClose notifyClose = new RecvShopNotifyClose();
+            //Router.Send(client.Map, notifyClose, client);//Causes other client's shops to close, can't be used on self.
 
             RecvEventSync syncEvent = new RecvEventSync();
             Router.Send(syncEvent, client);
