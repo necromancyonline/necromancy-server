@@ -86,6 +86,7 @@ namespace Necromancy.Server.Packet.Area
             }
             else if (supportItemCount == 0)
             {
+                itemService.Remove(itemInstance.Location, itemInstance.Quantity);
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
                 Router.Send(recvItemRemove);
             }
@@ -128,15 +129,23 @@ namespace Necromancy.Server.Packet.Area
             for (int i = 0; i < forgeItemCount; i++)
             {
                 ItemInstance forgeItemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)forgeItemStorageType[i], forgeItemBag[i], forgeItemSlot[i]));
-                RecvItemRemove recvItemRemove = new RecvItemRemove(client, forgeItemInstance);
-                Router.Send(recvItemRemove);
+                if (forgeItemInstance != null)
+                {
+                    RecvItemRemove recvItemRemove = new RecvItemRemove(client, forgeItemInstance);
+                    Router.Send(recvItemRemove);
+                    itemService.Remove(forgeItemInstance.Location, forgeItemInstance.Quantity);
+                }
 
             }
             for (int i = 0; i < supportItemCount; i++)
             {
                 ItemInstance supportItemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)supportItemStorageType, supportItemBag, supportItemSlot));
-                RecvItemRemove recvItemRemove = new RecvItemRemove(client, supportItemInstance);
-                Router.Send(recvItemRemove);
+                if (supportItemInstance != null)
+                {
+                    RecvItemRemove recvItemRemove = new RecvItemRemove(client, supportItemInstance);
+                    Router.Send(recvItemRemove);
+                    itemService.Remove(supportItemInstance.Location, supportItemInstance.Quantity);
+                }
             }
 
 
