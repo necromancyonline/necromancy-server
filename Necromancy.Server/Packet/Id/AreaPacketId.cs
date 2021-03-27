@@ -1259,10 +1259,10 @@ namespace Necromancy.Server.Packet.Id
         send_wanted_list_close = 0xABCD,
 
         //new JP Sends
-        send_auction_deregist_search_equipment_cond = 0x0,
-        send_auction_deregist_search_item_cond = 0x0,
-        send_auction_regist_search_equipment_cond = 0x0,
-        send_auction_regist_search_item_cond = 0x0,
+        send_auction_deregist_search_equipment_cond = 0x7BB0,
+        send_auction_deregist_search_item_cond = 0x760B,
+        send_auction_regist_search_equipment_cond = 0x431B,
+        send_auction_regist_search_item_cond = 0x76B9,
         send_battle_attack_long_cancel_request = 0x0,
         send_battle_attack_long_exec = 0x0,
         send_battle_attack_long_reload_cancel_request = 0x0,
