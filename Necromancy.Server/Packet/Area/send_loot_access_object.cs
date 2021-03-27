@@ -30,11 +30,11 @@ namespace Necromancy.Server.Packet.Area
             int result = 0;
             int instanceID = packet.Data.ReadInt32();
             MonsterSpawn monster = client.Map.GetMonsterByInstanceId((uint) instanceID);
-            Logger.Debug($"{client.Character.Name} is trying to loot object {instanceID}");
+            Logger.Debug($"{client.Character.Name} is trying to loot object {instanceID}.  Inventory Space {client.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
 
             if (monster == null) result = -10;
             else if (monster.loot.ItemCountRNG == 0) result = -1;
-            else if (client.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag) < 1) result = -207; //expand to all inventory. TODO            
+            else if (client.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag) < 2) result = -207; //expand to all inventory. TODO            
 
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(result);

@@ -12,6 +12,7 @@ namespace Necromancy.Server.Systems.Item
         Master      = 1 << 4,
         Legend      = 1 << 5,
         Artifact    = 1 << 6,
+        Epic        = 1 << 7,
         OTHER       = None
     }
 }
