@@ -4,6 +4,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
 using System.Collections.Generic;
 
@@ -28,33 +29,35 @@ namespace Necromancy.Server.Packet.Area
             searchCriteria.ForgePriceMin = packet.Data.ReadByte();
             searchCriteria.ForgePriceMax = packet.Data.ReadByte();
             searchCriteria.Quality = (ItemQualities)packet.Data.ReadInt16();
-            searchCriteria.Class = (Classes)packet.Data.ReadInt16();
-
-            Logger.Info("YEFAS2F");
-            int NUMBER_OF_ITEMS_DEBUG = 20;
+            searchCriteria.Class = (Classes)packet.Data.ReadInt16();            
 
             ItemService itemService = new ItemService(client.Character);
             List<ItemInstance> auctionList = itemService.SearchAuction(searchCriteria);
 
-            //IBuffer res = BufferProvider.Provide();
-            //res.WriteInt32(0);
-            //res.WriteInt32(auctionList.Count); // cmp to 0x64 = 100
-            //int i = 0;
-            //foreach(AuctionLot auctionLot in auctionList)
-            //{
-            //    res.WriteInt32(i); // 0 = bid, 1 = re-bid 
-            //    res.WriteUInt64(auctionLot.ItemInstance.InstanceID); // 1 = add, 2 blue icons, what is this ?
-            //    res.WriteUInt64(auctionLot.MinimumBid); // Lowest
-            //    res.WriteUInt64(auctionLot.BuyoutPrice); // Buy Now
-            //    res.WriteFixedString(auctionLot.ConsignerName, 49); // Soul Name Of Sellers
-            //    res.WriteByte(
-            //        0); // 0 = nothing.    Other = Logo appear. maybe it's effect or rank, or somethiung else ?
-            //    res.WriteFixedString(auctionLot.Comment, 385); // Item Comment
-            //    res.WriteInt16(8); // Bid?
-            //    res.WriteInt32(auctionLot.SecondsUntilExpiryTime); // Item remaining time
-            //}
+            foreach(ItemInstance auctionItem in auctionList)
+            {
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, auctionItem);
+                Router.Send(recvItemInstance);
+            }
 
-            //Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_search_r, res, ServerType.Area);
+            IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(0);
+            res.WriteInt32(auctionList.Count); // cmp to 0x64 = 100
+            int i = 0;
+            foreach(ItemInstance auctionItem in auctionList)
+            {
+                res.WriteInt32(i); //row identifier 
+                res.WriteUInt64(auctionItem.InstanceID);
+                res.WriteUInt64(auctionItem.MinimumBid); 
+                res.WriteUInt64(auctionItem.BuyoutPrice); 
+                res.WriteFixedString(auctionItem.ConsignerName, 49); 
+                res.WriteByte(0); // 0 = nothing.    Other = Logo appear. maybe it's effect or rank, or somethiung else ?
+                res.WriteFixedString(auctionItem.Comment, 385); 
+                res.WriteInt32(auctionItem.CurrentBid); 
+                res.WriteInt32(auctionItem.SecondsUntilExpiryTime); 
+            }
+
+            Router.Send(client.Map, (ushort)AreaPacketId.recv_auction_search_r, res, ServerType.Area);
         }
     }
 }

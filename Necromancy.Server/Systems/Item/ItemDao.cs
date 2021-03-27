@@ -640,6 +640,7 @@ namespace Necromancy.Server.Systems.Item
         {
             ExecuteNonQuery(SqlUpdateExhibit, command =>
             {
+                AddParameter(command, "@id", itemInstance.InstanceID);
                 AddParameter(command, "@consigner_name", itemInstance.ConsignerName);
                 AddParameter(command, "@expiry_datetime", CalcExpiryTime(itemInstance.SecondsUntilExpiryTime));
                 AddParameter(command, "@min_bid", itemInstance.MinimumBid);

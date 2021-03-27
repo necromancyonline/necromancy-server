@@ -635,7 +635,18 @@ namespace Necromancy.Server.Systems.Item
 
         public List<ItemInstance> SearchAuction(AuctionSearchCriteria searchCriteria)
         {
-            throw new NotImplementedException();
+            List<ItemInstance> auctionList = new List<ItemInstance>();
+
+            int dummyItems = 60;
+            for (short i = 0; i < dummyItems; i++)
+            {
+                ItemLocation loc = new ItemLocation((ItemZoneType)i, 0, i);
+                ItemInstance item = new ItemInstance((ulong)(i + 800));
+                item.BaseID = 100210;
+                item.Location = loc;
+                auctionList.Add(item);
+            }
+            return auctionList;            
         }
 
         //auction functions

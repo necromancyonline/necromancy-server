@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Arrowgene.Buffers;
+using Arrowgene.Logging;
 using Necromancy.Server.Common;
+using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Auction;
@@ -11,6 +13,8 @@ namespace Necromancy.Server.Chat.Command.Commands
     //opens auction house
     public class SendAuctionNotifyOpen : ServerChatCommand
     {
+
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(SendAuctionNotifyOpen));
         public SendAuctionNotifyOpen(NecServer server) : base(server)
         {
         }
@@ -106,33 +110,35 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteInt32(0);
             }
 
+            numEntries = 8;
             res.WriteInt32(numEntries); //Less than or equal to 0x8
-
+            Logger.Debug(((short)ItemQualities.All).ToString());
             for (int i = 0; i < numEntries; i++)
             {
-                res.WriteFixedString("fs0x49", 0x49);
-                res.WriteByte(0);
-                res.WriteByte(0);
-                res.WriteByte(0);
-                res.WriteByte(0);
-                res.WriteInt32(0);
-                res.WriteInt16(0);
-                res.WriteInt16(0);
-                res.WriteInt64(0);
-                res.WriteByte(0);
-                res.WriteByte(0); //Bool
+                res.WriteFixedString("Joe Bob", 0x49); //V| Search Text
+                res.WriteByte(97); //V| Grade min
+                res.WriteByte(99); //V| Grade max
+                res.WriteByte(97); //V| Level min
+                res.WriteByte(99); //V| Level max
+                res.WriteInt32(1); // class?
+                res.WriteInt16(2); // race?
+                res.WriteInt16((short)ItemQualities.All); //V| Qualities
+                res.WriteInt64(4); //V| Gold
+                res.WriteByte(7);
 
-                res.WriteByte(0);//These are 3 separate bytes or a fixed string of 3 characters.
-                res.WriteByte(0);//
-                res.WriteByte(0);//
+                res.WriteByte(0); //V| Effectiveness
+                res.WriteByte(0); //V| Gem slot 1
+                res.WriteByte(0); //V| Gem slot 2
+                res.WriteByte(0); //V| Gem slot 3
 
-                res.WriteInt64(0);
-                res.WriteInt64(0);
-                res.WriteFixedString("fs0xC1", 0xC1);//Fixed string of 0xC1 or 0xC1 bytes.
-                res.WriteByte(0);
-                res.WriteByte(0);
+                res.WriteInt64(8);
+                res.WriteInt64(8);
+                res.WriteFixedString("Test Search", 0xC1); //v| Saved Search Title
+                res.WriteByte(1);
+                res.WriteByte(1);
             }
 
+            numEntries = 1;
             res.WriteInt32(numEntries); //Less than or equal to 0x8
 
             for (int i = 0; i < numEntries; i++)
@@ -152,7 +158,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
 
             res.WriteByte(0); //Bool
-            res.WriteInt32(0);
+            res.WriteInt32(60);
             Router.Send(client, (ushort)AreaPacketId.recv_auction_notify_open, res, ServerType.Area);
         }
 
