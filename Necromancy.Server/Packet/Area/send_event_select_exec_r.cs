@@ -677,64 +677,75 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(2);
             Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
 
-            if (client.Character.eventSelectExecCode == 0)
-            {
-                List<ItemInfoSetting> Weaponlist = new List<ItemInfoSetting>();
-                foreach (ItemInfoSetting weapon in Server.SettingRepository.ItemInfo.Values)
-                {
-                    if (weapon.Id > 10100101 & weapon.Id < 15300101)
-                    {
-                        Weaponlist.Add(weapon);
-                    }
-                }
+            ItemLocation nextOpenLocation = client.Character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
 
-                int baseId = Weaponlist[Util.GetRandomNumber(0, Weaponlist.Count)].Id;
-                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
-
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
-                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
-            }
-            else if (client.Character.eventSelectExecCode == 1)
-            {
-                List<ItemInfoSetting> ArmorList = new List<ItemInfoSetting>();
-                foreach (ItemInfoSetting armor in Server.SettingRepository.ItemInfo.Values)
-                {
-                    if (armor.Id > 16100101 & armor.Id < 30499901)
-                    {
-                        ArmorList.Add(armor);
-                    }
-                }
-
-                int baseId = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)].Id;
-                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
-
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
-                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
-            }
-            else if (client.Character.eventSelectExecCode == 2)
-            { //50401040,Moist Cudgel
-                int baseId = 50401040; //This can select from a small array of items, and a small array of custom names
-                spawmParam.ItemStatuses = ItemStatuses.Identified;
-                itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
-
-                RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
-                Router.Send(client, recvItemInstance.ToPacket());
-            }
-
-            if (itemInstance == null)
+            if (nextOpenLocation.ZoneType == ItemZoneType.InvalidZone)
             {
                 res = BufferProvider.Provide();
-                res.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
+                res.WriteCString($"Your Adventure Bag is full.  Go away already! {client.Soul.Name}"); // Length 0xC01
                 Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
-                res = BufferProvider.Provide();
-                Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
-                RecvEventEnd(client); //End The Event 
-                return;
             }
-            res = BufferProvider.Provide();
-            res.WriteCString($"Enjoy your new Super {itemInstance.UnidentifiedName}"); // Length 0xC01
-            Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
+            else
+            {
 
+                if (client.Character.eventSelectExecCode == 0)
+                {
+                    List<ItemInfoSetting> Weaponlist = new List<ItemInfoSetting>();
+                    foreach (ItemInfoSetting weapon in Server.SettingRepository.ItemInfo.Values)
+                    {
+                        if (weapon.Id > 10100101 & weapon.Id < 15300101)
+                        {
+                            Weaponlist.Add(weapon);
+                        }
+                    }
+
+                    int baseId = Weaponlist[Util.GetRandomNumber(0, Weaponlist.Count)].Id;
+                    itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
+
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                    Router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                }
+                else if (client.Character.eventSelectExecCode == 1)
+                {
+                    List<ItemInfoSetting> ArmorList = new List<ItemInfoSetting>();
+                    foreach (ItemInfoSetting armor in Server.SettingRepository.ItemInfo.Values)
+                    {
+                        if (armor.Id > 16100101 & armor.Id < 30499901)
+                        {
+                            ArmorList.Add(armor);
+                        }
+                    }
+
+                    int baseId = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)].Id;
+                    itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
+
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                    Router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                }
+                else if (client.Character.eventSelectExecCode == 2)
+                { //50401040,Moist Cudgel
+                    int baseId = 50401040; //This can select from a small array of items, and a small array of custom names
+                    spawmParam.ItemStatuses = ItemStatuses.Identified;
+                    itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
+
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
+                    Router.Send(client, recvItemInstance.ToPacket());
+                }
+
+                if (itemInstance == null)
+                {
+                    res = BufferProvider.Provide();
+                    res.WriteCString("Better Luck Next Time.  I ran out of items!"); // Length 0xC01
+                    Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
+                    res = BufferProvider.Provide();
+                    Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+                    RecvEventEnd(client); //End The Event 
+                    return;
+                }
+                res = BufferProvider.Provide();
+                res.WriteCString($"Enjoy your new Super {itemInstance.UnidentifiedName}"); // Length 0xC01
+                Router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
+            }
             res = BufferProvider.Provide();
             Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             RecvEventEnd(client); //End The Event 
