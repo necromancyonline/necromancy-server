@@ -17,13 +17,20 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
+            NecClient targetClient = null;
+            if (client.Character.eventSelectExecCode != 0)
+                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+
             ulong myGoldOffer = packet.Data.ReadUInt64();
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check.  must be 0 to succeed
             Router.Send(client, (ushort) AreaPacketId.recv_trade_set_money_r, res, ServerType.Area);
 
-            RecvTradeNotifyMoney notifyMoney = new RecvTradeNotifyMoney(myGoldOffer);
-            Router.Send(notifyMoney, Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode));
+            if (targetClient != null)
+            {
+                RecvTradeNotifyMoney notifyMoney = new RecvTradeNotifyMoney(myGoldOffer);
+                Router.Send(notifyMoney, targetClient);
+            }
         }
 
     }

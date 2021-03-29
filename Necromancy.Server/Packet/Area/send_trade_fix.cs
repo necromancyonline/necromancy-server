@@ -17,23 +17,24 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
+            NecClient targetClient = null;
+            if (client.Character.eventSelectExecCode != 0)
+                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //error check?  to be tested
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_fix_r, res, ServerType.Area);
-            SendTradeNotifyFixed(client);
-        }
-        
-        private void SendTradeNotifyFixed(NecClient client)
-        {
-            IBuffer res = BufferProvider.Provide();
+            Router.Send(client, (ushort) AreaPacketId.recv_trade_fix_r, res, ServerType.Area);
+
+            if (targetClient != null)
+            {
+                RecvTradeNotifyFixed notifyFixed = new RecvTradeNotifyFixed();
+                Router.Send(notifyFixed, targetClient);
+            }
+
+            RecvEventEnd eventEnd = new RecvEventEnd(0);
+            Router.Send(eventEnd, client);
             
-            res.WriteInt32(0);//error check? to be tested    Chat message "%d's trade completed
-
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_notify_fixed, res, ServerType.Area, client);
-
+            client.Character.eventSelectExecCode = 0;
         }
-
-       
-        
     }
 }

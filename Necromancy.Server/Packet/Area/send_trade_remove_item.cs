@@ -18,7 +18,9 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+            NecClient targetClient = null;
+            if(client.Character.eventSelectExecCode != 0)
+                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
             short fromSlot = packet.Data.ReadInt16();
 
@@ -33,9 +35,11 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(0); // error check?
             Router.Send(client, (ushort) AreaPacketId.recv_trade_remove_item_r, res, ServerType.Area);
 
-            RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
-            Router.Send(itemRemove, targetClient);
+            if (targetClient != null)
+            {
+                RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
+                Router.Send(itemRemove, targetClient);
+            }
         }
-
     }
 }
