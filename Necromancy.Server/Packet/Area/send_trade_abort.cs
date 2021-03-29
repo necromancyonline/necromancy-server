@@ -1,8 +1,8 @@
-﻿using Arrowgene.Buffers;
+using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -19,19 +19,17 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_abort_r, res, ServerType.Area);
-            recvTradeNotifyAbort(client);
+            Router.Send(client, (ushort) AreaPacketId.recv_trade_abort_r, res, ServerType.Area);
+
+            RecvTradeNotifyAborted notifyAborted = new RecvTradeNotifyAborted();
+            Router.Send(notifyAborted, Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode));
+
+            RecvEventEnd eventEnd = new RecvEventEnd(0);
+            Router.Send(eventEnd, client);
+            Router.Send(eventEnd, Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode));
+
+            Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode).Character.eventSelectExecCode = 0;
+            client.Character.eventSelectExecCode = 0;
         }
-
-        private void recvTradeNotifyAbort(NecClient client)
-        {
-            IBuffer res = BufferProvider.Provide();
-            
-            res.WriteInt32(0);
-
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_notify_aborted, res, ServerType.Area, client);
-
-        }
-
     }
 }
