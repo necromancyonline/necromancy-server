@@ -18,7 +18,7 @@ namespace Necromancy.Server.Model
         public uint InstanceId { get; set; }
 
         //core attributes
-        public int Id { get; set; }
+        public int Id { get; set; } //TODO at some point make a uint
         public int AccountId { get; set; }
         public int SoulId { get; set; }
         public DateTime Created { get; set; }

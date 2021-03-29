@@ -102,6 +102,16 @@ namespace Necromancy.Test.Systems
             {
                 throw new NotImplementedException();
             }
+
+            public List<ItemInstance> SelectBids(int characterId)
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<ItemInstance> SelectLots(int characterId)
+            {
+                throw new NotImplementedException();
+            }
         }
 
             public class TestMove

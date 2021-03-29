@@ -162,7 +162,7 @@ namespace Necromancy.Server.Systems.Item
                     @plus_weight,
                     @plus_ranged_eff,
                     @plus_reservoir_eff
-                                    );
+                );
             SELECT last_insert_rowid()";
 
         private const string SqlUpdateExhibit = @"
@@ -172,6 +172,24 @@ namespace Necromancy.Server.Systems.Item
                 consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment 
             WHERE 
                 id = @id";
+
+        private const string SqlSelectBids = @"
+            SELECT 			
+                *
+            FROM
+                item_instance
+            WHERE
+                bidder_id = @bidder_id";
+
+        private const string SqlSelectLots = @"
+            SELECT 			
+                *
+            FROM 
+                item_instance			
+            WHERE 
+                owner_id = @owner_id 
+            AND 
+                zone = 82"; //Probably auction lot zone, may be 83
 
         public ItemInstance InsertItemInstance(int baseId)
         {
@@ -399,8 +417,6 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, parameters[i], lastIds[i]);
                 }
 
-
-
                 command.CommandText = string.Format("SELECT * FROM item_instance WHERE id IN({0})", string.Join(", ", parameters));
                 using DbDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -420,6 +436,7 @@ namespace Necromancy.Server.Systems.Item
         {
             ulong instanceId = (ulong)reader.GetInt64("id");
             ItemInstance itemInstance = new ItemInstance(instanceId);
+            itemInstance.OwnerID = reader.GetInt32("owner_id");
 
             ItemZoneType zone = (ItemZoneType)reader.GetByte("zone");
             byte bag = reader.GetByte("container");
@@ -449,7 +466,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.PlusPhysical = reader.GetInt16("plus_physical");
             itemInstance.PlusMagical = reader.GetInt16("plus_magical");
             itemInstance.PlusGP = reader.GetInt16("plus_gp");
-            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight") * 10); //maybe make this a double
+            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight") * 10); //TODO REMOVE THIS MULTIPLICATION AND FIX TRHOUGHOUT CODE
             itemInstance.PlusRangedEff = reader.GetInt16("plus_ranged_eff");
             itemInstance.PlusReservoirEff = reader.GetInt16("plus_reservoir_eff");
 
@@ -590,16 +607,16 @@ namespace Necromancy.Server.Systems.Item
 
             //grade,
             //weight
-            itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000);
+            itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000); // TODO DOUBLE CHECK THIS IS CORRECT SCALE
 
             //auction
-            itemInstance.ConsignerName = reader.IsDBNull("consigner_name") ? null : reader.GetString("consigner_name");
+            itemInstance.ConsignerName = reader.IsDBNull("consigner_name") ? "" : reader.GetString("consigner_name");
             itemInstance.SecondsUntilExpiryTime = reader.IsDBNull("expiry_datetime") ? 0 : CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
             itemInstance.MinimumBid = reader.IsDBNull("min_bid") ? 0 : (ulong)reader.GetInt64("min_bid");
             itemInstance.BuyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");
             itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
             itemInstance.BidderId = reader.IsDBNull("bidder_id") ? 0 : reader.GetInt32("bidder_id");
-            itemInstance.Comment = reader.IsDBNull("comment") ? null : reader.GetString("comment");
+            itemInstance.Comment = reader.IsDBNull("comment") ? "" : reader.GetString("comment");
             if (itemInstance.BidderId > 0) itemInstance.IsCancellable = false;
 
             return itemInstance;
@@ -647,6 +664,44 @@ namespace Necromancy.Server.Systems.Item
                 AddParameter(command, "@buyout_price", itemInstance.BuyoutPrice);
                 AddParameter(command, "@comment", itemInstance.Comment);
             });
+        }
+
+        public List<ItemInstance> SelectBids(int bidderId)
+        {
+            List<ItemInstance> bids = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(SqlSelectBids,
+                command =>
+                {
+                    AddParameter(command, "@bidder_id", bidderId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        bids.Add(itemInstance);
+                    }
+                });
+            return bids;
+        }
+
+        public List<ItemInstance> SelectLots(int ownerId)
+        {
+            List<ItemInstance> lots = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(SqlSelectLots,
+                command =>
+                {
+                    AddParameter(command, "@owner_id", ownerId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        lots.Add(itemInstance);
+                    }
+                });
+            return lots;
         }
     }
 }

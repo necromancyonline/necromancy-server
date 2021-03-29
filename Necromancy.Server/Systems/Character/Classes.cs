@@ -15,6 +15,6 @@ namespace Necromancy.Server.Systems.Item
         Lord,
         Clown,
         Alchemist,
-        All = Fighter & Thief & Mage & Priest & Samurai & Bishop & Ninja % Lord & Clown & Alchemist
+        All = Fighter + Thief + Mage + Priest + Samurai + Bishop + Ninja + Lord + Clown + Alchemist
     }
 }

@@ -33,8 +33,14 @@ namespace Necromancy.Server.Systems.Item
         private const int MAX_CONTAINERS_WAREHOUSE = 27;
         private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
 
-        private const int MAX_CONTAINERS_AUCTION_LOTS = 1;
-        private const int MAX_CONTAINER_SIZE_AUCTION_LOTS = 15;
+        private const int MAX_CONTAINERS_AUCTION_LOTS = 1;      
+        private const int MAX_CONTAINER_SIZE_AUCTION_LOTS = 15; 
+
+        private const int MAX_CONTAINERS_AUCTION_BIDS = 1;          //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINER_SIZE_AUCTION_BIDS = 15;     //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+
+        private const int MAX_CONTAINERS_AUCTION_SEARCH = 1;        //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINER_SIZE_AUCTION_SEARCH = 1000; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
 
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
 
@@ -65,8 +71,8 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
             ZoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
 
-            ZoneMap.Add(ItemZoneType.TempAuctionZone, new ItemZone(MAX_CONTAINERS_AUCTION_LOTS, MAX_CONTAINER_SIZE_AUCTION_LOTS));
-            ZoneMap[ItemZoneType.TempAuctionZone].PutContainer(0, MAX_CONTAINER_SIZE_AUCTION_LOTS);
+            ZoneMap.Add(ItemZoneType.ProbablyAuctionLots, new ItemZone(MAX_CONTAINERS_AUCTION_LOTS, MAX_CONTAINER_SIZE_AUCTION_LOTS));
+            ZoneMap[ItemZoneType.ProbablyAuctionLots].PutContainer(0, MAX_CONTAINER_SIZE_AUCTION_LOTS);
         }
 
         public ItemInstance GetItem(ItemLocation loc)

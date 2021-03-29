@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
@@ -5,6 +6,7 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Auction;
 using Necromancy.Server.Systems.Item;
 
@@ -22,123 +24,95 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            //AuctionService auctionHouse = new AuctionService(client);
-            ItemInstance[] lots = new ItemInstance[0]; //TODO auctionHouse.GetLots();
-            ItemInstance[] bids = new ItemInstance[0]; //TODO auctionHouse.GetBids();
+            ItemService itemService = new ItemService(client.Character);
+            List<ItemInstance> lots = itemService.GetLots();
+            List<ItemInstance> bids = itemService.GetBids();
+            List<AuctionEquipmentSearchConditions> equipSearch = itemService.GetEquipmentSearchConditions();
+            List<AuctionItemSearchConditions> itemSearch = itemService.GetItemSearchConditions();
             const byte isInMaintenanceMode = 0x0;
-
-            //IBuffer res = BufferProvider.Provide();
-            //res.WriteInt32(lots.Length);
-
-            //for (int i = 0; i < lots.Length; i++)
-            //{
-            //    res.WriteByte((byte)i); // row number?
-            //    res.WriteInt32(i); // row number ??
-            //    res.WriteInt64(lots[i].ItemID); //spawned item id
-            //    res.WriteInt32(lots[i].MinimumBid);
-            //    res.WriteInt32(lots[i].BuyoutPrice);
-            //    res.WriteFixedString(lots[i].ConsignerName, 49);
-            //    res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
-            //    res.WriteFixedString(lots[i].Comment, 385);
-            //    res.WriteInt16((short)lots[i].CurrentBid); // Bid why convert to short?
-            //    res.WriteInt32(lots[i].SecondsUntilExpiryTime);
-
-            //    res.WriteInt32(0); // unknown
-            //    res.WriteInt32(0); // unknown
-            //}
-
-            //res.WriteInt32(bids.Length); // must be< = 8 | why?
-
-            //for (int i = 0; i < bids.Length; i++)
-            //{
-            //    res.WriteByte((byte)i); // row number?
-            //    res.WriteInt32(i); // row number ??
-            //    res.WriteInt64(bids[i].ItemID);
-            //    res.WriteInt32(bids[i].MinimumBid); // Lowest
-            //    res.WriteInt32(bids[i].BuyoutPrice); // Buy Now
-            //    res.WriteFixedString(bids[i].ConsignerName, 49);
-            //    res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
-            //    res.WriteFixedString(bids[i].Comment, 385); // Comment in the item information
-            //    res.WriteInt16((short)bids[i].CurrentBid); // Bid why convert to short?
-            //    res.WriteInt32(bids[i].SecondsUntilExpiryTime);
-
-            //    res.WriteInt32(0); // unknown
-            //    res.WriteInt32(0); // unknown
-            //}
-
-            //res.WriteByte(isInMaintenanceMode); // bool  IsInMaintenanceMode
-
+            const int max_lots = 15;
+            
             IBuffer res = BufferProvider.Provide();
-            int numEntries = 0;
-            res.WriteInt32(numEntries); //Less than or equal to 0xF
 
-            for (int i = 0; i < numEntries; i++)
+            foreach (ItemInstance lotItem in lots)
             {
-                res.WriteByte((byte)i); // row number?
-                res.WriteInt32(i); // row number ??
-                res.WriteInt64(bids[i].BaseID);
-                res.WriteUInt64(bids[i].MinimumBid); // Lowest
-                res.WriteUInt64(bids[i].BuyoutPrice); // Buy Now
-                res.WriteFixedString(bids[i].ConsignerName, 49);
-                res.WriteByte(1); // 1 permit to show item in the search section ?? flags?
-                res.WriteFixedString(bids[i].Comment, 385); // Comment in the item information
-                res.WriteInt16((short)bids[i].CurrentBid); // Bid why convert to short?
-                res.WriteInt32(bids[i].SecondsUntilExpiryTime);
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, lotItem);
+                Router.Send(recvItemInstance);
+            }
+            int j = 0;
+            res.WriteInt32(lots.Count); //Less than or equal to 15
+            foreach (ItemInstance lotItem in lots)
+            {
+                res.WriteByte((byte)j); // row number?
+                res.WriteInt32(j); // row number ??
+                res.WriteUInt64(lotItem.InstanceID);
+                res.WriteUInt64(lotItem.MinimumBid);
+                res.WriteUInt64(lotItem.BuyoutPrice);
+                res.WriteFixedString(lotItem.ConsignerName, 49);
+                res.WriteByte(0); // criminal status of seller?
+                res.WriteFixedString(lotItem.Comment, 385);
+                res.WriteInt16((short)lotItem.CurrentBid); // Bid why convert to short?
+                res.WriteInt32(lotItem.SecondsUntilExpiryTime);
 
-                res.WriteInt64(0);
-                res.WriteInt32(0);
-                res.WriteInt32(0);
+                res.WriteInt64(0); //unknown
+                res.WriteInt32(0); //unknown
+                res.WriteInt32(0); //unknown
+                j++;
             }
 
-            res.WriteInt32(numEntries); //Less than or equal to 0xE
-
-            for (int i = 0; i < numEntries; i++)
+            foreach (ItemInstance bidItem in bids)
             {
-                res.WriteByte(0);
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, bidItem);
+                Router.Send(recvItemInstance);
+            }
+            j = 0;
+            res.WriteInt32(bids.Count); //Less than or equal to 0xE
+            foreach (ItemInstance bidItem in bids)
+            {
+                res.WriteByte((byte)j); // row number?
+                res.WriteInt32(j); // row number ??
+                res.WriteUInt64(bidItem.InstanceID);
+                res.WriteUInt64(bidItem.MinimumBid);
+                res.WriteUInt64(bidItem.BuyoutPrice);
+                res.WriteFixedString(bidItem.ConsignerName, 49);
+                res.WriteByte(0); // criminal status of seller?
+                res.WriteFixedString(bidItem.Comment, 385);
+                res.WriteInt16((short)bidItem.CurrentBid); // Bid why convert to short?
+                res.WriteInt32(bidItem.SecondsUntilExpiryTime);
 
-                res.WriteInt32(0);
-                res.WriteInt64(0);
-                res.WriteInt64(0);
-                res.WriteInt64(0);
-                res.WriteFixedString("soulname", 49);
-                res.WriteByte(1);
-                res.WriteFixedString("ToBeFound", 385);
-                res.WriteInt16(0);
-                res.WriteInt32(0);
-
-                res.WriteInt64(0);
-                res.WriteInt32(0);
+                res.WriteInt64(0); //unknown
+                res.WriteInt32(0); //unknown
+                j++;
             }
 
-            numEntries = 8;
-            res.WriteInt32(numEntries); //Less than or equal to 0x8
+            res.WriteInt32(equipSearch.Count); //Less than or equal to 0x8
             Logger.Debug(((short)ItemQualities.All).ToString());
-            for (int i = 0; i < numEntries; i++)
+            foreach (AuctionEquipmentSearchConditions equipCond in equipSearch)
             {
-                res.WriteFixedString("Joe Bob", 0x49); //V| Search Text
-                res.WriteByte(97); //V| Grade min
-                res.WriteByte(99); //V| Grade max
-                res.WriteByte(97); //V| Level min
-                res.WriteByte(99); //V| Level max
-                res.WriteInt32(1); // class?
-                res.WriteInt16(2); // race?
-                res.WriteInt16((short)ItemQualities.All); //V| Qualities
-                res.WriteInt64(4); //V| Gold
-                res.WriteByte(7);
+                res.WriteFixedString(equipCond.Text, AuctionEquipmentSearchConditions.MAX_TEXT_LENGTH); //V| Search Text
+                res.WriteByte(equipCond.ForgePriceMin); //V| Grade min
+                res.WriteByte(equipCond.ForgePriceMax); //V| Grade max
+                res.WriteByte(equipCond.SoulRankMin); //V| Level min
+                res.WriteByte(equipCond.SoulRankMax); //V| Level max
+                res.WriteInt32((int) equipCond.Class); // class?
+                res.WriteInt16((short) equipCond.Race); // race?
+                res.WriteInt16((short)equipCond.Qualities); //V| Qualities
+                res.WriteUInt64(equipCond.GoldCost); //V| Gold
+                res.WriteByte(Convert.ToByte(equipCond.IsLessThanGoldCost));
 
-                res.WriteByte(0); //V| Effectiveness
-                res.WriteByte(0); //V| Gem slot 1
-                res.WriteByte(0); //V| Gem slot 2
-                res.WriteByte(0); //V| Gem slot 3
+                res.WriteByte(Convert.ToByte(equipCond.HasGemSlot)); //V| Effectiveness
+                res.WriteByte((byte) equipCond.GemSlotType1); //V| Gem slot 1
+                res.WriteByte((byte) equipCond.GemSlotType2); //V| Gem slot 2
+                res.WriteByte((byte) equipCond.GemSlotType3); //V| Gem slot 3
 
-                res.WriteInt64(8);
-                res.WriteInt64(8);
-                res.WriteFixedString("Test Search", 0xC1); //v| Saved Search Title
-                res.WriteByte(1);
-                res.WriteByte(1);
+                res.WriteInt64(0); //TODO UNKNOWN
+                res.WriteInt64(0);
+                res.WriteFixedString(equipCond.Description, AuctionEquipmentSearchConditions.MAX_DESCRIPTION_LENGTH); //v| Saved Search Description
+                res.WriteByte(0); //TODO UNKNOWN
+                res.WriteByte(0); //TODO UNKNOWN
             }
 
-            numEntries = 1;
+            int numEntries = 1;
             res.WriteInt32(numEntries); //Less than or equal to 0x8
 
             for (int i = 0; i < numEntries; i++)
@@ -158,8 +132,32 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
 
             res.WriteByte(0); //Bool
-            res.WriteInt32(60);
+            res.WriteInt32(0);
             Router.Send(client, (ushort)AreaPacketId.recv_auction_notify_open, res, ServerType.Area);
+
+            //RecvAuctionNotifyOpenItemStart recvAuctionNotifyOpenItemStart = new RecvAuctionNotifyOpenItemStart(client);
+            //RecvAuctionNotifyOpenItemEnd recvAuctionNotifyOpenItemEnd = new RecvAuctionNotifyOpenItemEnd(client);
+
+            //List<ItemInstance> auctionList0 = itemService.SearchAuction(new AuctionItemSearchConditions(), 0);
+            //RecvAuctionNotifyOpenItem recvAuctionNotifyOpenItem0 = new RecvAuctionNotifyOpenItem(client, auctionList0);
+            //List<ItemInstance> auctionList1 = itemService.SearchAuction(new AuctionItemSearchConditions(), 100);
+            //RecvAuctionNotifyOpenItem recvAuctionNotifyOpenItem1 = new RecvAuctionNotifyOpenItem(client, auctionList1);
+
+            //foreach (ItemInstance auctionItem in auctionList0)
+            //{
+            //    RecvItemInstance recvItemInstance = new RecvItemInstance(client, auctionItem);
+            //    Router.Send(recvItemInstance);
+            //}
+            //foreach (ItemInstance auctionItem in auctionList1)
+            //{
+            //    RecvItemInstance recvItemInstance = new RecvItemInstance(client, auctionItem);
+            //    Router.Send(recvItemInstance);
+            //}
+
+            //Router.Send(recvAuctionNotifyOpenItemStart);
+            //Router.Send(recvAuctionNotifyOpenItem0);
+            //Router.Send(recvAuctionNotifyOpenItem1);
+            //Router.Send(recvAuctionNotifyOpenItemEnd);
         }
 
         public override AccountStateType AccountState => AccountStateType.Admin;

@@ -633,17 +633,30 @@ namespace Necromancy.Server.Systems.Item
             return _character.AdventureBagGold;
         }
 
-        public List<ItemInstance> SearchAuction(AuctionSearchCriteria searchCriteria)
+        public List<ItemInstance> SearchAuction(AuctionItemSearchConditions searchCriteria, short startValue)
         {
             List<ItemInstance> auctionList = new List<ItemInstance>();
 
             int dummyItems = 60;
-            for (short i = 0; i < dummyItems; i++)
+            for (short i = startValue; i < startValue + 100; i++)
             {
-                ItemLocation loc = new ItemLocation((ItemZoneType)i, 0, i);
+                ItemLocation loc = new ItemLocation(ItemZoneType.ProbablyAuctionSearch, 0, i);
                 ItemInstance item = new ItemInstance((ulong)(i + 800));
-                item.BaseID = 100210;
+                item.BaseID = 510503;
+                item.Quality = ItemQualities.Normal;
+                item.IsTradeable = true;
+                item.GP = 1;
+                item.Hardness = 1;
+                item.MinimumBid = 1;
+                item.BuyoutPrice = 5;
+                item.Physical = 10;
+                item.Magical = 15;
+                item.RequiredClasses = Classes.Fighter;
+                item.RequiredLevel = 10;
                 item.Location = loc;
+                item.ConsignerName = "TesoFriend";
+                item.SecondsUntilExpiryTime = 1000;
+                item.Comment = "Comment Test " + i.ToString();
                 auctionList.Add(item);
             }
             return auctionList;            
@@ -654,7 +667,7 @@ namespace Necromancy.Server.Systems.Item
         {
             const int MAX_LOTS = 10; //TODO update with dimento?
             ItemInstance fromItem = _character.ItemManager.GetItem(itemLocation);
-            ItemLocation exhibitLocation = new ItemLocation(ItemZoneType.TempAuctionZone, 0, exhibitSlot);
+            ItemLocation exhibitLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, exhibitSlot);
             bool hasToItem = _character.ItemManager.HasItem(exhibitLocation);
             MoveResult moveResult = new MoveResult();
 
@@ -688,14 +701,56 @@ namespace Necromancy.Server.Systems.Item
 
             int auctionTimeInSecondsFromNow = 0;
             const int SECONDS_PER_FOUR_HOURS = 60 * 60 * 4;
-            for (int i = 0; i < auctionTimeSelector; i++)
+            switch (auctionTimeSelector)
             {
-                auctionTimeInSecondsFromNow = (i + 1) * SECONDS_PER_FOUR_HOURS;
+                case 1: // 4 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS;
+                    break;
+                case 2: // 8 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 2;
+                    break;
+                case 3: // 12 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 3;
+                    break;
+                case 4: // 24 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 6;
+                    break;
             }
             moveResult.DestItem.SecondsUntilExpiryTime = auctionTimeInSecondsFromNow;
 
             _itemDao.UpdateAuctionExhibit(moveResult.DestItem);
             return moveResult;
+        }
+
+        public List<ItemInstance> GetBids()
+        {
+            //TODO modify their location to be bids
+            return _itemDao.SelectBids(_character.Id);
+        }
+
+        public List<ItemInstance> GetLots()
+        {
+            return _itemDao.SelectLots(_character.Id);
+        }
+
+        public List<AuctionItemSearchConditions> GetItemSearchConditions()
+        {
+            return new List<AuctionItemSearchConditions>(); //TODO
+        }
+
+        public List<AuctionEquipmentSearchConditions> GetEquipmentSearchConditions()
+        {
+            return new List<AuctionEquipmentSearchConditions>(); //TODO
+        }
+
+        public void PutItemSearchConditions(AuctionItemSearchConditions auctionItemSearchConditions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PutEquipmentSearchConditions(AuctionEquipmentSearchConditions auctionEquipmentSearchConditions)
+        {
+            throw new NotImplementedException();
         }
     }
 }

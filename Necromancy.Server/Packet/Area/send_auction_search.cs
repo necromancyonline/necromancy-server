@@ -23,7 +23,7 @@ namespace Necromancy.Server.Packet.Area
         public override void Handle(NecClient client, NecPacket packet)
         {
 
-            AuctionSearchCriteria searchCriteria = new AuctionSearchCriteria();
+            AuctionItemSearchConditions searchCriteria = new AuctionItemSearchConditions();
             searchCriteria.SoulRankMin = packet.Data.ReadByte();
             searchCriteria.SoulRankMax = packet.Data.ReadByte();
             searchCriteria.ForgePriceMin = packet.Data.ReadByte();
@@ -32,7 +32,7 @@ namespace Necromancy.Server.Packet.Area
             searchCriteria.Class = (Classes)packet.Data.ReadInt16();            
 
             ItemService itemService = new ItemService(client.Character);
-            List<ItemInstance> auctionList = itemService.SearchAuction(searchCriteria);
+            List<ItemInstance> auctionList = itemService.SearchAuction(searchCriteria, 0);
 
             foreach(ItemInstance auctionItem in auctionList)
             {

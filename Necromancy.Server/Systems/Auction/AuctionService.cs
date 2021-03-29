@@ -81,23 +81,7 @@ namespace Necromancy.Server.Systems.Auction
         //public void ReExhibit(AuctionLot auctionItem)
         //{
         //    throw new NotImplementedException();
-        //}
-
-        
-
-        //public List<AuctionLot> Search(SearchCriteria searchCritera)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public AuctionLot[]  GetBids() {
-        //    return _auctionDao.SelectBids(_client.Character);
-        //}
-
-        //public AuctionLot[] GetLots()
-        //{
-        //    return _auctionDao.SelectLots(_client.Character);
-        //}        
+        //} 
 
     }
 }

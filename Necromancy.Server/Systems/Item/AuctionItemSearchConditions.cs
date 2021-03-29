@@ -2,7 +2,7 @@ using System;
 
 namespace Necromancy.Server.Systems.Item
 {
-    public class AuctionSearchCriteria
+    public class AuctionItemSearchConditions
     {
 
         private const int MIN_SOUL_RANK = 0;
@@ -17,7 +17,7 @@ namespace Necromancy.Server.Systems.Item
         public ItemQualities Quality { get; set; }
         public Classes Class { get;set; }
 
-        public bool HasdValidClass()
+        public bool HasValidClass()
         {
             return (Class & Classes.All) == Class;
         }
