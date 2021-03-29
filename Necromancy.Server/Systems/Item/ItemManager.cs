@@ -147,7 +147,23 @@ namespace Necromancy.Server.Systems.Item
             return nextOpenSlot;
         }
 
-        public ItemLocation NextOpenSlot(ItemZoneType itemZoneType) //Todo,  CopyPasta one of these that searches all equipped bags.
+        /// <summary>
+        /// Finds the next open slot in adventure bag, equipped bags, and premium bag, in that order.
+        /// </summary>
+        /// <returns></returns>
+        public ItemLocation NextOpenSlotInInventory()
+        {
+            ItemLocation nextOpenSlot = ItemLocation.InvalidLocation;
+            nextOpenSlot = NextOpenSlot(ItemZoneType.AdventureBag);
+            if (!nextOpenSlot.Equals(ItemLocation.InvalidLocation)) return nextOpenSlot;
+            nextOpenSlot = NextOpenSlot(ItemZoneType.EquippedBags);
+            if (!nextOpenSlot.Equals(ItemLocation.InvalidLocation)) return nextOpenSlot;
+            nextOpenSlot = NextOpenSlot(ItemZoneType.PremiumBag);
+            if (!nextOpenSlot.Equals(ItemLocation.InvalidLocation)) return nextOpenSlot;
+            return nextOpenSlot;
+        }
+
+        public ItemLocation NextOpenSlot(ItemZoneType itemZoneType)
         {
             int nextContainerWithSpace = ZoneMap[itemZoneType].NextContainerWithSpace;
             if (nextContainerWithSpace != ItemZone.NO_CONTAINERS_WITH_SPACE)

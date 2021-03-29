@@ -633,14 +633,14 @@ namespace Necromancy.Server.Systems.Item
             return _character.AdventureBagGold;
         }
 
-        public List<ItemInstance> SearchAuction(AuctionItemSearchConditions searchCriteria, short startValue)
+        public List<ItemInstance> SearchAuction()
         {
             List<ItemInstance> auctionList = new List<ItemInstance>();
 
-            int dummyItems = 60;
-            for (short i = startValue; i < startValue + 100; i++)
+            int dummyItems = 8;
+            for (short i = 0; i < dummyItems; i++)
             {
-                ItemLocation loc = new ItemLocation(ItemZoneType.ProbablyAuctionSearch, 0, i);
+                ItemLocation loc = new ItemLocation(ItemZoneType.ProbablyAuctionBids, 0, i);
                 ItemInstance item = new ItemInstance((ulong)(i + 800));
                 item.BaseID = 510503;
                 item.Quality = ItemQualities.Normal;
@@ -722,6 +722,23 @@ namespace Necromancy.Server.Systems.Item
             return moveResult;
         }
 
+        public MoveResult CancelExhibit(byte slot)
+        {
+            //TODO don't allow cancelling auctions with bids
+            ItemLocation itemLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, slot);
+            ItemInstance fromItem = _character.ItemManager.GetItem(itemLocation);
+            ItemLocation nextOpenSlot = _character.ItemManager.NextOpenSlotInInventory();
+
+            //check possible errors. these should only occur if client is compromised
+            if (fromItem is null || nextOpenSlot.Equals(ItemLocation.InvalidLocation)) throw new AuctionException(AuctionExceptionType.Generic);
+
+            MoveResult moveResult = MoveItemPlace(nextOpenSlot, fromItem);
+
+            _itemDao.UpdateAuctionCancelExhibit(fromItem.InstanceID);
+
+            return moveResult;
+        }
+
         public List<ItemInstance> GetBids()
         {
             //TODO modify their location to be bids
@@ -730,6 +747,11 @@ namespace Necromancy.Server.Systems.Item
 
         public List<ItemInstance> GetLots()
         {
+            List<ItemInstance> itemInstances = _itemDao.SelectLots(_character.Id);
+            foreach (ItemInstance item in itemInstances)
+            {
+                _character.ItemManager.PutItem(item.Location, item);
+            }
             return _itemDao.SelectLots(_character.Id);
         }
 

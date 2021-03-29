@@ -173,6 +173,14 @@ namespace Necromancy.Server.Systems.Item
             WHERE 
                 id = @id";
 
+        private const string SqlUpdateCancelExhibit = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment, bidder_id = @bidder_id, bidder_name = @bidder_name
+            WHERE 
+                id = @id";
+
         private const string SqlSelectBids = @"
             SELECT 			
                 *
@@ -666,6 +674,21 @@ namespace Necromancy.Server.Systems.Item
             });
         }
 
+        public void UpdateAuctionCancelExhibit(ulong instanceId)
+        {
+            ExecuteNonQuery(SqlUpdateExhibit, command =>
+            {
+                AddParameter(command, "@id", instanceId);
+                AddParameterNull(command, "@consigner_name");
+                AddParameterNull(command, "@expiry_datetime");
+                AddParameterNull(command, "@min_bid");
+                AddParameterNull(command, "@buyout_price");
+                AddParameterNull(command, "@comment");
+                AddParameterNull(command, "@bidder_id");
+                AddParameterNull(command, "@bidder_name");
+            });
+        }
+
         public List<ItemInstance> SelectBids(int bidderId)
         {
             List<ItemInstance> bids = new List<ItemInstance>();
@@ -703,5 +726,7 @@ namespace Necromancy.Server.Systems.Item
                 });
             return lots;
         }
+
+        
     }
 }

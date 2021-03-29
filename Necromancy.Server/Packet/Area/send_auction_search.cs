@@ -32,7 +32,7 @@ namespace Necromancy.Server.Packet.Area
             searchCriteria.Class = (Classes)packet.Data.ReadInt16();            
 
             ItemService itemService = new ItemService(client.Character);
-            List<ItemInstance> auctionList = itemService.SearchAuction(searchCriteria, 0);
+            List<ItemInstance> auctionList = itemService.SearchAuction();
 
             foreach(ItemInstance auctionItem in auctionList)
             {
