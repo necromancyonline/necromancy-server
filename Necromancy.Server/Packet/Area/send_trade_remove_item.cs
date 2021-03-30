@@ -22,14 +22,7 @@ namespace Necromancy.Server.Packet.Area
             if(client.Character.eventSelectExecCode != 0)
                 targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
-            short fromSlot = packet.Data.ReadInt16();
-
-            //The item zone type fails here.
-            //The given key 'TradeWindow' was not present in the dictionary.
-            ItemLocation fromLoc = new ItemLocation(ItemZoneType.TradeWindow, 0, fromSlot);
-            ItemService itemService = new ItemService(client.Character);
-            ItemInstance itemInstance = itemService.GetIdentifiedItem(fromLoc);
-            
+            short fromSlot = packet.Data.ReadInt16();            
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
@@ -37,6 +30,7 @@ namespace Necromancy.Server.Packet.Area
 
             if (targetClient != null)
             {
+                ItemInstance itemInstance = targetClient.Character.ItemManager.GetItem(new ItemLocation(ItemZoneType.TradeWindow, 0, fromSlot));
                 RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
                 Router.Send(itemRemove, targetClient);
             }
