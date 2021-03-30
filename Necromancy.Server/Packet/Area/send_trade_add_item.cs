@@ -41,7 +41,7 @@ namespace Necromancy.Server.Packet.Area
             if (targetClient != null)
             {
                 RecvItemInstance itemInstance = new RecvItemInstance(targetClient, targetItem);
-                Router.Send(itemInstance, targetClient);
+                Router.Send(itemInstance);
             }
         }
     }

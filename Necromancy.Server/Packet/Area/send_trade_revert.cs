@@ -21,9 +21,8 @@ namespace Necromancy.Server.Packet.Area
             if (client.Character.eventSelectExecCode != 0)
                 targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); // error check?
-            Router.Send(client, (ushort) AreaPacketId.recv_trade_revert_r, res, ServerType.Area);
+            RecvTradeRevert tradeRevert = new RecvTradeRevert();
+            Router.Send(tradeRevert, client);
 
             if (targetClient != null)
             {

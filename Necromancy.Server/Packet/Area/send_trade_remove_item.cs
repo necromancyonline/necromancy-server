@@ -33,7 +33,7 @@ namespace Necromancy.Server.Packet.Area
             {
                 ItemInstance itemInstance = client.Character.ItemManager.GetItem(itemlocation);
                 RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
-                Router.Send(itemRemove, targetClient);
+                Router.Send(itemRemove);
             }
         }
     }

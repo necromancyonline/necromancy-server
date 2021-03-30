@@ -32,9 +32,10 @@ namespace Necromancy.Server.Packet.Area
             }
 
             RecvEventEnd eventEnd = new RecvEventEnd(0);
-            Router.Send(eventEnd, client);
             if(targetClient != null)
-                Router.Send(eventEnd, targetClient);
+            Router.Send(eventEnd, client, targetClient);
+            else
+                Router.Send(eventEnd, client);
 
             if (targetClient != null)
                 targetClient.Character.eventSelectExecCode = 0;
