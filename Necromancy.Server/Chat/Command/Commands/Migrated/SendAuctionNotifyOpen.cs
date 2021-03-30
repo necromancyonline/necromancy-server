@@ -31,7 +31,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             List<AuctionItemSearchConditions> itemSearch = itemService.GetItemSearchConditions();
             const byte isInMaintenanceMode = 0x0;
             const int max_lots = 15;
-            
+
             IBuffer res = BufferProvider.Provide();
 
             foreach (ItemInstance lotItem in lots)
@@ -86,7 +86,6 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
 
             res.WriteInt32(equipSearch.Count); //Less than or equal to 0x8
-            Logger.Debug(((short)ItemQualities.All).ToString());
             foreach (AuctionEquipmentSearchConditions equipCond in equipSearch)
             {
                 res.WriteFixedString(equipCond.Text, AuctionEquipmentSearchConditions.MAX_TEXT_LENGTH); //V| Search Text
@@ -94,16 +93,16 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteByte(equipCond.ForgePriceMax); //V| Grade max
                 res.WriteByte(equipCond.SoulRankMin); //V| Level min
                 res.WriteByte(equipCond.SoulRankMax); //V| Level max
-                res.WriteInt32((int) equipCond.Class); // class?
-                res.WriteInt16((short) equipCond.Race); // race?
+                res.WriteInt32((int)equipCond.Class); // class?
+                res.WriteInt16((short)equipCond.Race); // race?
                 res.WriteInt16((short)equipCond.Qualities); //V| Qualities
                 res.WriteUInt64(equipCond.GoldCost); //V| Gold
                 res.WriteByte(Convert.ToByte(equipCond.IsLessThanGoldCost));
 
                 res.WriteByte(Convert.ToByte(equipCond.HasGemSlot)); //V| Effectiveness
-                res.WriteByte((byte) equipCond.GemSlotType1); //V| Gem slot 1
-                res.WriteByte((byte) equipCond.GemSlotType2); //V| Gem slot 2
-                res.WriteByte((byte) equipCond.GemSlotType3); //V| Gem slot 3
+                res.WriteByte((byte)equipCond.GemSlotType1); //V| Gem slot 1
+                res.WriteByte((byte)equipCond.GemSlotType2); //V| Gem slot 2
+                res.WriteByte((byte)equipCond.GemSlotType3); //V| Gem slot 3
 
                 res.WriteInt64(0); //TODO UNKNOWN
                 res.WriteInt64(0);
@@ -135,29 +134,33 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteInt32(0);
             Router.Send(client, (ushort)AreaPacketId.recv_auction_notify_open, res, ServerType.Area);
 
-            //RecvAuctionNotifyOpenItemStart recvAuctionNotifyOpenItemStart = new RecvAuctionNotifyOpenItemStart(client);
-            //RecvAuctionNotifyOpenItemEnd recvAuctionNotifyOpenItemEnd = new RecvAuctionNotifyOpenItemEnd(client);
+            RecvAuctionNotifyOpenItemStart recvAuctionNotifyOpenItemStart = new RecvAuctionNotifyOpenItemStart(client);
+            RecvAuctionNotifyOpenItemEnd recvAuctionNotifyOpenItemEnd = new RecvAuctionNotifyOpenItemEnd(client);
 
-            //List<ItemInstance> auctionList0 = itemService.SearchAuction(new AuctionItemSearchConditions(), 0);
-            //RecvAuctionNotifyOpenItem recvAuctionNotifyOpenItem0 = new RecvAuctionNotifyOpenItem(client, auctionList0);
-            //List<ItemInstance> auctionList1 = itemService.SearchAuction(new AuctionItemSearchConditions(), 100);
-            //RecvAuctionNotifyOpenItem recvAuctionNotifyOpenItem1 = new RecvAuctionNotifyOpenItem(client, auctionList1);
+            List<ItemInstance> auctionList = itemService.LoadAuction();
 
-            //foreach (ItemInstance auctionItem in auctionList0)
-            //{
-            //    RecvItemInstance recvItemInstance = new RecvItemInstance(client, auctionItem);
-            //    Router.Send(recvItemInstance);
-            //}
-            //foreach (ItemInstance auctionItem in auctionList1)
-            //{
-            //    RecvItemInstance recvItemInstance = new RecvItemInstance(client, auctionItem);
-            //    Router.Send(recvItemInstance);
-            //}
+            foreach (ItemInstance auctionItem in auctionList)
+            {
+                RecvItemInstance recvItemInstance = new RecvItemInstance(client, auctionItem);
+                Router.Send(recvItemInstance);
+            }
 
-            //Router.Send(recvAuctionNotifyOpenItemStart);
-            //Router.Send(recvAuctionNotifyOpenItem0);
-            //Router.Send(recvAuctionNotifyOpenItem1);
-            //Router.Send(recvAuctionNotifyOpenItemEnd);
+            Router.Send(recvAuctionNotifyOpenItemStart);
+            int divideBy100 = auctionList.Count / 100 + (auctionList.Count % 100 == 0 ? 0 : 1); // TOTAL NUMBER OF RECVS TO SEND
+            for (int i = 0; i < divideBy100; i++)
+            {
+                RecvAuctionNotifyOpenItem recvAuctionNotifyOpenItem;
+                if (i == divideBy100 - 1)
+                {
+                    recvAuctionNotifyOpenItem = new RecvAuctionNotifyOpenItem(client, auctionList.GetRange(i, auctionList.Count % 100));
+                }
+                else
+                {
+                    recvAuctionNotifyOpenItem = new RecvAuctionNotifyOpenItem(client, auctionList.GetRange(i, 100));
+                }
+                Router.Send(recvAuctionNotifyOpenItem);
+            }
+            Router.Send(recvAuctionNotifyOpenItemEnd);
         }
 
         public override AccountStateType AccountState => AccountStateType.Admin;

@@ -165,6 +165,14 @@ namespace Necromancy.Server.Systems.Item
                 );
             SELECT last_insert_rowid()";
 
+        private const string SqlSelectAuctions = @"
+            SELECT 			
+                *
+            FROM 
+                item_instance			
+            WHERE                 
+                zone = 82";
+
         private const string SqlUpdateExhibit = @"
             UPDATE 
                 nec_item_instance 
@@ -661,6 +669,22 @@ namespace Necromancy.Server.Systems.Item
             return dOffsetNow.ToUnixTimeSeconds() + secondsToExpiry;
         }
 
+        public List<ItemInstance> SelectAuctions()
+        {
+            List<ItemInstance> auctions = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(SqlSelectAuctions,
+                command => { }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        auctions.Add(itemInstance);
+                    }
+                });
+            return auctions;
+        }
+
         public void UpdateAuctionExhibit(ItemInstance itemInstance)
         {
             ExecuteNonQuery(SqlUpdateExhibit, command =>
@@ -676,7 +700,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateAuctionCancelExhibit(ulong instanceId)
         {
-            ExecuteNonQuery(SqlUpdateExhibit, command =>
+            ExecuteNonQuery(SqlUpdateCancelExhibit, command =>
             {
                 AddParameter(command, "@id", instanceId);
                 AddParameterNull(command, "@consigner_name");

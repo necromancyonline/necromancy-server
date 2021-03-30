@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
             byte bag = packet.Data.ReadByte();
             short slot = packet.Data.ReadInt16();
             byte quantity = packet.Data.ReadByte();
-            int time = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:16 hours 3:24 hours
+            int time = packet.Data.ReadInt32(); //0:4hours 1:8 hours 2:12 hours 3:24 hours
             ulong minBid = packet.Data.ReadUInt64();
             ulong buyoutPrice = packet.Data.ReadUInt64();
             string comment = packet.Data.ReadCString();

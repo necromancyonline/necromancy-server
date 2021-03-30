@@ -48,7 +48,7 @@ namespace Necromancy.Server.Systems.Item
         {
             ItemInstance item = _character.ItemManager.GetItem(location);
             if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
-            { 
+            {
                 item.Statuses &= ~ItemStatuses.Unidentified;
             }
             return item;
@@ -83,7 +83,7 @@ namespace Necromancy.Server.Systems.Item
             if (_character.EquippedItems.ContainsKey(equipSlot))
             {
                 _character.EquippedItems[equipSlot] = item;
-            } 
+            }
             else
             {
                 _character.EquippedItems.Add(equipSlot, item);
@@ -130,7 +130,7 @@ namespace Necromancy.Server.Systems.Item
             }
             return item;
         }
-        public ItemInstance PutLootedItem(ItemInstance itemInstance) 
+        public ItemInstance PutLootedItem(ItemInstance itemInstance)
         {
             ItemInstance myNewItem = itemInstance;
 
@@ -139,7 +139,7 @@ namespace Necromancy.Server.Systems.Item
             myNewItem.Location = nextOpenLocation;
             _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
             _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
-            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
+            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);
             return myNewItem;
         }
 
@@ -192,7 +192,7 @@ namespace Necromancy.Server.Systems.Item
                     itemInstance.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
 
                     //Temporary ItemLibrary.CSV lookup until Item_decrypted.csv and Table are fully mapped/ populated
-                     server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
+                    server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
                     if (itemLibrarySetting != null)
                     {
                         itemInstance.MaximumDurability = itemLibrarySetting.Durability; //Temporary until we get durability in itemLibrary
@@ -261,7 +261,7 @@ namespace Necromancy.Server.Systems.Item
             {
                 ulong[] instanceIds = new ulong[1];
                 byte[] quantities = new byte[1];
-                instanceIds[0] = instanceId;                
+                instanceIds[0] = instanceId;
                 quantities[0] = item.Quantity;
                 _itemDao.UpdateItemQuantities(instanceIds, quantities);
             }
@@ -343,7 +343,7 @@ namespace Necromancy.Server.Systems.Item
             _character.ItemManager.PutItem(to, fromItem);
             _character.ItemManager.PutItem(from, toItem);
             moveResult.DestItem = fromItem;
-            moveResult.OriginItem = toItem;            
+            moveResult.OriginItem = toItem;
 
             ulong[] instanceIds = new ulong[2];
             ItemLocation[] locs = new ItemLocation[2];
@@ -475,14 +475,14 @@ namespace Necromancy.Server.Systems.Item
                     RecvItemUpdateNum recvItemUpdateNum2 = new RecvItemUpdateNum(client, moveResult.DestItem);
                     responses.Add(recvItemUpdateNum2);
                     break;
-                case MoveType.None:                    
+                case MoveType.None:
                     break;
             }
             return responses;
         }
 
         //TODO no character stats should be calculated, should be updated on equip and unequip / buff application move
-        public List<PacketResponse>CalculateBattleStats(NecClient client)
+        public List<PacketResponse> CalculateBattleStats(NecClient client)
         {
             List<PacketResponse> responses = new List<PacketResponse>();
             BattleParam battleParam = new BattleParam();
@@ -511,17 +511,17 @@ namespace Necromancy.Server.Systems.Item
             }
 
             //if you dont have a shield on,  set your GP to 0.  no blocking for you
-            if (ShieldCheck == false) 
-            { 
+            if (ShieldCheck == false)
+            {
                 client.Character.Gp.setMax(0);
                 RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.Character.Gp.max);
                 responses.Add(recvCharaUpdateAc);
             }
 
-            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Weight.max/10, client.Character.Weight.current/10/*Weight.Diff*/);
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Weight.max / 10, client.Character.Weight.current / 10/*Weight.Diff*/);
             responses.Add(recvCharaUpdateMaxWeight);
 
-            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current/10);
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current / 10);
             responses.Add(recvCharaUpdateWeight);
 
             RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);
@@ -537,7 +537,7 @@ namespace Necromancy.Server.Systems.Item
         {
             //TODO ADD PROTECTIONS TO SQL CALL SO ALL ITEMS CANT BE LOOTED
             List<ItemInstance> lootableItems = _itemDao.SelectLootableInventoryItems(characterId);
-            foreach(ItemInstance itemInstance in lootableItems)
+            foreach (ItemInstance itemInstance in lootableItems)
             {
                 itemInstance.Statuses &= ItemStatuses.Unidentified;
             }
@@ -633,33 +633,20 @@ namespace Necromancy.Server.Systems.Item
             return _character.AdventureBagGold;
         }
 
-        public List<ItemInstance> SearchAuction()
+        /// <summary>
+        /// This may seem insane but the client requires every auction house listing, this dumps it into the client.
+        /// </summary>
+        /// <returns>Every single auction house listing.</returns>
+        public List<ItemInstance> LoadAuction()
         {
-            List<ItemInstance> auctionList = new List<ItemInstance>();
-
-            int dummyItems = 8;
-            for (short i = 0; i < dummyItems; i++)
+            List<ItemInstance> auctions = _itemDao.SelectAuctions();
+            short i = 0;
+            foreach (ItemInstance itemInstance in auctions)
             {
-                ItemLocation loc = new ItemLocation(ItemZoneType.ProbablyAuctionBids, 0, i);
-                ItemInstance item = new ItemInstance((ulong)(i + 800));
-                item.BaseID = 510503;
-                item.Quality = ItemQualities.Normal;
-                item.IsTradeable = true;
-                item.GP = 1;
-                item.Hardness = 1;
-                item.MinimumBid = 1;
-                item.BuyoutPrice = 5;
-                item.Physical = 10;
-                item.Magical = 15;
-                item.RequiredClasses = Classes.Fighter;
-                item.RequiredLevel = 10;
-                item.Location = loc;
-                item.ConsignerName = "TesoFriend";
-                item.SecondsUntilExpiryTime = 1000;
-                item.Comment = "Comment Test " + i.ToString();
-                auctionList.Add(item);
+                itemInstance.Location = new ItemLocation(ItemZoneType.ProbablyAuctionSearch, 0, i);
+                i++;
             }
-            return auctionList;            
+            return auctions;
         }
 
         //auction functions
@@ -701,18 +688,18 @@ namespace Necromancy.Server.Systems.Item
 
             int auctionTimeInSecondsFromNow = 0;
             const int SECONDS_PER_FOUR_HOURS = 60 * 60 * 4;
-            switch (auctionTimeSelector)
+            switch (auctionTimeSelector) //TODO something not working
             {
-                case 1: // 4 hours
+                case 0: // 4 hours
                     auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS;
                     break;
-                case 2: // 8 hours
+                case 1: // 8 hours
                     auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 2;
                     break;
-                case 3: // 12 hours
+                case 2: // 12 hours
                     auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 3;
                     break;
-                case 4: // 24 hours
+                case 3: // 24 hours
                     auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 6;
                     break;
             }
@@ -731,6 +718,7 @@ namespace Necromancy.Server.Systems.Item
 
             //check possible errors. these should only occur if client is compromised
             if (fromItem is null || nextOpenSlot.Equals(ItemLocation.InvalidLocation)) throw new AuctionException(AuctionExceptionType.Generic);
+            if (fromItem.BidderId > 0) throw new AuctionException(AuctionExceptionType.BiddingCompleted);
 
             MoveResult moveResult = MoveItemPlace(nextOpenSlot, fromItem);
 
