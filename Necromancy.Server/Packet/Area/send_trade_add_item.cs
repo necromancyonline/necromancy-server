@@ -25,6 +25,7 @@ namespace Necromancy.Server.Packet.Area
             byte quantity = packet.Data.ReadByte();
 
             ItemLocation fromLoc = new ItemLocation(fromZone, fromContainer, fromSlot);
+            client.Character.ItemManager.TradeAddItem(toSlot, fromLoc);
             ItemService itemService = new ItemService(client.Character);
             ItemInstance targetItem = itemService.GetIdentifiedItem(fromLoc);//To do; get regular item instead of identified item. Mark item as in trade.
             targetItem.Location = new ItemLocation(ItemZoneType.TradeWindow, 0, toSlot);

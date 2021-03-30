@@ -33,6 +33,7 @@ namespace Necromancy.Server.Systems.Item
         private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
 
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
+        private ItemLocation[] TradeWindowSlot = new ItemLocation[20];
 
         public ItemManager()
         {
@@ -98,6 +99,17 @@ namespace Necromancy.Server.Systems.Item
             if (ZoneMap[loc.ZoneType].GetContainer(loc.Container) == null) return false;
             if (ZoneMap[loc.ZoneType].GetContainer(loc.Container).GetItem(loc.Slot) == null) return false;
             return true;
+        }
+
+        public void TradeAddItem(short index, ItemLocation loc)
+        {
+            TradeWindowSlot[index] = loc;
+        }
+        public ItemLocation TradeRemoveItem(short index)
+        {
+            ItemLocation itemLocation = TradeWindowSlot[index];
+            TradeWindowSlot[index] = new ItemLocation();
+            return itemLocation;
         }
 
         public void PutItem(ItemLocation loc, ItemInstance item)

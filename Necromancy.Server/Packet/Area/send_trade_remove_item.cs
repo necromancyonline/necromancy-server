@@ -22,7 +22,8 @@ namespace Necromancy.Server.Packet.Area
             if(client.Character.eventSelectExecCode != 0)
                 targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
-            short fromSlot = packet.Data.ReadInt16();            
+            short fromSlot = packet.Data.ReadInt16();
+            ItemLocation itemlocation = client.Character.ItemManager.TradeRemoveItem(fromSlot);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
@@ -30,7 +31,7 @@ namespace Necromancy.Server.Packet.Area
 
             if (targetClient != null)
             {
-                ItemInstance itemInstance = targetClient.Character.ItemManager.GetItem(new ItemLocation(ItemZoneType.TradeWindow, 0, fromSlot));
+                ItemInstance itemInstance = client.Character.ItemManager.GetItem(itemlocation);
                 RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
                 Router.Send(itemRemove, targetClient);
             }
