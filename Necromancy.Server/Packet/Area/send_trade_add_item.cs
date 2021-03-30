@@ -9,6 +9,7 @@ namespace Necromancy.Server.Packet.Area
 {
     public class send_trade_add_item : ClientHandler
     {
+        private ItemInstance _itemInstance;
         public send_trade_add_item(NecServer server) : base(server)
         {
         }
@@ -27,12 +28,11 @@ namespace Necromancy.Server.Packet.Area
             ItemLocation fromLoc = new ItemLocation(fromZone, fromContainer, fromSlot);
             client.Character.ItemManager.TradeAddItem(toSlot, fromLoc);
             ItemService itemService = new ItemService(client.Character);
-            ItemInstance targetItem = itemService.GetIdentifiedItem(fromLoc);//To do; get regular item instead of identified item. Mark item as in trade.
-            targetItem.Location = new ItemLocation(ItemZoneType.TradeWindow, 0, toSlot);
+            _itemInstance = itemService.GetIdentifiedItem(fromLoc);//To do; get regular item instead of identified item. Mark item as in trade.
 
-            NecClient targetClient = null;
-            if(client.Character.eventSelectExecCode != 0)
-                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+            _itemInstance.Location = new ItemLocation(ItemZoneType.TradeWindow, 0, toSlot);
+
+            NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
@@ -40,7 +40,7 @@ namespace Necromancy.Server.Packet.Area
 
             if (targetClient != null)
             {
-                RecvItemInstance itemInstance = new RecvItemInstance(targetClient, targetItem);
+                RecvItemInstance itemInstance = new RecvItemInstance(targetClient, _itemInstance);
                 Router.Send(itemInstance);
             }
         }

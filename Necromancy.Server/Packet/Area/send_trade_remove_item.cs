@@ -18,9 +18,7 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            NecClient targetClient = null;
-            if(client.Character.eventSelectExecCode != 0)
-                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+            NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
             short fromSlot = packet.Data.ReadInt16();
             ItemLocation itemlocation = client.Character.ItemManager.TradeRemoveItem(fromSlot);

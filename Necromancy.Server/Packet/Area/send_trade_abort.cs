@@ -17,28 +17,24 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            NecClient targetClient = null;
-            if (client.Character.eventSelectExecCode != 0)
-                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+            NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             Router.Send(client, (ushort) AreaPacketId.recv_trade_abort_r, res, ServerType.Area);
 
+            RecvEventEnd eventEnd = new RecvEventEnd(0);
             if (targetClient != null)
             {
                 RecvTradeNotifyAborted notifyAborted = new RecvTradeNotifyAborted();
                 Router.Send(notifyAborted, targetClient);
+                Router.Send(eventEnd, targetClient);
+                targetClient.Character.ItemManager.TradeEnd();
+                targetClient.Character.eventSelectExecCode = 0;
             }
 
-            RecvEventEnd eventEnd = new RecvEventEnd(0);
-            if(targetClient != null)
-            Router.Send(eventEnd, client, targetClient);
-            else
-                Router.Send(eventEnd, client);
-
-            if (targetClient != null)
-                targetClient.Character.eventSelectExecCode = 0;
+            Router.Send(eventEnd, client);
+            client.Character.ItemManager.TradeEnd();            
             client.Character.eventSelectExecCode = 0;
         }
     }

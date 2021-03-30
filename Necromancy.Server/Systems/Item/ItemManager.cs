@@ -33,20 +33,20 @@ namespace Necromancy.Server.Systems.Item
         private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
 
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
-        private ItemLocation[] TradeWindowSlot = new ItemLocation[20];
+        private Dictionary<short, ItemLocation> TradeWindowSlot = new Dictionary<short, ItemLocation>();
 
         public ItemManager()
         {
-            ZoneMap.Add(ItemZoneType.AdventureBag,      new ItemZone(MAX_CONTAINERS_ADV_BAG, MAX_CONTAINER_SIZE_ADV_BAG));
+            ZoneMap.Add(ItemZoneType.AdventureBag, new ItemZone(MAX_CONTAINERS_ADV_BAG, MAX_CONTAINER_SIZE_ADV_BAG));
             ZoneMap[ItemZoneType.AdventureBag].PutContainer(0, MAX_CONTAINER_SIZE_ADV_BAG);
 
             ZoneMap.Add(ItemZoneType.EquippedBags, new ItemZone(MAX_CONTAINERS_EQUIPPED_BAGS, MAX_CONTAINER_EQUIPPED_BAGS));
 
-            ZoneMap.Add(ItemZoneType.PremiumBag,          new ItemZone(MAX_CONTAINERS_ROYAL_BAG, MAX_CONTAINER_SIZE_ROYAL_BAG));
-            ZoneMap.Add(ItemZoneType.BagSlot,           new ItemZone(MAX_CONTAINERS_BAG_SLOT, MAX_CONTAINER_SIZE_BAG_SLOT));
+            ZoneMap.Add(ItemZoneType.PremiumBag, new ItemZone(MAX_CONTAINERS_ROYAL_BAG, MAX_CONTAINER_SIZE_ROYAL_BAG));
+            ZoneMap.Add(ItemZoneType.BagSlot, new ItemZone(MAX_CONTAINERS_BAG_SLOT, MAX_CONTAINER_SIZE_BAG_SLOT));
             ZoneMap[ItemZoneType.BagSlot].PutContainer(0, MAX_CONTAINER_SIZE_BAG_SLOT);
 
-            ZoneMap.Add(ItemZoneType.AvatarInventory,   new ItemZone(MAX_CONTAINERS_AVATAR, MAX_CONTAINER_SIZE_AVATAR));
+            ZoneMap.Add(ItemZoneType.AvatarInventory, new ItemZone(MAX_CONTAINERS_AVATAR, MAX_CONTAINER_SIZE_AVATAR));
             ZoneMap[ItemZoneType.AvatarInventory].PutContainer(0, MAX_CONTAINER_SIZE_AVATAR);
             ZoneMap[ItemZoneType.AvatarInventory].PutContainer(1, MAX_CONTAINER_SIZE_AVATAR);
             ZoneMap[ItemZoneType.AvatarInventory].PutContainer(2, MAX_CONTAINER_SIZE_AVATAR);
@@ -57,7 +57,7 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap[ItemZoneType.AvatarInventory].PutContainer(7, MAX_CONTAINER_SIZE_AVATAR);
             ZoneMap[ItemZoneType.AvatarInventory].PutContainer(8, MAX_CONTAINER_SIZE_AVATAR);
 
-            ZoneMap.Add(ItemZoneType.TreasureBox,       new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
+            ZoneMap.Add(ItemZoneType.TreasureBox, new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
             ZoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
             ZoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
         }
@@ -103,13 +103,21 @@ namespace Necromancy.Server.Systems.Item
 
         public void TradeAddItem(short index, ItemLocation loc)
         {
-            TradeWindowSlot[index] = loc;
+            TradeWindowSlot.Add(index, loc);
         }
         public ItemLocation TradeRemoveItem(short index)
         {
-            ItemLocation itemLocation = TradeWindowSlot[index];
-            TradeWindowSlot[index] = new ItemLocation();
+            TradeWindowSlot.TryGetValue(index, out ItemLocation itemLocation);
+            TradeWindowSlot.Remove(index);
             return itemLocation;
+        }
+        public void TradeEnd()
+        {
+            TradeWindowSlot = new Dictionary<short, ItemLocation>();
+        }
+        public Dictionary<short, ItemLocation> GetTradeItemLocations()
+        {
+            return TradeWindowSlot;
         }
 
         public void PutItem(ItemLocation loc, ItemInstance item)
