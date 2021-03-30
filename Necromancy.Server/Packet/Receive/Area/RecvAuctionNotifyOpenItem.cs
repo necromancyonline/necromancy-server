@@ -21,7 +21,6 @@ namespace Necromancy.Server.Packet.Receive.Area
         }
         protected override IBuffer ToBuffer() 
         {
-            Logger.Debug(_auctionList.Count.ToString());
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(_auctionList.Count); // cmp to 0x64 = 100
             int i = 0;

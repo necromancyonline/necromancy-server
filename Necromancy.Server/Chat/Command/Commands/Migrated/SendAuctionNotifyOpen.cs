@@ -137,7 +137,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             RecvAuctionNotifyOpenItemStart recvAuctionNotifyOpenItemStart = new RecvAuctionNotifyOpenItemStart(client);
             RecvAuctionNotifyOpenItemEnd recvAuctionNotifyOpenItemEnd = new RecvAuctionNotifyOpenItemEnd(client);
 
-            List<ItemInstance> auctionList = itemService.LoadAuction();
+            List<ItemInstance> auctionList = itemService.GetItemsUpForAuction();
 
             foreach (ItemInstance auctionItem in auctionList)
             {

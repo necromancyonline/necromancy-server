@@ -637,7 +637,7 @@ namespace Necromancy.Server.Systems.Item
         /// This may seem insane but the client requires every auction house listing, this dumps it into the client.
         /// </summary>
         /// <returns>Every single auction house listing.</returns>
-        public List<ItemInstance> LoadAuction()
+        public List<ItemInstance> GetItemsUpForAuction()
         {
             List<ItemInstance> auctions = _itemDao.SelectAuctions();
             short i = 0;
@@ -647,6 +647,11 @@ namespace Necromancy.Server.Systems.Item
                 i++;
             }
             return auctions;
+        }
+
+        public void Bid(byte isBuyout, int slot, ulong bid)
+        {
+
         }
 
         //auction functions
