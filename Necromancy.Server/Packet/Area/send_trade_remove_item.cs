@@ -23,16 +23,16 @@ namespace Necromancy.Server.Packet.Area
             short fromSlot = packet.Data.ReadInt16();
             ItemLocation itemlocation = client.Character.ItemManager.TradeRemoveItem(fromSlot);
 
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); // error check?
-            Router.Send(client, (ushort) AreaPacketId.recv_trade_remove_item_r, res, ServerType.Area);
-
             if (targetClient != null)
             {
                 ItemInstance itemInstance = client.Character.ItemManager.GetItem(itemlocation);
                 RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
                 Router.Send(itemRemove);
             }
+
+            IBuffer res = BufferProvider.Provide();
+            res.WriteInt32(0); // error check?
+            Router.Send(client, (ushort)AreaPacketId.recv_trade_remove_item_r, res, ServerType.Area);
         }
     }
 }

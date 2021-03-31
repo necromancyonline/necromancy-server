@@ -6,12 +6,14 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
+using System;
+using System.Threading.Tasks;
 
 namespace Necromancy.Server.Packet.Area
 {
     public class send_trade_fix : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_charabody_salvage_abort));
+        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_trade_fix));
 
         public send_trade_fix(NecServer server) : base(server)
         {
@@ -24,74 +26,88 @@ namespace Necromancy.Server.Packet.Area
         {
             NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); //error check?  to be tested
-            Router.Send(client, (ushort) AreaPacketId.recv_trade_fix_r, res, ServerType.Area);
+            ItemService itemService = new ItemService(client.Character);
+            ItemService targetItemService = new ItemService(targetClient.Character);
+
+            RecvTradeNotifyFixed notifyFixed = new RecvTradeNotifyFixed(0);
+            if (targetClient != null) Router.Send(targetClient, notifyFixed.ToPacket());
+            Router.Send(client, notifyFixed.ToPacket());
+
+            RecvTradeFix recvTradeFix = new RecvTradeFix();
+            if (targetClient != null) Router.Send(targetClient, recvTradeFix.ToPacket());
+            Router.Send(client, recvTradeFix.ToPacket());
+
+            RecvTradeNotifyReverted notifyReverted = new RecvTradeNotifyReverted();
+            Router.Send(targetClient, notifyReverted.ToPacket());
+            //Router.Send(client, recvTradeFix.ToPacket());
+
+            RecvSituationStart recvSituationStart = new RecvSituationStart(2);
+            if (targetClient != null) Router.Send(targetClient, recvSituationStart.ToPacket());
+            Router.Send(client, recvSituationStart.ToPacket());
 
 
+
+            //Get stuff from targetClient
+            foreach (ItemLocation itemLocation in targetClient.Character.ItemManager.GetTradeItemLocations().Values)
             {
-                ItemService itemService = new ItemService(client.Character);
-                ItemService targetItemService = new ItemService(targetClient.Character);
-                //Get stuff from targetClient
-                foreach (ItemLocation itemLocation in targetClient.Character.ItemManager.GetTradeItemLocations().Values)
+                Logger.Debug($"Client trading : {itemLocation.ZoneType}{itemLocation.Container}{itemLocation.Slot}");
+                //if (!itemLocation.Equals(ItemLocation.InvalidLocation))
                 {
-                    Logger.Debug("${ itemLocation}");
-                    if (!itemLocation.Equals(ItemLocation.InvalidLocation))
-                    {
-                        ItemInstance iteminstance = targetItemService.GetIdentifiedItem(itemLocation);
-                        //remove the icon from the deadClient's inventory if they are online.
-                        RecvItemRemove recvItemRemove = new RecvItemRemove(targetClient, iteminstance);
-                        if (targetClient != null) Router.Send(recvItemRemove);
+                    ItemInstance iteminstance = targetItemService.GetIdentifiedItem(itemLocation);
+                    //remove the icon from the deadClient's inventory if they are online.
+                    RecvItemRemove recvItemRemove = new RecvItemRemove(targetClient, iteminstance);
+                    if (targetClient != null) Router.Send(recvItemRemove);
 
-                        //this is important.
-                        iteminstance.Location = new ItemLocation(ItemZoneType.InvalidZone, 0, 0);
+                    //this is important.
+                    //iteminstance.Location = new ItemLocation(ItemZoneType.InvalidZone, 0, 0);
 
-                        //put the item in the new owners inventory
-                        itemService.PutLootedItem(iteminstance);
+                    //put the item in the new owners inventory
+                    iteminstance = itemService.PutLootedItem(iteminstance);
 
-                        RecvItemInstance recvItemInstance = new RecvItemInstance(client, iteminstance);
-                        Router.Send(client, recvItemInstance.ToPacket());
-                    }
-                }
-                //give stuff to targetClient
-                foreach (ItemLocation itemLocation in client.Character.ItemManager.GetTradeItemLocations().Values)
-                {
-                    if (!itemLocation.Equals(ItemLocation.InvalidLocation))
-                    {
-                        ItemInstance iteminstance = itemService.GetIdentifiedItem(itemLocation);
-                        //remove the icon from the deadClient's inventory if they are online.
-                        RecvItemRemove recvItemRemove = new RecvItemRemove(client, iteminstance);
-                        if (client != null) Router.Send(recvItemRemove);
-
-                        //this is important.
-                        iteminstance.Location = new ItemLocation(ItemZoneType.InvalidZone,0,0);
-
-                        //put the item in the new owners inventory
-                        itemService.PutLootedItem(iteminstance);
-
-                        RecvItemInstance recvItemInstance = new RecvItemInstance(targetClient, iteminstance);
-                        Router.Send(targetClient, recvItemInstance.ToPacket());
-                    }
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, iteminstance);
+                    Router.Send(client, recvItemInstance.ToPacket());
                 }
             }
-            //Clean everything up and end everything
-            RecvTradeNotifyFixed notifyFixed = new RecvTradeNotifyFixed();
-            RecvTradeNotifyAborted notifyAborted = new RecvTradeNotifyAborted(); //Find a better recv for closing the trade windows at the end.  ToDo
-            RecvEventEnd eventEnd = new RecvEventEnd(0);
-            if (targetClient != null)
+            //give stuff to targetClient
+            foreach (ItemLocation itemLocation in client.Character.ItemManager.GetTradeItemLocations().Values)
             {
-                Router.Send(notifyFixed, targetClient);
-                Router.Send(eventEnd, targetClient);
-                Router.Send(notifyAborted, targetClient);
-                targetClient.Character.ItemManager.TradeEnd();
-                targetClient.Character.eventSelectExecCode = 0;
+                Logger.Debug($"targetClient trading : {itemLocation.ZoneType}{itemLocation.Container}{itemLocation.Slot}");
+                ///if (!itemLocation.Equals(ItemLocation.InvalidLocation))
+                {
+                    ItemInstance iteminstance = itemService.GetIdentifiedItem(itemLocation);
+                    //remove the icon from the deadClient's inventory if they are online.
+                    RecvItemRemove recvItemRemove = new RecvItemRemove(client, iteminstance);
+                    if (client != null) Router.Send(recvItemRemove);
+
+                    //this is important.
+                    //iteminstance.Location = new ItemLocation(ItemZoneType.InvalidZone, 0, 0);
+
+                    //put the item in the new owners inventory
+                    iteminstance = itemService.PutLootedItem(iteminstance);
+
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(targetClient, iteminstance);
+                    if (targetClient != null) Router.Send(targetClient, recvItemInstance.ToPacket());
+                }
             }
 
-            Router.Send(notifyFixed, client);
-            Router.Send(eventEnd, client);
-            Router.Send(notifyAborted, client);
-            client.Character.ItemManager.TradeEnd();
+            RecvSituationEnd recvSituationEnd = new RecvSituationEnd();
+            if (targetClient != null) Router.Send(targetClient, recvSituationEnd.ToPacket());
+            Router.Send(client, recvSituationEnd.ToPacket());
+
+            targetClient.Character.eventSelectExecCode = 0;
             client.Character.eventSelectExecCode = 0;
+
+            client.Character.ItemManager.TradeEnd();
+            targetClient.Character.ItemManager.TradeEnd();
+            Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
+            (t1 =>
+            {
+                RecvEventEnd eventEnd = new RecvEventEnd(0);
+                if (targetClient != null) Router.Send(eventEnd, targetClient);
+                Router.Send(eventEnd, client);
+                
+            }
+            );
         }
     }
 }

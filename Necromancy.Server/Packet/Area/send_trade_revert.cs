@@ -29,6 +29,7 @@ namespace Necromancy.Server.Packet.Area
                 RecvTradeNotifyReverted notifyReverted = new RecvTradeNotifyReverted();
                 Router.Send(notifyReverted, targetClient);
             }
+            //client.Character.eventSelectExecCode = 0;
         }
     }
 }
