@@ -120,8 +120,13 @@ namespace Necromancy.Server.Model
         public bool _characterActive { get; private set; }
 
         //Inventory
-        public ItemLocationVerifier ItemManager { get; } = new ItemLocationVerifier(); //TODO make item service
+        public ItemLocationVerifier ItemLocationVerifier { get; } = new ItemLocationVerifier(); //TODO make item service
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems { get; } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
+
+        /// <summary>
+        /// Used to hold the ids of the items in the auction search window temporarily.
+        /// </summary>
+        public ulong[] AuctionSearchIds { get; set; } = new ulong[0];
         public ItemLocation lootNotify { get; set; }
         public ulong AdventureBagGold { get; set; }
 

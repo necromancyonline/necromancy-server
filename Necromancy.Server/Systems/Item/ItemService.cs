@@ -41,12 +41,12 @@ namespace Necromancy.Server.Systems.Item
 
         internal ItemInstance GetItem(ItemLocation location)
         {
-            return _character.ItemManager.GetItem(location);
+            return _character.ItemLocationVerifier.GetItem(location);
         }
 
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
             {
                 item.Statuses &= ~ItemStatuses.Unidentified;
@@ -78,7 +78,7 @@ namespace Necromancy.Server.Systems.Item
 
         public ItemInstance Equip(ItemLocation location, ItemEquipSlots equipSlot)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             item.CurrentEquipSlot = equipSlot;
             if (_character.EquippedItems.ContainsKey(equipSlot))
             {
@@ -123,7 +123,7 @@ namespace Necromancy.Server.Systems.Item
         }
         internal ItemInstance GetLootedItem(ItemLocation location)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             if (item.CurrentEquipSlot != ItemEquipSlots.None)
             {
                 Unequip(item.CurrentEquipSlot);
@@ -135,11 +135,11 @@ namespace Necromancy.Server.Systems.Item
             ItemInstance myNewItem = itemInstance;
 
             //ToDo,  make this find space in more than just your adventure bag.
-            ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
+            ItemLocation nextOpenLocation = _character.ItemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
             myNewItem.Location = nextOpenLocation;
             _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
             _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
-            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);
+            _character.ItemLocationVerifier.PutItem(myNewItem.Location, myNewItem);
             return myNewItem;
         }
 
@@ -154,12 +154,12 @@ namespace Necromancy.Server.Systems.Item
 
         public List<ItemInstance> SpawnItemInstances(ItemZoneType itemZoneType, int[] baseIds, ItemSpawnParams[] spawnParams)
         {
-            if (_character.ItemManager.GetTotalFreeSpace(itemZoneType) < baseIds.Length) throw new ItemException(ItemExceptionType.InventoryFull);
-            ItemLocation[] nextOpenLocations = _character.ItemManager.NextOpenSlots(itemZoneType, baseIds.Length);
+            if (_character.ItemLocationVerifier.GetTotalFreeSpace(itemZoneType) < baseIds.Length) throw new ItemException(ItemExceptionType.InventoryFull);
+            ItemLocation[] nextOpenLocations = _character.ItemLocationVerifier.NextOpenSlots(itemZoneType, baseIds.Length);
             List<ItemInstance> itemInstances = _itemDao.InsertItemInstances(_character.Id, nextOpenLocations, baseIds, spawnParams);
             foreach (ItemInstance item in itemInstances)
             {
-                _character.ItemManager.PutItem(item.Location, item);
+                _character.ItemLocationVerifier.PutItem(item.Location, item);
             }
             return itemInstances;
         }
@@ -180,7 +180,7 @@ namespace Necromancy.Server.Systems.Item
                 {
                     ItemLocation location = item.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
                     item.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
-                    _character.ItemManager.PutItem(location, item);
+                    _character.ItemLocationVerifier.PutItem(location, item);
                 }
             }
             foreach (ItemInstance itemInstance in ownedItems)
@@ -213,7 +213,7 @@ namespace Necromancy.Server.Systems.Item
                     itemInstance.Weight = (short)(itemInstance.Weight - forgeMultiplier.Weight);
                     if (itemInstance.Weight < 0) { itemInstance.Weight = 0; } //this is lazy, fix the weight math issue.
 
-                    _character.ItemManager.PutItem(location, itemInstance);
+                    _character.ItemLocationVerifier.PutItem(location, itemInstance);
                 }
                 if (itemInstance.CurrentEquipSlot != ItemEquipSlots.None)
                 {
@@ -246,7 +246,7 @@ namespace Necromancy.Server.Systems.Item
         }
         public ItemInstance Remove(ItemLocation location, byte quantity)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             ulong instanceId = item.InstanceID;
             if (item is null) throw new ItemException(ItemExceptionType.Generic);
             if (item.Quantity < quantity) throw new ItemException(ItemExceptionType.Amount);
@@ -255,7 +255,7 @@ namespace Necromancy.Server.Systems.Item
             if (item.Quantity == 0)
             {
                 _itemDao.DeleteItemInstance(instanceId);
-                _character.ItemManager.RemoveItem(item);
+                _character.ItemLocationVerifier.RemoveItem(item);
             }
             else
             {
@@ -273,16 +273,16 @@ namespace Necromancy.Server.Systems.Item
         }
         public MoveResult Move(ItemLocation from, ItemLocation to, byte quantity)
         {
-            ItemInstance fromItem = _character.ItemManager.GetItem(from);
-            bool hasToItem = _character.ItemManager.HasItem(to);
-            ItemInstance toItem = _character.ItemManager.GetItem(to);
+            ItemInstance fromItem = _character.ItemLocationVerifier.GetItem(from);
+            bool hasToItem = _character.ItemLocationVerifier.HasItem(to);
+            ItemInstance toItem = _character.ItemLocationVerifier.GetItem(to);
             MoveResult moveResult = new MoveResult();
 
             //check possible errors. these should only occur if client is compromised
             if (fromItem is null || quantity == 0) throw new ItemException(ItemExceptionType.Generic);
             if (quantity > fromItem.Quantity) throw new ItemException(ItemExceptionType.Amount);
             if (quantity > 1 && quantity < fromItem.Quantity && hasToItem && toItem.BaseID != fromItem.BaseID) throw new ItemException(ItemExceptionType.BagLocation);
-            if (fromItem.Location.ZoneType == ItemZoneType.BagSlot && !_character.ItemManager.IsEmptyContainer(ItemZoneType.EquippedBags, fromItem.Location.Slot)) throw new ItemException(ItemExceptionType.BagLocation);
+            if (fromItem.Location.ZoneType == ItemZoneType.BagSlot && !_character.ItemLocationVerifier.IsEmptyContainer(ItemZoneType.EquippedBags, fromItem.Location.Slot)) throw new ItemException(ItemExceptionType.BagLocation);
 
             if (!hasToItem && quantity == fromItem.Quantity)
             {
@@ -317,7 +317,7 @@ namespace Necromancy.Server.Systems.Item
         private MoveResult MoveItemPlace(ItemLocation to, ItemInstance fromItem)
         {
             MoveResult moveResult = new MoveResult(MoveType.Place);
-            _character.ItemManager.PutItem(to, fromItem);
+            _character.ItemLocationVerifier.PutItem(to, fromItem);
             moveResult.DestItem = fromItem;
 
             ulong[] instanceIds = new ulong[1];
@@ -340,8 +340,8 @@ namespace Necromancy.Server.Systems.Item
         private MoveResult MoveItemSwap(ItemLocation from, ItemLocation to, ItemInstance fromItem, ItemInstance toItem)
         {
             MoveResult moveResult = new MoveResult(MoveType.Swap);
-            _character.ItemManager.PutItem(to, fromItem);
-            _character.ItemManager.PutItem(from, toItem);
+            _character.ItemLocationVerifier.PutItem(to, fromItem);
+            _character.ItemLocationVerifier.PutItem(from, toItem);
             moveResult.DestItem = fromItem;
             moveResult.OriginItem = toItem;
 
@@ -383,7 +383,7 @@ namespace Necromancy.Server.Systems.Item
             spawnParams[0] = spawnParam;
 
             List<ItemInstance> insertedItem = _itemDao.InsertItemInstances(fromItem.OwnerID, locs, baseIds, spawnParams);
-            _character.ItemManager.PutItem(to, insertedItem[0]);
+            _character.ItemLocationVerifier.PutItem(to, insertedItem[0]);
             moveResult.DestItem = insertedItem[0];
 
             return moveResult;
@@ -431,7 +431,7 @@ namespace Necromancy.Server.Systems.Item
             MoveResult moveResult = new MoveResult(MoveType.AllQuantity);
             moveResult.DestItem = toItem;
             moveResult.DestItem.Quantity += quantity;
-            _character.ItemManager.RemoveItem(fromItem.Location);
+            _character.ItemLocationVerifier.RemoveItem(fromItem.Location);
 
             ulong[] instanceIds = new ulong[1];
             byte[] quantities = new byte[1];
@@ -614,7 +614,7 @@ namespace Necromancy.Server.Systems.Item
             List<ItemInstance> ItemInstances = new List<ItemInstance>();
             foreach (ItemLocation location in locations)
             {
-                ItemInstance itemInstance = _character.ItemManager.GetItem(location);
+                ItemInstance itemInstance = _character.ItemLocationVerifier.GetItem(location);
                 ItemInstances.Add(itemInstance);
                 _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
             }
@@ -640,9 +640,11 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> GetItemsUpForAuction()
         {
             List<ItemInstance> auctions = _itemDao.SelectAuctions();
+            _character.AuctionSearchIds = new ulong[auctions.Count];
             short i = 0;
             foreach (ItemInstance itemInstance in auctions)
             {
+                _character.AuctionSearchIds[i] = itemInstance.InstanceID;
                 itemInstance.Location = new ItemLocation(ItemZoneType.ProbablyAuctionSearch, 0, i);
                 i++;
             }
@@ -658,9 +660,9 @@ namespace Necromancy.Server.Systems.Item
         public MoveResult Exhibit(ItemLocation itemLocation, byte exhibitSlot, byte quantity, int auctionTimeSelector, ulong minBid, ulong buyoutPrice, string comment)
         {
             const int MAX_LOTS = 10; //TODO update with dimento?
-            ItemInstance fromItem = _character.ItemManager.GetItem(itemLocation);
+            ItemInstance fromItem = _character.ItemLocationVerifier.GetItem(itemLocation);
             ItemLocation exhibitLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, exhibitSlot);
-            bool hasToItem = _character.ItemManager.HasItem(exhibitLocation);
+            bool hasToItem = _character.ItemLocationVerifier.HasItem(exhibitLocation);
             MoveResult moveResult = new MoveResult();
 
             //check possible errors. these should only occur if client is compromised
@@ -718,8 +720,8 @@ namespace Necromancy.Server.Systems.Item
         {
             //TODO don't allow cancelling auctions with bids
             ItemLocation itemLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, slot);
-            ItemInstance fromItem = _character.ItemManager.GetItem(itemLocation);
-            ItemLocation nextOpenSlot = _character.ItemManager.NextOpenSlotInInventory();
+            ItemInstance fromItem = _character.ItemLocationVerifier.GetItem(itemLocation);
+            ItemLocation nextOpenSlot = _character.ItemLocationVerifier.NextOpenSlotInInventory();
 
             //check possible errors. these should only occur if client is compromised
             if (fromItem is null || nextOpenSlot.Equals(ItemLocation.InvalidLocation)) throw new AuctionException(AuctionExceptionType.Generic);
@@ -743,7 +745,7 @@ namespace Necromancy.Server.Systems.Item
             List<ItemInstance> itemInstances = _itemDao.SelectLots(_character.Id);
             foreach (ItemInstance item in itemInstances)
             {
-                _character.ItemManager.PutItem(item.Location, item);
+                _character.ItemLocationVerifier.PutItem(item.Location, item);
             }
             return _itemDao.SelectLots(_character.Id);
         }

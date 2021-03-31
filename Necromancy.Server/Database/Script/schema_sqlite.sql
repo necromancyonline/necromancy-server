@@ -491,13 +491,9 @@ CREATE TABLE IF NOT EXISTS `nec_item_instance` (
 	`expiry_datetime`	INTEGER,
 	`min_bid`			INTEGER,
 	`buyout_price`		INTEGER,
-	`bidder_id`			INTEGER,
-    `bidder_name`		TEXT,
-	`current_bid`		INTEGER,
 	`comment`			TEXT,
 	PRIMARY KEY(`id` AUTOINCREMENT),
 	FOREIGN KEY(`owner_id`) REFERENCES `nec_character`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY(`bidder_id`) REFERENCES `nec_character`(`id`) ON DELETE SET NULL,
 	FOREIGN KEY(`base_id`) REFERENCES `nec_item_library`(`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 
@@ -694,4 +690,13 @@ CREATE VIEW IF NOT EXISTS item_instance
                     nec_item_library 
                 ON 
                     nec_item_instance.base_id = nec_item_library.id;
+
+ CREATE TABLE IF NOT EXISTS "nec_auction_bids" (
+	"item_instance_id"	INTEGER NOT NULL,
+	"bidder_id"	INTEGER NOT NULL,
+	"bid"	INTEGER,
+	PRIMARY KEY("item_instance_id","bidder_id"),
+    FOREIGN KEY(`item_instance_id`) REFERENCES `nec_item_instance`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY(`bidder_id`) REFERENCES `nec_character`(`id`) ON DELETE CASCADE
+)
 

@@ -77,11 +77,11 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteFixedString(bidItem.ConsignerName, 49);
                 res.WriteByte(0); // criminal status of seller?
                 res.WriteFixedString(bidItem.Comment, 385);
-                res.WriteInt16((short)bidItem.CurrentBid); // Bid why convert to short?
+                res.WriteInt16((short)bidItem.CurrentBid); // The current bid, why convert to short?
                 res.WriteInt32(bidItem.SecondsUntilExpiryTime);
 
-                res.WriteInt64(0); //unknown
-                res.WriteInt32(0); //unknown
+                res.WriteInt64(5000); //Your current bid
+                res.WriteInt32(0); //0: you are the highest bidder, 1: you won the item, 2: you were outbid, 3: seller cancelled
                 j++;
             }
 

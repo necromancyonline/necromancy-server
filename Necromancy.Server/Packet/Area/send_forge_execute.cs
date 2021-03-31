@@ -46,7 +46,7 @@ namespace Necromancy.Server.Packet.Area
             Router.Send(client, recvForgeNotifyExecuteResult.ToPacket());
 
             ItemService itemService = new ItemService(client.Character);
-            ItemInstance itemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
+            ItemInstance itemInstance = client.Character.ItemLocationVerifier.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
             ForgeMultiplier forgeMultiplier = itemService.ForgeMultiplier(itemInstance.EnhancementLevel + 1);
 
 

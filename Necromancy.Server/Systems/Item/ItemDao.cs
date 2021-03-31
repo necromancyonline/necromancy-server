@@ -185,15 +185,27 @@ namespace Necromancy.Server.Systems.Item
             UPDATE 
                 nec_item_instance 
             SET 
-                consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment, bidder_id = @bidder_id, bidder_name = @bidder_name
+                consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment
             WHERE 
                 id = @id";
 
         private const string SqlSelectBids = @"
-            SELECT 			
-                *
-            FROM
-                item_instance
+            SELECT 
+                id, 
+                bidder_id, 
+                bid, 
+                min_bid, 
+                buyout_price, 
+                consigner_name, 
+                comment, 
+                expiry_datetime, 
+                (SELECT MAX(bid) FROM nec_auction_bids AS current_bid) 
+            FROM 
+                nec_auction_bids 
+            JOIN 
+                nec_item_instance 
+            ON 
+                nec_item_instance.id = nec_auction_bids.item_instance_id
             WHERE
                 bidder_id = @bidder_id";
 
@@ -725,8 +737,8 @@ namespace Necromancy.Server.Systems.Item
                 {
                     while (reader.Read())
                     {
-                        ItemInstance itemInstance = MakeItemInstance(reader);
-                        bids.Add(itemInstance);
+                        //ItemInstance itemInstance = MakeItemInstance(reader); TODO
+                        //bids.Add(itemInstance);
                     }
                 });
             return bids;
