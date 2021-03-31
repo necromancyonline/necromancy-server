@@ -10,7 +10,7 @@ namespace Necromancy.Server.Systems.Item
     /// Stores information about published items, and their locations. <b>Does not validate any actions.</b>
     /// Do not access from other clients, does not function.
     /// </summary>
-    public class ItemManager
+    public class ItemLocationVerifier
     {
         private const int MAX_CONTAINERS_ADV_BAG = 1;
         private const int MAX_CONTAINER_SIZE_ADV_BAG = 24;
@@ -44,7 +44,7 @@ namespace Necromancy.Server.Systems.Item
 
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
 
-        public ItemManager()
+        public ItemLocationVerifier()
         {
             ZoneMap.Add(ItemZoneType.AdventureBag, new ItemZone(MAX_CONTAINERS_ADV_BAG, MAX_CONTAINER_SIZE_ADV_BAG));
             ZoneMap[ItemZoneType.AdventureBag].PutContainer(0, MAX_CONTAINER_SIZE_ADV_BAG);
