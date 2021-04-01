@@ -680,9 +680,6 @@ CREATE VIEW IF NOT EXISTS item_instance
 	                expiry_datetime,
 	                min_bid,
 	                buyout_price,
-	                bidder_id,
-                    bidder_name,
-	                current_bid,
 	                comment
                 FROM 
                     nec_item_instance 
@@ -694,7 +691,7 @@ CREATE VIEW IF NOT EXISTS item_instance
  CREATE TABLE IF NOT EXISTS "nec_auction_bids" (
 	"item_instance_id"	INTEGER NOT NULL,
 	"bidder_id"	INTEGER NOT NULL,
-	"bid"	INTEGER,
+	"current_bid"	INTEGER,
 	PRIMARY KEY("item_instance_id","bidder_id"),
     FOREIGN KEY(`item_instance_id`) REFERENCES `nec_item_instance`(`id`) ON DELETE CASCADE,
     FOREIGN KEY(`bidder_id`) REFERENCES `nec_character`(`id`) ON DELETE CASCADE

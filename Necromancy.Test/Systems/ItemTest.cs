@@ -112,6 +112,16 @@ namespace Necromancy.Test.Systems
             {
                 throw new NotImplementedException();
             }
+
+            public List<ItemInstance> SelectAuctions()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void UpdateAuctionCancelExhibit(ulong instanceId)
+            {
+                throw new NotImplementedException();
+            }
         }
 
             public class TestMove

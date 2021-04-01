@@ -96,8 +96,8 @@ namespace Necromancy.Server.Systems.Item
         public int BidderId { get; set; }
         public string BidderName { get; set; }
         public int CurrentBid { get; set; }
+        public int MaxBid { get; set; }
         public string Comment { get; set; }
-        public bool IsCancellable { get; set; } = true;
 
 
         /// <summary>

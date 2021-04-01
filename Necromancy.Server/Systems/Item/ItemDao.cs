@@ -191,22 +191,17 @@ namespace Necromancy.Server.Systems.Item
 
         private const string SqlSelectBids = @"
             SELECT 
-                id, 
+                item_instance.*, 
                 bidder_id, 
-                bid, 
-                min_bid, 
-                buyout_price, 
-                consigner_name, 
-                comment, 
-                expiry_datetime, 
-                (SELECT MAX(bid) FROM nec_auction_bids AS current_bid) 
+                current_bid, 
+                (SELECT MAX(current_bid) FROM nec_auction_bids WHERE item_instance_id = id) AS max_bid
             FROM 
-                nec_auction_bids 
+                item_instance 
             JOIN 
-                nec_item_instance 
+                nec_auction_bids 
             ON 
-                nec_item_instance.id = nec_auction_bids.item_instance_id
-            WHERE
+                item_instance.id = nec_auction_bids.item_instance_id 
+            WHERE 
                 bidder_id = @bidder_id";
 
         private const string SqlSelectLots = @"
@@ -641,11 +636,8 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.ConsignerName = reader.IsDBNull("consigner_name") ? "" : reader.GetString("consigner_name");
             itemInstance.SecondsUntilExpiryTime = reader.IsDBNull("expiry_datetime") ? 0 : CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
             itemInstance.MinimumBid = reader.IsDBNull("min_bid") ? 0 : (ulong)reader.GetInt64("min_bid");
-            itemInstance.BuyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");
-            itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
-            itemInstance.BidderId = reader.IsDBNull("bidder_id") ? 0 : reader.GetInt32("bidder_id");
+            itemInstance.BuyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");            
             itemInstance.Comment = reader.IsDBNull("comment") ? "" : reader.GetString("comment");
-            if (itemInstance.BidderId > 0) itemInstance.IsCancellable = false;
 
             return itemInstance;
         }
@@ -737,8 +729,11 @@ namespace Necromancy.Server.Systems.Item
                 {
                     while (reader.Read())
                     {
-                        //ItemInstance itemInstance = MakeItemInstance(reader); TODO
-                        //bids.Add(itemInstance);
+                        ItemInstance itemInstance = MakeItemInstance(reader);                         
+                        itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
+                        itemInstance.BidderId = reader.IsDBNull("bidder_id") ? 0 : reader.GetInt32("bidder_id");
+                        itemInstance.MaxBid = reader.IsDBNull("max_bid") ? 0 : reader.GetInt32("max_bid");
+                        bids.Add(itemInstance);
                     }
                 });
             return bids;
