@@ -50,7 +50,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteUInt64(auctionItem.InstanceID);
                 res.WriteUInt64(auctionItem.MinimumBid); 
                 res.WriteUInt64(auctionItem.BuyoutPrice); 
-                res.WriteFixedString(auctionItem.ConsignerName, 49); 
+                res.WriteFixedString(auctionItem.ConsignerSoulName, 49); 
                 res.WriteByte(0); // 0 = nothing.    Other = Logo appear. maybe it's effect or rank, or somethiung else ?
                 res.WriteFixedString(auctionItem.Comment, 385); 
                 res.WriteInt32(auctionItem.CurrentBid); 

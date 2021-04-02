@@ -177,7 +177,7 @@ namespace Necromancy.Server.Systems.Item
             UPDATE 
                 nec_item_instance 
             SET 
-                consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment 
+                consigner_soul_name = @consigner_soul_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment 
             WHERE 
                 id = @id";
 
@@ -185,14 +185,14 @@ namespace Necromancy.Server.Systems.Item
             UPDATE 
                 nec_item_instance 
             SET 
-                consigner_name = @consigner_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment
+                consigner_soul_name = @consigner_soul_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment
             WHERE 
                 id = @id";
 
         private const string SqlSelectBids = @"
             SELECT 
                 item_instance.*, 
-                bidder_id, 
+                bidder_soul_id, 
                 current_bid, 
                 (SELECT MAX(current_bid) FROM nec_auction_bids WHERE item_instance_id = id) AS max_bid
             FROM 
@@ -202,7 +202,7 @@ namespace Necromancy.Server.Systems.Item
             ON 
                 item_instance.id = nec_auction_bids.item_instance_id 
             WHERE 
-                bidder_id = @bidder_id";
+                bidder_soul_id = @bidder_soul_id";
 
         private const string SqlSelectLots = @"
             SELECT 			
@@ -633,7 +633,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000); // TODO DOUBLE CHECK THIS IS CORRECT SCALE
 
             //auction
-            itemInstance.ConsignerName = reader.IsDBNull("consigner_name") ? "" : reader.GetString("consigner_name");
+            itemInstance.ConsignerSoulName = reader.IsDBNull("consigner_soul_name") ? "" : reader.GetString("consigner_soul_name");
             itemInstance.SecondsUntilExpiryTime = reader.IsDBNull("expiry_datetime") ? 0 : CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
             itemInstance.MinimumBid = reader.IsDBNull("min_bid") ? 0 : (ulong)reader.GetInt64("min_bid");
             itemInstance.BuyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");            
@@ -694,7 +694,7 @@ namespace Necromancy.Server.Systems.Item
             ExecuteNonQuery(SqlUpdateExhibit, command =>
             {
                 AddParameter(command, "@id", itemInstance.InstanceID);
-                AddParameter(command, "@consigner_name", itemInstance.ConsignerName);
+                AddParameter(command, "@consigner_soul_name", itemInstance.ConsignerSoulName);
                 AddParameter(command, "@expiry_datetime", CalcExpiryTime(itemInstance.SecondsUntilExpiryTime));
                 AddParameter(command, "@min_bid", itemInstance.MinimumBid);
                 AddParameter(command, "@buyout_price", itemInstance.BuyoutPrice);
@@ -707,7 +707,7 @@ namespace Necromancy.Server.Systems.Item
             ExecuteNonQuery(SqlUpdateCancelExhibit, command =>
             {
                 AddParameter(command, "@id", instanceId);
-                AddParameterNull(command, "@consigner_name");
+                AddParameterNull(command, "@consigner_soul_name");
                 AddParameterNull(command, "@expiry_datetime");
                 AddParameterNull(command, "@min_bid");
                 AddParameterNull(command, "@buyout_price");
@@ -731,7 +731,7 @@ namespace Necromancy.Server.Systems.Item
                     {
                         ItemInstance itemInstance = MakeItemInstance(reader);                         
                         itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
-                        itemInstance.BidderId = reader.IsDBNull("bidder_id") ? 0 : reader.GetInt32("bidder_id");
+                        itemInstance.BidderSoulId = reader.IsDBNull("bidder_soul_id") ? 0 : reader.GetInt32("bidder_soul_id");
                         itemInstance.MaxBid = reader.IsDBNull("max_bid") ? 0 : reader.GetInt32("max_bid");
                         bids.Add(itemInstance);
                     }

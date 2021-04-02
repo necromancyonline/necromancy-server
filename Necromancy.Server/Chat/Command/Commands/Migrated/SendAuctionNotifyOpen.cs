@@ -48,7 +48,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteUInt64(lotItem.InstanceID);
                 res.WriteUInt64(lotItem.MinimumBid);
                 res.WriteUInt64(lotItem.BuyoutPrice);
-                res.WriteFixedString(lotItem.ConsignerName, 49);
+                res.WriteFixedString(lotItem.ConsignerSoulName, 49);
                 res.WriteByte(0); // criminal status of seller?
                 res.WriteFixedString(lotItem.Comment, 385);
                 res.WriteInt16((short)lotItem.CurrentBid); // Bid why convert to short?
@@ -74,7 +74,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteUInt64(bidItem.InstanceID);
                 res.WriteUInt64(bidItem.MinimumBid);
                 res.WriteUInt64(bidItem.BuyoutPrice);
-                res.WriteFixedString(bidItem.ConsignerName, 49);
+                res.WriteFixedString(bidItem.ConsignerSoulName, 49);
                 res.WriteByte(0); // criminal status of seller?
                 res.WriteFixedString(bidItem.Comment, 385);
                 res.WriteInt16((short)bidItem.CurrentBid); // The current bid, why convert to short?

@@ -487,7 +487,7 @@ CREATE TABLE IF NOT EXISTS `nec_item_instance` (
 	`plus_weight`	INTEGER NOT NULL DEFAULT (0),
 	`plus_ranged_eff`	INTEGER NOT NULL DEFAULT (0),
 	`plus_reservoir_eff`	INTEGER NOT NULL DEFAULT (0),
-    `consigner_name`  TEXT,
+    `consigner_soul_name`  TEXT,
 	`expiry_datetime`	INTEGER,
 	`min_bid`			INTEGER,
 	`buyout_price`		INTEGER,
@@ -676,7 +676,7 @@ CREATE VIEW IF NOT EXISTS item_instance
                     plus_weight,
                     plus_ranged_eff,
                     plus_reservoir_eff,
-                    consigner_name,
+                    consigner_soul_name,
 	                expiry_datetime,
 	                min_bid,
 	                buyout_price,
@@ -690,10 +690,10 @@ CREATE VIEW IF NOT EXISTS item_instance
 
  CREATE TABLE IF NOT EXISTS "nec_auction_bids" (
 	"item_instance_id"	INTEGER NOT NULL,
-	"bidder_id"	INTEGER NOT NULL,
+	"bidder_soul_id"	INTEGER NOT NULL,
 	"current_bid"	INTEGER,
 	PRIMARY KEY("item_instance_id","bidder_id"),
     FOREIGN KEY(`item_instance_id`) REFERENCES `nec_item_instance`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY(`bidder_id`) REFERENCES `nec_character`(`id`) ON DELETE CASCADE
+    FOREIGN KEY(`bidder_id`) REFERENCES `nec_soul`(`id`) ON DELETE CASCADE
 )
 

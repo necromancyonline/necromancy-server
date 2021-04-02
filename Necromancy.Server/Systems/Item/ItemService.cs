@@ -688,7 +688,7 @@ namespace Necromancy.Server.Systems.Item
                 moveResult = MoveItemPlaceQuantity(exhibitLocation, fromItem, quantity);
             }
 
-            moveResult.DestItem.ConsignerName = _character.Name;
+            moveResult.DestItem.ConsignerSoulName = _character.Name;
             moveResult.DestItem.MinimumBid = minBid;
             moveResult.DestItem.BuyoutPrice = buyoutPrice;
             moveResult.DestItem.Comment = comment;
@@ -725,7 +725,7 @@ namespace Necromancy.Server.Systems.Item
 
             //check possible errors. these should only occur if client is compromised
             if (fromItem is null || nextOpenSlot.Equals(ItemLocation.InvalidLocation)) throw new AuctionException(AuctionExceptionType.Generic);
-            if (fromItem.BidderId > 0) throw new AuctionException(AuctionExceptionType.BiddingCompleted);
+            if (fromItem.BidderSoulId > 0) throw new AuctionException(AuctionExceptionType.BiddingCompleted);
 
             MoveResult moveResult = MoveItemPlace(nextOpenSlot, fromItem);
 
