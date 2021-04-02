@@ -167,11 +167,18 @@ namespace Necromancy.Server.Systems.Item
 
         private const string SqlSelectAuctions = @"
             SELECT 			
-                *
+                item_instance.*,
+				nec_soul.id AS owner_soul_id
             FROM 
-                item_instance			
+                item_instance
+			JOIN
+				nec_soul
+			ON
+				item_instance.owner_id = nec_soul.id			
             WHERE                 
-                zone = 82";
+                zone = 82
+            AND
+                owner_soul_id != @owner_soul_id";
 
         private const string SqlUpdateExhibit = @"
             UPDATE 
@@ -206,11 +213,16 @@ namespace Necromancy.Server.Systems.Item
 
         private const string SqlSelectLots = @"
             SELECT 			
-                *
+                item_instance.*,
+				nec_soul.id AS owner_soul_id
             FROM 
-                item_instance			
+                item_instance
+			JOIN
+				nec_soul
+			ON
+				item_instance.owner_id = nec_soul.id
             WHERE 
-                owner_id = @owner_id 
+                owner_soul_id = @owner_soul_id
             AND 
                 zone = 82"; //Probably auction lot zone, may be 83
 
@@ -673,12 +685,14 @@ namespace Necromancy.Server.Systems.Item
             return dOffsetNow.ToUnixTimeSeconds() + secondsToExpiry;
         }
 
-        public List<ItemInstance> SelectAuctions()
+        public List<ItemInstance> SelectAuctions(uint ownerSoulId)
         {
             List<ItemInstance> auctions = new List<ItemInstance>();
             int i = 0;
             ExecuteReader(SqlSelectAuctions,
-                command => { }, reader =>
+                command => {
+                    AddParameter(command, "@owner_soul_id", ownerSoulId);
+                }, reader =>
                 {
                     while (reader.Read())
                     {
@@ -712,19 +726,18 @@ namespace Necromancy.Server.Systems.Item
                 AddParameterNull(command, "@min_bid");
                 AddParameterNull(command, "@buyout_price");
                 AddParameterNull(command, "@comment");
-                AddParameterNull(command, "@bidder_id");
-                AddParameterNull(command, "@bidder_name");
+                AddParameterNull(command, "@bidder_soul_id");
             });
         }
 
-        public List<ItemInstance> SelectBids(int bidderId)
+        public List<ItemInstance> SelectBids(int bidderSoulId)
         {
             List<ItemInstance> bids = new List<ItemInstance>();
             int i = 0;
             ExecuteReader(SqlSelectBids,
                 command =>
                 {
-                    AddParameter(command, "@bidder_id", bidderId);
+                    AddParameter(command, "@bidder_soul_id", bidderSoulId);
                 }, reader =>
                 {
                     while (reader.Read())
@@ -739,14 +752,14 @@ namespace Necromancy.Server.Systems.Item
             return bids;
         }
 
-        public List<ItemInstance> SelectLots(int ownerId)
+        public List<ItemInstance> SelectLots(int ownerSoulId)
         {
             List<ItemInstance> lots = new List<ItemInstance>();
             int i = 0;
             ExecuteReader(SqlSelectLots,
                 command =>
                 {
-                    AddParameter(command, "@owner_id", ownerId);
+                    AddParameter(command, "@owner_soul_id", ownerSoulId);
                 }, reader =>
                 {
                     while (reader.Read())

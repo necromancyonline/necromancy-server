@@ -692,8 +692,8 @@ CREATE VIEW IF NOT EXISTS item_instance
 	"item_instance_id"	INTEGER NOT NULL,
 	"bidder_soul_id"	INTEGER NOT NULL,
 	"current_bid"	INTEGER,
-	PRIMARY KEY("item_instance_id","bidder_id"),
+	PRIMARY KEY("item_instance_id","bidder_soul_id"),
     FOREIGN KEY(`item_instance_id`) REFERENCES `nec_item_instance`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY(`bidder_id`) REFERENCES `nec_soul`(`id`) ON DELETE CASCADE
+    FOREIGN KEY(`bidder_soul_id`) REFERENCES `nec_soul`(`id`) ON DELETE CASCADE
 )
 

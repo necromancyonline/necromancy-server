@@ -639,7 +639,7 @@ namespace Necromancy.Server.Systems.Item
         /// <returns>Every single auction house listing.</returns>
         public List<ItemInstance> GetItemsUpForAuction()
         {
-            List<ItemInstance> auctions = _itemDao.SelectAuctions();
+            List<ItemInstance> auctions = _itemDao.SelectAuctions((uint)_character.SoulId); //TODO make all ids unsigned
             _character.AuctionSearchIds = new ulong[auctions.Count];
             short i = 0;
             foreach (ItemInstance itemInstance in auctions)
@@ -737,7 +737,7 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> GetBids()
         {
             //TODO modify their location to be bids
-            return _itemDao.SelectBids(_character.Id);
+            return _itemDao.SelectBids(_character.SoulId);
         }
 
         public List<ItemInstance> GetLots()
@@ -747,7 +747,7 @@ namespace Necromancy.Server.Systems.Item
             {
                 _character.ItemLocationVerifier.PutItem(item.Location, item);
             }
-            return _itemDao.SelectLots(_character.Id);
+            return _itemDao.SelectLots(_character.SoulId);
         }
 
         public List<AuctionItemSearchConditions> GetItemSearchConditions()

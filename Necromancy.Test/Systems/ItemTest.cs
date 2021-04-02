@@ -113,7 +113,7 @@ namespace Necromancy.Test.Systems
                 throw new NotImplementedException();
             }
 
-            public List<ItemInstance> SelectAuctions()
+            public List<ItemInstance> SelectAuctions(uint ownerSoulId)
             {
                 throw new NotImplementedException();
             }
