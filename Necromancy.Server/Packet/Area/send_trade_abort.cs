@@ -29,12 +29,12 @@ namespace Necromancy.Server.Packet.Area
                 RecvTradeNotifyAborted notifyAborted = new RecvTradeNotifyAborted();
                 Router.Send(notifyAborted, targetClient);
                 Router.Send(eventEnd, targetClient);
-                targetClient.Character.ItemManager.TradeEnd();
+                targetClient.Character.TradeWindowSlot = new ulong[20];
                 targetClient.Character.eventSelectExecCode = 0;
             }
 
             Router.Send(eventEnd, client);
-            client.Character.ItemManager.TradeEnd();            
+            client.Character.TradeWindowSlot = new ulong[20];
             client.Character.eventSelectExecCode = 0;
         }
     }

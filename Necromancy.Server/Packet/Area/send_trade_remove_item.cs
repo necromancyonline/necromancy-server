@@ -21,11 +21,11 @@ namespace Necromancy.Server.Packet.Area
             NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
             short fromSlot = packet.Data.ReadInt16();
-            ItemLocation itemlocation = client.Character.ItemManager.TradeRemoveItem(fromSlot);
+            ulong itemId = client.Character.TradeWindowSlot[fromSlot];
+            ItemInstance itemInstance = client.Character.ItemManager.GetItemByInstanceId(itemId);
 
             if (targetClient != null)
             {
-                ItemInstance itemInstance = client.Character.ItemManager.GetItem(itemlocation);
                 RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
                 Router.Send(itemRemove);
             }

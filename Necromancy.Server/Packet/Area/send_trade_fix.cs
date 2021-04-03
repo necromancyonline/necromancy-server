@@ -48,44 +48,35 @@ namespace Necromancy.Server.Packet.Area
 
 
             //Get stuff from targetClient
-            foreach (ItemLocation itemLocation in targetClient.Character.ItemManager.GetTradeItemLocations().Values)
+            for (int i = 0; i < 20; i++)
             {
-                Logger.Debug($"Client trading : {itemLocation.ZoneType}{itemLocation.Container}{itemLocation.Slot}");
-                //if (!itemLocation.Equals(ItemLocation.InvalidLocation))
+                ItemInstance itemInstance = targetClient.Character.ItemManager.GetItemByInstanceId(targetClient.Character.TradeWindowSlot[i]);
+                if (itemInstance != null)
                 {
-                    ItemInstance iteminstance = targetItemService.GetIdentifiedItem(itemLocation);
-                    //remove the icon from the deadClient's inventory if they are online.
-                    RecvItemRemove recvItemRemove = new RecvItemRemove(targetClient, iteminstance);
+                    //ItemInstance iteminstance = targetItemService.GetIdentifiedItem(itemLocation);
+                    RecvItemRemove recvItemRemove = new RecvItemRemove(targetClient, itemInstance);
                     if (targetClient != null) Router.Send(recvItemRemove);
 
-                    //this is important.
-                    //iteminstance.Location = new ItemLocation(ItemZoneType.InvalidZone, 0, 0);
-
                     //put the item in the new owners inventory
-                    iteminstance = itemService.PutLootedItem(iteminstance);
+                    itemInstance = itemService.PutLootedItem(itemInstance);
 
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, iteminstance);
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
                     Router.Send(client, recvItemInstance.ToPacket());
                 }
             }
             //give stuff to targetClient
-            foreach (ItemLocation itemLocation in client.Character.ItemManager.GetTradeItemLocations().Values)
+            for (int i = 0; i < 20; i++)
             {
-                Logger.Debug($"targetClient trading : {itemLocation.ZoneType}{itemLocation.Container}{itemLocation.Slot}");
-                ///if (!itemLocation.Equals(ItemLocation.InvalidLocation))
+                ItemInstance itemInstance = client.Character.ItemManager.GetItemByInstanceId(client.Character.TradeWindowSlot[i]);
+                if (itemInstance != null)
                 {
-                    ItemInstance iteminstance = itemService.GetIdentifiedItem(itemLocation);
-                    //remove the icon from the deadClient's inventory if they are online.
-                    RecvItemRemove recvItemRemove = new RecvItemRemove(client, iteminstance);
+                    RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
                     if (client != null) Router.Send(recvItemRemove);
 
-                    //this is important.
-                    //iteminstance.Location = new ItemLocation(ItemZoneType.InvalidZone, 0, 0);
-
                     //put the item in the new owners inventory
-                    iteminstance = itemService.PutLootedItem(iteminstance);
+                    itemInstance = itemService.PutLootedItem(itemInstance);
 
-                    RecvItemInstance recvItemInstance = new RecvItemInstance(targetClient, iteminstance);
+                    RecvItemInstance recvItemInstance = new RecvItemInstance(targetClient, itemInstance);
                     if (targetClient != null) Router.Send(targetClient, recvItemInstance.ToPacket());
                 }
             }
@@ -97,8 +88,8 @@ namespace Necromancy.Server.Packet.Area
             targetClient.Character.eventSelectExecCode = 0;
             client.Character.eventSelectExecCode = 0;
 
-            client.Character.ItemManager.TradeEnd();
-            targetClient.Character.ItemManager.TradeEnd();
+            client.Character.TradeWindowSlot = new ulong[20];
+            targetClient.Character.TradeWindowSlot = new ulong[20];
             Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
             (t1 =>
             {

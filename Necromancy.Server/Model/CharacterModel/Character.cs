@@ -125,6 +125,7 @@ namespace Necromancy.Server.Model
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems { get; } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
         public ItemLocation lootNotify { get; set; }
         public ulong AdventureBagGold { get; set; }
+        public ulong[] TradeWindowSlot { get; set; }
 
         //Statues
         public uint[] StatusEffects { get; set; }
@@ -190,6 +191,7 @@ namespace Necromancy.Server.Model
                 (uint)Statuses.Porkul_Cake_Whole,
                 (uint)Statuses._Chimera_Killer_Hot_Mode 
             };
+            TradeWindowSlot = new ulong[20];
         }
 
         public bool characterActive

@@ -33,7 +33,6 @@ namespace Necromancy.Server.Systems.Item
         private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
 
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
-        private Dictionary<short, ItemLocation> TradeWindowSlot = new Dictionary<short, ItemLocation>();
 
         public ItemManager()
         {
@@ -99,26 +98,7 @@ namespace Necromancy.Server.Systems.Item
             if (ZoneMap[loc.ZoneType].GetContainer(loc.Container) == null) return false;
             if (ZoneMap[loc.ZoneType].GetContainer(loc.Container).GetItem(loc.Slot) == null) return false;
             return true;
-        }
-
-        public void TradeAddItem(short index, ItemLocation loc)
-        {
-            TradeWindowSlot.Add(index, loc);
-        }
-        public ItemLocation TradeRemoveItem(short index)
-        {
-            TradeWindowSlot.TryGetValue(index, out ItemLocation itemLocation);
-            TradeWindowSlot.Remove(index);
-            return itemLocation;
-        }
-        public void TradeEnd()
-        {
-            TradeWindowSlot = new Dictionary<short, ItemLocation>();
-        }
-        public Dictionary<short, ItemLocation> GetTradeItemLocations()
-        {
-            return TradeWindowSlot;
-        }
+        }        
 
         public void PutItem(ItemLocation loc, ItemInstance item)
         {
@@ -210,6 +190,19 @@ namespace Necromancy.Server.Systems.Item
             return ZoneMap[itemZoneType].GetContainer(container).Count == 0;
         }
 
-
+        public ItemInstance GetItemByInstanceId (ulong instanceId)
+        {
+            foreach (ItemZone itemZone in ZoneMap.Values)
+            {
+                foreach (Container container in itemZone._containers)
+                {
+                    foreach (ItemInstance itemInstance in container._slots)
+                    {
+                        if (itemInstance.InstanceID == instanceId) return itemInstance;
+                    }                    
+                }                
+            }
+            return null;
+        }
     }
 }
