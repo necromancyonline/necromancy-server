@@ -74,7 +74,7 @@ namespace Necromancy.Server.Packet.Area
                     if (client != null) Router.Send(recvItemRemove);
 
                     //put the item in the new owners inventory
-                    itemInstance = itemService.PutLootedItem(itemInstance);
+                    itemInstance = targetItemService.PutLootedItem(itemInstance);
 
                     RecvItemInstance recvItemInstance = new RecvItemInstance(targetClient, itemInstance);
                     if (targetClient != null) Router.Send(targetClient, recvItemInstance.ToPacket());

@@ -196,8 +196,10 @@ namespace Necromancy.Server.Systems.Item
             {
                 foreach (Container container in itemZone._containers)
                 {
+                    if (container == null) continue;
                     foreach (ItemInstance itemInstance in container._slots)
                     {
+                        if (itemInstance == null) continue;
                         if (itemInstance.InstanceID == instanceId) return itemInstance;
                     }                    
                 }                
