@@ -651,9 +651,25 @@ namespace Necromancy.Server.Systems.Item
             return auctions;
         }
 
+
+        //TODO ADD LOCKS ON ALL AUCTION WHEN THESE ARE NOT ALL RUN IN THE SAME THREAD
         public void Bid(byte isBuyout, int slot, ulong bid)
         {
+            ulong instanceId = _character.AuctionSearchIds[slot];
+            ulong buyoutPrice = _itemDao.SelectBuyoutPrice(instanceId);
+            bool IsAlreadyBought = _itemDao.SelectAuctionWinnerSoulId(instanceId) != 0;
 
+            if (IsAlreadyBought) throw new AuctionException(AuctionExceptionType.BiddingCompleted);
+            if (isBuyout == 1 && bid != buyoutPrice) throw new AuctionException(AuctionExceptionType.Generic);
+            if (isBuyout == 0 && bid == buyoutPrice) throw new AuctionException(AuctionExceptionType.Generic);
+            if (bid > buyoutPrice) throw new AuctionException(AuctionExceptionType.Generic);
+
+
+            _itemDao.InsertAuctionBid(instanceId, _character.SoulId, bid);
+            if (isBuyout == 1)
+            {
+                _itemDao.UpdateAuctionWinner(instanceId, _character.SoulId);
+            } 
         }
 
         //auction functions

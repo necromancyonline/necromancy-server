@@ -488,13 +488,15 @@ CREATE TABLE IF NOT EXISTS `nec_item_instance` (
 	`plus_ranged_eff`	INTEGER NOT NULL DEFAULT (0),
 	`plus_reservoir_eff`	INTEGER NOT NULL DEFAULT (0),
     `consigner_soul_name`  TEXT,
+    `winner_soul_id`    INTEGER,
 	`expiry_datetime`	INTEGER,
 	`min_bid`			INTEGER,
 	`buyout_price`		INTEGER,
 	`comment`			TEXT,
 	PRIMARY KEY(`id` AUTOINCREMENT),
 	FOREIGN KEY(`owner_id`) REFERENCES `nec_character`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY(`base_id`) REFERENCES `nec_item_library`(`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+	FOREIGN KEY(`base_id`) REFERENCES `nec_item_library`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+    FOREIGN KEY(`winner_soul_id`) REFERENCES `nec_soul`(`id`) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE VIEW IF NOT EXISTS item_instance
@@ -677,6 +679,7 @@ CREATE VIEW IF NOT EXISTS item_instance
                     plus_ranged_eff,
                     plus_reservoir_eff,
                     consigner_soul_name,
+                    winner_soul_id,
 	                expiry_datetime,
 	                min_bid,
 	                buyout_price,
@@ -693,7 +696,7 @@ CREATE VIEW IF NOT EXISTS item_instance
 	"bidder_soul_id"	INTEGER NOT NULL,
 	"current_bid"	INTEGER,
 	PRIMARY KEY("item_instance_id","bidder_soul_id"),
-    FOREIGN KEY(`item_instance_id`) REFERENCES `nec_item_instance`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY(`bidder_soul_id`) REFERENCES `nec_soul`(`id`) ON DELETE CASCADE
+    FOREIGN KEY(`item_instance_id`) REFERENCES `nec_item_instance`(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(`bidder_soul_id`) REFERENCES `nec_soul`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 )
 

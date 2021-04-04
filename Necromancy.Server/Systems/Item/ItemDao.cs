@@ -165,6 +165,7 @@ namespace Necromancy.Server.Systems.Item
                 );
             SELECT last_insert_rowid()";
 
+        //TODO move auction stuff to partial namespace for easier reading
         private const string SqlSelectAuctions = @"
             SELECT 			
                 item_instance.*,
@@ -225,6 +226,43 @@ namespace Necromancy.Server.Systems.Item
                 owner_soul_id = @owner_soul_id
             AND 
                 zone = 82"; //Probably auction lot zone, may be 83
+
+        private const string SqlSelectBuyoutPrice = @"
+            SELECT 
+                buyout_price 
+            FROM 
+                item_instance 
+            WHERE 
+                id = @id";
+
+        private const string SqlInsertAuctionBid = @"
+            INSERT INTO 
+                nec_auction_bids 
+                (
+                    item_instance_id, 
+                    bidder_soul_id, 
+                    current_bid
+                ) 
+            VALUES 
+                (
+                    @instance_id, 
+                    @bidder_soul_id, 
+                    @current_bid
+                )";
+        private const string SqlUpdateAuctionWinnerSoulId = @"
+            UPDATE
+                nec_item_instance
+            SET
+                winner_soul_id = @winner_soul_id
+            WHERE
+                id = @id";
+
+        private const string SqlSelectAuctionWinnerSoulId = @"
+            SELECT 
+                winner_soul_id 
+            FROM 
+                item_instance 
+            WHERE id = @id";
 
         public ItemInstance InsertItemInstance(int baseId)
         {
@@ -771,6 +809,53 @@ namespace Necromancy.Server.Systems.Item
             return lots;
         }
 
-        
+        public ulong SelectBuyoutPrice(ulong instanceId)
+        {
+            ulong buyoutPrice = 0;
+            ExecuteReader(SqlSelectBuyoutPrice,
+                command =>
+                {
+                    AddParameter(command, "@id", instanceId);
+                }, reader =>
+                {
+                    reader.Read();
+                    buyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong) reader.GetInt64("buyout_price"); //TODO remove cast                    
+                });
+            return buyoutPrice;
+        }
+
+        public void InsertAuctionBid(ulong instanceId, int bidderSoulId, ulong bid)
+        {
+            ExecuteNonQuery(SqlInsertAuctionBid, command =>
+            {
+                AddParameter(command, "@instance_id", instanceId);
+                AddParameter(command, "@bidder_soul_id", bidderSoulId);
+                AddParameter(command, "@current_bid", bid);
+            });
+        }
+
+        public void UpdateAuctionWinner(ulong instanceId, int winnerSoulId)
+        {
+            ExecuteNonQuery(SqlUpdateAuctionWinnerSoulId, command =>
+            {
+                AddParameter(command, "@winner_soul_id", winnerSoulId);
+                AddParameter(command, "@id", instanceId);                
+            });
+        }
+
+        public int SelectAuctionWinnerSoulId(ulong instanceId)
+        {
+            int winnerSoulId = 0;
+            ExecuteReader(SqlSelectAuctionWinnerSoulId,
+                command =>
+                {
+                    AddParameter(command, "@id", instanceId);
+                }, reader =>
+                {
+                    reader.Read();
+                    winnerSoulId = reader.IsDBNull("winner_soul_id") ? 0 : reader.GetInt32("winner_soul_id"); //TODO remove cast                    
+                });
+            return winnerSoulId;
+        }
     }
 }
