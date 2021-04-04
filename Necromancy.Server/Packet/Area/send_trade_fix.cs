@@ -57,6 +57,8 @@ namespace Necromancy.Server.Packet.Area
                     RecvItemRemove recvItemRemove = new RecvItemRemove(targetClient, itemInstance);
                     if (targetClient != null) Router.Send(recvItemRemove);
 
+                    targetClient.Character.ItemManager.RemoveItem(itemInstance);
+
                     //put the item in the new owners inventory
                     itemInstance = itemService.PutLootedItem(itemInstance);
 
@@ -72,6 +74,8 @@ namespace Necromancy.Server.Packet.Area
                 {
                     RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
                     if (client != null) Router.Send(recvItemRemove);
+
+                    client.Character.ItemManager.RemoveItem(itemInstance);
 
                     //put the item in the new owners inventory
                     itemInstance = targetItemService.PutLootedItem(itemInstance);

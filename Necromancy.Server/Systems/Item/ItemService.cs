@@ -126,13 +126,10 @@ namespace Necromancy.Server.Systems.Item
             }
             return item;
         }
-        public ItemInstance PutLootedItem(ItemInstance itemInstance) 
+        public ItemInstance PutLootedItem(ItemInstance myNewItem) 
         {
-            ItemInstance myNewItem = itemInstance;
-
             //ToDo,  make this find space in more than just your adventure bag.
-            ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
-            myNewItem.Location = nextOpenLocation;
+            myNewItem.Location = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
             _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
             _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
             _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            

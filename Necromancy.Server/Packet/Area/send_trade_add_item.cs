@@ -26,11 +26,11 @@ namespace Necromancy.Server.Packet.Area
             byte quantity = packet.Data.ReadByte();
 
             ItemLocation fromLoc = new ItemLocation(fromZone, fromContainer, fromSlot);
-            //client.Character.ItemManager.TradeAddItem(toSlot, fromLoc);
             ItemService itemService = new ItemService(client.Character);
             _itemInstance = itemService.GetIdentifiedItem(fromLoc);//To do; get regular item instead of identified item. Mark item as in trade.
             client.Character.TradeWindowSlot[toSlot] = _itemInstance.InstanceID;
 
+            ItemLocation originalLocation = _itemInstance.Location;
             _itemInstance.Location = new ItemLocation(ItemZoneType.TradeWindow, 0, toSlot); //This is bad. it changes the stored location?
 
             NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
@@ -44,6 +44,7 @@ namespace Necromancy.Server.Packet.Area
                 RecvItemInstance itemInstance = new RecvItemInstance(targetClient, _itemInstance);
                 Router.Send(itemInstance);
             }
+            _itemInstance.Location = originalLocation;
         }
     }
 }
