@@ -37,15 +37,15 @@ namespace Necromancy.Server.Packet.Area
             if (targetClient != null) Router.Send(targetClient, recvTradeFix.ToPacket());
             Router.Send(client, recvTradeFix.ToPacket());
 
-            RecvTradeNotifyReverted notifyReverted = new RecvTradeNotifyReverted();
-            Router.Send(targetClient, notifyReverted.ToPacket());
-            //Router.Send(client, recvTradeFix.ToPacket());
+            RecvTradeNotifyProblem recvTradeNotifyProblem = new RecvTradeNotifyProblem();
+            Router.Send(targetClient, recvTradeNotifyProblem.ToPacket());
+            //Router.Send(client, recvTradeFix.ToPacket());    
 
             RecvSituationStart recvSituationStart = new RecvSituationStart(2);
             if (targetClient != null) Router.Send(targetClient, recvSituationStart.ToPacket());
             Router.Send(client, recvSituationStart.ToPacket());
 
-
+            
 
             //Get stuff from targetClient
             for (int i = 0; i < 20; i++)
