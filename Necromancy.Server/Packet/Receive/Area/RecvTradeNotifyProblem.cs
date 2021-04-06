@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvTradeNotifyProblem : PacketResponse
     {
-        public RecvTradeNotifyProblem()
+        private uint _objectId;
+        private byte _systemMessage;
+        public RecvTradeNotifyProblem(uint objectId, byte systemMessage)
             : base((ushort) AreaPacketId.recv_trade_notify_problem, ServerType.Area)
         {
+            _objectId = objectId;
+            _systemMessage = systemMessage;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteByte(0);
+            res.WriteUInt32(_objectId); //optional instanceId for system messages
+            res.WriteByte(_systemMessage); //which system message to throw
             return res;
         }
     }
