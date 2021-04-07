@@ -377,6 +377,12 @@ namespace Necromancy.Server.Chat.Command.Commands
                         ServerType.Area);
                     break;
 
+                case "interface":
+                    RecvTradeNotifyInterfaceStatus recvTradeNotifyInterfaceStatus = new RecvTradeNotifyInterfaceStatus(status:x);
+                    Router.Send(client.Map, recvTradeNotifyInterfaceStatus);
+                    break;
+
+                    
                 default: //you don't know what you're doing do you?
                     Logger.Error($"There is no recv of type : {command[0]} ");
                     {
