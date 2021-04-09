@@ -750,6 +750,11 @@ namespace Necromancy.Server.Systems.Item
             return moveResult;
         }
 
+        public void CancelBid(byte slot)
+        {
+            //_itemDao.DeleteAuctionBid(_character.SoulId, instanceId);
+        }
+
         public List<ItemInstance> GetBids()
         {
             //TODO modify their location to be bids

@@ -201,7 +201,7 @@ namespace Necromancy.Server.Systems.Item
             SELECT 
                 item_instance.*, 
                 bidder_soul_id, 
-                current_bid, 
+                current_bid,
                 (SELECT MAX(current_bid) FROM nec_auction_bids WHERE item_instance_id = id) AS max_bid
             FROM 
                 item_instance 
@@ -784,6 +784,7 @@ namespace Necromancy.Server.Systems.Item
                         itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
                         itemInstance.BidderSoulId = reader.IsDBNull("bidder_soul_id") ? 0 : reader.GetInt32("bidder_soul_id");
                         itemInstance.MaxBid = reader.IsDBNull("max_bid") ? 0 : reader.GetInt32("max_bid");
+                        itemInstance.IsBidCancelled = reader.GetBoolean("is_cancelled");
                         bids.Add(itemInstance);
                     }
                 });

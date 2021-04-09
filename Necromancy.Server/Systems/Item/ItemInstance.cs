@@ -96,6 +96,7 @@ namespace Necromancy.Server.Systems.Item
         public int BidderSoulId { get; set; }
         public string BidderName { get; set; }
         public int CurrentBid { get; set; }
+        public bool IsBidCancelled { get; internal set; }
         public int MaxBid { get; set; }
         public string Comment { get; set; }
 
@@ -109,6 +110,6 @@ namespace Necromancy.Server.Systems.Item
                 return ((ItemStatuses.Identified & Statuses) != 0) && ((ItemStatuses.Unidentified & Statuses) == 0);
             } 
         }
-        
+
     }
 }
