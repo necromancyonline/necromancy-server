@@ -33,7 +33,7 @@ namespace Necromancy.Server.Packet.Area
             ItemInstance iteminstance = deadCharacterItemService.GetLootedItem(fromLoc);
             itemService.PutLootedItem(iteminstance);
 
-            RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, iteminstance, (byte)iteminstance.Location.ZoneType);
+            RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, iteminstance);
             Router.Send(client, recvItemInstanceUnidentified.ToPacket());
         }
     }

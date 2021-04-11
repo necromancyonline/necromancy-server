@@ -2,21 +2,21 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_auction_deregist_search_equipment_cond_r : PacketResponse
+    class RecvAuctionNotifyOpenItemStart : PacketResponse
     {
-        public recv_auction_deregist_search_equipment_cond_r()
-            : base((ushort) AreaPacketId.recv_auction_deregist_search_equipment_cond_r, ServerType.Area)
+        public RecvAuctionNotifyOpenItemStart(NecClient necClient) : base((ushort)AreaPacketId.recv_auction_notify_open_item_start, ServerType.Area)
         {
+            Clients.Add(necClient);
         }
-
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-
             return res;
         }
     }

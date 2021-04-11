@@ -57,7 +57,7 @@ namespace Necromancy.Server.Packet.Area
                     Router.Send(client, responses);
                 }
             }
-            catch (ItemException e) { error = (int)e.ExceptionType; }
+            catch (ItemException e) { error = (int)e.Type; }
             catch (Exception e1)
             {
                 error = (int)ItemExceptionType.Generic;

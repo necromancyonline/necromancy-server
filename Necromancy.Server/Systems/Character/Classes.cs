@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Necromancy.Server.Systems.Item
 {
@@ -16,6 +14,7 @@ namespace Necromancy.Server.Systems.Item
         Ninja,
         Lord,
         Clown,
-        Alchemist
+        Alchemist,
+        All = Fighter + Thief + Mage + Priest + Samurai + Bishop + Ninja + Lord + Clown + Alchemist
     }
 }

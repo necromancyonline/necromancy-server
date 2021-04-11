@@ -8,8 +8,9 @@ namespace Necromancy.Server.Systems.Item
     /// <summary>
     /// Holds item cache in memory.<br/> <br/>
     /// Stores information about published items, and their locations. <b>Does not validate any actions.</b>
+    /// Do not access from other clients, does not function.
     /// </summary>
-    public class ItemManager
+    public class ItemLocationVerifier
     {
         private const int MAX_CONTAINERS_ADV_BAG = 1;
         private const int MAX_CONTAINER_SIZE_ADV_BAG = 24;
@@ -32,9 +33,18 @@ namespace Necromancy.Server.Systems.Item
         private const int MAX_CONTAINERS_WAREHOUSE = 27;
         private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
 
+        private const int MAX_CONTAINERS_AUCTION_LOTS = 1;      
+        private const int MAX_CONTAINER_SIZE_AUCTION_LOTS = 15; 
+
+        private const int MAX_CONTAINERS_AUCTION_BIDS = 1;          //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINER_SIZE_AUCTION_BIDS = 15;     //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+
+        private const int MAX_CONTAINERS_AUCTION_SEARCH = 1;        //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINER_SIZE_AUCTION_SEARCH = 1000; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+
         private Dictionary<ItemZoneType, ItemZone> ZoneMap = new Dictionary<ItemZoneType, ItemZone>();
 
-        public ItemManager()
+        public ItemLocationVerifier()
         {
             ZoneMap.Add(ItemZoneType.AdventureBag, new ItemZone(MAX_CONTAINERS_ADV_BAG, MAX_CONTAINER_SIZE_ADV_BAG));
             ZoneMap[ItemZoneType.AdventureBag].PutContainer(0, MAX_CONTAINER_SIZE_ADV_BAG);
@@ -59,33 +69,11 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap.Add(ItemZoneType.TreasureBox, new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
             ZoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
             ZoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
-        }
-        public List<ItemInstance> GetLootableItems()
-        {
-            List<ItemInstance> itemInstances = new List<ItemInstance>();
 
-            foreach (ItemZoneType itemZoneType in ZoneMap.Keys)
-            {
-                if (itemZoneType == ItemZoneType.AdventureBag | itemZoneType == ItemZoneType.EquippedBags | itemZoneType == ItemZoneType.PremiumBag)
-                {
-                    ZoneMap.TryGetValue(itemZoneType, out ItemZone itemZone);
-                    foreach (Container container in itemZone._containers)
-                    {
-                        if (container != null)
-                        {
-                            foreach (ItemInstance itemInstance in container._slots)
-                            {
-                                if (itemInstance != null)
-                                {
-                                    itemInstances.Add(itemInstance);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return itemInstances;
+            ZoneMap.Add(ItemZoneType.ProbablyAuctionLots, new ItemZone(MAX_CONTAINERS_AUCTION_LOTS, MAX_CONTAINER_SIZE_AUCTION_LOTS));
+            ZoneMap[ItemZoneType.ProbablyAuctionLots].PutContainer(0, MAX_CONTAINER_SIZE_AUCTION_LOTS);
         }
+
         public ItemInstance GetItem(ItemLocation loc)
         {
             if (loc.Equals(ItemLocation.InvalidLocation)) return null;
@@ -102,7 +90,6 @@ namespace Necromancy.Server.Systems.Item
 
         public void PutItem(ItemLocation loc, ItemInstance item)
         {
-
             RemoveItem(item);
             item.Location = loc;
 
@@ -136,7 +123,6 @@ namespace Necromancy.Server.Systems.Item
                     }
                 default:
                     {
-
                         ZoneMap[item.Location.ZoneType]?.GetContainer(item.Location.Container)?.RemoveItem(item.Location.Slot);
                         break;
                     }
@@ -160,7 +146,23 @@ namespace Necromancy.Server.Systems.Item
             return nextOpenSlot;
         }
 
-        public ItemLocation NextOpenSlot(ItemZoneType itemZoneType) //Todo,  CopyPasta one of these that searches all equipped bags.
+        /// <summary>
+        /// Finds the next open slot in adventure bag, equipped bags, and premium bag, in that order.
+        /// </summary>
+        /// <returns></returns>
+        public ItemLocation NextOpenSlotInInventory()
+        {
+            ItemLocation nextOpenSlot = ItemLocation.InvalidLocation;
+            nextOpenSlot = NextOpenSlot(ItemZoneType.AdventureBag);
+            if (!nextOpenSlot.Equals(ItemLocation.InvalidLocation)) return nextOpenSlot;
+            nextOpenSlot = NextOpenSlot(ItemZoneType.EquippedBags);
+            if (!nextOpenSlot.Equals(ItemLocation.InvalidLocation)) return nextOpenSlot;
+            nextOpenSlot = NextOpenSlot(ItemZoneType.PremiumBag);
+            if (!nextOpenSlot.Equals(ItemLocation.InvalidLocation)) return nextOpenSlot;
+            return nextOpenSlot;
+        }
+
+        public ItemLocation NextOpenSlot(ItemZoneType itemZoneType)
         {
             int nextContainerWithSpace = ZoneMap[itemZoneType].NextContainerWithSpace;
             if (nextContainerWithSpace != ItemZone.NO_CONTAINERS_WITH_SPACE)

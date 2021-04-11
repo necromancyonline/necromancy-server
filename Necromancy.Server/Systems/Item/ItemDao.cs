@@ -9,194 +9,7 @@ using System.Data.SQLite;
 namespace Necromancy.Server.Systems.Item
 {
     class ItemDao : DatabaseAccessObject, IItemDao
-    {
-        private const string SqlSpawnedView = @"
-            DROP VIEW IF EXISTS item_instance;
-            CREATE VIEW IF NOT EXISTS 
-                item_instance 
-            AS
-			SELECT  nec_item_instance.id,
-                    owner_id,
-                    zone,
-                    container,
-                    slot,
-                    base_id,
-                    quantity,
-                    statuses,
-                    current_equip_slot,
-                    current_durability,
-                    plus_maximum_durability,
-                    enhancement_level,
-                    special_forge_level,
-                    nec_item_library.physical,
-                    nec_item_library.magical,
-                    nec_item_library.hardness,
-					gem_slot_1_type,
-                    gem_slot_2_type,
-                    gem_slot_3_type,
-                    gem_id_slot_1,
-                    gem_id_slot_2,
-                    gem_id_slot_3,
-                    enchant_id,
-					item_type,
-                    quality,
-                    _item_name_necromancy,
-                    max_stack_size,
-                    '3',
-                    es_hand_r,
-                    es_hand_l,
-                    es_quiver,
-                    es_head,
-                    es_body,
-                    es_legs,
-                    es_arms,
-                    es_feet,
-                    es_mantle,
-                    es_ring,
-                    es_earring,
-                    es_necklace,
-                    es_belt,
-                    es_talkring,
-                    es_avatar_head,
-                    es_avatar_body,
-                    es_avatar_legs,
-                    es_avatar_arms,
-                    es_avatar_feet,
-                    es_avatar_mantle,
-                    req_hum_m,
-                    req_hum_f,
-                    req_elf_m,
-                    req_elf_f,
-                    req_dwf_m,
-                    req_dwf_f,
-                    req_por_m,
-                    req_por_f,
-                    req_gnm_m,
-                    req_gnm_f,
-                    req_fighter,
-                    req_thief,
-                    req_mage,
-                    req_priest,
-                    req_lawful,
-                    req_neutral,
-                    req_chaotic,
-                    '40',
-                    '41',
-                    req_str,
-                    req_vit,
-                    req_dex,
-                    req_agi,
-                    req_int,
-                    req_pie,
-                    req_luk,
-                    req_soul_rank,
-                    req_lvl,
-					'51',
-                    '52',
-                    '53',
-                    phys_slash,
-                    phys_strike,
-                    phys_pierce,
-                    '56',
-                    pdef_fire,
-                    pdef_water,
-                    pdef_wind,
-                    pdef_earth,
-                    pdef_light,
-                    pdef_dark,
-                    '63',
-                    '64',
-                    '65',
-                    matk_fire,
-                    matk_water,
-                    matk_wind,
-                    matk_earth,
-                    matk_light,
-                    matk_dark,
-                    '72',
-                    '73',
-                    '74',
-                    '75',
-                    '76',
-                    seffect_hp,
-                    seffect_mp,
-                    seffect_str,
-                    seffect_vit,
-                    seffect_dex,
-                    seffect_agi,
-                    seffect_int,
-                    seffect_pie,
-                    seffect_luk,
-                    res_poison,
-                    res_paralyze,
-                    res_petrified,
-                    res_faint,
-                    res_blind,
-                    res_sleep,
-                    res_silent,
-                    res_charm,
-                    res_confusion,
-                    res_fear,
-                    '96',
-                    status_malus,
-                    status_percent,
-                    num_of_bag_slots,
-                    object_type,
-                    equip_slot,
-                    '102',
-                    '103',
-                    '104',
-                    no_use_in_town,
-                    no_storage,
-                    no_discard,
-                    no_sell,
-                    no_trade,
-                    no_trade_after_used,
-                    no_stolen,
-                    gold_border,
-                    lore,
-                    icon,
-                    field118,
-                    field119,
-                    field120,
-                    field121,
-                    field122,
-                    field123,
-                    field124,
-                    field125,
-                    field126,
-                    field127,
-                    field128,
-                    field129,
-                    field130,
-                    req_samurai,
-                    req_ninja,
-                    req_bishop,
-                    req_lord,
-                    field135,
-                    field136,
-                    field137,
-                    field138,
-                    field139,
-                    req_clown,
-                    req_alchemist,
-                    grade,
-                    nec_item_library.hardness,
-                    scroll_id,
-                    weight,
-                    plus_physical,
-                    plus_magical,
-                    plus_hardness,
-                    plus_gp,
-                    plus_weight,
-                    plus_ranged_eff,
-                    plus_reservoir_eff
-                FROM 
-                    nec_item_instance 
-                INNER JOIN 
-                    nec_item_library 
-                ON 
-                    nec_item_instance.base_id = nec_item_library.id";
+    {    
 
         private const string SqlSelectItemInstanceById = @"
             SELECT
@@ -228,7 +41,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id IN ({0})";
 
-        private const string SqlSelectOwneditemInstances = @"
+        private const string SqlSelectOwnedInventoryItems = @"
             SELECT 
                 * 
             FROM 
@@ -237,6 +50,16 @@ namespace Necromancy.Server.Systems.Item
                 owner_id = @owner_id 
             AND 
                 zone IN (0,1,2,8,12)"; //adventure bag, equipped bags,royal bag, bag slot, avatar inventory
+
+        private const string SqlSelectLootableInventoryItems = @"
+            SELECT 
+                * 
+            FROM 
+                item_instance 
+            WHERE 
+                owner_id = @owner_id 
+            AND 
+                zone IN (0,1,2)"; //adventure bag, equipped bags,royal bag
 
         private const string SqlUpdateItemLocation = @"
             UPDATE 
@@ -339,19 +162,108 @@ namespace Necromancy.Server.Systems.Item
                     @plus_weight,
                     @plus_ranged_eff,
                     @plus_reservoir_eff
-                                    );
+                );
             SELECT last_insert_rowid()";
 
+        //TODO move auction stuff to partial namespace for easier reading
+        private const string SqlSelectAuctions = @"
+            SELECT 			
+                item_instance.*,
+				nec_soul.id AS owner_soul_id
+            FROM 
+                item_instance
+			JOIN
+				nec_soul
+			ON
+				item_instance.owner_id = nec_soul.id			
+            WHERE                 
+                zone = 82
+            AND
+                owner_soul_id != @owner_soul_id";
 
-        public ItemDao() : base()
-        {
-            CreateView();
-        }
+        private const string SqlUpdateExhibit = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                consigner_soul_name = @consigner_soul_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment 
+            WHERE 
+                id = @id";
 
-        private void CreateView()
-        {
-            ExecuteNonQuery(SqlSpawnedView, command => { });
-        }
+        private const string SqlUpdateCancelExhibit = @"
+            UPDATE 
+                nec_item_instance 
+            SET 
+                consigner_soul_name = @consigner_soul_name, expiry_datetime = @expiry_datetime, min_bid = @min_bid, buyout_price = @buyout_price, comment = @comment
+            WHERE 
+                id = @id";
+
+        private const string SqlSelectBids = @"
+            SELECT 
+                item_instance.*, 
+                bidder_soul_id, 
+                current_bid,
+                (SELECT MAX(current_bid) FROM nec_auction_bids WHERE item_instance_id = id) AS max_bid
+            FROM 
+                item_instance 
+            JOIN 
+                nec_auction_bids 
+            ON 
+                item_instance.id = nec_auction_bids.item_instance_id 
+            WHERE 
+                bidder_soul_id = @bidder_soul_id";
+
+        private const string SqlSelectLots = @"
+            SELECT 			
+                item_instance.*,
+				nec_soul.id AS owner_soul_id
+            FROM 
+                item_instance
+			JOIN
+				nec_soul
+			ON
+				item_instance.owner_id = nec_soul.id
+            WHERE 
+                owner_soul_id = @owner_soul_id
+            AND 
+                zone = 82"; //Probably auction lot zone, may be 83
+
+        private const string SqlSelectBuyoutPrice = @"
+            SELECT 
+                buyout_price 
+            FROM 
+                item_instance 
+            WHERE 
+                id = @id";
+
+        private const string SqlInsertAuctionBid = @"
+            INSERT INTO 
+                nec_auction_bids 
+                (
+                    item_instance_id, 
+                    bidder_soul_id, 
+                    current_bid
+                ) 
+            VALUES 
+                (
+                    @instance_id, 
+                    @bidder_soul_id, 
+                    @current_bid
+                )";
+        private const string SqlUpdateAuctionWinnerSoulId = @"
+            UPDATE
+                nec_item_instance
+            SET
+                winner_soul_id = @winner_soul_id
+            WHERE
+                id = @id";
+
+        private const string SqlSelectAuctionWinnerSoulId = @"
+            SELECT 
+                winner_soul_id 
+            FROM 
+                item_instance 
+            WHERE id = @id";
+
         public ItemInstance InsertItemInstance(int baseId)
         {
             throw new NotImplementedException();
@@ -484,13 +396,18 @@ namespace Necromancy.Server.Systems.Item
             {
                 Logger.Error($"Query: {SqlUpdateItemQuantity}");
                 Exception(ex);
-            }            
+            }
         }
 
-        public List<ItemInstance> SelectOwneditemInstances(int ownerId)
+        /// <summary>
+        /// This selects only the items in the player's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and Avatar inventory.
+        /// </summary>
+        /// <param name="ownerId">Owner of items.</param>
+        /// <returns></returns>
+        public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
         {
-            List<ItemInstance> owneditemInstances = new List<ItemInstance>();
-            ExecuteReader(SqlSelectOwneditemInstances,
+            List<ItemInstance> ownedItemInstances = new List<ItemInstance>();
+            ExecuteReader(SqlSelectOwnedInventoryItems,
                 command =>
                 {
                     AddParameter(command, "@owner_id", ownerId);
@@ -498,10 +415,10 @@ namespace Necromancy.Server.Systems.Item
                 {
                     while (reader.Read())
                     {
-                        owneditemInstances.Add(MakeItemInstance(reader));
+                        ownedItemInstances.Add(MakeItemInstance(reader));
                     }
                 });
-            return owneditemInstances;
+            return ownedItemInstances;
         }
 
         public List<ItemInstance> InsertItemInstances(int ownerId, ItemLocation[] locs, int[] baseId, ItemSpawnParams[] spawnParams)
@@ -533,27 +450,27 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, "@plus_ranged_eff", spawnParams[i].plus_ranged_eff);
                     AddParameter(command, "@plus_reservoir_eff", spawnParams[i].plus_reservoir_eff);
 
-                    if (spawnParams[i].GemSlots.Length > 0) 
+                    if (spawnParams[i].GemSlots.Length > 0)
                         AddParameter(command, "@gem_slot_1_type", (int)spawnParams[i].GemSlots[0].Type);
                     else
                         AddParameter(command, "@gem_slot_1_type", 0);
 
-                    if (spawnParams[i].GemSlots.Length > 1) 
+                    if (spawnParams[i].GemSlots.Length > 1)
                         AddParameter(command, "@gem_slot_2_type", (int)spawnParams[i].GemSlots[1].Type);
                     else
-                        AddParameter(command, "@gem_slot_2_type",0);
+                        AddParameter(command, "@gem_slot_2_type", 0);
 
-                    if (spawnParams[i].GemSlots.Length > 2) 
+                    if (spawnParams[i].GemSlots.Length > 2)
                         AddParameter(command, "@gem_slot_3_type", (int)spawnParams[i].GemSlots[2].Type);
                     else
-                        AddParameter(command, "@gem_slot_3_type",0);
+                        AddParameter(command, "@gem_slot_3_type", 0);
 
-                    if (spawnParams[i].GemSlots.Length > 0) 
+                    if (spawnParams[i].GemSlots.Length > 0)
                         AddParameter(command, "@gem_id_slot_1", (int)spawnParams[i].GemSlots[0].Type);
                     else
                         AddParameterNull(command, "@gem_id_slot_1");
 
-                    if (spawnParams[i].GemSlots.Length > 1) 
+                    if (spawnParams[i].GemSlots.Length > 1)
                         AddParameter(command, "@gem_id_slot_2", (int)spawnParams[i].GemSlots[1].Type);
                     else
                         AddParameterNull(command, "@gem_id_slot_2");
@@ -573,8 +490,6 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, parameters[i], lastIds[i]);
                 }
 
-
-
                 command.CommandText = string.Format("SELECT * FROM item_instance WHERE id IN({0})", string.Join(", ", parameters));
                 using DbDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -591,9 +506,10 @@ namespace Necromancy.Server.Systems.Item
         }
 
         private ItemInstance MakeItemInstance(DbDataReader reader)
-        {    
+        {
             ulong instanceId = (ulong)reader.GetInt64("id");
             ItemInstance itemInstance = new ItemInstance(instanceId);
+            itemInstance.OwnerID = reader.GetInt32("owner_id");
 
             ItemZoneType zone = (ItemZoneType)reader.GetByte("zone");
             byte bag = reader.GetByte("container");
@@ -623,7 +539,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.PlusPhysical = reader.GetInt16("plus_physical");
             itemInstance.PlusMagical = reader.GetInt16("plus_magical");
             itemInstance.PlusGP = reader.GetInt16("plus_gp");
-            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight")*10); //maybe make this a double
+            itemInstance.PlusWeight = (short)(reader.GetInt16("plus_weight") * 10); //TODO REMOVE THIS MULTIPLICATION AND FIX TRHOUGHOUT CODE
             itemInstance.PlusRangedEff = reader.GetInt16("plus_ranged_eff");
             itemInstance.PlusReservoirEff = reader.GetInt16("plus_reservoir_eff");
 
@@ -639,7 +555,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.EnchantId = reader.GetInt32("enchant_id");
             itemInstance.GP = reader.GetInt16("plus_gp");
             itemInstance.Type = (ItemType)Enum.Parse(typeof(ItemType), reader.GetString("item_type"));
-            itemInstance.Quality = (ItemQualities)Enum.Parse(typeof(ItemQualities), reader.GetString("quality"),true);
+            itemInstance.Quality = (ItemQualities)Enum.Parse(typeof(ItemQualities), reader.GetString("quality"), true);
             itemInstance.MaxStackSize = reader.GetByte("max_stack_size");
 
             if (reader.GetBoolean("es_hand_r")) itemInstance.EquipAllowedSlots |= ItemEquipSlots.RightHand;
@@ -743,7 +659,7 @@ namespace Necromancy.Server.Systems.Item
 
             itemInstance.ObjectType = reader.GetString("object_type"); //not sure what this is for
             itemInstance.EquipSlot2 = reader.GetString("equip_slot"); //not sure what this is for
-            
+
             itemInstance.IsUseableInTown = !reader.GetBoolean("no_use_in_town"); //not sure what this is for
             itemInstance.IsStorable = !reader.GetBoolean("no_storage");
             itemInstance.IsDiscardable = !reader.GetBoolean("no_discard");
@@ -755,7 +671,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.IsGoldBorder = reader.GetBoolean("gold_border");
 
             //itemInstance.Lore = reader.GetString("lore");
-            
+
             itemInstance.IconId = reader.GetInt32("icon");
 
             itemInstance.TalkRingName = "";
@@ -764,11 +680,183 @@ namespace Necromancy.Server.Systems.Item
 
             //grade,
             //weight
-            itemInstance.Weight = (int)(reader.GetDouble("weight")*10000);
+            itemInstance.Weight = (int)(reader.GetDouble("weight") * 10000); // TODO DOUBLE CHECK THIS IS CORRECT SCALE
+
+            //auction
+            itemInstance.ConsignerSoulName = reader.IsDBNull("consigner_soul_name") ? "" : reader.GetString("consigner_soul_name");
+            itemInstance.SecondsUntilExpiryTime = reader.IsDBNull("expiry_datetime") ? 0 : CalcSecondsToExpiry(reader.GetInt64("expiry_datetime"));
+            itemInstance.MinimumBid = reader.IsDBNull("min_bid") ? 0 : (ulong)reader.GetInt64("min_bid");
+            itemInstance.BuyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");            
+            itemInstance.Comment = reader.IsDBNull("comment") ? "" : reader.GetString("comment");
 
             return itemInstance;
         }
 
-        
+        public List<ItemInstance> SelectLootableInventoryItems(uint ownerId)
+        {
+            List<ItemInstance> lootableItemInstances = new List<ItemInstance>();
+            ExecuteReader(SqlSelectOwnedInventoryItems,
+                command =>
+                {
+                    AddParameter(command, "@owner_id", ownerId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        lootableItemInstances.Add(MakeItemInstance(reader));
+                    }
+                });
+            return lootableItemInstances;
+        }
+
+        private int CalcSecondsToExpiry(long unixTimeSecondsExpiry)
+        {
+            DateTime dNow = DateTime.Now;
+            DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
+            return ((int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds()));
+        }
+
+        private long CalcExpiryTime(int secondsToExpiry)
+        {
+            DateTime dNow = DateTime.Now;
+            DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
+            return dOffsetNow.ToUnixTimeSeconds() + secondsToExpiry;
+        }
+
+        public List<ItemInstance> SelectAuctions(uint ownerSoulId)
+        {
+            List<ItemInstance> auctions = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(SqlSelectAuctions,
+                command => {
+                    AddParameter(command, "@owner_soul_id", ownerSoulId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        auctions.Add(itemInstance);
+                    }
+                });
+            return auctions;
+        }
+
+        public void UpdateAuctionExhibit(ItemInstance itemInstance)
+        {
+            ExecuteNonQuery(SqlUpdateExhibit, command =>
+            {
+                AddParameter(command, "@id", itemInstance.InstanceID);
+                AddParameter(command, "@consigner_soul_name", itemInstance.ConsignerSoulName);
+                AddParameter(command, "@expiry_datetime", CalcExpiryTime(itemInstance.SecondsUntilExpiryTime));
+                AddParameter(command, "@min_bid", itemInstance.MinimumBid);
+                AddParameter(command, "@buyout_price", itemInstance.BuyoutPrice);
+                AddParameter(command, "@comment", itemInstance.Comment);
+            });
+        }
+
+        public void UpdateAuctionCancelExhibit(ulong instanceId)
+        {
+            ExecuteNonQuery(SqlUpdateCancelExhibit, command =>
+            {
+                AddParameter(command, "@id", instanceId);
+                AddParameterNull(command, "@consigner_soul_name");
+                AddParameterNull(command, "@expiry_datetime");
+                AddParameterNull(command, "@min_bid");
+                AddParameterNull(command, "@buyout_price");
+                AddParameterNull(command, "@comment");
+                AddParameterNull(command, "@bidder_soul_id");
+            });
+        }
+
+        public List<ItemInstance> SelectBids(int bidderSoulId)
+        {
+            List<ItemInstance> bids = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(SqlSelectBids,
+                command =>
+                {
+                    AddParameter(command, "@bidder_soul_id", bidderSoulId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);                         
+                        itemInstance.CurrentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
+                        itemInstance.BidderSoulId = reader.IsDBNull("bidder_soul_id") ? 0 : reader.GetInt32("bidder_soul_id");
+                        itemInstance.MaxBid = reader.IsDBNull("max_bid") ? 0 : reader.GetInt32("max_bid");
+                        itemInstance.IsBidCancelled = reader.GetBoolean("is_cancelled");
+                        bids.Add(itemInstance);
+                    }
+                });
+            return bids;
+        }
+
+        public List<ItemInstance> SelectLots(int ownerSoulId)
+        {
+            List<ItemInstance> lots = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(SqlSelectLots,
+                command =>
+                {
+                    AddParameter(command, "@owner_soul_id", ownerSoulId);
+                }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        lots.Add(itemInstance);
+                    }
+                });
+            return lots;
+        }
+
+        public ulong SelectBuyoutPrice(ulong instanceId)
+        {
+            ulong buyoutPrice = 0;
+            ExecuteReader(SqlSelectBuyoutPrice,
+                command =>
+                {
+                    AddParameter(command, "@id", instanceId);
+                }, reader =>
+                {
+                    reader.Read();
+                    buyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong) reader.GetInt64("buyout_price"); //TODO remove cast                    
+                });
+            return buyoutPrice;
+        }
+
+        public void InsertAuctionBid(ulong instanceId, int bidderSoulId, ulong bid)
+        {
+            ExecuteNonQuery(SqlInsertAuctionBid, command =>
+            {
+                AddParameter(command, "@instance_id", instanceId);
+                AddParameter(command, "@bidder_soul_id", bidderSoulId);
+                AddParameter(command, "@current_bid", bid);
+            });
+        }
+
+        public void UpdateAuctionWinner(ulong instanceId, int winnerSoulId)
+        {
+            ExecuteNonQuery(SqlUpdateAuctionWinnerSoulId, command =>
+            {
+                AddParameter(command, "@winner_soul_id", winnerSoulId);
+                AddParameter(command, "@id", instanceId);                
+            });
+        }
+
+        public int SelectAuctionWinnerSoulId(ulong instanceId)
+        {
+            int winnerSoulId = 0;
+            ExecuteReader(SqlSelectAuctionWinnerSoulId,
+                command =>
+                {
+                    AddParameter(command, "@id", instanceId);
+                }, reader =>
+                {
+                    reader.Read();
+                    winnerSoulId = reader.IsDBNull("winner_soul_id") ? 0 : reader.GetInt32("winner_soul_id"); //TODO remove cast                    
+                });
+            return winnerSoulId;
+        }
     }
 }

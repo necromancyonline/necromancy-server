@@ -677,7 +677,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(2);
             Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
 
-            ItemLocation nextOpenLocation = client.Character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
+            ItemLocation nextOpenLocation = client.Character.ItemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
 
             if (nextOpenLocation.ZoneType == ItemZoneType.InvalidZone)
             {
@@ -702,7 +702,7 @@ namespace Necromancy.Server.Packet.Area
                     int baseId = Weaponlist[Util.GetRandomNumber(0, Weaponlist.Count)].Id;
                     itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                     Router.Send(client, recvItemInstanceUnidentified.ToPacket());
                 }
                 else if (client.Character.eventSelectExecCode == 1)
@@ -719,7 +719,7 @@ namespace Necromancy.Server.Packet.Area
                     int baseId = ArmorList[Util.GetRandomNumber(0, ArmorList.Count)].Id;
                     itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
 
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                     Router.Send(client, recvItemInstanceUnidentified.ToPacket());
                 }
                 else if (client.Character.eventSelectExecCode == 2)

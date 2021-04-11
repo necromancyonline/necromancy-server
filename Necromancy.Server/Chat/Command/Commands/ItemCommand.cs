@@ -72,7 +72,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 if (command.Length > 2 && command[2] != "") { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.Location.ZoneType; }
                 Logger.Debug(itemInstance.Type.ToString());
-                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, itemZoneOverride);
+                RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                 Router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else

@@ -5,18 +5,18 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_auction_notify_open_item_end : PacketResponse
+    public class RecvAuctionNotifyUpdateExhibitState : PacketResponse
     {
-        public recv_auction_notify_open_item_end()
-            : base((ushort) AreaPacketId.recv_auction_notify_open_item_end, ServerType.Area)
+        public RecvAuctionNotifyUpdateExhibitState()
+            : base((ushort) AreaPacketId.recv_auction_notify_update_exhibit_state, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            //No Structure
-
+            res.WriteInt32(0);
+            res.WriteInt32(0);
             return res;
         }
     }

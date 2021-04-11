@@ -1,11 +1,7 @@
-using Necromancy.Server.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Necromancy.Server.Systems.Item
 {
-    public class ForgeMultiplier
+    public class ForgeMultiplier //TODO what is this for?
     {
         public double Factor { get; set; }
         public double Durability { get; set; }
