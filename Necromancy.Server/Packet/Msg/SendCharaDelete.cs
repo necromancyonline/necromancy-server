@@ -7,31 +7,31 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_chara_delete : ClientHandler
+    public class SendCharaDelete : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_chara_delete));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaDelete));
 
         private readonly NecServer _server;
 
-        public send_chara_delete(NecServer server) : base(server)
+        public SendCharaDelete(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_chara_delete;
+        public override ushort id => (ushort) MsgPacketId.send_chara_delete;
 
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int characterId = packet.Data.ReadInt32();
-            Logger.Debug($"CharacterId [{characterId}] deleted from Soul [{client.Soul.Name}]");
-            _server.Database.DeleteCharacter(characterId);
+            int characterId = packet.data.ReadInt32();
+            _Logger.Debug($"CharacterId [{characterId}] deleted from Soul [{client.soul.name}]");
+            _server.database.DeleteCharacter(characterId);
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0);
 
 
-            Router.Send(client, (ushort) MsgPacketId.recv_chara_delete_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_chara_delete_r, res, ServerType.Msg);
         }
     }
 }

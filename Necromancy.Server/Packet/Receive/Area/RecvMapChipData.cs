@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_map_chip_data : PacketResponse
+    public class RecvMapChipData : PacketResponse
     {
-        public recv_map_chip_data()
+        public RecvMapChipData()
             : base((ushort) AreaPacketId.recv_map_chip_data, ServerType.Area)
         {
         }

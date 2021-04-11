@@ -9,54 +9,54 @@ namespace Necromancy.Server.Model
 {
     public class DropTables
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(DropTables));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(DropTables));
 
         private readonly NecServer _server;
-        private List<DropTable> dropTables;
+        private List<DropTable> _dropTables;
 
         public DropTables(NecServer server)
         {
             _server = server;
-            dropTables = new List<DropTable>();
+            _dropTables = new List<DropTable>();
             DropTable beetle = new DropTable(40101);
             DropTableItem item1 = new DropTableItem();
-            item1.ItemId = 1;
-            item1.Rarity = 1;
-            item1.MinItems = 1;
-            item1.Maxitems = 5;
+            item1.itemId = 1;
+            item1.rarity = 1;
+            item1.minItems = 1;
+            item1.maxitems = 5;
             DropTableItem item2 = new DropTableItem();
-            item2.ItemId = 50100101;
-            item2.Rarity = 2;
-            item2.MinItems = 1;
-            item2.Maxitems = 3;
+            item2.itemId = 50100101;
+            item2.rarity = 2;
+            item2.minItems = 1;
+            item2.maxitems = 3;
             DropTableItem item3 = new DropTableItem();
-            item3.ItemId = 10200101;
-            item3.Rarity = 3;
-            item3.MinItems = 1;
-            item3.Maxitems = 1;
+            item3.itemId = 10200101;
+            item3.rarity = 3;
+            item3.minItems = 1;
+            item3.maxitems = 1;
 
             beetle.AddItem(item1);
             beetle.AddItem(item2);
             beetle.AddItem(item3);
-            dropTables.Add(beetle);
+            _dropTables.Add(beetle);
         }
 
         public DropItem GetLoot(int monsterId)
         {
             monsterId = 40101; //   All monsters are beetles for now!!
             int roll = LootRoll();
-            DropTable monsterDrop = dropTables.Find(x => x.MonsterId == monsterId);
+            DropTable monsterDrop = _dropTables.Find(x => x.monsterId == monsterId);
             DropItem dropItem = null;
 
             if (monsterDrop != null)
             {
-                List<DropTableItem> ItemDrop = monsterDrop.FindAll(roll);
-                if (ItemDrop.Count == 1)
+                List<DropTableItem> itemDrop = monsterDrop.FindAll(roll);
+                if (itemDrop.Count == 1)
                 {
-                    Logger.Debug($"ItemId [ItemDrop ItemId {ItemDrop[0].ItemId}]");
-                    if (!_server.SettingRepository.ItemInfo.TryGetValue(ItemDrop[0].ItemId, out ItemInfoSetting itemSetting))
+                    _Logger.Debug($"ItemId [ItemDrop ItemId {itemDrop[0].itemId}]");
+                    if (!_server.settingRepository.itemInfo.TryGetValue(itemDrop[0].itemId, out ItemInfoSetting itemSetting))
                     {
-                        Logger.Error($"Could not retrieve ItemSettings for ItemId [{ItemDrop[0].ItemId}]");
+                        _Logger.Error($"Could not retrieve ItemSettings for ItemId [{itemDrop[0].itemId}]");
                         return null;
                     }
 
@@ -79,9 +79,9 @@ namespace Necromancy.Server.Model
             }
             else
             {
-                if (!_server.SettingRepository.ItemInfo.TryGetValue(50100301, out ItemInfoSetting itemSetting))
+                if (!_server.settingRepository.itemInfo.TryGetValue(50100301, out ItemInfoSetting itemSetting))
                 {
-                    Logger.Error($"Could not retrieve ItemSettings for default Item Camp");
+                    _Logger.Error($"Could not retrieve ItemSettings for default Item Camp");
                     return null;
                 }
 
@@ -127,43 +127,43 @@ namespace Necromancy.Server.Model
 
     public class DropTable
     {
-        public int MonsterId { get; }
-        public List<DropTableItem> DropTableItems { get; }
+        public int monsterId { get; }
+        public List<DropTableItem> dropTableItems { get; }
 
         public DropTable(int monsterId)
         {
-            MonsterId = monsterId;
-            DropTableItems = new List<DropTableItem>();
+            this.monsterId = monsterId;
+            dropTableItems = new List<DropTableItem>();
         }
 
         public void AddItem(DropTableItem item)
         {
-            DropTableItems.Add(item);
+            dropTableItems.Add(item);
         }
 
         public List<DropTableItem> FindAll(int rarity)
         {
-            return DropTableItems.FindAll(x => x.Rarity == rarity);
+            return dropTableItems.FindAll(x => x.rarity == rarity);
         }
     }
 
     public class DropTableItem
     {
-        public int Rarity;
-        public int ItemId;
-        public int MinItems;
-        public int Maxitems;
+        public int rarity;
+        public int itemId;
+        public int minItems;
+        public int maxitems;
     }
 
     public class DropItem
     {
-        public ItemBase Item;
-        public int NumItems;
+        public ItemBase item;
+        public int numItems;
 
         public DropItem(int numItems, ItemBase item)
         {
-            Item = item;
-            NumItems = numItems;
+            this.item = item;
+            this.numItems = numItems;
         }
     }
 }

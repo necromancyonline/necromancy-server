@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_cash_buy_premium : ClientHandler
+    public class SendCashBuyPremium : ClientHandler
     {
-        public send_cash_buy_premium(NecServer server) : base(server)
+        public SendCashBuyPremium(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_cash_buy_premium;
+        public override ushort id => (ushort) MsgPacketId.send_cash_buy_premium;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
 
 
-            Router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
         }
     }
 }

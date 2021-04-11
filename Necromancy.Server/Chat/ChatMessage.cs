@@ -4,13 +4,13 @@ namespace Necromancy.Server.Chat
     {
         public ChatMessage(ChatMessageType messageType, string recipientSoulName, string message)
         {
-            MessageType = messageType;
-            RecipientSoulName = recipientSoulName;
-            Message = message;
+            this.messageType = messageType;
+            this.recipientSoulName = recipientSoulName;
+            this.message = message;
         }
 
-        public ChatMessageType MessageType { get; }
-        public string RecipientSoulName { get; }
-        public string Message { get; }
+        public ChatMessageType messageType { get; }
+        public string recipientSoulName { get; }
+        public string message { get; }
     }
 }

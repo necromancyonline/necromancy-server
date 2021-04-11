@@ -10,55 +10,55 @@ using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_party_accept_to_apply : ClientHandler
+    public class SendPartyAcceptToApply : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_party_accept_to_apply));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendPartyAcceptToApply));
 
-        public send_party_accept_to_apply(NecServer server) : base(server)
+        public SendPartyAcceptToApply(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_party_accept_to_apply;
+        public override ushort id => (ushort) AreaPacketId.send_party_accept_to_apply;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint applicantInstanceId =packet.Data.ReadUInt32(); //Could be a Party ID value hidden as character-who-made-it's value
-            Logger.Debug($"character {client.Character.Name} accepted Application to party from character Instance ID {applicantInstanceId}");
+            uint applicantInstanceId =packet.data.ReadUInt32(); //Could be a Party ID value hidden as character-who-made-it's value
+            _Logger.Debug($"character {client.character.name} accepted Application to party from character Instance ID {applicantInstanceId}");
 
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_party_accept_to_apply_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_party_accept_to_apply_r, res, ServerType.Area);
 
-            Party myParty = Server.Instances.GetInstance(client.Character.partyId) as Party;
-            NecClient applicantClient = Server.Clients.GetByCharacterInstanceId(applicantInstanceId);
+            Party myParty = server.instances.GetInstance(client.character.partyId) as Party;
+            NecClient applicantClient = server.clients.GetByCharacterInstanceId(applicantInstanceId);
             myParty.Join(applicantClient);
 
-            applicantClient.Character.partyId = myParty.InstanceId;
+            applicantClient.character.partyId = myParty.instanceId;
 
             RecvPartyNotifyEstablish recvPartyNotifyEstablish = new RecvPartyNotifyEstablish(applicantClient, myParty);
-            Router.Send(recvPartyNotifyEstablish, applicantClient); // Only establish the party for the applicant. everyone else is already established.
+            router.Send(recvPartyNotifyEstablish, applicantClient); // Only establish the party for the applicant. everyone else is already established.
 
 
-            foreach (NecClient partyClient in myParty.PartyMembers)
+            foreach (NecClient partyClient in myParty.partyMembers)
             {
                 //Sanity check.  Who is in the party List at the time of Accepting the invite?
-                Logger.Debug(
-                    $"my party with instance ID {myParty.InstanceId} contains members {partyClient.Character.Name}");
-                List<NecClient> DisposableList = new List<NecClient>();
-                foreach (NecClient DisposablePartyClient in myParty.PartyMembers)
+                _Logger.Debug(
+                    $"my party with instance ID {myParty.instanceId} contains members {partyClient.character.name}");
+                List<NecClient> disposableList = new List<NecClient>();
+                foreach (NecClient disposablePartyClient in myParty.partyMembers)
                 {
-                    DisposableList.Add(DisposablePartyClient);
-                    Logger.Debug($"Added {DisposablePartyClient.Character.Name} to disposable list");
+                    disposableList.Add(disposablePartyClient);
+                    _Logger.Debug($"Added {disposablePartyClient.character.name} to disposable list");
                 }
 
                 RecvPartyNotifyAddMember recvPartyNotifyAddMember = new RecvPartyNotifyAddMember(partyClient);
-                Router.Send(recvPartyNotifyAddMember, DisposableList);
+                router.Send(recvPartyNotifyAddMember, disposableList);
 
-                Logger.Debug($"Adding member {partyClient.Character.Name} to Roster ");
+                _Logger.Debug($"Adding member {partyClient.character.name} to Roster ");
             }
 
-            RecvCharaBodyNotifyPartyJoin recvCharaBodyNotifyPartyJoin = new RecvCharaBodyNotifyPartyJoin(client.Character.InstanceId, myParty.InstanceId, myParty.PartyType);
-            Router.Send(client.Map, recvCharaBodyNotifyPartyJoin);//Only send the Join Notify of the Accepting Client to the Map.  Existing members already did that when they joined.
+            RecvCharaBodyNotifyPartyJoin recvCharaBodyNotifyPartyJoin = new RecvCharaBodyNotifyPartyJoin(client.character.instanceId, myParty.instanceId, myParty.partyType);
+            router.Send(client.map, recvCharaBodyNotifyPartyJoin);//Only send the Join Notify of the Accepting Client to the Map.  Existing members already did that when they joined.
         }
 
     }

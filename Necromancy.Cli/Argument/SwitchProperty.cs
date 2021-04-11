@@ -2,7 +2,7 @@ namespace Necromancy.Cli.Argument
 {
     public class SwitchProperty<T> : ISwitchProperty
     {
-        public static TryParseHandler NoOp = (string value, out T result) =>
+        public static TryParseHandler noOp = (string value, out T result) =>
         {
             result = default;
             return true;
@@ -14,9 +14,9 @@ namespace Necromancy.Cli.Argument
         public SwitchProperty(string key, string valueDescription, string description, TryParseHandler parser,
             AssignHandler assigner)
         {
-            Key = key;
-            ValueDescription = valueDescription;
-            Description = description;
+            this.key = key;
+            this.valueDescription = valueDescription;
+            this.description = description;
             _parser = parser;
             _assigner = assigner;
         }
@@ -25,9 +25,9 @@ namespace Necromancy.Cli.Argument
 
         public delegate void AssignHandler(T result);
 
-        public string Key { get; }
-        public string Description { get; }
-        public string ValueDescription { get; }
+        public string key { get; }
+        public string description { get; }
+        public string valueDescription { get; }
 
         public bool Assign(string value)
         {

@@ -5,24 +5,24 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_raisescale_add_item : ClientHandler
+    public class SendRaisescaleAddItem : ClientHandler
     {
-        public send_raisescale_add_item(NecServer server) : base(server)
+        public SendRaisescaleAddItem(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_raisescale_add_item;
+        public override ushort id => (ushort) AreaPacketId.send_raisescale_add_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte bag = packet.Data.ReadByte();
-            byte unknown = packet.Data.ReadByte(); //Type?
-            int bagSlot = packet.Data.ReadInt16();
-            byte quantity = packet.Data.ReadByte();
+            byte bag = packet.data.ReadByte();
+            byte unknown = packet.data.ReadByte(); //Type?
+            int bagSlot = packet.data.ReadInt16();
+            byte quantity = packet.data.ReadByte();
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(bagSlot);
-            Router.Send(client, (ushort) AreaPacketId.recv_raisescale_add_item_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_raisescale_add_item_r, res, ServerType.Area);
         }
     }
 }

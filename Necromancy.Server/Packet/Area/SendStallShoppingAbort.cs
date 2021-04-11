@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_stall_shopping_abort : ClientHandler
+    public class SendStallShoppingAbort : ClientHandler
     {
-        public send_stall_shopping_abort(NecServer server) : base(server)
+        public SendStallShoppingAbort(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_stall_shopping_abort;
+        public override ushort id => (ushort) AreaPacketId.send_stall_shopping_abort;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(0);
 
-            Router.Send(client, (ushort) AreaPacketId.recv_stall_shopping_abort_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_stall_shopping_abort_r, res, ServerType.Area);
 
             SendStallShoppingNotifyAborted(client);
         }
@@ -28,7 +28,7 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
 
-            Router.Send(client, (ushort)AreaPacketId.recv_stall_shopping_notify_aborted, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_stall_shopping_notify_aborted, res, ServerType.Area);
         }
     }
 }

@@ -38,18 +38,18 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.InstanceId);
+            res.WriteUInt32(client.character.instanceId);
             res.WriteFloat(x);
             res.WriteFloat(y);
             res.WriteFloat(z);
-            res.WriteByte(client.Character.Heading);
-            res.WriteByte(client.Character.movementAnim);
+            res.WriteByte(client.character.heading);
+            res.WriteByte(client.character.movementAnim);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "tp";
-        public override string HelpText => "usage: `/tp x, y, z` - Moves character to location x, y, z.";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "tp";
+        public override string helpText => "usage: `/tp x, y, z` - Moves character to location x, y, z.";
     }
 }

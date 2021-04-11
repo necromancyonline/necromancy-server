@@ -12,7 +12,7 @@ namespace Necromancy.Server.Database.Sql
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
 
         public const int NoRowsAffected = 0;
         public const long NoAutoIncrement = 0;
@@ -44,7 +44,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
                 return NoRowsAffected;
             }
@@ -67,7 +67,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
                 autoIncrement = NoAutoIncrement;
                 return NoRowsAffected;
@@ -92,7 +92,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
             }
         }
@@ -114,7 +114,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
             }
         }
@@ -133,7 +133,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
             }
         }
@@ -157,7 +157,7 @@ namespace Necromancy.Server.Database.Sql
         protected virtual void Exception(Exception ex)
         {
             //throw ex;
-            Logger.Exception(ex);
+            _Logger.Exception(ex);
         }
 
         protected DbParameter Parameter(TCom command, string name, object value, DbType type)

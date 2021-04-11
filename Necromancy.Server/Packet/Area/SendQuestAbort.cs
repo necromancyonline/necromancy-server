@@ -6,22 +6,22 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_quest_abort : ClientHandler
+    public class SendQuestAbort : ClientHandler
     {
-        public send_quest_abort(NecServer server) : base(server)
+        public SendQuestAbort(NecServer server) : base(server)
         {
         }
-        
 
-        public override ushort Id => (ushort) AreaPacketId.send_quest_abort;
+
+        public override ushort id => (ushort) AreaPacketId.send_quest_abort;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int abortQuestNumber = packet.Data.ReadInt32();
+            int abortQuestNumber = packet.data.ReadInt32();
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(abortQuestNumber);
-            Router.Send(client, (ushort) AreaPacketId.recv_quest_abort_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_quest_abort_r, res, ServerType.Area);
         }
 
     }

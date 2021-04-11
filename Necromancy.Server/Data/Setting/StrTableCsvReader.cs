@@ -2,7 +2,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class StrTableCsvReader : CsvReader<StrTableSetting>
     {
-        protected override int NumExpectedItems => 4;
+        protected override int numExpectedItems => 4;
 
         protected override StrTableSetting CreateInstance(string[] properties)
         {
@@ -23,10 +23,10 @@ namespace Necromancy.Server.Data.Setting
 
             return new StrTableSetting
             {
-                Id = id,
-                SubId = subId,
-                StringId = stringId,
-                Text = properties[3]
+                id = id,
+                subId = subId,
+                stringId = stringId,
+                text = properties[3]
             };
         }
     }

@@ -7,35 +7,35 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_refusallist_add_user : ClientHandler
+    public class SendRefusallistAddUser : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_refusallist_add_user));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendRefusallistAddUser));
 
-        public send_refusallist_add_user(NecServer server) : base(server)
+        public SendRefusallistAddUser(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_refusallist_add_user;
+        public override ushort id => (ushort) AreaPacketId.send_refusallist_add_user;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
-            string targetSoulName = packet.Data.ReadCString();
+            string targetSoulName = packet.data.ReadCString();
             int targetSoulId;
             int result;
 
             try
             {
-                Soul blockSoul = Server.Database.SelectSoulByName(targetSoulName);
-                targetSoulId = blockSoul.Id;
+                Soul blockSoul = server.database.SelectSoulByName(targetSoulName);
+                targetSoulId = blockSoul.id;
                 result = 0;
-                Logger.Debug($"target Soul Id is {targetSoulId}");
+                _Logger.Debug($"target Soul Id is {targetSoulId}");
             }
             catch //(System.NullReferenceException NRE)
             {
                 targetSoulId = 0;
                 result = -20;
-                Logger.Debug($"Database Lookup for soul name {targetSoulName} returned null. Result {result}");
+                _Logger.Debug($"Database Lookup for soul name {targetSoulName} returned null. Result {result}");
             }
 
             /*
@@ -57,7 +57,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(result); //error check
             res.WriteInt32(targetSoulId); //ref_soulid
 
-            Router.Send(client, (ushort) AreaPacketId.recv_refusallist_add_user_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_refusallist_add_user_r, res, ServerType.Area);
         }
     }
 }

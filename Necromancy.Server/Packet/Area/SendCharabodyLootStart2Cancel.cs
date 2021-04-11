@@ -7,27 +7,27 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_charabody_loot_start2_cancel : ClientHandler
+    public class SendCharabodyLootStart2Cancel : ClientHandler
     {
         private NecServer _server;
-        public send_charabody_loot_start2_cancel(NecServer server) : base(server)
+        public SendCharabodyLootStart2Cancel(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_charabody_loot_start2_cancel;
+        public override ushort id => (ushort) AreaPacketId.send_charabody_loot_start2_cancel;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            client.Map.DeadBodies.TryGetValue(client.Character.eventSelectReadyCode, out DeadBody deadBody);
-            Character deadCharacter = _server.Instances.GetInstance(deadBody.CharacterInstanceId) as Character;
+            client.map.deadBodies.TryGetValue(client.character.eventSelectReadyCode, out DeadBody deadBody);
+            Character deadCharacter = _server.instances.GetInstance(deadBody.characterInstanceId) as Character;
             ItemLocation itemLocation = deadCharacter.lootNotify;
-            NecClient necClient = client.Map.ClientLookup.GetByCharacterInstanceId(deadBody.CharacterInstanceId);
+            NecClient necClient = client.map.clientLookup.GetByCharacterInstanceId(deadBody.characterInstanceId);
 
-            RecvCharaBodyNotifyLootStartCancel recvCharaBodyNotifyLootStartCancel = new RecvCharaBodyNotifyLootStartCancel((byte)itemLocation.ZoneType, itemLocation.Container, itemLocation.Slot, client.Soul.Name, client.Character.Name);
-            if (necClient != null) Router.Send(necClient, recvCharaBodyNotifyLootStartCancel.ToPacket());
-            RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
-            if (necClient != null) Router.Send(necClient, recvObjectDisappearNotify.ToPacket());
+            RecvCharaBodyNotifyLootStartCancel recvCharaBodyNotifyLootStartCancel = new RecvCharaBodyNotifyLootStartCancel((byte)itemLocation.zoneType, itemLocation.container, itemLocation.slot, client.soul.name, client.character.name);
+            if (necClient != null) router.Send(necClient, recvCharaBodyNotifyLootStartCancel.ToPacket());
+            RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.character.instanceId);
+            if (necClient != null) router.Send(necClient, recvObjectDisappearNotify.ToPacket());
 
         }
     }

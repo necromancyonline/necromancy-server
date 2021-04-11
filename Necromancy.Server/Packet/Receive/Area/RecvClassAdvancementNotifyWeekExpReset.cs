@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_class_advancement_notify_week_exp_reset : PacketResponse
+    public class RecvClassAdvancementNotifyWeekExpReset : PacketResponse
     {
-        public recv_class_advancement_notify_week_exp_reset()
+        public RecvClassAdvancementNotifyWeekExpReset()
             : base((ushort) AreaPacketId.recv_class_advancement_notify_week_exp_reset, ServerType.Area)
         {
         }

@@ -10,7 +10,7 @@ namespace Necromancy.Server.Chat.Command.Commands
     /// </summary>
     public class GetCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(GetCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(GetCommand));
         public GetCommand(NecServer server) : base(server)
         {
         }
@@ -28,55 +28,55 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 case "mob":
                     responses.Add(ChatResponse.CommandError(client, "Mob instance ids for current map:"));
-                    foreach (KeyValuePair<uint, MonsterSpawn> monster in client.Map.MonsterSpawns)
+                    foreach (KeyValuePair<uint, MonsterSpawn> monster in client.map.monsterSpawns)
                     {
-                        MonsterSpawn mobHolder = Server.Instances.GetInstance(monster.Key) as MonsterSpawn;
+                        MonsterSpawn mobHolder = server.instances.GetInstance(monster.Key) as MonsterSpawn;
                         if (mobHolder != null)
-                            responses.Add(ChatResponse.CommandError(client, $"{mobHolder.Name} has instance id {mobHolder.InstanceId}"));
+                            responses.Add(ChatResponse.CommandError(client, $"{mobHolder.name} has instance id {mobHolder.instanceId}"));
                     }
                     break;
                 case "npc":
                     responses.Add(ChatResponse.CommandError(client, "Npc instance ids for current map:"));
-                    foreach (KeyValuePair<uint, NpcSpawn> npc in client.Map.NpcSpawns)
+                    foreach (KeyValuePair<uint, NpcSpawn> npc in client.map.npcSpawns)
                     {
-                        NpcSpawn npcHolder = Server.Instances.GetInstance(npc.Key) as NpcSpawn;
+                        NpcSpawn npcHolder = server.instances.GetInstance(npc.Key) as NpcSpawn;
                         if (npcHolder != null)
-                            responses.Add(ChatResponse.CommandError(client, $"{npcHolder.Name} has instance id {npcHolder.InstanceId}"));
-                        
+                            responses.Add(ChatResponse.CommandError(client, $"{npcHolder.name} has instance id {npcHolder.instanceId}"));
+
                     }
                     break;
                 case "maptran":
                     responses.Add(ChatResponse.CommandError(client, "Map transition instance ids for current map:"));
-                    foreach (KeyValuePair<uint, MapTransition> mapTran in client.Map.MapTransitions)
+                    foreach (KeyValuePair<uint, MapTransition> mapTran in client.map.mapTransitions)
                     {
-                        MapTransition mapTranHolder = Server.Instances.GetInstance(mapTran.Key) as MapTransition;
-                        responses.Add(ChatResponse.CommandError(client, $"Map transition {mapTranHolder.Id} has instance id {mapTranHolder.InstanceId}"));
+                        MapTransition mapTranHolder = server.instances.GetInstance(mapTran.Key) as MapTransition;
+                        responses.Add(ChatResponse.CommandError(client, $"Map transition {mapTranHolder.id} has instance id {mapTranHolder.instanceId}"));
                     }
                     break;
                 case "gimmick":
                     responses.Add(ChatResponse.CommandError(client, "Gimmick instance ids for current map:"));
-                    foreach (KeyValuePair<uint, Gimmick> gimmick in client.Map.GimmickSpawns)
+                    foreach (KeyValuePair<uint, Gimmick> gimmick in client.map.gimmickSpawns)
                     {
-                        Gimmick gimmickHolder = Server.Instances.GetInstance(gimmick.Key) as Gimmick;
-                        responses.Add(ChatResponse.CommandError(client, $"Gimmick {gimmickHolder.Id} has instance id {gimmickHolder.InstanceId}"));
+                        Gimmick gimmickHolder = server.instances.GetInstance(gimmick.Key) as Gimmick;
+                        responses.Add(ChatResponse.CommandError(client, $"Gimmick {gimmickHolder.id} has instance id {gimmickHolder.instanceId}"));
                     }
                     break;
                 case "ggate":
                     responses.Add(ChatResponse.CommandError(client, "Ggate instance ids for current map:"));
-                    foreach (KeyValuePair<uint, GGateSpawn> ggate in client.Map.GGateSpawns)
+                    foreach (KeyValuePair<uint, GGateSpawn> ggate in client.map.gGateSpawns)
                     {
-                        GGateSpawn ggateHolder = Server.Instances.GetInstance(ggate.Key) as GGateSpawn;
-                        responses.Add(ChatResponse.CommandError(client, $"Ggate {ggateHolder.Id} has instance id {ggateHolder.InstanceId}"));
+                        GGateSpawn ggateHolder = server.instances.GetInstance(ggate.Key) as GGateSpawn;
+                        responses.Add(ChatResponse.CommandError(client, $"Ggate {ggateHolder.id} has instance id {ggateHolder.instanceId}"));
                     }
                     break;
                 default:
-                        Logger.Error($"Unable to searc for: {command[0]} ");
+                        _Logger.Error($"Unable to searc for: {command[0]} ");
                         break;
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "get";
-        public override string HelpText => "usage: `/get [type]` - Displays instnace ID for all objects of 'type' on current map";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "get";
+        public override string helpText => "usage: `/get [type]` - Displays instnace ID for all objects of 'type' on current map";
     }
 }

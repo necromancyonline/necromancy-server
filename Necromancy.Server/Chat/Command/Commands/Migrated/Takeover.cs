@@ -10,7 +10,7 @@ namespace Necromancy.Server.Chat.Command.Commands
     //failsafe to end events when frozen
     public class Takeover : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(Takeover));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(Takeover));
 
         public Takeover(NecServer server) : base(server)
         {
@@ -19,123 +19,123 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            if (client.Character.takeover == true)
+            if (client.character.takeover == true)
             {
-                client.Character.takeover = false;
+                client.character.takeover = false;
             }
-            else if (client.Character.takeover == false)
+            else if (client.character.takeover == false)
             {
-                client.Character.takeover = true;
+                client.character.takeover = true;
             }
 
             if (command[0] == "cancel" || command[0] == "c")
             {
-                client.Character.takeover = false;
+                client.character.takeover = false;
             }
 
-            IInstance instance = Server.Instances.GetInstance(client.Character.eventSelectReadyCode);
+            IInstance instance = server.instances.GetInstance(client.character.eventSelectReadyCode);
 
             if (command[0] == "save" || command[0] == "s")
             {
-                client.Character.takeover = false;
+                client.character.takeover = false;
 
                 switch (instance)
                 {
                     case NpcSpawn npcSpawn:
-                        Logger.Debug($"NPCId: {npcSpawn.Id} is being updated in the database");
-                        npcSpawn.Heading = (byte) (client.Character.Heading);
-                        npcSpawn.X = (client.Character.X);
-                        npcSpawn.Y = (client.Character.Y);
-                        npcSpawn.Z = (client.Character.Z);
-                        npcSpawn.Updated = DateTime.Now;
-                        if (!Server.Database.UpdateNpcSpawn(npcSpawn))
+                        _Logger.Debug($"NPCId: {npcSpawn.id} is being updated in the database");
+                        npcSpawn.heading = (byte) (client.character.heading);
+                        npcSpawn.x = (client.character.x);
+                        npcSpawn.y = (client.character.y);
+                        npcSpawn.z = (client.character.z);
+                        npcSpawn.updated = DateTime.Now;
+                        if (!server.database.UpdateNpcSpawn(npcSpawn))
                         {
-                            Logger.Error("Could not update the database");
+                            _Logger.Error("Could not update the database");
                             return;
                         }
 
                         break;
                     case MonsterSpawn monsterSpawn:
-                        Logger.Debug($"MonsterId: {monsterSpawn.Id} is being updated in the database");
-                        monsterSpawn.Heading = (byte) (client.Character.Heading);
-                        monsterSpawn.X = (client.Character.X);
-                        monsterSpawn.Y = (client.Character.Y);
-                        monsterSpawn.Z = (client.Character.Z);
-                        monsterSpawn.Updated = DateTime.Now;
-                        if (!Server.Database.UpdateMonsterSpawn(monsterSpawn))
+                        _Logger.Debug($"MonsterId: {monsterSpawn.id} is being updated in the database");
+                        monsterSpawn.heading = (byte) (client.character.heading);
+                        monsterSpawn.x = (client.character.x);
+                        monsterSpawn.y = (client.character.y);
+                        monsterSpawn.z = (client.character.z);
+                        monsterSpawn.updated = DateTime.Now;
+                        if (!server.database.UpdateMonsterSpawn(monsterSpawn))
                         {
-                            Logger.Error("Could not update the database");
+                            _Logger.Error("Could not update the database");
                             return;
                         }
 
                         break;
                     case Character character:
-                        Logger.Debug($"CharacterId: {character.Id} is being updated in the database");
-                        character.Heading = (byte) (client.Character.Heading);
-                        character.X = (client.Character.X);
-                        character.Y = (client.Character.Y);
-                        character.Z = (client.Character.Z);
-                        character.MapId = client.Character.MapId;
+                        _Logger.Debug($"CharacterId: {character.id} is being updated in the database");
+                        character.heading = (byte) (client.character.heading);
+                        character.x = (client.character.x);
+                        character.y = (client.character.y);
+                        character.z = (client.character.z);
+                        character.mapId = client.character.mapId;
                         //character.Updated = DateTime.Now;
-                        if (!Server.Database.UpdateCharacter(character))
+                        if (!server.database.UpdateCharacter(character))
                         {
-                            Logger.Error("Could not update the database");
+                            _Logger.Error("Could not update the database");
                             return;
                         }
 
                         break;
                     case Gimmick gimmick:
-                        Logger.Debug($"MonsterId: {gimmick.Id} is being updated in the database");
-                        gimmick.Heading = (byte) (client.Character.Heading);
-                        gimmick.X = (client.Character.X);
-                        gimmick.Y = (client.Character.Y);
-                        gimmick.Z = (client.Character.Z);
-                        gimmick.Updated = DateTime.Now;
-                        if (!Server.Database.UpdateGimmick(gimmick))
+                        _Logger.Debug($"MonsterId: {gimmick.id} is being updated in the database");
+                        gimmick.heading = (byte) (client.character.heading);
+                        gimmick.x = (client.character.x);
+                        gimmick.y = (client.character.y);
+                        gimmick.z = (client.character.z);
+                        gimmick.updated = DateTime.Now;
+                        if (!server.database.UpdateGimmick(gimmick))
                         {
-                            Logger.Error("Could not update the database");
+                            _Logger.Error("Could not update the database");
                             return;
                         }
 
                         break;
                     default:
-                        Logger.Error($"Instance with InstanceId: {instance.InstanceId} does not exist");
+                        _Logger.Error($"Instance with InstanceId: {instance.instanceId} does not exist");
                         break;
                 }
             }
             else if (uint.TryParse(command[0], out uint specifiedInstanceId))
             {
-                IInstance specifiedInstance = Server.Instances.GetInstance(specifiedInstanceId);
+                IInstance specifiedInstance = server.instances.GetInstance(specifiedInstanceId);
 
                 switch (specifiedInstance)
                 {
                     case NpcSpawn npcSpawn:
-                        Logger.Debug($"NPCId: {npcSpawn.Id} is now under your movement control. /takeover to Cancel");
-                        client.Character.eventSelectReadyCode = specifiedInstance.InstanceId;
+                        _Logger.Debug($"NPCId: {npcSpawn.id} is now under your movement control. /takeover to Cancel");
+                        client.character.eventSelectReadyCode = specifiedInstance.instanceId;
 
                         break;
                     case MonsterSpawn monsterSpawn:
-                        Logger.Debug(
-                            $"MonsterId: {monsterSpawn.InstanceId} is now under your movement control. /takeover to Cancel");
-                        client.Character.eventSelectReadyCode = specifiedInstance.InstanceId;
+                        _Logger.Debug(
+                            $"MonsterId: {monsterSpawn.instanceId} is now under your movement control. /takeover to Cancel");
+                        client.character.eventSelectReadyCode = specifiedInstance.instanceId;
                         break;
                     case Character character:
-                        Logger.Debug(
-                            $"CharacterId: {character.InstanceId} is now under your movement control. /takeover to Cancel");
-                        client.Character.eventSelectReadyCode = specifiedInstance.InstanceId;
+                        _Logger.Debug(
+                            $"CharacterId: {character.instanceId} is now under your movement control. /takeover to Cancel");
+                        client.character.eventSelectReadyCode = specifiedInstance.instanceId;
                         break;
                     case Skill skill:
-                        Logger.Debug(
-                            $"CharacterId: {skill.InstanceId} is now under your movement control. /takeover to Cancel");
-                        client.Character.eventSelectReadyCode = specifiedInstance.InstanceId;
+                        _Logger.Debug(
+                            $"CharacterId: {skill.instanceId} is now under your movement control. /takeover to Cancel");
+                        client.character.eventSelectReadyCode = specifiedInstance.instanceId;
                         break;
                     case Gimmick gimmick:
-                        Logger.Debug(
-                            $"CharacterId: {gimmick.InstanceId} is now under your movement control. /takeover to Cancel");
-                        client.Character.eventSelectReadyCode = specifiedInstance.InstanceId;
+                        _Logger.Debug(
+                            $"CharacterId: {gimmick.instanceId} is now under your movement control. /takeover to Cancel");
+                        client.character.eventSelectReadyCode = specifiedInstance.instanceId;
                         break;
                     default:
-                        Logger.Error($"Instance with InstanceId: {instance.InstanceId} does not exist");
+                        _Logger.Error($"Instance with InstanceId: {instance.instanceId} does not exist");
                         break;
                 }
             }
@@ -144,39 +144,39 @@ namespace Necromancy.Server.Chat.Command.Commands
                 switch (instance)
                 {
                     case NpcSpawn npcSpawn:
-                        Logger.Debug(
-                            $"NPCId: {npcSpawn.InstanceId} is now under your movement control. /takeover to Cancel");
+                        _Logger.Debug(
+                            $"NPCId: {npcSpawn.instanceId} is now under your movement control. /takeover to Cancel");
 
                         break;
                     case MonsterSpawn monsterSpawn:
-                        Logger.Debug(
-                            $"MonsterId: {monsterSpawn.InstanceId} is now under your movement control. /takeover to Cancel");
+                        _Logger.Debug(
+                            $"MonsterId: {monsterSpawn.instanceId} is now under your movement control. /takeover to Cancel");
 
                         break;
                     case Character character:
-                        Logger.Debug(
-                            $"CharacterId: {character.InstanceId} is now under your movement control. /takeover to Cancel");
+                        _Logger.Debug(
+                            $"CharacterId: {character.instanceId} is now under your movement control. /takeover to Cancel");
 
                         break;
                     case Skill skill:
-                        Logger.Debug(
-                            $"CharacterId: {skill.InstanceId} is now under your movement control. /takeover to Cancel");
+                        _Logger.Debug(
+                            $"CharacterId: {skill.instanceId} is now under your movement control. /takeover to Cancel");
                         break;
                     case Gimmick gimmick:
-                        Logger.Debug(
-                            $"CharacterId: {gimmick.InstanceId} is now under your movement control. /takeover to Cancel");
+                        _Logger.Debug(
+                            $"CharacterId: {gimmick.instanceId} is now under your movement control. /takeover to Cancel");
                         break;
                     default:
-                        Logger.Error($"Instance with InstanceId: {instance.InstanceId} does not exist");
+                        _Logger.Error($"Instance with InstanceId: {instance.instanceId} does not exist");
                         break;
                 }
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "takeover";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "takeover";
 
-        public override string HelpText =>
+        public override string helpText =>
             "usage: `/takeover ` - Takes over the last object targeted \n `/takeover cancel` - cancels the takeover \n `/takeover save` - saves the takeover to database ";
     }
 }

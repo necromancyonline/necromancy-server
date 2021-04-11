@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_chara_select_back_soul_select : ClientHandler
+    public class SendCharaSelectBackSoulSelect : ClientHandler
     {
-        public send_chara_select_back_soul_select(NecServer server) : base(server)
+        public SendCharaSelectBackSoulSelect(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_chara_select_back_soul_select;
+        public override ushort id => (ushort) MsgPacketId.send_chara_select_back_soul_select;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
 
 
-            Router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
         }
     }
 }

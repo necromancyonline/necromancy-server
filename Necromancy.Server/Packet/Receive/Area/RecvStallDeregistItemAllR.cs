@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_stall_deregist_item_all_r : PacketResponse
+    public class RecvStallDeregistItemAllR : PacketResponse
     {
-        public recv_stall_deregist_item_all_r()
+        public RecvStallDeregistItemAllR()
             : base((ushort) AreaPacketId.recv_stall_deregist_item_all_r, ServerType.Area)
         {
         }

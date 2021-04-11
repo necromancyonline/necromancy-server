@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_roguemap_update_point : PacketResponse
+    public class RecvRoguemapUpdatePoint : PacketResponse
     {
-        public recv_roguemap_update_point()
+        public RecvRoguemapUpdatePoint()
             : base((ushort) AreaPacketId.recv_roguemap_update_point, ServerType.Area)
         {
         }

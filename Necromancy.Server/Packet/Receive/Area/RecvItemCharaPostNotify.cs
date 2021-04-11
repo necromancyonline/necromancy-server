@@ -5,7 +5,7 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_item_chara_post_notify : PacketResponse
+    public class RecvItemCharaPostNotify : PacketResponse
     {
         /// <summary>
         /// Notifies you that an item was mailed to you because your inventory was full.
@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         /// </summary>
         private int _serialId;
         private byte _count;
-        public recv_item_chara_post_notify(int serialId, byte count)
+        public RecvItemCharaPostNotify(int serialId, byte count)
             : base((ushort) AreaPacketId.recv_item_chara_post_notify, ServerType.Area)
         {
             _serialId = serialId;

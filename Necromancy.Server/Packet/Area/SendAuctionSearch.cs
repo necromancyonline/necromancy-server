@@ -10,15 +10,15 @@ using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_auction_search : ClientHandler
+    public class SendAuctionSearch : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_auction_search));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendAuctionSearch));
 
-        public send_auction_search(NecServer server) : base(server)        {
+        public SendAuctionSearch(NecServer server) : base(server)        {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_auction_search;
+        public override ushort id => (ushort) AreaPacketId.send_auction_search;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Area
             //searchCriteria.ForgePriceMin = packet.Data.ReadByte();
             //searchCriteria.ForgePriceMax = packet.Data.ReadByte();
             //searchCriteria.Quality = (ItemQualities)packet.Data.ReadInt16();
-            //searchCriteria.Class = (Classes)packet.Data.ReadInt16();            
+            //searchCriteria.Class = (Classes)packet.Data.ReadInt16();
 
             //ItemService itemService = new ItemService(client.Character);
             //List<ItemInstance> auctionList = itemService.GetItemsUpForAuction();
@@ -46,15 +46,15 @@ namespace Necromancy.Server.Packet.Area
             //int i = 0;
             //foreach(ItemInstance auctionItem in auctionList)
             //{
-            //    res.WriteInt32(i); //row identifier 
+            //    res.WriteInt32(i); //row identifier
             //    res.WriteUInt64(auctionItem.InstanceID);
-            //    res.WriteUInt64(auctionItem.MinimumBid); 
-            //    res.WriteUInt64(auctionItem.BuyoutPrice); 
-            //    res.WriteFixedString(auctionItem.ConsignerSoulName, 49); 
+            //    res.WriteUInt64(auctionItem.MinimumBid);
+            //    res.WriteUInt64(auctionItem.BuyoutPrice);
+            //    res.WriteFixedString(auctionItem.ConsignerSoulName, 49);
             //    res.WriteByte(0); // 0 = nothing.    Other = Logo appear. maybe it's effect or rank, or somethiung else ?
-            //    res.WriteFixedString(auctionItem.Comment, 385); 
-            //    res.WriteInt32(auctionItem.CurrentBid); 
-            //    res.WriteInt32(auctionItem.SecondsUntilExpiryTime); 
+            //    res.WriteFixedString(auctionItem.Comment, 385);
+            //    res.WriteInt32(auctionItem.CurrentBid);
+            //    res.WriteInt32(auctionItem.SecondsUntilExpiryTime);
             //}
 
             //Router.Send(client.Map, (ushort)AreaPacketId.recv_auction_search_r, res, ServerType.Area);

@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_minimap_update_object_view : PacketResponse
+    public class RecvMinimapUpdateObjectView : PacketResponse
     {
-        public recv_minimap_update_object_view()
+        public RecvMinimapUpdateObjectView()
             : base((ushort) AreaPacketId.recv_minimap_update_object_view, ServerType.Area)
         {
         }

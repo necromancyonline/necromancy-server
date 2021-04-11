@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_roguemap_entry_notify_party_member_entry : PacketResponse
+    public class RecvRoguemapEntryNotifyPartyMemberEntry : PacketResponse
     {
-        public recv_roguemap_entry_notify_party_member_entry()
+        public RecvRoguemapEntryNotifyPartyMemberEntry()
             : base((ushort) AreaPacketId.recv_roguemap_entry_notify_party_member_entry, ServerType.Area)
         {
         }

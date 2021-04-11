@@ -6,26 +6,26 @@ namespace Necromancy.Server.Model.Union
 {
     public class UnionMember : IInstance
     {
-        public uint InstanceId { get; set; }
-        public int Id { get; set; }
-        public int UnionId { get; set; }
-        public int CharacterDatabaseId { get; set; }
+        public uint instanceId { get; set; }
+        public int id { get; set; }
+        public int unionId { get; set; }
+        public int characterDatabaseId { get; set; }
        // public uint CharacterInstanceId { get; set; }
-        public uint MemberPriviledgeBitMask { get; set; }
-        public uint Rank { get; set; }
+        public uint memberPriviledgeBitMask { get; set; }
+        public uint rank { get; set; }
 
-        public DateTime Joined { get; set; }
+        public DateTime joined { get; set; }
 
         public UnionMember()
         {
-            InstanceId = 0;
-            Id = -1;
-            UnionId = 0;
-            CharacterDatabaseId = 1;
+            instanceId = 0;
+            id = -1;
+            unionId = 0;
+            characterDatabaseId = 1;
             //CharacterInstanceId = 0;
-            MemberPriviledgeBitMask = 0b01100111;
-            Rank = 3;
-            Joined = DateTime.Now;
+            memberPriviledgeBitMask = 0b01100111;
+            rank = 3;
+            joined = DateTime.Now;
 
         }
 

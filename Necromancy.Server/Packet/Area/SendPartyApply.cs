@@ -8,31 +8,31 @@ using Necromancy.Server.Packet.Receive.Msg;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_party_apply : ClientHandler
+    public class SendPartyApply : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_party_apply));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendPartyApply));
 
-        public send_party_apply(NecServer server) : base(server)
+        public SendPartyApply(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_party_apply;
+        public override ushort id => (ushort) AreaPacketId.send_party_apply;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int errorCheck = packet.Data.ReadInt32();
-            uint targetPartyInstanceId = packet.Data.ReadUInt32();
-            Logger.Debug($"{client.Character.Name}Applied to party {targetPartyInstanceId} with sys_msg {errorCheck}. 0 is good");
+            int errorCheck = packet.data.ReadInt32();
+            uint targetPartyInstanceId = packet.data.ReadUInt32();
+            _Logger.Debug($"{client.character.name}Applied to party {targetPartyInstanceId} with sys_msg {errorCheck}. 0 is good");
 
-            Party myParty = Server.Instances.GetInstance(targetPartyInstanceId) as Party;
-            NecClient myPartyLeaderClient = Server.Clients.GetByCharacterInstanceId(myParty.PartyLeaderId);
+            Party myParty = server.instances.GetInstance(targetPartyInstanceId) as Party;
+            NecClient myPartyLeaderClient = server.clients.GetByCharacterInstanceId(myParty.partyLeaderId);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(errorCheck);
-            Router.Send(client, (ushort) AreaPacketId.recv_party_apply_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_party_apply_r, res, ServerType.Area);
 
             RecvPartyNotifyApply recvPartyNotifyApply = new RecvPartyNotifyApply(client);
-            Router.Send(recvPartyNotifyApply, myPartyLeaderClient); //Send the application to the party leader.
+            router.Send(recvPartyNotifyApply, myPartyLeaderClient); //Send the application to the party leader.
         }
     }
 }

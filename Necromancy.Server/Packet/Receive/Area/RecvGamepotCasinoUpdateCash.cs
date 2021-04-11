@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_gamepot_casino_update_cash : PacketResponse
+    public class RecvGamepotCasinoUpdateCash : PacketResponse
     {
-        public recv_gamepot_casino_update_cash()
+        public RecvGamepotCasinoUpdateCash()
             : base((ushort) AreaPacketId.recv_gamepot_casino_update_cash, ServerType.Area)
         {
         }

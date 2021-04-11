@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_create_partner_open : PacketResponse
+    public class RecvSoulPartnerCreatePartnerOpen : PacketResponse
     {
-        public recv_soul_partner_create_partner_open()
+        public RecvSoulPartnerCreatePartnerOpen()
             : base((ushort) AreaPacketId.recv_soul_partner_create_partner_open, ServerType.Area)
         {
         }
@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            //No Structure			
+            //No Structure
 
             return res;
         }

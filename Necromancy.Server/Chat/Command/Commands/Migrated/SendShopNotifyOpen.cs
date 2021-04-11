@@ -18,25 +18,25 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             IBuffer res0 = BufferProvider.Provide();
             res0.WriteInt16(14); //shop mode
-            /* Shop ID, 0 it's forge, 1 it's cursed, 2 Purchase shop, 3 purchase and curse, 4 it's sell, 
+            /* Shop ID, 0 it's forge, 1 it's cursed, 2 Purchase shop, 3 purchase and curse, 4 it's sell,
                         5 sell and curse. 6 purchase and sell. 7 Purchase, Sell, Curse.
-                        
+
                         8 Identify. 9 identify & curse. 10 Purchase & Identify.
-                        
+
                         11 Purchase, Identify & Curse. 12 Sell And Identify
-                        
+
                         13 Sell, Identify & Curse, 14 Purchase, Sell & Identify
-                        
+
                         15 All of what i say before except the forge.
-                        
+
                         16 Repair ! 17 repair and curse. 18 Repair and purchase;
-                        
+
                         19 repair, purchase, cursed. 20 Repair and sell
            */
             res0.WriteInt32(1); // item number
             res0.WriteInt32(10200101); // don't know too
             res0.WriteByte(0); // 0 = shop open, 1 = shop not open ?
-            Router.Send(client, (ushort) AreaPacketId.recv_shop_notify_open, res0, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_shop_notify_open, res0, ServerType.Area);
 
             IBuffer res1 = BufferProvider.Provide();
             res1.WriteByte(1); //idx
@@ -47,12 +47,12 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteCString("GnomeBoobs");
-            Router.Send(client, (ushort)AreaPacketId.recv_shop_title_push, res2, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_shop_title_push, res2, ServerType.Area);
 
 
             IBuffer res3 = BufferProvider.Provide();
             res3.WriteInt32(0);
-            res3.WriteUInt32(client.Character.InstanceId);
+            res3.WriteUInt32(client.character.instanceId);
 
             int numEntries = 0xA;
             res3.WriteInt32(0xA);//<a
@@ -66,7 +66,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res3.WriteByte(1);
                 }
             }
-            Router.Send(client, (ushort)0x4978, res3, ServerType.Area);
+            router.Send(client, (ushort)0x4978, res3, ServerType.Area);
 
             IBuffer res4 = BufferProvider.Provide();
 
@@ -79,7 +79,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res4.WriteFixedString("UNKNOWN", 0xC1);
             }
 
-            Router.Send(client, (ushort)0xBA61, res4, ServerType.Area);
+            router.Send(client, (ushort)0xBA61, res4, ServerType.Area);
 
             IBuffer res5 = BufferProvider.Provide();
 
@@ -90,11 +90,11 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res5.WriteInt16((short)i);
                 res5.WriteInt32(10500501);
             }
-            Router.Send(client, (ushort)0x8D62, res5, ServerType.Area);
+            router.Send(client, (ushort)0x8D62, res5, ServerType.Area);
 
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "shop";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "shop";
     }
 }

@@ -5,20 +5,20 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_auction_receive_item : ClientHandler
+    public class SendAuctionReceiveItem : ClientHandler
     {
-        public send_auction_receive_item(NecServer server) : base(server)
+        public SendAuctionReceiveItem(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_auction_receive_item;
+        public override ushort id => (ushort) AreaPacketId.send_auction_receive_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); /*
-            
+
             0 = Work.
 
             error code :
@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
             1. This item may not be listed.
             2. You may not list the equiped items
             */
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_receive_item_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_auction_receive_item_r, res, ServerType.Area);
         }
     }
 }

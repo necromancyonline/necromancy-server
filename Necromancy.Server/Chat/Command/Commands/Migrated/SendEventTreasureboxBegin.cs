@@ -21,7 +21,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res2.WriteInt32(0); // 1 = cinematic
             res2.WriteByte(0);
 
-            Router.Send(client, (ushort) AreaPacketId.recv_event_start, res2, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_event_start, res2, ServerType.Area);
 
             //recv_event_tresurebox_begin = 0xBD7E,
             IBuffer res1 = BufferProvider.Provide();
@@ -32,19 +32,19 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res1.WriteInt32(10001 + i);
             }
 
-            Router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_begin, res1, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_begin, res1, ServerType.Area);
 
 
             IBuffer res4 = BufferProvider.Provide();
             res4.WriteInt32(0); // 1 = Error reported by SV,  1 = sucess
-            Router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_select_r, res4, ServerType.Area);
-            
+            router.Send(client, (ushort) AreaPacketId.recv_event_treasurebox_select_r, res4, ServerType.Area);
+
             /*   IBuffer res4 = BufferProvider.Provide();
                res4.WriteByte(3);
                Router.Send(client, (ushort)AreaPacketId.recv_event_end, res4); */
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "tbox";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "tbox";
     }
 }

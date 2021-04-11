@@ -5,15 +5,15 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class ExitCommand : ConsoleCommand
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(ExitCommand));
-        
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(ExitCommand));
+
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
-            Logger.Info("Exiting...");
+            _Logger.Info("Exiting...");
             return CommandResultType.Exit;
         }
 
-        public override string Key => "exit";
-        public override string Description => "Closes the program";
+        public override string key => "exit";
+        public override string description => "Closes the program";
     }
 }

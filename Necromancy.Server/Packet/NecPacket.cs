@@ -50,28 +50,28 @@ namespace Necromancy.Server.Packet
 
         public NecPacket(ushort id, IBuffer buffer, ServerType serverType)
         {
-            Data = buffer;
-            Id = id;
-            ServerType = serverType;
-            PacketType = null;
+            data = buffer;
+            this.id = id;
+            this.serverType = serverType;
+            packetType = null;
         }
 
         public NecPacket(ushort id, IBuffer buffer, ServerType serverType, PacketType packetType)
         {
-            Data = buffer;
-            Id = id;
-            ServerType = serverType;
-            PacketType = null;
-            PacketType = packetType;
+            data = buffer;
+            this.id = id;
+            this.serverType = serverType;
+            this.packetType = null;
+            this.packetType = packetType;
         }
 
-        public IBuffer Data { get; }
-        public ushort Id { get; }
-        public byte[] Header { get; set; }
-        public ServerType ServerType { get; }
-        public PacketType? PacketType { get; }
+        public IBuffer data { get; }
+        public ushort id { get; }
+        public byte[] header { get; set; }
+        public ServerType serverType { get; }
+        public PacketType? packetType { get; }
 
-        public string PacketIdName
+        public string packetIdName
         {
             get
             {
@@ -80,10 +80,10 @@ namespace Necromancy.Server.Packet
                     return _packetIdName;
                 }
 
-                _packetIdName = GetPacketIdName(Id, ServerType);
+                _packetIdName = GetPacketIdName(id, serverType);
                 if (_packetIdName == null)
                 {
-                    _packetIdName = $"ID_NOT_DEFINED_{ServerType}_{Id}";
+                    _packetIdName = $"ID_NOT_DEFINED_{serverType}_{id}";
                 }
 
                 return _packetIdName;

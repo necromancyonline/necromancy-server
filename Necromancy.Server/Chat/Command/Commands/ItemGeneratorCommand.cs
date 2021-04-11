@@ -14,15 +14,15 @@ namespace Necromancy.Server.Chat.Command.Commands
 {
     class ItemGeneratorCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ItemCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ItemCommand));
 
         public ItemGeneratorCommand(NecServer server) : base(server)
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "genitems";
-        public override string HelpText => "usage: `/genitems [package]`";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "genitems";
+        public override string helpText => "usage: `/genitems [package]`";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -36,10 +36,10 @@ namespace Necromancy.Server.Chat.Command.Commands
             switch (command[0])
             {
                 case "bags":
-                    spawnBags(client);
+                    SpawnBags(client);
                     break;
                 case "a_darkmerchant":
-                    spawnAvatarDarkMerchant(client);
+                    SpawnAvatarDarkMerchant(client);
                     break;
                 case "charmed":
                     SpawnCharmedGear(client);
@@ -48,7 +48,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     responses.Add(ChatResponse.CommandError(client, $"Invalid Package: {command[0]}"));
                     return;
             }
-            
+
         }
 
         private void SpawnCharmedGear(NecClient client)
@@ -62,7 +62,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             SendItems(client, itemIds);
         }
 
-        private void spawnAvatarDarkMerchant(NecClient client)
+        private void SpawnAvatarDarkMerchant(NecClient client)
         {
             int[] itemIds = new int[5];
             itemIds[0] = 162502;
@@ -73,7 +73,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             SendItems(client, itemIds);
         }
 
-        private void spawnBags(NecClient client)
+        private void SpawnBags(NecClient client)
         {
             int[] itemIds = new int[18];
             itemIds[0] = 50100501;
@@ -103,23 +103,23 @@ namespace Necromancy.Server.Chat.Command.Commands
             for (int i = 0; i < itemIds.Length; i++)
             {
                 spawmParams[i] = new ItemSpawnParams();
-                spawmParams[i].ItemStatuses = ItemStatuses.Identified;
+                spawmParams[i].itemStatuses = ItemStatuses.Identified;
             }
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             List<ItemInstance> items = itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
 
             RecvSituationStart recvSituationStart = new RecvSituationStart(2);
-            Router.Send(client, recvSituationStart.ToPacket());
+            router.Send(client, recvSituationStart.ToPacket());
 
             foreach (ItemInstance itemInstance in items)
             {
-                Logger.Debug(itemInstance.Type.ToString());
+                _Logger.Debug(itemInstance.type.ToString());
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
-                Router.Send(client, recvItemInstance.ToPacket());
+                router.Send(client, recvItemInstance.ToPacket());
             }
 
             RecvSituationEnd recvSituationEnd = new RecvSituationEnd();
-            Router.Send(client, recvSituationEnd.ToPacket());
+            router.Send(client, recvSituationEnd.ToPacket());
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 byteArr[i] += res.ReadByte();
             }
 
-            // TODO use packet format 
+            // TODO use packet format
             //  client.MsgConnection.Send(byteArr);
 
             Thread.Sleep(4000);
@@ -48,11 +48,11 @@ namespace Necromancy.Server.Chat.Command.Commands
                 byteArrr[i] += res2.ReadByte();
             }
 
-            // TODO use packet format 
+            // TODO use packet format
             //  client.MsgConnection.Send(byteArr);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "logout";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "logout";
     }
 }

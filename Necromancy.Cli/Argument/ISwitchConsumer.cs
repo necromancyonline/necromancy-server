@@ -4,6 +4,6 @@ namespace Necromancy.Cli.Argument
 {
     public interface ISwitchConsumer
     {
-        List<ISwitchProperty> Switches { get; }
+        List<ISwitchProperty> switches { get; }
     }
 }

@@ -11,37 +11,37 @@ using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_item_sort : ClientHandler
+    public class SendItemSort : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_item_sort));
-        public send_item_sort(NecServer server) : base(server)
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemSort));
+        public SendItemSort(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort)AreaPacketId.send_item_sort;
+        public override ushort id => (ushort)AreaPacketId.send_item_sort;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType zoneType = (ItemZoneType)packet.Data.ReadInt32();
-            byte container = packet.Data.ReadByte();
-            int itemsToSort = packet.Data.ReadInt32();
+            ItemZoneType zoneType = (ItemZoneType)packet.data.ReadInt32();
+            byte container = packet.data.ReadByte();
+            int itemsToSort = packet.data.ReadInt32();
 
-            Logger.Debug($"zoneType [{zoneType}] container [{container}] itemCount [{itemsToSort}]");
+            _Logger.Debug($"zoneType [{zoneType}] container [{container}] itemCount [{itemsToSort}]");
 
             short[] fromSlots = new short[itemsToSort];
             short[] toSlots = new short[itemsToSort];
             short[] quantities = new short[itemsToSort];
             for (int i = 0; i < itemsToSort; i++)
             {
-                fromSlots[i] = packet.Data.ReadInt16();
-                toSlots[i] = packet.Data.ReadInt16();
-                quantities[i] = packet.Data.ReadInt16();
+                fromSlots[i] = packet.data.ReadInt16();
+                toSlots[i] = packet.data.ReadInt16();
+                quantities[i] = packet.data.ReadInt16();
 
-                Logger.Debug($"fromSlot short [{fromSlots[i]}] toSlot short [{toSlots[i]}] amount [{quantities[i]}]");
+                _Logger.Debug($"fromSlot short [{fromSlots[i]}] toSlot short [{toSlots[i]}] amount [{quantities[i]}]");
             }
 
 
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
 
             try
@@ -54,19 +54,19 @@ namespace Necromancy.Server.Packet.Area
 
                     MoveResult moveResult = itemService.Move(fromLoc, toLoc, quantity);
                     List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
-                    Router.Send(client, responses);
+                    router.Send(client, responses);
                 }
             }
-            catch (ItemException e) { error = (int)e.Type; }
+            catch (ItemException e) { error = (int)e.type; }
             catch (Exception e1)
             {
                 error = (int)ItemExceptionType.Generic;
-                Logger.Exception(client, e1);
+                _Logger.Exception(client, e1);
             }
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(error);
-            Router.Send(client, (ushort)AreaPacketId.recv_item_sort_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_item_sort_r, res, ServerType.Area);
         }
     }
 }

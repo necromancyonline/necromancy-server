@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_cash_shop_open_by_menu : ClientHandler
+    public class SendCashShopOpenByMenu : ClientHandler
     {
-        public send_cash_shop_open_by_menu(NecServer server) : base(server)
+        public SendCashShopOpenByMenu(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_cash_shop_open_by_menu;
+        public override ushort id => (ushort) AreaPacketId.send_cash_shop_open_by_menu;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt16(1); //mode flag
             res.WriteByte(1); //item number
             res.WriteInt32(125); //cash
-            Router.Send(client, (ushort)AreaPacketId.recv_cash_shop2_notify_open, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_cash_shop2_notify_open, res, ServerType.Area);
 
 
         }

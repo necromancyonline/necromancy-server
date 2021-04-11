@@ -6,13 +6,13 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_chara_get_createinfo : ClientHandler
+    public class SendCharaGetCreateinfo : ClientHandler
     {
-        public send_chara_get_createinfo(NecServer server) : base(server)
+        public SendCharaGetCreateinfo(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_chara_get_createinfo;
+        public override ushort id => (ushort) MsgPacketId.send_chara_get_createinfo;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -69,7 +69,7 @@ namespace Necromancy.Server.Packet.Msg
             wo_4E0970_Thief(res);//Holds Stats and info for Thief Class(need to fix bonus HP+MP+Stats)
             wo_4E0970_Mage(res);//Holds Stats and info for Mage Class(need to fix bonus HP+MP+Stats)
 
-            Router.Send(client, (ushort) MsgPacketId.recv_chara_get_createinfo_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_chara_get_createinfo_r, res, ServerType.Msg);
         }
 
         private void wo_4E08E0_Human_Stats(IBuffer res)
@@ -160,22 +160,22 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteByte(1);//bool
 
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752401, 752401, 752401, 752401, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752401, 752401, 752401, 752401, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -198,11 +198,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -218,22 +218,22 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteByte(1);//bool
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752101, 752101, 752101, 752101, 0 , 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752101, 752101, 752101, 752101, 0 , 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -256,11 +256,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SlotContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] slotContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SlotContainer[xxx]);
+                res.WriteInt32(slotContainer[xxx]);
 
                 xxx++;
             }
@@ -276,22 +276,22 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteByte(1);//bool
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752201, 752201, 752201, 752201, 0 , 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752201, 752201, 752201, 752201, 0 , 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -314,11 +314,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -334,22 +334,22 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteByte(1);//bool
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752301, 752301, 752301, 752301, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752301, 752301, 752301, 752301, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -372,11 +372,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -393,22 +393,22 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteByte(1);//bool
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752501, 752501, 752501, 752501, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752501, 752501, 752501, 752501, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -431,11 +431,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -453,22 +453,22 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteByte(1);//bool
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 753001, 753001, 753001, 753001, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 753001, 753001, 753001, 753001, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -491,11 +491,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -512,22 +512,22 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteByte(1);//bool
 
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752701, 752701, 752701, 752701, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752701, 752701, 752701, 752701, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -550,11 +550,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -571,22 +571,22 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteByte(1);//bool
 
 
-            int[] WeaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
+            int[] weaponContainer = new int[] { 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, (int)ItemType.SHOES,
                                                 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.HELMET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.GLOVES, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             int x = 0;
             int xx = 0;
             int xxx = 0;
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(WeaponContainer[x]);
+                res.WriteInt32(weaponContainer[x]);
 
                 x++;
             }
 
-            int[] EquipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752801, 752801, 752801, 752801, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            int[] equipmentContainer = new int[] { 0, 0, 260103, 110504, 360103, 460103, 560103, 0, 0, 0, 0, 0, 752801, 752801, 752801, 752801, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(EquipmentContainer[xx]);
+                res.WriteInt32(equipmentContainer[xx]);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -609,11 +609,11 @@ namespace Necromancy.Server.Packet.Msg
                 xx++;
             }
 
-            int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+            int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
             for (int i = 0; i < 0x19; i++)
             {
-                res.WriteInt32(SoltContainer[xxx]);
+                res.WriteInt32(soltContainer[xxx]);
 
                 xxx++;
             }
@@ -626,18 +626,18 @@ namespace Necromancy.Server.Packet.Msg
             int classSlot = 0;
             for (int load = 0; load < 4; load++)
             {
-                
+
                 res.WriteInt32(0);//race
                 res.WriteInt32(0);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -647,7 +647,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -656,7 +656,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -665,7 +665,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -674,33 +674,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250101, 550101, 450101, 350101, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -724,11 +724,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -749,13 +749,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(1);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -765,7 +765,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -774,7 +774,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -783,7 +783,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -792,33 +792,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250201, 550201, 450201, 350201, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -842,11 +842,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -868,13 +868,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(0);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -884,7 +884,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -893,7 +893,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -902,7 +902,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -911,33 +911,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250301, 550301, 450301, 350301, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -961,11 +961,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -987,13 +987,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(1);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -1003,7 +1003,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -1012,7 +1012,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -1021,7 +1021,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -1030,33 +1030,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250401, 550401, 450401, 350401, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -1080,11 +1080,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -1106,13 +1106,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(0);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -1122,7 +1122,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -1131,7 +1131,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -1140,7 +1140,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -1149,33 +1149,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250501, 550501, 450501, 350501, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -1199,11 +1199,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -1225,13 +1225,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(1);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -1241,7 +1241,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -1250,7 +1250,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -1259,7 +1259,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -1268,33 +1268,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 251001, 551001, 451001, 351001, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -1318,11 +1318,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -1344,13 +1344,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(0);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -1360,7 +1360,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -1369,7 +1369,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -1378,7 +1378,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -1387,33 +1387,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250701, 550701, 450701, 350701, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -1437,11 +1437,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -1463,13 +1463,13 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(1);//gender
                 res.WriteInt32(classSlot);//class
 
-                int[] WeaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer0 = new int[] { (int)ItemType.SWORD_1H, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
+                int[] weaponContainer1 = new int[] { (int)ItemType.DAGGER, (int)ItemType.SHIELD_SMALL, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS,
                                                      (int)ItemType.SHOES, (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer2 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] WeaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
+                int[] weaponContainer3 = new int[] { (int)ItemType.WAND_2H, 0, 0, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0, (int)ItemType.ARMOR_TOPS, (int)ItemType.SHOES,
                                                      (int)ItemType.BRACLET, (int)ItemType.ARMOR_BOTTOMS, (int)ItemType.HELMET, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 int x = 0;
@@ -1479,7 +1479,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer0[x]);
+                        res.WriteInt32(weaponContainer0[x]);
 
                         x++;
                     }
@@ -1488,7 +1488,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer1[x]);
+                        res.WriteInt32(weaponContainer1[x]);
 
                         x++;
                     }
@@ -1497,7 +1497,7 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer2[x]);
+                        res.WriteInt32(weaponContainer2[x]);
 
                         x++;
                     }
@@ -1506,33 +1506,33 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     for (int i = 0; i < 0x19; i++)
                     {
-                        res.WriteInt32(WeaponContainer3[x]);
+                        res.WriteInt32(weaponContainer3[x]);
 
                         x++;
                     }
                 }
-                int[] EQC0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
-                int[] EQC3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc0 = new int[] { 10300101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc1 = new int[] { 10200101, 15000101, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc2 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
+                int[] eqc3 = new int[] { 11300101, 0, 0, 120101, 0, 0, 0, 0, 0, 0, 0, 0, 250801, 550801, 450801, 350801, 120101, 0, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
                     if (classSlot == 0)
                     {
-                        res.WriteInt32(EQC0[xx]);
+                        res.WriteInt32(eqc0[xx]);
                     }
                     if (classSlot == 1)
                     {
-                        res.WriteInt32(EQC1[xx]);
+                        res.WriteInt32(eqc1[xx]);
                     }
                     if (classSlot == 2)
                     {
-                        res.WriteInt32(EQC2[xx]);
+                        res.WriteInt32(eqc2[xx]);
                     }
                     if (classSlot == 3)
                     {
-                        res.WriteInt32(EQC3[xx]);
+                        res.WriteInt32(eqc3[xx]);
                     }
                     res.WriteByte(0);
                     res.WriteByte(0);
@@ -1556,11 +1556,11 @@ namespace Necromancy.Server.Packet.Msg
                     xx++;
                 }
 
-                int[] SoltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
+                int[] soltContainer = new int[] { 1, 2, 16, 8, 32, 64, 128, 4, 0, 0, 0, 0, 16, 128, 64, 32, 8, 4, 0, 0, 0, 0, 0, 0, 0 };
 
                 for (int i = 0; i < 0x19; i++)
                 {
-                    res.WriteInt32(SoltContainer[xxx]);
+                    res.WriteInt32(soltContainer[xxx]);
 
                     xxx++;
                 }
@@ -1573,7 +1573,7 @@ namespace Necromancy.Server.Packet.Msg
 
         private void wo_4E0970_Fighter(IBuffer res)
         {
-            
+
             res.WriteInt32(0);//Class ID Fighter = 0, Thief = 1, Mage = 2, Priest - 3
             res.WriteByte(14); //Alignment Requirements 0/1 = Fully Locked, 2/3 = Lawful, 4/5 = Neutral. 6/7 = Lawful/Neutral,
                                 //8/9 = Chaotic, 10/11 = Lawful/Chaotic, 12/13 = Neutral Chaotic, 14/15 = Fully unlocked, 16+ = fully locked
@@ -1598,8 +1598,8 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt16(0);//Class Bonus LUK
 
             res.WriteInt32(11101);// states what is in skill slot 0 (left most), 0 = nothing
-            res.WriteInt32(11201);// states what is in skill slot 1 (middle), 0 = nothing              
-            res.WriteInt32(0);// states what is in skill slot 2 (right most), 0 = nothing              
+            res.WriteInt32(11201);// states what is in skill slot 1 (middle), 0 = nothing
+            res.WriteInt32(0);// states what is in skill slot 2 (right most), 0 = nothing
 
             res.WriteByte(0);//bonus roll number store?
 
@@ -1631,8 +1631,8 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt16(1);//Class Bonus LUK
 
             res.WriteInt32(14101);// states what is in skill slot 0 (left most), 0 = nothing
-            res.WriteInt32(14302);// states what is in skill slot 1 (middle), 0 = nothing              
-            res.WriteInt32(14803);// states what is in skill slot 2 (right most), 0 = nothing              
+            res.WriteInt32(14302);// states what is in skill slot 1 (middle), 0 = nothing
+            res.WriteInt32(14803);// states what is in skill slot 2 (right most), 0 = nothing
 
             res.WriteByte(0);//bonus roll number store?
         }
@@ -1663,15 +1663,15 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt16(0);//Class Bonus LUK
 
             res.WriteInt32(13101);// states what is in skill slot 0 (left most), 0 = nothing
-            res.WriteInt32(13404);// states what is in skill slot 1 (middle), 0 = nothing              
-            res.WriteInt32(0);// states what is in skill slot 2 (right most), 0 = nothing              
+            res.WriteInt32(13404);// states what is in skill slot 1 (middle), 0 = nothing
+            res.WriteInt32(0);// states what is in skill slot 2 (right most), 0 = nothing
 
             res.WriteByte(0);//bonus roll number store?
         }
 
         private void wo_4E0970_Priest(IBuffer res)
         {
-            
+
             res.WriteInt32(3);//Class ID Fighter = 0, Thief = 1, Mage = 2, Priest - 3
             res.WriteByte(10); //Alignment Requirements 0/1 = Fully Locked, 2/3 = Lawful, 4/5 = Neutral. 6/7 = Lawful/Neutral,
                                //8/9 = Chaotic, 10/11 = Lawful/Chaotic, 12/13 = Neutral Chaotic, 14/15 = Fully unlocked, 16+ = fully locked
@@ -1696,15 +1696,15 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt16(0);//Class Bonus LUK
 
             res.WriteInt32(12501);// states what is in skill slot 0 (left most), 0 = nothing
-            res.WriteInt32(12601);// states what is in skill slot 1 (middle), 0 = nothing              
-            res.WriteInt32(0);// states what is in skill slot 2 (right most), 0 = nothing              
+            res.WriteInt32(12601);// states what is in skill slot 1 (middle), 0 = nothing
+            res.WriteInt32(0);// states what is in skill slot 2 (right most), 0 = nothing
 
             res.WriteByte(0);//bonus roll number store?
         }
 
 
-       
-        
-        
+
+
+
     }
 }

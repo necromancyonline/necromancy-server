@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_chara_update_skill_build_flag : PacketResponse
+    public class RecvCharaUpdateSkillBuildFlag : PacketResponse
     {
-        public recv_chara_update_skill_build_flag()
+        public RecvCharaUpdateSkillBuildFlag()
             : base((ushort) AreaPacketId.recv_chara_update_skill_build_flag, ServerType.Area)
         {
         }

@@ -18,13 +18,13 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer resI = BufferProvider.Provide();
-            resI.WriteUInt32(_gimmickSpawn.InstanceId);
-            resI.WriteFloat(_gimmickSpawn.X);
-            resI.WriteFloat(_gimmickSpawn.Y);
-            resI.WriteFloat(_gimmickSpawn.Z);
-            resI.WriteByte(_gimmickSpawn.Heading);
-            resI.WriteInt32(_gimmickSpawn.ModelId); //Gimmick number (from gimmick.csv)
-            resI.WriteInt32(_gimmickSpawn.State); //Gimmick State
+            resI.WriteUInt32(_gimmickSpawn.instanceId);
+            resI.WriteFloat(_gimmickSpawn.x);
+            resI.WriteFloat(_gimmickSpawn.y);
+            resI.WriteFloat(_gimmickSpawn.z);
+            resI.WriteByte(_gimmickSpawn.heading);
+            resI.WriteInt32(_gimmickSpawn.modelId); //Gimmick number (from gimmick.csv)
+            resI.WriteInt32(_gimmickSpawn.state); //Gimmick State
             resI.WriteInt32(0); //new
             return resI;
         }

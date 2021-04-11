@@ -8,8 +8,8 @@ namespace Necromancy.Server.Database
     public interface IDatabase
     {
         const int InvalidDatabaseId = -1;
-        
-        long Version { get; set; }
+
+        long version { get; set; }
 
         void Execute(string sql);
 
@@ -62,7 +62,7 @@ namespace Necromancy.Server.Database
         List<MonsterSpawn> SelectMonsterSpawns();
         List<MonsterSpawn> SelectMonsterSpawnsByMapId(int mapId);
         bool UpdateMonsterSpawn(MonsterSpawn monsterSpawn);
-        bool DeleteMonsterSpawn(int monsterSpawnId);       
+        bool DeleteMonsterSpawn(int monsterSpawnId);
 
         // ShortcutBar
         void InsertOrReplaceShortcutItem(Character character, int barNumber, int slotNumber, ShortcutItem shortcutItem);
@@ -79,7 +79,7 @@ namespace Necromancy.Server.Database
         // Monster Coord
         bool InsertMonsterCoords(MonsterCoord monsterCoord);
         List<MonsterCoord> SelectMonsterCoords();
-        List<MonsterCoord> SelectMonsterCoordsById(int Id);
+        List<MonsterCoord> SelectMonsterCoordsById(int id);
         List<MonsterCoord> SelectMonsterCoordsByMonsterId(int monsterId);
         List<MonsterCoord> SelectMonsterCoordsByMapId(int mapId);
         bool UpdateMonsterCoord(MonsterCoord monsterCoord);
@@ -101,7 +101,7 @@ namespace Necromancy.Server.Database
 
         //UnionMember
         bool InsertUnionMember(UnionMember unionMember);
-        UnionMember SelectUnionMemberByCharacterId(int CharacterDatabaseId);
+        UnionMember SelectUnionMemberByCharacterId(int characterDatabaseId);
         List<UnionMember> SelectUnionMembersByUnionId(int unionId);
         bool UpdateUnionMember(UnionMember unionMember);
         bool DeleteUnionMember(int characterDatabaseId);
@@ -117,7 +117,7 @@ namespace Necromancy.Server.Database
         // MapTransition Spawn
         bool InsertMapTransition(MapTransition mapTran);
         List<MapTransition> SelectMapTransitions();
-        MapTransition SelectMapTransitionsById(int Id);
+        MapTransition SelectMapTransitionsById(int id);
         List<MapTransition> SelectMapTransitionsByMapId(int mapId);
         bool UpdateMapTransition(MapTransition mapTran);
 

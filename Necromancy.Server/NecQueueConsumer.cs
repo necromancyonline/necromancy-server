@@ -15,7 +15,7 @@ namespace Necromancy.Server
     {
         public const int NoExpectedSize = -1;
 
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(NecQueueConsumer));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecQueueConsumer));
 
         private readonly Dictionary<int, IClientHandler> _clientHandlers;
         private readonly Dictionary<int, IConnectionHandler> _connectionHandlers;
@@ -36,8 +36,8 @@ namespace Necromancy.Server
             _connections = new Dictionary<ITcpSocket, NecConnection>();
         }
 
-        public Action<NecConnection> ClientDisconnected;
-        public Action<NecConnection> ClientConnected;
+        public Action<NecConnection> clientDisconnected;
+        public Action<NecConnection> clientConnected;
 
         public void Clear()
         {
@@ -49,25 +49,25 @@ namespace Necromancy.Server
         {
             if (overwrite)
             {
-                if (_clientHandlers.ContainsKey(clientHandler.Id))
+                if (_clientHandlers.ContainsKey(clientHandler.id))
                 {
-                    _clientHandlers[clientHandler.Id] = clientHandler;
+                    _clientHandlers[clientHandler.id] = clientHandler;
                 }
                 else
                 {
-                    _clientHandlers.Add(clientHandler.Id, clientHandler);
+                    _clientHandlers.Add(clientHandler.id, clientHandler);
                 }
 
                 return;
             }
 
-            if (_clientHandlers.ContainsKey(clientHandler.Id))
+            if (_clientHandlers.ContainsKey(clientHandler.id))
             {
-                Logger.Error($"[{_serverType}] ClientHandlerId: {clientHandler.Id} already exists");
+                _Logger.Error($"[{_serverType}] ClientHandlerId: {clientHandler.id} already exists");
             }
             else
             {
-                _clientHandlers.Add(clientHandler.Id, clientHandler);
+                _clientHandlers.Add(clientHandler.id, clientHandler);
             }
         }
 
@@ -75,25 +75,25 @@ namespace Necromancy.Server
         {
             if (overwrite)
             {
-                if (_connectionHandlers.ContainsKey(connectionHandler.Id))
+                if (_connectionHandlers.ContainsKey(connectionHandler.id))
                 {
-                    _connectionHandlers[connectionHandler.Id] = connectionHandler;
+                    _connectionHandlers[connectionHandler.id] = connectionHandler;
                 }
                 else
                 {
-                    _connectionHandlers.Add(connectionHandler.Id, connectionHandler);
+                    _connectionHandlers.Add(connectionHandler.id, connectionHandler);
                 }
 
                 return;
             }
 
-            if (_connectionHandlers.ContainsKey(connectionHandler.Id))
+            if (_connectionHandlers.ContainsKey(connectionHandler.id))
             {
-                Logger.Error($"[{_serverType}] ConnectionHandlerId: {connectionHandler.Id} already exists");
+                _Logger.Error($"[{_serverType}] ConnectionHandlerId: {connectionHandler.id} already exists");
             }
             else
             {
-                _connectionHandlers.Add(connectionHandler.Id, connectionHandler);
+                _connectionHandlers.Add(connectionHandler.id, connectionHandler);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Necromancy.Server
             {
                 if (!_connections.ContainsKey(socket))
                 {
-                    Logger.Error(socket, $"[{_serverType}] Client does not exist in lookup");
+                    _Logger.Error(socket, $"[{_serverType}] Client does not exist in lookup");
                     return;
                 }
 
@@ -119,7 +119,7 @@ namespace Necromancy.Server
             List<NecPacket> packets = connection.Receive(data);
             foreach (NecPacket packet in packets)
             {
-                NecClient client = connection.Client;
+                NecClient client = connection.client;
                 if (client != null)
                 {
                     HandleReceived_Client(client, packet);
@@ -133,60 +133,60 @@ namespace Necromancy.Server
 
         private void HandleReceived_Connection(NecConnection connection, NecPacket packet)
         {
-            if (!_connectionHandlers.ContainsKey(packet.Id))
+            if (!_connectionHandlers.ContainsKey(packet.id))
             {
-                Logger.LogUnknownIncomingPacket(connection, packet, _serverType);
+                _Logger.LogUnknownIncomingPacket(connection, packet, _serverType);
                 return;
             }
 
-            IConnectionHandler connectionHandler = _connectionHandlers[packet.Id];
-            if (connectionHandler.ExpectedSize != NoExpectedSize && packet.Data.Size < connectionHandler.ExpectedSize)
+            IConnectionHandler connectionHandler = _connectionHandlers[packet.id];
+            if (connectionHandler.expectedSize != NoExpectedSize && packet.data.Size < connectionHandler.expectedSize)
             {
-                Logger.Error(connection,
-                    $"[{_serverType}] Ignoring Packed (Id:{packet.Id}) is smaller ({packet.Data.Size}) than expected ({connectionHandler.ExpectedSize})");
+                _Logger.Error(connection,
+                    $"[{_serverType}] Ignoring Packed (Id:{packet.id}) is smaller ({packet.data.Size}) than expected ({connectionHandler.expectedSize})");
                 return;
             }
 
-            Logger.LogIncomingPacket(connection, packet, _serverType);
-            packet.Data.SetPositionStart();
+            _Logger.LogIncomingPacket(connection, packet, _serverType);
+            packet.data.SetPositionStart();
             try
             {
                 connectionHandler.Handle(connection, packet);
             }
             catch (Exception ex)
             {
-                Logger.Exception(connection, ex);
+                _Logger.Exception(connection, ex);
             }
         }
 
         private void HandleReceived_Client(NecClient client, NecPacket packet)
         {
-            if (!_clientHandlers.ContainsKey(packet.Id))
+            if (!_clientHandlers.ContainsKey(packet.id))
             {
-                Logger.LogUnknownIncomingPacket(client, packet, _serverType);
+                _Logger.LogUnknownIncomingPacket(client, packet, _serverType);
                 return;
             }
 
-            IClientHandler clientHandler = _clientHandlers[packet.Id];
-            if (clientHandler.ExpectedSize != NoExpectedSize && packet.Data.Size < clientHandler.ExpectedSize)
+            IClientHandler clientHandler = _clientHandlers[packet.id];
+            if (clientHandler.expectedSize != NoExpectedSize && packet.data.Size < clientHandler.expectedSize)
             {
-                Logger.Error(client,
-                    $"[{_serverType}] Ignoring Packed (Id:{packet.Id}) is smaller ({packet.Data.Size}) than expected ({clientHandler.ExpectedSize})");
+                _Logger.Error(client,
+                    $"[{_serverType}] Ignoring Packed (Id:{packet.id}) is smaller ({packet.data.Size}) than expected ({clientHandler.expectedSize})");
                 return;
             }
 
-            Logger.LogIncomingPacket(client, packet, _serverType);
-            packet.Data.SetPositionStart();
+            _Logger.LogIncomingPacket(client, packet, _serverType);
+            packet.data.SetPositionStart();
             try
             {
                 clientHandler.Handle(client, packet);
             }
             catch (Exception ex)
             {
-                Logger.Exception(client, ex);
+                _Logger.Exception(client, ex);
             }
         }
-        
+
         protected override void HandleDisconnected(ITcpSocket socket)
         {
             NecConnection connection;
@@ -194,16 +194,16 @@ namespace Necromancy.Server
             {
                 if (!_connections.ContainsKey(socket))
                 {
-                    Logger.Error(socket, $"[{_serverType}] Disconnected client does not exist in lookup");
+                    _Logger.Error(socket, $"[{_serverType}] Disconnected client does not exist in lookup");
                     return;
                 }
 
                 connection = _connections[socket];
                 _connections.Remove(socket);
-                Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
+                _Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
             }
 
-            Action<NecConnection> onClientDisconnected = ClientDisconnected;
+            Action<NecConnection> onClientDisconnected = clientDisconnected;
             if (onClientDisconnected != null)
             {
                 try
@@ -212,11 +212,11 @@ namespace Necromancy.Server
                 }
                 catch (Exception ex)
                 {
-                    Logger.Exception(connection, ex);
+                    _Logger.Exception(connection, ex);
                 }
             }
 
-            Logger.Info(connection, $"[{_serverType}] Client disconnected");
+            _Logger.Info(connection, $"[{_serverType}] Client disconnected");
         }
 
         protected override void HandleConnected(ITcpSocket socket)
@@ -225,10 +225,10 @@ namespace Necromancy.Server
             lock (_lock)
             {
                 _connections.Add(socket, connection);
-                Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
+                _Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
             }
 
-            Action<NecConnection> onClientConnected = ClientConnected;
+            Action<NecConnection> onClientConnected = clientConnected;
             if (onClientConnected != null)
             {
                 try
@@ -237,11 +237,11 @@ namespace Necromancy.Server
                 }
                 catch (Exception ex)
                 {
-                    Logger.Exception(connection, ex);
+                    _Logger.Exception(connection, ex);
                 }
             }
 
-            Logger.Info(connection, $"[{_serverType}] Client connected");
+            _Logger.Info(connection, $"[{_serverType}] Client connected");
         }
     }
 }

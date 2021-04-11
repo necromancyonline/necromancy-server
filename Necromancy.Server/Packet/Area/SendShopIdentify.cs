@@ -10,30 +10,30 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_shop_identify : ClientHandler
+    public class SendShopIdentify : ClientHandler
     {
-        public send_shop_identify(NecServer server) : base(server) { }
-        public override ushort Id => (ushort) AreaPacketId.send_shop_identify;
+        public SendShopIdentify(NecServer server) : base(server) { }
+        public override ushort id => (ushort) AreaPacketId.send_shop_identify;
         public override void Handle(NecClient client, NecPacket packet)
-        {         
-            ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte();
-            byte bag = packet.Data.ReadByte();
-            short slot = packet.Data.ReadInt16(); 
+        {
+            ItemZoneType zone = (ItemZoneType) packet.data.ReadByte();
+            byte bag = packet.data.ReadByte();
+            short slot = packet.data.ReadInt16();
             //9 bytes left TODO investigate, probably one is identify price which is irrelevant, check price server side
 
             ItemLocation location = new ItemLocation(zone, bag, slot);
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             ItemInstance identifiedItem;
             int error = 0;
 
-            try {  
+            try {
                 identifiedItem = itemService.GetIdentifiedItem(location);
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, identifiedItem);
-                Router.Send(recvItemInstance);
-            } catch(ItemException e) { error = (int) e.Type; }
+                router.Send(recvItemInstance);
+            } catch(ItemException e) { error = (int) e.type; }
 
             RecvShopIdentify recvShopIdentify = new RecvShopIdentify(client, error);
-            Router.Send(recvShopIdentify);            
+            router.Send(recvShopIdentify);
         }
     }
 }

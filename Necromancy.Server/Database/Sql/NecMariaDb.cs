@@ -11,12 +11,12 @@ namespace Necromancy.Server.Database.Sql
     {
         public const string MemoryDatabasePath = ":memory:";
 
-        private const string SelectAutoIncrement = "SELECT last_insert_rowid()";
+        private const string _SelectAutoIncrement = "SELECT last_insert_rowid()";
 
 
         private string _connectionString;
 
-        public long Version
+        public long version
         {
             get {
                 return (long)long.Parse(Command("SELECT @@GLOBAL.user_version;", Connection()).ExecuteScalar().ToString());

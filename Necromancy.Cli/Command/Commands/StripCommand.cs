@@ -11,11 +11,11 @@ namespace Necromancy.Cli.Command.Commands
     {
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
-            if (parameter.Arguments.Count == 2)
+            if (parameter.arguments.Count == 2)
             {
                 string line;
-                System.IO.StreamReader fileIn = new System.IO.StreamReader(parameter.Arguments[0]);
-                System.IO.StreamWriter fileOut = new System.IO.StreamWriter(parameter.Arguments[1]);
+                System.IO.StreamReader fileIn = new System.IO.StreamReader(parameter.arguments[0]);
+                System.IO.StreamWriter fileOut = new System.IO.StreamWriter(parameter.arguments[1]);
                 while ((line = fileIn.ReadLine()) != null)
                 {
                     if (!line.StartsWith(",") && !line.StartsWith("#") && line.Length != 0)
@@ -33,9 +33,9 @@ namespace Necromancy.Cli.Command.Commands
             return CommandResultType.Continue;
         }
 
-        public override string Key => "strip";
+        public override string key => "strip";
 
-        public override string Description =>
+        public override string description =>
             $"Strips Lines From Data. Ex.:{Environment.NewLine}strip \"C:/Games/Wizardry Online/data/settings.csv\" \"C:/Games/Wizardry Online/data/settings_filtered.csv\"";
     }
 }

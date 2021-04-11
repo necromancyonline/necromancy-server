@@ -8,20 +8,20 @@ namespace Necromancy.Server.Systems.Item
     {
         //TODO make gems their own type maybe?
         private ItemInstance _gem;
-        public GemType Type{ get; set; }
-        public ItemInstance Gem { 
+        public GemType type{ get; set; }
+        public ItemInstance gem {
             get {
                 return _gem;
             }
             set {
                 _gem = value;
-                IsFilled = true; 
-            } 
+                isFilled = true;
+            }
         }
 
         /// <summary>
         /// Helper Property to determine if the slot is filled or not.
         /// </summary>
-        public bool IsFilled { get; private set; }
+        public bool isFilled { get; private set; }
     }
 }

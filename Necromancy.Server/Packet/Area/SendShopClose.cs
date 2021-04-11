@@ -7,25 +7,25 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_shop_close : ClientHandler
+    public class SendShopClose : ClientHandler
     {
-        public send_shop_close(NecServer server) : base(server)
+        public SendShopClose(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_shop_close;
+        public override ushort id => (ushort) AreaPacketId.send_shop_close;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             RecvShopClose shopClose = new RecvShopClose();
-            Router.Send(shopClose, client);
+            router.Send(shopClose, client);
 
             //RecvShopNotifyClose notifyClose = new RecvShopNotifyClose();
             //Router.Send(client.Map, notifyClose, client);//Causes other client's shops to close, can't be used on self.
 
             RecvEventSync syncEvent = new RecvEventSync();
-            Router.Send(syncEvent, client);
+            router.Send(syncEvent, client);
         }
     }
 }

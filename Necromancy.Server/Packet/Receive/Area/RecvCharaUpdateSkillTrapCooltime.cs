@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_chara_update_skill_trap_cooltime : PacketResponse
+    public class RecvCharaUpdateSkillTrapCooltime : PacketResponse
     {
-        public recv_chara_update_skill_trap_cooltime()
+        public RecvCharaUpdateSkillTrapCooltime()
             : base((ushort) AreaPacketId.recv_chara_update_skill_trap_cooltime, ServerType.Area)
         {
         }

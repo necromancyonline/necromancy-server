@@ -7,45 +7,45 @@ namespace Necromancy.Server.Model
 {
     public class DeadBody : IInstance
     {
-        public uint InstanceId { get; set; }
-        public uint CharacterInstanceId { get; set; }
-        public int Id { get; set; }
-        public string CharaName { get; set; }
-        public string SoulName { get; set; }
-        public string Title { get; set; }
-        public int MapId { get; set; }
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-        public byte Heading { get; set; }
+        public uint instanceId { get; set; }
+        public uint characterInstanceId { get; set; }
+        public int id { get; set; }
+        public string charaName { get; set; }
+        public string soulName { get; set; }
+        public string title { get; set; }
+        public int mapId { get; set; }
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+        public byte heading { get; set; }
         //Basic traits
-        public uint RaceId { get; set; }
-        public uint SexId { get; set; }
-        public byte HairId { get; set; }
-        public byte HairColorId { get; set; }
-        public byte FaceId { get; set; }
-        public byte FaceArrangeId { get; set; }
-        public byte VoiceId { get; set; }
-        public uint ClassId { get; set; }
+        public uint raceId { get; set; }
+        public uint sexId { get; set; }
+        public byte hairId { get; set; }
+        public byte hairColorId { get; set; }
+        public byte faceId { get; set; }
+        public byte faceArrangeId { get; set; }
+        public byte voiceId { get; set; }
+        public uint classId { get; set; }
 
-        public int ConnectionState { get; set; }
-        public int ModelType { get; set; }
-        public byte CriminalStatus { get; set; }
-        public byte BeginnerProtection { get; set; }
+        public int connectionState { get; set; }
+        public int modelType { get; set; }
+        public byte criminalStatus { get; set; }
+        public byte beginnerProtection { get; set; }
         public int deathPose { get; set; }
-        public int Level { get; set; }
-        public uint SalvagerId { get; set; }
+        public int level { get; set; }
+        public uint salvagerId { get; set; }
 
         //Inventory
-        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems;
+        public Dictionary<ItemEquipSlots, ItemInstance> equippedItems;
 
         public DeadBody()
         {
-            Level = 0;
-            ConnectionState = 1;//0 if disconnected, 1 if dead.
-            ModelType = 1; //4 if they are an ash pile
-            CriminalStatus = 0; //We need a criminal status value from original character
-            BeginnerProtection = 1; // We need a beginner protection value from original character
+            level = 0;
+            connectionState = 1;//0 if disconnected, 1 if dead.
+            modelType = 1; //4 if they are an ash pile
+            criminalStatus = 0; //We need a criminal status value from original character
+            beginnerProtection = 1; // We need a beginner protection value from original character
             deathPose = 1; // We need to send whatever value our character dies with here, 1 = head popped off, 4 = chopped in half (this should come from recv_battle_report_noact_notify_dead)*/
         }
     }

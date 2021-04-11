@@ -11,7 +11,7 @@ namespace Necromancy.Server.Common.Instance
     /// </summary>
     public class InstanceGenerator
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(InstanceGenerator));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(InstanceGenerator));
 
         public const uint InvalidInstanceId = 0;
 
@@ -27,19 +27,19 @@ namespace Necromancy.Server.Common.Instance
 
         public InstanceGenerator(NecServer server)
         {
-            _setting = server.Setting;
+            _setting = server.setting;
             _server = server;
             _pools = new List<IInstanceIdPool>();
             _instances = new Dictionary<uint, IInstance>();
-            _dynamicPool = new InstanceIdPool("Dynamic", _setting.PoolDynamicIdLowerBound, _setting.PoolDynamicIdSize);
+            _dynamicPool = new InstanceIdPool("Dynamic", _setting.poolDynamicIdLowerBound, _setting.poolDynamicIdSize);
             _pools.Add(_dynamicPool);
-            _characterPool = new DatabaseInstanceIdPool("Character", _setting.PoolCharacterIdLowerBound,   _setting.PoolCharacterIdSize);
+            _characterPool = new DatabaseInstanceIdPool("Character", _setting.poolCharacterIdLowerBound,   _setting.poolCharacterIdSize);
             _pools.Add(_characterPool);
-            _npcPool = new DatabaseInstanceIdPool("Npc", _setting.PoolNpcLowerBound, _setting.PoolNpcIdSize);
+            _npcPool = new DatabaseInstanceIdPool("Npc", _setting.poolNpcLowerBound, _setting.poolNpcIdSize);
             _pools.Add(_npcPool);
-            _monsterPool = new DatabaseInstanceIdPool("Monster", _setting.PoolMonsterIdLowerBound, _setting.PoolMonsterIdSize);
+            _monsterPool = new DatabaseInstanceIdPool("Monster", _setting.poolMonsterIdLowerBound, _setting.poolMonsterIdSize);
             _pools.Add(_monsterPool);
-            _deadBodyPool = new DatabaseInstanceIdPool("DeadBody", _setting.PoolDeadBodyIdLowerBound, _setting.PoolDeadBodyIdSize);
+            _deadBodyPool = new DatabaseInstanceIdPool("DeadBody", _setting.poolDeadBodyIdLowerBound, _setting.poolDeadBodyIdSize);
             _pools.Add(_deadBodyPool);
 
             foreach (IInstanceIdPool pool in _pools)
@@ -51,10 +51,10 @@ namespace Necromancy.Server.Common.Instance
                         continue;
                     }
 
-                    if (pool.LowerBound <= otherPool.UpperBound && otherPool.LowerBound <= pool.UpperBound)
+                    if (pool.lowerBound <= otherPool.upperBound && otherPool.lowerBound <= pool.upperBound)
                     {
-                        Logger.Error(
-                            $"Pool: {pool.Name}({pool.LowerBound}-{pool.UpperBound}) overlaps with Pool {otherPool.Name}({otherPool.LowerBound}-{otherPool.UpperBound})");
+                        _Logger.Error(
+                            $"Pool: {pool.name}({pool.lowerBound}-{pool.upperBound}) overlaps with Pool {otherPool.name}({otherPool.lowerBound}-{otherPool.upperBound})");
                     }
                 }
             }
@@ -71,18 +71,18 @@ namespace Necromancy.Server.Common.Instance
                 return character;
             }
 
-            character = _server.Clients.GetCharacterByCharacterId(characterDatabaseId);
+            character = _server.clients.GetCharacterByCharacterId(characterDatabaseId);
             if (character != null)
             {
-                Logger.Error(
-                    $"Character {character.Name} in server lookup but not in instance lookup - fix synchronisation");
+                _Logger.Error(
+                    $"Character {character.name} in server lookup but not in instance lookup - fix synchronisation");
                 return character;
             }
 
-            character = _server.Database.SelectCharacterById(characterDatabaseId);
+            character = _server.database.SelectCharacterById(characterDatabaseId);
             if (character != null)
             {
-                character.InstanceId = characterInstanceId;
+                character.instanceId = characterInstanceId;
                 return character;
             }
 
@@ -114,19 +114,19 @@ namespace Necromancy.Server.Common.Instance
             bool success;
             if (instance is Character character)
             {
-                success = _characterPool.TryAssign((uint)character.Id, out instanceId);
+                success = _characterPool.TryAssign((uint)character.id, out instanceId);
             }
             else if (instance is DeadBody deadBody)
             {
-                success = _deadBodyPool.TryAssign((uint)deadBody.Id, out instanceId);
+                success = _deadBodyPool.TryAssign((uint)deadBody.id, out instanceId);
             }
             else if (instance is NpcSpawn npc)
             {
-                success = _npcPool.TryAssign((uint) npc.Id, out instanceId);
+                success = _npcPool.TryAssign((uint) npc.id, out instanceId);
             }
             else if (instance is MonsterSpawn monster)
             {
-                success = _monsterPool.TryAssign((uint) monster.Id, out instanceId);
+                success = _monsterPool.TryAssign((uint) monster.id, out instanceId);
             }
             else if (_dynamicPool.TryPop(out instanceId))
             {
@@ -140,7 +140,7 @@ namespace Necromancy.Server.Common.Instance
 
             if (instanceId == InvalidInstanceId)
             {
-                Logger.Error($"Failed to retrieve instanceId for type {instance.GetType()}");
+                _Logger.Error($"Failed to retrieve instanceId for type {instance.GetType()}");
                 return;
             }
 
@@ -149,15 +149,15 @@ namespace Necromancy.Server.Common.Instance
                 if (_instances.ContainsKey(instanceId))
                 {
                     // object already exists in lookup.
-                    instance.InstanceId = instanceId;
+                    instance.instanceId = instanceId;
                     return;
                 }
 
-                Logger.Error($"Failed to assign instanceId for type {instance.GetType()}");
+                _Logger.Error($"Failed to assign instanceId for type {instance.GetType()}");
                 return;
             }
 
-            instance.InstanceId = instanceId;
+            instance.instanceId = instanceId;
             _instances.Add(instanceId, instance);
         }
 
@@ -166,10 +166,10 @@ namespace Necromancy.Server.Common.Instance
         /// </summary>
         public void FreeInstance(IInstance instance)
         {
-            uint instanceId = instance.InstanceId;
+            uint instanceId = instance.instanceId;
             if (instanceId == InvalidInstanceId)
             {
-                Logger.Error("Failed to free, instanceId is invalid");
+                _Logger.Error("Failed to free, instanceId is invalid");
                 return;
             }
 
@@ -217,11 +217,11 @@ namespace Necromancy.Server.Common.Instance
             foreach (IInstanceIdPool pool in _pools)
             {
                 sb.AppendLine(
-                    $"{pool.Name}: {pool.Used}/{pool.Size} ({pool.LowerBound}-{pool.UpperBound})");
+                    $"{pool.name}: {pool.used}/{pool.size} ({pool.lowerBound}-{pool.upperBound})");
             }
 
             sb.AppendLine("---");
-            Logger.Info(sb.ToString());
+            _Logger.Info(sb.ToString());
         }
     }
 }

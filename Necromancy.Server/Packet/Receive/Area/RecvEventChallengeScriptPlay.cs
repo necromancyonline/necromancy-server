@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_event_challenge_script_play : PacketResponse
+    public class RecvEventChallengeScriptPlay : PacketResponse
     {
-        public recv_event_challenge_script_play()
+        public RecvEventChallengeScriptPlay()
             : base((ushort) AreaPacketId.recv_event_challenge_script_play, ServerType.Area)
         {
         }

@@ -5,14 +5,14 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_skill_onhit : ClientHandler
+    public class SendSkillOnhit : ClientHandler
     {
-        public send_skill_onhit(NecServer server) : base(server)
+        public SendSkillOnhit(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_skill_onhit;
+        public override ushort id => (ushort) AreaPacketId.send_skill_onhit;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

@@ -6,7 +6,7 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
-    //sells an item from your stall 
+    //sells an item from your stall
     public class SendStallSellItem : ServerChatCommand
     {
         public SendStallSellItem(NecServer server) : base(server)
@@ -25,12 +25,12 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteByte(0);
             res.WriteByte(0);
             res.WriteInt16(16);
-            res.WriteUInt32(client.Character.InstanceId); //Item id
+            res.WriteUInt32(client.character.instanceId); //Item id
 
-            Router.Send(client, (ushort) AreaPacketId.recv_stall_sell_item, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_stall_sell_item, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "sssi";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "sssi";
     }
 }

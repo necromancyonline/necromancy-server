@@ -7,106 +7,106 @@ namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionDao : DatabaseAccessObject
     {
-        private const string SqlCreateItemsUpForAuctionView = @"
+        private const string _SqlCreateItemsUpForAuctionView = @"
             DROP VIEW IF EXISTS items_up_for_auction;
             CREATE VIEW IF NOT EXISTS items_up_for_auction
 	            (
-		            id, 
-                    consigner_id, 
-		            consigner_name, 
-		            instance_id, 
-		            quantity, 
-		            expiry_datetime, 
-		            min_bid, 
-		            buyout_price, 
-		            current_bid, 
-		            bidder_id, 
+		            id,
+                    consigner_id,
+		            consigner_name,
+		            instance_id,
+		            quantity,
+		            expiry_datetime,
+		            min_bid,
+		            buyout_price,
+		            current_bid,
+		            bidder_id,
 		            comment,
                     is_cancellable
 	            )
             AS
-            SELECT 			
+            SELECT
                 nec_auction.id,
                 consigner.id,
                 consigner.name,
-                nec_auction.instance_id, 
+                nec_auction.instance_id,
                 nec_auction.quantity,
-                nec_auction.expiry_datetime, 
+                nec_auction.expiry_datetime,
                 nec_auction.min_bid,
-                nec_auction.buyout_price, 
-                nec_auction.current_bid, 
+                nec_auction.buyout_price,
+                nec_auction.current_bid,
                 nec_auction.bidder_id,
                 nec_auction.comment,
                 nec_auction.is_cancellable
-            FROM 
+            FROM
                 nec_auction
 			INNER JOIN
 				nec_item_instance item_instance
 			ON
 				nec_auction.instance_id = item_instance.id
-            INNER JOIN 
+            INNER JOIN
                 nec_character consigner
-            ON 
+            ON
                 item_instance.owner_id = consigner.id";
 
-        private const string SqlInsertLot = @"
-            INSERT INTO 
-                nec_auction 
-                ( 
+        private const string _SqlInsertLot = @"
+            INSERT INTO
+                nec_auction
+                (
                     slot
-                    instance_id, 
-                    quantity, 
-                    expiry_datetime, 
-                    min_bid, 
-                    buyout_price, 
+                    instance_id,
+                    quantity,
+                    expiry_datetime,
+                    min_bid,
+                    buyout_price,
                     comment
-                ) 
-            VALUES 
+                )
+            VALUES
                 (
                     @slot
-                    @instance_id, 
-                    @quantity, 
-                    @expiry_datetime, 
-                    @min_bid, 
-                    @buyout_price, 
+                    @instance_id,
+                    @quantity,
+                    @expiry_datetime,
+                    @min_bid,
+                    @buyout_price,
                     @comment
                 )";
 
-        private const string SqlUpdateBid = @"
-            UPDATE 
-                nec_auction_item 
-            SET 
-                bidder_id = @bidder_id, 
-                current_bid = @current_bid, 
-                is_cancellable = (bidder_id IS NULL) 
-            WHERE 
+        private const string _SqlUpdateBid = @"
+            UPDATE
+                nec_auction_item
+            SET
+                bidder_id = @bidder_id,
+                current_bid = @current_bid,
+                is_cancellable = (bidder_id IS NULL)
+            WHERE
                 id = @id";
 
-        private const string SqlSelectBids = @"
-            SELECT 			
+        private const string _SqlSelectBids = @"
+            SELECT
                 *
             FROM
                 items_up_for_auction
             WHERE
                 bidder_id = @character_id";
 
-        private const string SqlSelectLots = @"
-            SELECT 			
-                *
-            FROM 
-                items_up_for_auction			
-            WHERE 
-                consigner_id = @character_id";
-
-        private const string SqlSelectItem = @"
-            SELECT 			
+        private const string _SqlSelectLots = @"
+            SELECT
                 *
             FROM
                 items_up_for_auction
-            WHERE 
+            WHERE
+                consigner_id = @character_id";
+
+        private const string _SqlSelectItem = @"
+            SELECT
+                *
+            FROM
+                items_up_for_auction
+            WHERE
                 id = @id";
 
-        private const string SqlSelectItemsByCriteria = @"";
+        private const string _SqlSelectItemsByCriteria = @"";
 
 
         public AuctionDao()
@@ -116,11 +116,11 @@ namespace Necromancy.Server.Systems.Auction
 
         private void CreateView()
         {
-            ExecuteNonQuery(SqlCreateItemsUpForAuctionView, command => { });
+            ExecuteNonQuery(_SqlCreateItemsUpForAuctionView, command => { });
         }
 
         //public bool InsertLot(ItemInstance auctionLot)
-        //{           
+        //{
         //      int rowsAffected = ExecuteNonQuery(SqlInsertLot, command =>
         //        {
         //            AddParameter(command, "@slot", auctionLot.Slot);
@@ -190,7 +190,7 @@ namespace Necromancy.Server.Systems.Auction
         //        {
         //            AddParameter(command, "@character_id", character.Id);
         //        }, reader =>
-        //        {                    
+        //        {
         //            while (reader.Read())
         //            {
         //                if (i >= AuctionService.MAX_LOTS) break;
@@ -256,10 +256,10 @@ namespace Necromancy.Server.Systems.Auction
         //    ExecuteReader(SqlSelectItemsByCriteria,
         //        command =>
         //        {
-                    
+
         //        }, reader =>
         //        {
-        //            while (reader.Read()) { 
+        //            while (reader.Read()) {
         //            //TODO do something
         //            }
         //        });

@@ -12,26 +12,26 @@ namespace Necromancy.Server.Packet.Area
     /// <summary>
     //Tell the entering client about all the other objects on the map being entered.
     /// </summary>
-    public class send_map_get_info : ClientHandler
+    public class SendMapGetInfo : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_map_get_info));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendMapGetInfo));
 
         private readonly NecServer _server;
 
-        public send_map_get_info(NecServer server) : base(server)
+        public SendMapGetInfo(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_map_get_info;
+        public override ushort id => (ushort) AreaPacketId.send_map_get_info;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            //you are dead here.  only getting soul form characters and NPCs.  sorry bro.             
-            if (client.Character.State.HasFlag(CharacterState.SoulForm))
+            //you are dead here.  only getting soul form characters and NPCs.  sorry bro.
+            if (client.character.state.HasFlag(CharacterState.SoulForm))
             {
-                Logger.Debug($"Rendering Dead stuff");
-                foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
+                _Logger.Debug($"Rendering Dead stuff");
+                foreach (NecClient otherClient in client.map.clientLookup.GetAll())
                 {
                     if (otherClient == client)
                     {
@@ -39,89 +39,89 @@ namespace Necromancy.Server.Packet.Area
                         continue;
                     }
                     //Render all the souls if you are in soul form yourself
-                    if (otherClient.Character.State.HasFlag(CharacterState.SoulForm))
+                    if (otherClient.character.state.HasFlag(CharacterState.SoulForm))
                     {
-                        RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
-                        Router.Send(otherCharacterData, client);
+                        RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.character, otherClient.soul.name);
+                        router.Send(otherCharacterData, client);
                     }
 
-                    if (otherClient.Union != null)
+                    if (otherClient.union != null)
                     {
-                        RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
-                        Router.Send(otherUnionData, client);
+                        RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.character, otherClient.union.name);
+                        router.Send(otherUnionData, client);
                     }
                 }
-                foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
+                foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
                 {
-                    if (npcSpawn.Visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
+                    if (npcSpawn.visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
                     {
                         RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
-                        Router.Send(npcData, client);
+                        router.Send(npcData, client);
                     }
                 }
             }
             else //if you are not dead, do normal stuff.  else...  do dead person stuff
             {
-                Logger.Debug($"Not dead.  rendering living stuff.  CharacterState:{client.Character.State}");
-                foreach (NecClient otherClient in client.Map.ClientLookup.GetAll())
+                _Logger.Debug($"Not dead.  rendering living stuff.  CharacterState:{client.character.state}");
+                foreach (NecClient otherClient in client.map.clientLookup.GetAll())
                 {
                     if (otherClient == client) continue;
-                    if (!otherClient.Character.State.HasFlag(CharacterState.SoulForm))
+                    if (!otherClient.character.state.HasFlag(CharacterState.SoulForm))
                     {
-                        RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
-                        Router.Send(otherCharacterData, client);
+                        RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.character, otherClient.soul.name);
+                        router.Send(otherCharacterData, client);
                     }
-                    if (otherClient.Union != null)
+                    if (otherClient.union != null)
                     {
-                        RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
-                        Router.Send(otherUnionData, client);
+                        RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.character, otherClient.union.name);
+                        router.Send(otherUnionData, client);
                     }
                 }
 
-                foreach (MonsterSpawn monsterSpawn in client.Map.MonsterSpawns.Values)
+                foreach (MonsterSpawn monsterSpawn in client.map.monsterSpawns.Values)
                 {
                     RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
-                    Logger.Debug($"Monster Id {monsterSpawn.Id} with model {monsterSpawn.ModelId} is loading");
-                    Router.Send(monsterData, client);
+                    _Logger.Debug($"Monster Id {monsterSpawn.id} with model {monsterSpawn.modelId} is loading");
+                    router.Send(monsterData, client);
                 }
 
-                foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
+                foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
                 {
-                    if (npcSpawn.Visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
+                    if (npcSpawn.visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
                     {
                         RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
-                        Router.Send(npcData, client);
+                        router.Send(npcData, client);
                     }
                 }
 
 
             }
             //Allways render the stuff below this line.
-            if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+            if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
             {
-                foreach (DeadBody deadBody in client.Map.DeadBodies.Values)
+                foreach (DeadBody deadBody in client.map.deadBodies.Values)
                 {
                     RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                    Router.Send(deadBodyData, client);
+                    router.Send(deadBodyData, client);
                 }
             }
 
-            foreach (Gimmick gimmickSpawn in client.Map.GimmickSpawns.Values)
+            foreach (Gimmick gimmickSpawn in client.map.gimmickSpawns.Values)
             {
                 RecvDataNotifyGimmickData gimmickData = new RecvDataNotifyGimmickData(gimmickSpawn);
-                Router.Send(gimmickData, client);
+                router.Send(gimmickData, client);
             }
 
-            foreach (GGateSpawn gGateSpawn in client.Map.GGateSpawns.Values)
+            foreach (GGateSpawn gGateSpawn in client.map.gGateSpawns.Values)
             {
                 RecvDataNotifyGGateStoneData gGateSpawnData = new RecvDataNotifyGGateStoneData(gGateSpawn);
-                Router.Send(gGateSpawnData, client);
+                router.Send(gGateSpawnData, client);
             }
 
-            foreach (MapTransition mapTran in client.Map.MapTransitions.Values)
+            foreach (MapTransition mapTran in client.map.mapTransitions.Values)
             {
-                RecvDataNotifyMapLink mapLink = new RecvDataNotifyMapLink(mapTran.InstanceId, mapTran.ReferencePos, mapTran.MaplinkOffset, mapTran.MaplinkWidth, mapTran.MaplinkColor, mapTran.MaplinkHeading);
-                Router.Send(mapLink, client);
+                RecvDataNotifyMapLink mapLink = new RecvDataNotifyMapLink(mapTran.instanceId, mapTran.referencePos, mapTran.maplinkOffset, mapTran.maplinkWidth, mapTran.maplinkColor, mapTran.maplinkHeading);
+                router.Send(mapLink, client);
 
                 //un-comment for debugging maplinks to visualize the left and right Reference Positions
                 /*
@@ -160,13 +160,13 @@ namespace Necromancy.Server.Packet.Area
             }
 
             // ToDo this should be a database lookup
-            RecvMapFragmentFlag mapFragments = new RecvMapFragmentFlag(client.Map.Id, 0xff);
-            Router.Send(mapFragments, client);
+            RecvMapFragmentFlag mapFragments = new RecvMapFragmentFlag(client.map.id, 0xff);
+            router.Send(mapFragments, client);
 
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_map_get_info_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_map_get_info_r, res, ServerType.Area);
         }
     }
 }

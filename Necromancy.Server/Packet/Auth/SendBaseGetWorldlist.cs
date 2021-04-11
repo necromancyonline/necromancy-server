@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Auth
 {
-    public class send_base_get_worldlist : ClientHandler
+    public class SendBaseGetWorldlist : ClientHandler
     {
-        public send_base_get_worldlist(NecServer server) : base(server)
+        public SendBaseGetWorldlist(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AuthPacketId.send_base_get_worldlist;
+        public override ushort id => (ushort) AuthPacketId.send_base_get_worldlist;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -30,7 +30,7 @@ namespace Necromancy.Server.Packet.Auth
             res.WriteInt32(0);
             res.WriteByte(0); // 1 = Server merge notice
 
-            Router.Send(client, (ushort) AuthPacketId.recv_base_get_worldlist_r, res, ServerType.Auth);
+            router.Send(client, (ushort) AuthPacketId.recv_base_get_worldlist_r, res, ServerType.Auth);
         }
     }
 }

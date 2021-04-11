@@ -158,10 +158,10 @@ namespace Necromancy.Server.Common
             {
                 if (i % 2 == 0)
                 {
-                    xorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
+                    XorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
                 }
 
-                CamelliaRound(Sigma[i], pl, pr);
+                CamelliaRound(_sigma[i], pl, pr);
                 p = pl;
                 pl = pr;
                 pr = p;
@@ -169,12 +169,12 @@ namespace Necromancy.Server.Common
 
             if (keyLen != 128)
             {
-                xorOctets(16, ikey[2], ikey[1], ikey[3]); /* KB <- KA ^ KR */
+                XorOctets(16, ikey[2], ikey[1], ikey[3]); /* KB <- KA ^ KR */
                 Span<byte> spanKey3 = new Span<byte>(ikey[3]);
-                Span<byte> spanKey3_0 = spanKey3.Slice(0, 8);
-                Span<byte> spanKey3_8 = spanKey3.Slice(8, 8);
-                CamelliaRound(Sigma[4], spanKey3_0, spanKey3_8);
-                CamelliaRound(Sigma[5], spanKey3_8, spanKey3_0);
+                Span<byte> spanKey30 = spanKey3.Slice(0, 8);
+                Span<byte> spanKey38 = spanKey3.Slice(8, 8);
+                CamelliaRound(_sigma[4], spanKey30, spanKey38);
+                CamelliaRound(_sigma[5], spanKey38, spanKey30);
             }
 
             /* subkey generation */
@@ -219,11 +219,11 @@ namespace Necromancy.Server.Common
                 {
                     if (i < 4)
                     {
-                        rot15(ikey[j]);
+                        Rot15(ikey[j]);
                     }
                     else
                     {
-                        rot17(ikey[j]);
+                        Rot17(ikey[j]);
                     }
                 }
             }
@@ -250,8 +250,8 @@ namespace Necromancy.Server.Common
 
             /* prewhitening */
             //xorOctets(16, pt, subkey[ski], ct);
-            xorOctets(8, pt.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
-            xorOctets(8, pt.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
+            XorOctets(8, pt.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
+            XorOctets(8, pt.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
 
             if (decrypt)
             {
@@ -274,7 +274,7 @@ namespace Necromancy.Server.Common
 
                 if (r == 6 || r == 12 || r == 18)
                 {
-                    CamelliaFL(subkey[ski], ct.Slice(0, 8));
+                    CamelliaFl(subkey[ski], ct.Slice(0, 8));
                     ski += direction;
                     CamelliaFLinv(subkey[ski], ct.Slice(8, 8));
                     ski += direction;
@@ -286,7 +286,7 @@ namespace Necromancy.Server.Common
                 ski += direction;
             }
 
-            swapHalfBlock(ct.Slice(0, 8), ct.Slice(8, 8));
+            SwapHalfBlock(ct.Slice(0, 8), ct.Slice(8, 8));
 
             /* postwhitening */
             if (decrypt)
@@ -296,32 +296,32 @@ namespace Necromancy.Server.Common
 
             //xorOctets(16, ct, subkey[ski], ct);
 
-            xorOctets(8, ct.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
-            xorOctets(8, ct.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
+            XorOctets(8, ct.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
+            XorOctets(8, ct.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
         }
 
-        private byte s1(int x)
+        private byte S1(int x)
         {
-            return s[x];
+            return _s[x];
         }
 
-        private byte s2(int x)
+        private byte S2(int x)
         {
-            return (byte) ((s[x] << 1) + (s[x] >> 7));
+            return (byte) ((_s[x] << 1) + (_s[x] >> 7));
         }
 
-        private byte s3(int x)
+        private byte S3(int x)
         {
-            return (byte) ((s[x] << 7) + (s[x] >> 1));
+            return (byte) ((_s[x] << 7) + (_s[x] >> 1));
         }
 
-        private byte s4(int x)
+        private byte S4(int x)
         {
-            return s[(byte) (x << 1) + (x >> 7)];
+            return _s[(byte) (x << 1) + (x >> 7)];
         }
 
         /* dst[] <- src1[] ^ src2[] */
-        private void xorOctets(uint nOctets, Span<byte> src1, Span<byte> src2, Span<byte> dst)
+        private void XorOctets(uint nOctets, Span<byte> src1, Span<byte> src2, Span<byte> dst)
         {
             int i;
 
@@ -332,7 +332,7 @@ namespace Necromancy.Server.Common
         }
 
         /* a[] <-> b[] */
-        private void swapHalfBlock(Span<byte> a, Span<byte> b)
+        private void SwapHalfBlock(Span<byte> a, Span<byte> b)
         {
             byte t;
             for (int i = 0; i < 8; i++)
@@ -344,7 +344,7 @@ namespace Necromancy.Server.Common
         }
 
         /* dst[] <- src1[] & src2[] */
-        private void and4octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
+        private void And4Octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
         {
             int i;
 
@@ -355,7 +355,7 @@ namespace Necromancy.Server.Common
         }
 
         /* dst[] <- src1[] | src2[] */
-        private void or4octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
+        private void Or4Octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
         {
             int i;
 
@@ -366,7 +366,7 @@ namespace Necromancy.Server.Common
         }
 
         /* x[] <<<= 1 */
-        private void rot1(int nOctets, Span<byte> x)
+        private void Rot1(int nOctets, Span<byte> x)
         {
             byte x0 = x[0];
             nOctets--;
@@ -379,7 +379,7 @@ namespace Necromancy.Server.Common
         }
 
         /* rotate 128-bit data to the left by 16 bits */
-        private void rot16(Span<byte> x)
+        private void Rot16(Span<byte> x)
         {
             byte x0 = x[0];
             byte x1 = x[1];
@@ -395,12 +395,12 @@ namespace Necromancy.Server.Common
         }
 
         /* rotate 128-bit data to the left by 15 bits */
-        private void rot15(Span<byte> x)
+        private void Rot15(Span<byte> x)
         {
             byte x15;
             int i;
 
-            rot16(x);
+            Rot16(x);
             x15 = x[15];
             for (i = 15; i >= 1; i--)
             {
@@ -411,10 +411,10 @@ namespace Necromancy.Server.Common
         }
 
         /* rotate 128-bit data to the left by 17 bits */
-        private void rot17(Span<byte> x)
+        private void Rot17(Span<byte> x)
         {
-            rot16(x);
-            rot1(16, x);
+            Rot16(x);
+            Rot1(16, x);
         }
 
         /* Camellia round function without swap */
@@ -423,17 +423,17 @@ namespace Necromancy.Server.Common
             byte[] t = new byte[8];
 
             /* key XOR */
-            xorOctets(8, subkey, l, t);
+            XorOctets(8, subkey, l, t);
 
             /* S-Function */
-            t[0] = s1(t[0]);
-            t[1] = s2(t[1]);
-            t[2] = s3(t[2]);
-            t[3] = s4(t[3]);
-            t[4] = s2(t[4]);
-            t[5] = s3(t[5]);
-            t[6] = s4(t[6]);
-            t[7] = s1(t[7]);
+            t[0] = S1(t[0]);
+            t[1] = S2(t[1]);
+            t[2] = S3(t[2]);
+            t[3] = S4(t[3]);
+            t[4] = S2(t[4]);
+            t[5] = S3(t[5]);
+            t[6] = S4(t[6]);
+            t[7] = S1(t[7]);
 
             /* P-Function with Feistel XOR */
             byte a = (byte) (t[0] ^ t[3] ^ t[4] ^ t[5] ^ t[6]);
@@ -455,29 +455,29 @@ namespace Necromancy.Server.Common
         }
 
         /* Camellia FL function */
-        private void CamelliaFL(Span<byte> subkey, Span<byte> x)
+        private void CamelliaFl(Span<byte> subkey, Span<byte> x)
         {
             byte[] t = new byte[4];
-            and4octets(x.Slice(0, 4), subkey.Slice(0, 4), t);
-            rot1(4, t);
-            xorOctets(4, t, x.Slice(4, 4), x.Slice(4, 4));
-            or4octets(x.Slice(4, 4), subkey.Slice(4, 4), t);
-            xorOctets(4, x.Slice(0, 4), t, x.Slice(0, 4));
+            And4Octets(x.Slice(0, 4), subkey.Slice(0, 4), t);
+            Rot1(4, t);
+            XorOctets(4, t, x.Slice(4, 4), x.Slice(4, 4));
+            Or4Octets(x.Slice(4, 4), subkey.Slice(4, 4), t);
+            XorOctets(4, x.Slice(0, 4), t, x.Slice(0, 4));
         }
 
         /* Camellia FL^{-1} function */
         private void CamelliaFLinv(Span<byte> subkey, Span<byte> y)
         {
             byte[] t = new byte[4];
-            or4octets(y.Slice(4, 4), subkey.Slice(4, 4), t);
-            xorOctets(4, y.Slice(0, 4), t, y.Slice(0, 4));
-            and4octets(y.Slice(0, 4), subkey.Slice(0, 4), t);
-            rot1(4, t);
-            xorOctets(4, t, y.Slice(4, 4), y.Slice(4, 4));
+            Or4Octets(y.Slice(4, 4), subkey.Slice(4, 4), t);
+            XorOctets(4, y.Slice(0, 4), t, y.Slice(0, 4));
+            And4Octets(y.Slice(0, 4), subkey.Slice(0, 4), t);
+            Rot1(4, t);
+            XorOctets(4, t, y.Slice(4, 4), y.Slice(4, 4));
         }
 
         /* sbox */
-        private static byte[] s = new byte[256]
+        private static byte[] _s = new byte[256]
         {
             0x70, 0x82, 0x2c, 0xec, 0xb3, 0x27, 0xc0, 0xe5,
             0xe4, 0x85, 0x57, 0x35, 0xea, 0x0c, 0xae, 0x41,
@@ -514,7 +514,7 @@ namespace Necromancy.Server.Common
         };
 
         /* key schedule constants */
-        private static byte[][] Sigma = new byte[6][]
+        private static byte[][] _sigma = new byte[6][]
         {
             new byte[8] {0xa0, 0x9e, 0x66, 0x7f, 0x3b, 0xcc, 0x90, 0x8b},
             new byte[8] {0xb6, 0x7a, 0xe8, 0x58, 0x4c, 0xaa, 0x73, 0xb2},

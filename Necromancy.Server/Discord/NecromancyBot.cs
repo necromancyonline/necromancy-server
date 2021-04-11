@@ -16,7 +16,7 @@ namespace Necromancy.Server.Discord
 {
     public class NecromancyBot
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(NecromancyBot));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(NecromancyBot));
 
         private readonly IServiceCollection _collection;
         private readonly List<Assembly> _assemblies;
@@ -51,9 +51,9 @@ namespace Necromancy.Server.Discord
 
         public void Start()
         {
-            if (String.IsNullOrWhiteSpace(_setting.DiscordBotToken))
+            if (String.IsNullOrWhiteSpace(_setting.discordBotToken))
             {
-                Logger.Info("No Discord Token");
+                _Logger.Info("No Discord Token");
                 return;
             }
 
@@ -95,31 +95,31 @@ namespace Necromancy.Server.Discord
 
             if (discordEvent == null)
             {
-                Logger.Error("DiscordEvent is null");
+                _Logger.Error("DiscordEvent is null");
                 return false;
             }
 
             try
             {
                 DiscordSocketClient client = _service.GetRequiredService<DiscordSocketClient>();
-                SocketGuild guild = client.GetGuild(_setting.DiscordGuild);
+                SocketGuild guild = client.GetGuild(_setting.discordGuild);
                 if (guild == null)
                 {
                     return false;
                 }
 
-                SocketTextChannel textChannel = guild.GetTextChannel(discordEvent.TextChannelId);
+                SocketTextChannel textChannel = guild.GetTextChannel(discordEvent.textChannelId);
                 if (textChannel == null)
                 {
                     return false;
                 }
 
-                await textChannel.SendMessageAsync(discordEvent.Text);
+                await textChannel.SendMessageAsync(discordEvent.text);
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex);
+                _Logger.Exception(ex);
             }
 
             return false;
@@ -131,8 +131,8 @@ namespace Necromancy.Server.Discord
         public void EnqueueEvent_ServerStatus(string text)
         {
             DiscordEvent discordEvent = new DiscordEvent();
-            discordEvent.TextChannelId = _setting.DiscordBotChannel_ServerStatus;
-            discordEvent.Text = text;
+            discordEvent.textChannelId = _setting.discordBotChannelServerStatus;
+            discordEvent.text = text;
             EnqueueEvent(discordEvent);
         }
 
@@ -142,11 +142,11 @@ namespace Necromancy.Server.Discord
         public void Send_ServerStatus(string text)
         {
             DiscordEvent discordEvent = new DiscordEvent();
-            discordEvent.TextChannelId = _setting.DiscordBotChannel_ServerStatus;
-            discordEvent.Text = text;
+            discordEvent.textChannelId = _setting.discordBotChannelServerStatus;
+            discordEvent.text = text;
             if (!Send(discordEvent))
             {
-                Logger.Debug($"Discord event not send: {text}");
+                _Logger.Debug($"Discord event not send: {text}");
             }
         }
 
@@ -154,11 +154,11 @@ namespace Necromancy.Server.Discord
         {
             try
             {
-                Logger.Info("DiscordBot loading...");
+                _Logger.Info("DiscordBot loading...");
                 DiscordSocketClient client = _service.GetRequiredService<DiscordSocketClient>();
                 client.Log += ClientOnLog;
                 client.Ready += ClientOnReady;
-                await client.LoginAsync(TokenType.Bot, _setting.DiscordBotToken);
+                await client.LoginAsync(TokenType.Bot, _setting.discordBotToken);
                 await client.StartAsync();
                 CommandService commands = _service.GetRequiredService<CommandService>();
                 commands.Log += ClientOnLog;
@@ -171,14 +171,14 @@ namespace Necromancy.Server.Discord
                 _service.GetRequiredService<CommandHandlingService>();
                 _service.GetRequiredService<TextHandlingService>();
                 //
-                
-                Logger.Info("DiscordBot getting ready...");
+
+                _Logger.Info("DiscordBot getting ready...");
                 while (!_ready)
                 {
                     await Task.Delay(1000, _cancellationTokenSource.Token);
                 }
 
-                Logger.Info("DiscordBot ready!");
+                _Logger.Info("DiscordBot ready!");
                 while (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     DiscordEvent discordEvent;
@@ -188,23 +188,23 @@ namespace Necromancy.Server.Discord
                     }
                     catch (OperationCanceledException ex)
                     {
-                        Logger.Exception(ex);
+                        _Logger.Exception(ex);
                         return;
                     }
 
                     bool success = await SendAsync(discordEvent);
                     if (!success)
                     {
-                        Logger.Error($"Failed to deliver discord message: '{discordEvent.Text}'");
+                        _Logger.Error($"Failed to deliver discord message: '{discordEvent.text}'");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex);
+                _Logger.Exception(ex);
             }
 
-            Logger.Info("DiscordBot stopped");
+            _Logger.Info("DiscordBot stopped");
         }
 
         private Task ClientOnReady()
@@ -217,7 +217,7 @@ namespace Necromancy.Server.Discord
         {
             if (arg.Exception != null)
             {
-                Logger.Exception(arg.Exception);
+                _Logger.Exception(arg.Exception);
             }
 
             LogLevel level;
@@ -244,7 +244,7 @@ namespace Necromancy.Server.Discord
                     return Task.CompletedTask;
             }
 
-            Logger.Write(level, $"[{arg.Source}] {arg.Message}", arg);
+            _Logger.Write(level, $"[{arg.Source}] {arg.Message}", arg);
             return Task.CompletedTask;
         }
     }

@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_summon_start_notify : PacketResponse
+    public class RecvSoulPartnerSummonStartNotify : PacketResponse
     {
-        public recv_soul_partner_summon_start_notify()
+        public RecvSoulPartnerSummonStartNotify()
             : base((ushort) AreaPacketId.recv_soul_partner_summon_start_notify, ServerType.Area)
         {
         }
@@ -20,9 +20,9 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(100001);  //object id
             res.WriteInt64(100001);  //serial id
             res.WriteInt32(100001);  //base id
-            res.WriteCString("Failboat"); 
+            res.WriteCString("Failboat");
             res.WriteByte(1); //Slot
-            res.WriteInt32(5); // SG 
+            res.WriteInt32(5); // SG
             res.WriteByte(1); //is awakening
             res.WriteByte(31); //Avatar ID
             return res;

@@ -16,22 +16,22 @@ namespace Necromancy.Server.Chat.Command.Commands
             List<ChatResponse> responses)
         {
             responses.Add(ChatResponse.CommandError(client, "Available Commands:"));
-            Dictionary<string, ChatCommand> commands = Server.Chat.CommandHandler.GetCommands();
+            Dictionary<string, ChatCommand> commands = server.chat.commandHandler.GetCommands();
             foreach (string key in commands.Keys)
             {
                 ChatCommand chatCommand = commands[key];
-                if (chatCommand.HelpText == null)
+                if (chatCommand.helpText == null)
                 {
                     continue;
                 }
 
                 responses.Add(ChatResponse.CommandError(client, "----------"));
                 responses.Add(ChatResponse.CommandError(client, $"{key}"));
-                responses.Add(ChatResponse.CommandError(client, chatCommand.HelpText));
+                responses.Add(ChatResponse.CommandError(client, chatCommand.helpText));
             }
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "h";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "h";
     }
 }

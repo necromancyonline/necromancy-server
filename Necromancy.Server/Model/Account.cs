@@ -4,22 +4,22 @@ namespace Necromancy.Server.Model
 {
     public class Account
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string NormalName { get; set; }
-        public string Hash { get; set; }
-        public string Mail { get; set; }
-        public string MailToken { get; set; }
-        public string PasswordToken { get; set; }
-        public bool MailVerified { get; set; }
-        public DateTime? MailVerifiedAt { get; set; }
-        public AccountStateType State { get; set; }
-        public DateTime? LastLogin { get; set; }
-        public DateTime Created { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string normalName { get; set; }
+        public string hash { get; set; }
+        public string mail { get; set; }
+        public string mailToken { get; set; }
+        public string passwordToken { get; set; }
+        public bool mailVerified { get; set; }
+        public DateTime? mailVerifiedAt { get; set; }
+        public AccountStateType state { get; set; }
+        public DateTime? lastLogin { get; set; }
+        public DateTime created { get; set; }
 
         public Account()
         {
-            Id = -1;
+            id = -1;
         }
     }
 }

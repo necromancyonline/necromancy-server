@@ -5,14 +5,14 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_soul_partner_status_open : ClientHandler
+    public class SendSoulPartnerStatusOpen : ClientHandler
     {
-        public send_soul_partner_status_open(NecServer server) : base(server)
+        public SendSoulPartnerStatusOpen(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_soul_partner_status_open;
+        public override ushort id => (ushort) AreaPacketId.send_soul_partner_status_open;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -78,7 +78,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(0);
             res.WriteByte(0);
             res.WriteInt64(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_soul_partner_status_open_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_soul_partner_status_open_r, res, ServerType.Area);
             //There is also a notify
         }
     }

@@ -6,36 +6,36 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_trade_reply : ClientHandler
+    public class SendTradeReply : ClientHandler
     {
-        public send_trade_reply(NecServer server) : base(server)
+        public SendTradeReply(NecServer server) : base(server)
         {
         }
-        
 
-        public override ushort Id => (ushort) AreaPacketId.send_trade_reply;
+
+        public override ushort id => (ushort) AreaPacketId.send_trade_reply;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint myTargetID = packet.Data.ReadUInt32();
-            int error = packet.Data.ReadInt32();
+            uint myTargetId = packet.data.ReadUInt32();
+            int error = packet.data.ReadInt32();
 
-            NecClient targetClient = Server.Clients.GetByCharacterInstanceId(myTargetID);
+            NecClient targetClient = server.clients.GetByCharacterInstanceId(myTargetId);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(error);
-            Router.Send(client, (ushort) AreaPacketId.recv_trade_reply_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_trade_reply_r, res, ServerType.Area);
 
             RecvTradeNotifyReplied notifyReplied = new RecvTradeNotifyReplied(error);
-            Router.Send(notifyReplied, targetClient);
+            router.Send(notifyReplied, targetClient);
 
             if(error == 0)//Success condition
             {
                 RecvEventStart eventStart = new RecvEventStart(0, 0);
-                Router.Send(eventStart, client, targetClient);
+                router.Send(eventStart, client, targetClient);
 
-                client.Character.eventSelectExecCode = (int)myTargetID;
-                Server.Clients.GetByCharacterInstanceId(myTargetID).Character.eventSelectExecCode = (int)client.Character.InstanceId;
+                client.character.eventSelectExecCode = (int)myTargetId;
+                server.clients.GetByCharacterInstanceId(myTargetId).character.eventSelectExecCode = (int)client.character.instanceId;
             }
         }
     }

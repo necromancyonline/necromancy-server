@@ -18,23 +18,23 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_objectData.InstanceId);
-            res.WriteFloat(_objectData.ObjectCoord.X);
-            res.WriteFloat(_objectData.ObjectCoord.Y);
-            res.WriteFloat(_objectData.ObjectCoord.Z);
+            res.WriteUInt32(_objectData.instanceId);
+            res.WriteFloat(_objectData.objectCoord.X);
+            res.WriteFloat(_objectData.objectCoord.Y);
+            res.WriteFloat(_objectData.objectCoord.Z);
 
-            res.WriteFloat(_objectData.TriggerCoord.X);
-            res.WriteFloat(_objectData.TriggerCoord.Y);
-            res.WriteFloat(_objectData.TriggerCoord.Z);
-            res.WriteByte(_objectData.Heading);
+            res.WriteFloat(_objectData.triggerCoord.X);
+            res.WriteFloat(_objectData.triggerCoord.Y);
+            res.WriteFloat(_objectData.triggerCoord.Z);
+            res.WriteByte(_objectData.heading);
 
-            res.WriteInt32(_objectData.Bitmap1);
-            res.WriteInt32(_objectData.Unknown1);
-            res.WriteInt32(_objectData.Unknown2);
+            res.WriteInt32(_objectData.bitmap1);
+            res.WriteInt32(_objectData.unknown1);
+            res.WriteInt32(_objectData.unknown2);
 
-            res.WriteInt32(_objectData.Bitmap2);
+            res.WriteInt32(_objectData.bitmap2);
 
-            res.WriteInt32(_objectData.Unknown3);
+            res.WriteInt32(_objectData.unknown3);
             return res;
         }
     }

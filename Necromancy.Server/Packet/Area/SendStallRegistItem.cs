@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_stall_regist_item : ClientHandler
+    public class SendStallRegistItem : ClientHandler
     {
-        public send_stall_regist_item(NecServer server) : base(server)
+        public SendStallRegistItem(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_stall_regist_item;
+        public override ushort id => (ushort) AreaPacketId.send_stall_regist_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(0);
 
-            Router.Send(client, (ushort) AreaPacketId.recv_stall_regist_item_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_stall_regist_item_r, res, ServerType.Area);
         }
     }
 }

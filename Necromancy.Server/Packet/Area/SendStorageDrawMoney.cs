@@ -7,29 +7,29 @@ using System;
 namespace Necromancy.Server.Packet.Area
 {
 
-    public class send_storage_draw_money : ClientHandler
+    public class SendStorageDrawMoney : ClientHandler
     {
-        public send_storage_draw_money(NecServer server) : base(server)
+        public SendStorageDrawMoney(NecServer server) : base(server)
         {
 
         }
-        public override ushort Id => (ushort)AreaPacketId.send_storage_draw_money;
+        public override ushort id => (ushort)AreaPacketId.send_storage_draw_money;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
 
-            ulong WithdrawGold = packet.Data.ReadUInt64();
+            ulong withdrawGold = packet.data.ReadUInt64();
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); 
-            Router.Send(client, (ushort)AreaPacketId.recv_storage_drawmoney, res, ServerType.Area);
+            res.WriteInt32(0);
+            router.Send(client, (ushort)AreaPacketId.recv_storage_drawmoney, res, ServerType.Area);
 
-            client.Character.AdventureBagGold += WithdrawGold; //Updates your Character.AdventureBagGold
-            client.Soul.WarehouseGold -= WithdrawGold; //Updates your Soul.warehouseGold
+            client.character.adventureBagGold += withdrawGold; //Updates your Character.AdventureBagGold
+            client.soul.warehouseGold -= withdrawGold; //Updates your Soul.warehouseGold
 
             IBuffer res2 = BufferProvider.Provide();
-            res2.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
-            Router.Send(client, (ushort)AreaPacketId.recv_self_money_notify, res2, ServerType.Area);
+            res2.WriteUInt64(client.character.adventureBagGold); // Sets your Adventure Bag Gold
+            router.Send(client, (ushort)AreaPacketId.recv_self_money_notify, res2, ServerType.Area);
 
         }
 

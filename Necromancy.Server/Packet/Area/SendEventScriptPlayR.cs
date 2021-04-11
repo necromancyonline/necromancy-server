@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_event_script_play_r : ClientHandler
+    public class SendEventScriptPlayR : ClientHandler
     {
-        public send_event_script_play_r(NecServer server) : base(server)
+        public SendEventScriptPlayR(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort)AreaPacketId.send_event_script_play_r;
+        public override ushort id => (ushort)AreaPacketId.send_event_script_play_r;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -24,7 +24,7 @@ namespace Necromancy.Server.Packet.Area
                     {
                                 IBuffer res = BufferProvider.Provide();
                                 res.WriteByte(0);
-                                Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
+                                router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
 
                     }
                 );

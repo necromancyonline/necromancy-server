@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class Recv4ABB : PacketResponse
+    public class Recv4Abb : PacketResponse
     {
         private readonly uint _unknown1;
         private readonly int _unknown2;
         private readonly int _unknown3;
 
-        public Recv4ABB(uint unknown1, int unknown2, int unknown3)
+        public Recv4Abb(uint unknown1, int unknown2, int unknown3)
             : base((ushort) AreaPacketId.recv_event_end, ServerType.Area)
         {
             _unknown1 = unknown1;

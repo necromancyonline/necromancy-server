@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_battle_attack_long_start_r : PacketResponse
+    public class RecvBattleAttackLongStartR : PacketResponse
     {
-        public recv_battle_attack_long_start_r()
+        public RecvBattleAttackLongStartR()
             : base((ushort) AreaPacketId.recv_battle_attack_long_start_r, ServerType.Area)
         {
         }
@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             IBuffer res = BufferProvider.Provide();
             int numEntries = 0x2;
             res.WriteInt32(0);
-            res.WriteInt32(numEntries); //less than 0x4 
+            res.WriteInt32(numEntries); //less than 0x4
             for (int i = 0; i < numEntries; i++)
             {
                 res.WriteFloat(0);

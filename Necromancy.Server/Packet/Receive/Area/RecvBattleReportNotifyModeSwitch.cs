@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_battle_report_notify_mode_switch : PacketResponse
+    public class RecvBattleReportNotifyModeSwitch : PacketResponse
     {
-        public recv_battle_report_notify_mode_switch()
+        public RecvBattleReportNotifyModeSwitch()
             : base((ushort) AreaPacketId.recv_battle_report_notify_mode_switch, ServerType.Area)
         {
         }

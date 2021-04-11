@@ -14,15 +14,15 @@ namespace Necromancy.Server.Database.Sql
     {
         public const string MemoryDatabasePath = ":memory:";
 
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(NecSqLiteDb));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecSqLiteDb));
 
-        public long Version
+        public long version
         {
             get { return (long) Command("PRAGMA user_version;", Connection()).ExecuteScalar(); }
             set { Command(String.Format("PRAGMA user_version = {0};", value), Connection()).ExecuteNonQuery(); }
         }
 
-        private const string SelectAutoIncrement = "SELECT last_insert_rowid()";
+        private const string _SelectAutoIncrement = "SELECT last_insert_rowid()";
 
         private readonly string _databasePath;
         private string _connectionString;
@@ -30,7 +30,7 @@ namespace Necromancy.Server.Database.Sql
         public NecSqLiteDb(string databasePath)
         {
             _databasePath = databasePath;
-            Logger.Info($"Database Path: {_databasePath}");
+            _Logger.Info($"Database Path: {_databasePath}");
         }
 
         public bool CreateDatabase()
@@ -40,7 +40,7 @@ namespace Necromancy.Server.Database.Sql
                 FileStream fs = File.Create(_databasePath);
                 fs.Close();
                 fs.Dispose();
-                Logger.Info($"Creating new v{Version} database. This may take a few minutes.");
+                _Logger.Info($"Creating new v{version} database. This may take a few minutes.");
                 return true;
             }
 
@@ -57,7 +57,7 @@ namespace Necromancy.Server.Database.Sql
             builder.Flags = builder.Flags & SQLiteConnectionFlags.StrictConformance;
 
             string connectionString = builder.ToString();
-            Logger.Info($"Connection String: {connectionString}");
+            _Logger.Info($"Connection String: {connectionString}");
             return connectionString;
         }
 

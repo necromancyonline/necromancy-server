@@ -4,16 +4,16 @@ namespace Necromancy.Server.Common
 {
     public class BufferProvider
     {
-        private static readonly IBufferProvider Provider = new StreamBuffer();
+        private static readonly IBufferProvider _Provider = new StreamBuffer();
 
         public static IBuffer Provide()
         {
-            return Provider.Provide();
+            return _Provider.Provide();
         }
 
         public static IBuffer Provide(byte[] data)
         {
-            return Provider.Provide(data);
+            return _Provider.Provide(data);
         }
     }
 }

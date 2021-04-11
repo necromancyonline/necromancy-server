@@ -5,19 +5,19 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_union_request_set_info : ClientHandler
+    public class SendUnionRequestSetInfo : ClientHandler
     {
-        public send_union_request_set_info(NecServer server) : base(server)
+        public SendUnionRequestSetInfo(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_union_request_set_info;
+        public override ushort id => (ushort) MsgPacketId.send_union_request_set_info;
 
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint newsUpdatedByInstanceId = packet.Data.ReadUInt32();
-            string unionNews = packet.Data.ReadCString(); //Max size 0x196?
+            uint newsUpdatedByInstanceId = packet.data.ReadUInt32();
+            string unionNews = packet.data.ReadCString(); //Max size 0x196?
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //error check.  0 for success.  See sys_msg.csv for all error check messages.
@@ -28,7 +28,7 @@ namespace Necromancy.Server.Packet.Msg
                 -1715	The news contained banned words
             */
 
-            Router.Send(client, (ushort) MsgPacketId.recv_union_request_set_info_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_union_request_set_info_r, res, ServerType.Msg);
 
             //ToDo
             //L"network::proto_msg_implement_client::recv_union_notify_info()\n"
@@ -41,7 +41,7 @@ namespace Necromancy.Server.Packet.Msg
             res2.WriteInt32(0); //Error check probably.  0 means success?
             res2.WriteCString($"{unionNews}"); //max size 0x196
 
-            Router.Send(client.Union.UnionMembers, (ushort) MsgPacketId.recv_union_notify_info, res2,
+            router.Send(client.union.unionMembers, (ushort) MsgPacketId.recv_union_notify_info, res2,
                 ServerType.Msg);
         }
     }

@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_fragment_request_skill_list_r : PacketResponse
+    public class RecvSoulFragmentRequestSkillListR : PacketResponse
     {
-        public recv_soul_fragment_request_skill_list_r()
+        public RecvSoulFragmentRequestSkillListR()
             : base((ushort) AreaPacketId.recv_soul_fragment_request_skill_list_r, ServerType.Area)
         {
         }

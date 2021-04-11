@@ -7,44 +7,44 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_trade_add_item : ClientHandler
+    public class SendTradeAddItem : ClientHandler
     {
         private ItemInstance _itemInstance;
-        public send_trade_add_item(NecServer server) : base(server)
+        public SendTradeAddItem(NecServer server) : base(server)
         {
         }
-        
 
-        public override ushort Id => (ushort) AreaPacketId.send_trade_add_item;
+
+        public override ushort id => (ushort) AreaPacketId.send_trade_add_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType fromZone = (ItemZoneType)packet.Data.ReadByte();
-            byte fromContainer = packet.Data.ReadByte();
-            short fromSlot = packet.Data.ReadInt16();
-            short toSlot = packet.Data.ReadInt16();
-            byte quantity = packet.Data.ReadByte();
+            ItemZoneType fromZone = (ItemZoneType)packet.data.ReadByte();
+            byte fromContainer = packet.data.ReadByte();
+            short fromSlot = packet.data.ReadInt16();
+            short toSlot = packet.data.ReadInt16();
+            byte quantity = packet.data.ReadByte();
 
             ItemLocation fromLoc = new ItemLocation(fromZone, fromContainer, fromSlot);
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             _itemInstance = itemService.GetIdentifiedItem(fromLoc);//To do; get regular item instead of identified item. Mark item as in trade.
-            client.Character.TradeWindowSlot[toSlot] = _itemInstance.InstanceID;
+            client.character.tradeWindowSlot[toSlot] = _itemInstance.instanceId;
 
-            ItemLocation originalLocation = _itemInstance.Location;
-            _itemInstance.Location = new ItemLocation(ItemZoneType.TradeWindow, 0, toSlot); //This is bad. it changes the stored location?
+            ItemLocation originalLocation = _itemInstance.location;
+            _itemInstance.location = new ItemLocation(ItemZoneType.TradeWindow, 0, toSlot); //This is bad. it changes the stored location?
 
-            NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+            NecClient targetClient = server.clients.GetByCharacterInstanceId((uint)client.character.eventSelectExecCode);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
-            Router.Send(client, (ushort) AreaPacketId.recv_trade_add_item_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_trade_add_item_r, res, ServerType.Area);
 
             if (targetClient != null)
             {
                 RecvItemInstance itemInstance = new RecvItemInstance(targetClient, _itemInstance);
-                Router.Send(itemInstance);
+                router.Send(itemInstance);
             }
-            _itemInstance.Location = originalLocation;
+            _itemInstance.location = originalLocation;
         }
     }
 }

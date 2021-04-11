@@ -12,11 +12,11 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(NecSqlDb<TCon, TCom>));
-        
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecSqlDb<TCon, TCom>));
+
         protected override void Exception(Exception ex)
         {
-            Logger.Exception(ex);
+            _Logger.Exception(ex);
         }
     }
 }

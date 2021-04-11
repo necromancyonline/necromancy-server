@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_item_requirement_unequip_notify : PacketResponse
+    public class RecvItemRequirementUnequipNotify : PacketResponse
     {
-        public recv_item_requirement_unequip_notify()
+        public RecvItemRequirementUnequipNotify()
             : base((ushort) AreaPacketId.recv_item_requirement_unequip_notify, ServerType.Area)
         {
         }

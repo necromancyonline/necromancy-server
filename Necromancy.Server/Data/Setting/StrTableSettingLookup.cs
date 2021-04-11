@@ -6,10 +6,10 @@ namespace Necromancy.Server.Data.Setting
 {
     public class StrTableSettingLookup
     {
-        private const string RegexStringIdPattern = @"<str ([0-9]+) ([0-9]+) ([0-9]+)>";
-        
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(StrTableSettingLookup));
-        
+        private const string _RegexStringIdPattern = @"<str ([0-9]+) ([0-9]+) ([0-9]+)>";
+
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(StrTableSettingLookup));
+
         private readonly Dictionary<string, StrTableSetting> _table;
 
         public StrTableSettingLookup()
@@ -22,7 +22,7 @@ namespace Necromancy.Server.Data.Setting
             string key = GenerateKey(setting);
             if (_table.ContainsKey(key))
             {
-                Logger.Error($"Key '{key}' already exists");
+                _Logger.Error($"Key '{key}' already exists");
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Data.Setting
         /// <returns></returns>
         public StrTableSetting Get(string reference)
         {
-            Match match = Regex.Match(reference, RegexStringIdPattern);
+            Match match = Regex.Match(reference, _RegexStringIdPattern);
             if (!int.TryParse(match.Groups[1].Value, out int id))
             {
                 return null;
@@ -73,7 +73,7 @@ namespace Necromancy.Server.Data.Setting
 
         private string GenerateKey(StrTableSetting setting)
         {
-            return GenerateKey(setting.Id, setting.SubId, setting.StringId);
+            return GenerateKey(setting.id, setting.subId, setting.stringId);
         }
 
         private string GenerateKey(int id, int subId, int stringId)

@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_battle_attack_long_cancel : PacketResponse
+    public class RecvBattleAttackLongCancel : PacketResponse
     {
-        public recv_battle_attack_long_cancel()
+        public RecvBattleAttackLongCancel()
             : base((ushort) AreaPacketId.recv_battle_attack_long_cancel, ServerType.Area)
         {
         }

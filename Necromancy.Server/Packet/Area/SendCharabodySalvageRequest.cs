@@ -6,28 +6,28 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_charabody_salvage_request : ClientHandler
+    public class SendCharabodySalvageRequest : ClientHandler
     {
-        public send_charabody_salvage_request(NecServer server) : base(server)
+        public SendCharabodySalvageRequest(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_charabody_salvage_request;
+        public override ushort id => (ushort) AreaPacketId.send_charabody_salvage_request;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint targetId = packet.Data.ReadUInt32();
-            client.Map.DeadBodies.TryGetValue(targetId, out DeadBody deadbody);
-            NecClient necClient = Server.Clients.GetByCharacterInstanceId(deadbody.CharacterInstanceId);
+            uint targetId = packet.data.ReadUInt32();
+            client.map.deadBodies.TryGetValue(targetId, out DeadBody deadbody);
+            NecClient necClient = server.clients.GetByCharacterInstanceId(deadbody.characterInstanceId);
 
-            if (deadbody != null) deadbody.SalvagerId = client.Character.InstanceId;
+            if (deadbody != null) deadbody.salvagerId = client.character.instanceId;
 
             //ask the soul if they want to be collected. gotta have consent!
-            RecvCharaBodySelfSalvageNotify recvCharaBodySelfSalvageNotify = new RecvCharaBodySelfSalvageNotify(client.Character.Name, client.Soul.Name);
+            RecvCharaBodySelfSalvageNotify recvCharaBodySelfSalvageNotify = new RecvCharaBodySelfSalvageNotify(client.character.name, client.soul.name);
             if (necClient != null)
             {
-                Router.Send(necClient, recvCharaBodySelfSalvageNotify.ToPacket());
-                necClient.Character.eventSelectExecCode = (int)client.Character.InstanceId;
+                router.Send(necClient, recvCharaBodySelfSalvageNotify.ToPacket());
+                necClient.character.eventSelectExecCode = (int)client.character.instanceId;
             }
 
         }

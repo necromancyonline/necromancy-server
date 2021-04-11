@@ -11,12 +11,12 @@ namespace Necromancy.Server.Packet.Custom
         {
         }
 
-        public override ushort Id => (ushort) CustomPacketId.SendUnknown1;
+        public override ushort id => (ushort) CustomPacketId.SendUnknown1;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint a = packet.Data.ReadUInt32();
-            uint b = packet.Data.ReadUInt32();
+            uint a = packet.data.ReadUInt32();
+            uint b = packet.data.ReadUInt32();
             // Logger.Info(client, $"Unknown1 A:{a / 1000}");
             // Logger.Info(client, $"Unknown1 B:{b / 1000}");
 
@@ -27,11 +27,11 @@ namespace Necromancy.Server.Packet.Custom
             NecPacket response = new NecPacket(
                 (ushort) CustomPacketId.RecvUnknown1,
                 buffer,
-                packet.ServerType,
+                packet.serverType,
                 PacketType.Unknown1
             );
 
-            Router.Send(client, response);
+            router.Send(client, response);
         }
     }
 }

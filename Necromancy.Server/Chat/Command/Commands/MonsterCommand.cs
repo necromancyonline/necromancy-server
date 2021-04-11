@@ -15,7 +15,7 @@ namespace Necromancy.Server.Chat.Command.Commands
     /// </summary>
     public class MonsterCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(MonsterCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MonsterCommand));
 
         //protected NecServer server { get; }
         public MonsterCommand(NecServer server) : base(server)
@@ -23,20 +23,20 @@ namespace Necromancy.Server.Chat.Command.Commands
             //this.server = server;
         }
 
-        int i = 0;
+        int _i = 0;
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
             MonsterSpawn monsterSpawn = new MonsterSpawn();
-            Server.Instances.AssignInstance(monsterSpawn);
+            server.instances.AssignInstance(monsterSpawn);
             if (!int.TryParse(command[0], out int monsterId))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid Number: {command[0]}"));
                 return;
             }
 
-            if (!Server.SettingRepository.Monster.TryGetValue(monsterId, out MonsterSetting monsterSetting))
+            if (!server.settingRepository.monster.TryGetValue(monsterId, out MonsterSetting monsterSetting))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid MonsterId: {monsterId}"));
                 return;
@@ -49,54 +49,54 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
 
 
-            if (!Server.SettingRepository.ModelCommon.TryGetValue(modelId, out ModelCommonSetting modelSetting))
+            if (!server.settingRepository.modelCommon.TryGetValue(modelId, out ModelCommonSetting modelSetting))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid ModelId: {modelId}"));
                 return;
             }
 
-            Logger.Debug($"modelSetting.Radius [{modelSetting.Radius}]");
-            monsterSpawn.MonsterId = monsterSetting.Id;
-            monsterSpawn.Name = monsterSetting.Name;
-            monsterSpawn.Title = monsterSetting.Title;
-            monsterSpawn.Level = (byte) monsterSetting.Level;
+            _Logger.Debug($"modelSetting.Radius [{modelSetting.radius}]");
+            monsterSpawn.monsterId = monsterSetting.id;
+            monsterSpawn.name = monsterSetting.name;
+            monsterSpawn.title = monsterSetting.title;
+            monsterSpawn.level = (byte) monsterSetting.level;
 
-            monsterSpawn.ModelId = modelSetting.Id;
-            monsterSpawn.Size = (short) (modelSetting.Height / 2);
-            monsterSpawn.Radius = (short) modelSetting.Radius;
+            monsterSpawn.modelId = modelSetting.id;
+            monsterSpawn.size = (short) (modelSetting.height / 2);
+            monsterSpawn.radius = (short) modelSetting.radius;
 
-            monsterSpawn.MapId = client.Character.MapId;
+            monsterSpawn.mapId = client.character.mapId;
 
-            monsterSpawn.X = client.Character.X;
-            monsterSpawn.Y = client.Character.Y;
-            monsterSpawn.Z = client.Character.Z;
-            monsterSpawn.Heading = client.Character.Heading;
+            monsterSpawn.x = client.character.x;
+            monsterSpawn.y = client.character.y;
+            monsterSpawn.z = client.character.z;
+            monsterSpawn.heading = client.character.heading;
 
-            monsterSpawn.Hp.setMax(100);
-            monsterSpawn.Hp.setCurrent(100);
+            monsterSpawn.hp.SetMax(100);
+            monsterSpawn.hp.SetCurrent(100);
 
-            if (!Server.Database.InsertMonsterSpawn(monsterSpawn))
+            if (!server.database.InsertMonsterSpawn(monsterSpawn))
             {
                 responses.Add(ChatResponse.CommandError(client, "MonsterSpawn could not be saved to database"));
                 return;
             }
 
             RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
-            Router.Send(client.Map, monsterData);
+            router.Send(client.map, monsterData);
 
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32((uint)monsterSetting.Id);
-            //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing). 
-            res.WriteInt32(i);
-            i++;
+            res.WriteUInt32((uint)monsterSetting.id);
+            //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing).
+            res.WriteInt32(_i);
+            _i++;
 
-            Router.Send(client, (ushort)AreaPacketId.recv_monster_state_update_notify, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_monster_state_update_notify, res, ServerType.Area);
         }
 
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "mon";
-        public override string HelpText => "usage: `/mon [monsterId] [modelId]` - Spawns a Monster";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "mon";
+        public override string helpText => "usage: `/mon [monsterId] [modelId]` - Spawns a Monster";
     }
 }

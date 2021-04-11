@@ -19,15 +19,15 @@ namespace Necromancy.Server.Chat.Command.Commands
     /// </summary>
     public class ItemCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ItemCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ItemCommand));
 
         public ItemCommand(NecServer server) : base(server)
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "itm";
-        public override string HelpText => "usage: `/itm [itemId] (optional)u`";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "itm";
+        public override string helpText => "usage: `/itm [itemId] (optional)u`";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -37,20 +37,20 @@ namespace Necromancy.Server.Chat.Command.Commands
                 responses.Add(ChatResponse.CommandError(client, "To few arguments"));
                 return;
             }
-            
+
             if (!int.TryParse(command[0], out int itemId))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid Number: {command[0]}"));
                 return;
             }
-            
-            if (client.Character == null)
+
+            if (client.character == null)
             {
                 responses.Add(ChatResponse.CommandError(client, "Character is null"));
                 return;
             }
 
-            if (!Server.SettingRepository.ItemInfo.ContainsKey(itemId))
+            if (!server.settingRepository.itemInfo.ContainsKey(itemId))
             {
                 responses.Add(ChatResponse.CommandError(client, $"ItemId: '{itemId}' does not exist"));
                 return;
@@ -58,31 +58,31 @@ namespace Necromancy.Server.Chat.Command.Commands
 
 
             ItemSpawnParams spawmParam = new ItemSpawnParams();
-            spawmParam.ItemStatuses = ItemStatuses.Identified;
-            if (command.Length > 1 && command[1] == "u") spawmParam.ItemStatuses = ItemStatuses.Unidentified;
+            spawmParam.itemStatuses = ItemStatuses.Identified;
+            if (command.Length > 1 && command[1] == "u") spawmParam.itemStatuses = ItemStatuses.Unidentified;
 
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             ItemInstance itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, itemId, spawmParam);
             byte itemZoneOverride = 0;
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(2);
-            Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
 
             if (command.Length > 1 && command[1] == "u")
             {
-                if (command.Length > 2 && command[2] != "") { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.Location.ZoneType; }
-                Logger.Debug(itemInstance.Type.ToString());
+                if (command.Length > 2 && command[2] != "") { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.location.zoneType; }
+                _Logger.Debug(itemInstance.type.ToString());
                 RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
-                Router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                router.Send(client, recvItemInstanceUnidentified.ToPacket());
             }
             else
             {
-                Logger.Debug(itemInstance.Type.ToString());
+                _Logger.Debug(itemInstance.type.ToString());
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
-                Router.Send(client, recvItemInstance.ToPacket());
+                router.Send(client, recvItemInstance.ToPacket());
             }
             res = BufferProvider.Provide();
-            Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
-        }        
+            router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+        }
     }
 }

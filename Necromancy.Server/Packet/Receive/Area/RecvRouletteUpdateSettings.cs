@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_roulette_update_settings : PacketResponse
+    public class RecvRouletteUpdateSettings : PacketResponse
     {
-        public recv_roulette_update_settings()
+        public RecvRouletteUpdateSettings()
             : base((ushort) AreaPacketId.recv_roulette_update_settings, ServerType.Area)
         {
         }

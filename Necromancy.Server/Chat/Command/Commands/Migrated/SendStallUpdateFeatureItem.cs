@@ -19,7 +19,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             //recv_stall_update_feature_item = 0xB195,
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.InstanceId);
+            res.WriteUInt32(client.character.instanceId);
 
             res.WriteInt32(10200101);
             res.WriteByte(2);
@@ -34,10 +34,10 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             res.WriteInt32(0);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_stall_update_feature_item, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_stall_update_feature_item, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "stuf";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "stuf";
     }
 }

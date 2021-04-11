@@ -12,10 +12,10 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            Server.Database.UpdateCharacter(client.Character);
+            server.database.UpdateCharacter(client.character);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "charsave";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "charsave";
     }
 }

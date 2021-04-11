@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_chara_arrange_notify_close : PacketResponse
+    public class RecvCharaArrangeNotifyClose : PacketResponse
     {
-        public recv_chara_arrange_notify_close()
+        public RecvCharaArrangeNotifyClose()
             : base((ushort) AreaPacketId.recv_chara_arrange_notify_close, ServerType.Area)
         {
         }

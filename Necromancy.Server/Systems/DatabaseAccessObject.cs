@@ -17,32 +17,32 @@ namespace Necromancy.Server.Systems
     {
         protected static readonly ILogger Logger = LogProvider.Logger(typeof(DatabaseAccessObject));
 
-        protected const int NO_ROWS_AFFECTED = 0;
-        
+        protected const int NoRowsAffected = 0;
+
         private readonly string _sqLiteConnectionString;
 
         public DatabaseAccessObject()
         {
-            _sqLiteConnectionString = makeSQLiteConnectionString();
+            _sqLiteConnectionString = MakeSqLiteConnectionString();
         }
 
-        private string makeSQLiteConnectionString()
+        private string MakeSqLiteConnectionString()
         {
             //TODO move info to resources
             SQLiteConnectionStringBuilder sqLiteConnStrBuilder = new SQLiteConnectionStringBuilder();
-            string SettingFile = "server_setting.json";
+            string settingFile = "server_setting.json";
             SettingProvider settingProvider = new SettingProvider();
-            NecSetting _setting = settingProvider.Load<NecSetting>(SettingFile);
-            string sqLitePath = Path.Combine(_setting.DatabaseSettings.SqLiteFolder, "db.sqlite");
-            sqLiteConnStrBuilder.DataSource = sqLitePath;            
-            sqLiteConnStrBuilder.Version = 3; 
+            NecSetting setting = settingProvider.Load<NecSetting>(settingFile);
+            string sqLitePath = Path.Combine(setting.databaseSettings.sqLiteFolder, "db.sqlite");
+            sqLiteConnStrBuilder.DataSource = sqLitePath;
+            sqLiteConnStrBuilder.Version = 3;
             sqLiteConnStrBuilder.Pooling = true;
             sqLiteConnStrBuilder.ForeignKeys = true;
             sqLiteConnStrBuilder.Flags = sqLiteConnStrBuilder.Flags & SQLiteConnectionFlags.StrictConformance;
             return sqLiteConnStrBuilder.ConnectionString;
         }
 
-        protected DbConnection GetSQLConnection()
+        protected DbConnection GetSqlConnection()
         {
             return new SQLiteConnection(_sqLiteConnectionString);
         }
@@ -63,7 +63,7 @@ namespace Necromancy.Server.Systems
             {
                 Logger.Error($"Query: {query}");
                 Exception(ex);
-                return NO_ROWS_AFFECTED;
+                return NoRowsAffected;
             }
         }
 
@@ -78,7 +78,7 @@ namespace Necromancy.Server.Systems
                 command.CommandText = query;
                 nonQueryAction(command);
                 using DbDataReader reader = command.ExecuteReader();
-                readAction(reader);    
+                readAction(reader);
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace Necromancy.Server.Systems
                 using DbConnection conn = new SQLiteConnection(_sqLiteConnectionString);
                 conn.Open();
                 using DbCommand command = conn.CreateCommand();
-                command.ExecuteNonQuery();                    
+                command.ExecuteNonQuery();
             }
             catch (Exception ex)
             {

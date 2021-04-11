@@ -7,9 +7,9 @@ namespace Necromancy.Server.Systems.Item
     [Serializable()]
     public class ItemException :  Exception
     {
-        public ItemExceptionType Type { get; private set; }
-        public ItemException() : base() { Type = ItemExceptionType.Generic; }
-        public ItemException(ItemExceptionType exceptionType) : base() { Type = exceptionType; }
+        public ItemExceptionType type { get; private set; }
+        public ItemException() : base() { type = ItemExceptionType.Generic; }
+        public ItemException(ItemExceptionType exceptionType) : base() { type = exceptionType; }
         public ItemException(string message) : base(message) { }
         public ItemException(string message, System.Exception inner) : base(message, inner) { }
 

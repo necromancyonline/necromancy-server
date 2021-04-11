@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_login_news_url_notify : PacketResponse
+    public class RecvLoginNewsUrlNotify : PacketResponse
     {
-        public recv_login_news_url_notify()
+        public RecvLoginNewsUrlNotify()
             : base((ushort) AreaPacketId.recv_login_news_url_notify, ServerType.Area)
         {
         }

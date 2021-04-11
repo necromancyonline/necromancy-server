@@ -7,24 +7,24 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_soul_set_passwd : ClientHandler
+    public class SendSoulSetPasswd : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_soul_set_passwd));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSoulSetPasswd));
 
-        public send_soul_set_passwd(NecServer server) : base(server)
+        public SendSoulSetPasswd(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_soul_set_passwd;
+        public override ushort id => (ushort) MsgPacketId.send_soul_set_passwd;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            string soulPassword = packet.Data.ReadCString();
-            Soul soul = client.Soul;
-            soul.Password = soulPassword;
-            if (!Database.UpdateSoul(soul))
+            string soulPassword = packet.data.ReadCString();
+            Soul soul = client.soul;
+            soul.password = soulPassword;
+            if (!database.UpdateSoul(soul))
             {
-                Logger.Error(client, $"Failed to save password for SoulId: {soul.Id}");
+                _Logger.Error(client, $"Failed to save password for SoulId: {soul.id}");
                 client.Close();
                 return;
             }
@@ -33,7 +33,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
             res.WriteByte(0); // bool in JP client TODO what is it in US???
             res.WriteCString("");
-            Router.Send(client, (ushort) MsgPacketId.recv_soul_set_passwd_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_soul_set_passwd_r, res, ServerType.Msg);
         }
     }
 }

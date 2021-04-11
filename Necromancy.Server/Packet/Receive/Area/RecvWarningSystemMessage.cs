@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_warning_system_message : PacketResponse
+    public class RecvWarningSystemMessage : PacketResponse
     {
-        public recv_warning_system_message()
+        public RecvWarningSystemMessage()
             : base((ushort) AreaPacketId.recv_warning_system_message, ServerType.Area)
         {
         }

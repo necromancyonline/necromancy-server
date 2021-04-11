@@ -11,35 +11,35 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_loot_access_object : ClientHandler
+    public class SendLootAccessObject : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_loot_access_object));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendLootAccessObject));
 
         private readonly NecServer _server;
 
-        public send_loot_access_object(NecServer server) : base(server)
+        public SendLootAccessObject(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_loot_access_object;
+        public override ushort id => (ushort) AreaPacketId.send_loot_access_object;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             int result = 0;
-            int instanceID = packet.Data.ReadInt32();
-            MonsterSpawn monster = client.Map.GetMonsterByInstanceId((uint) instanceID);
-            Logger.Debug($"{client.Character.Name} is trying to loot object {instanceID}.  Inventory Space {client.Character.ItemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
-            ItemLocation nextOpenLocation = client.Character.ItemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
+            int instanceId = packet.data.ReadInt32();
+            MonsterSpawn monster = client.map.GetMonsterByInstanceId((uint) instanceId);
+            _Logger.Debug($"{client.character.name} is trying to loot object {instanceId}.  Inventory Space {client.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
+            ItemLocation nextOpenLocation = client.character.itemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
 
             if (monster == null) result = -10;
-            else if (monster.loot.ItemCountRNG == 0) result = -1;
-            else if (nextOpenLocation.ZoneType == ItemZoneType.InvalidZone) result = -207; //expand to all inventory. TODO            
+            else if (monster.loot.itemCountRng == 0) result = -1;
+            else if (nextOpenLocation.zoneType == ItemZoneType.InvalidZone) result = -207; //expand to all inventory. TODO
 
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(result);
-            Router.Send(client, (ushort) AreaPacketId.recv_loot_access_object_r, res2, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_loot_access_object_r, res2, ServerType.Area);
             //LOOT, -1, I don't have anything. , SYSTEM_WARNING,
             //LOOT, -10, no route target, SYSTEM_WARNING,
             //LOOT, -207, There is no space in the inventory. , SYSTEM_WARNING,
@@ -49,19 +49,19 @@ namespace Necromancy.Server.Packet.Area
             {
                 IBuffer res = BufferProvider.Provide();
                 res.WriteInt32(2);
-                Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
 
-                int itemId = monster.loot.DropTableItemSerialIds[monster.loot.ItemCountRNG];
+                int itemId = monster.loot.dropTableItemSerialIds[monster.loot.itemCountRng];
                 ItemSpawnParams spawmParam = new ItemSpawnParams();
-                spawmParam.ItemStatuses = ItemStatuses.Identified;
+                spawmParam.itemStatuses = ItemStatuses.Identified;
                 ItemInstance itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, itemId, spawmParam);
-                Logger.Debug(itemInstance.Type.ToString());
+                _Logger.Debug(itemInstance.type.ToString());
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
-                Router.Send(client, recvItemInstance.ToPacket());
-                monster.loot.ItemCountRNG--; //decrement available items
+                router.Send(client, recvItemInstance.ToPacket());
+                monster.loot.itemCountRng--; //decrement available items
 
                 res = BufferProvider.Provide();
-                Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             }
 
 

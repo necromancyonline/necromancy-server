@@ -11,15 +11,15 @@ namespace Necromancy.Server.Chat.Command.Commands
     /// </summary>
     public class PlayersCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(PlayersCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(PlayersCommand));
 
         public PlayersCommand(NecServer server) : base(server)
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
-        public override string Key => "players";
-        public override string HelpText => "usage: `/players [map|world|{characterName}]`";
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "players";
+        public override string helpText => "usage: `/players [map|world|{characterName}]`";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -34,46 +34,46 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 case "map":
                 {
-                    foreach (NecClient theirClient in client.Map.ClientLookup.GetAll())
+                    foreach (NecClient theirClient in client.map.clientLookup.GetAll())
                     {
                         responses.Add(ChatResponse.CommandInfo(client,
-                            $"{theirClient.Character.Name} {theirClient.Soul.Name} is on Map {theirClient.Character.MapId} with InstanceID {theirClient.Character.InstanceId}"));
+                            $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
                     }
 
                     break;
                 }
                 case "world":
                 {
-                    foreach (NecClient theirClient in Server.Clients.GetAll())
+                    foreach (NecClient theirClient in server.clients.GetAll())
                     {
-                        if (theirClient.Map != null)
+                        if (theirClient.map != null)
                             responses.Add(ChatResponse.CommandInfo(client,
-                                $"{theirClient.Character.Name} {theirClient.Soul.Name} is on Map {theirClient.Character.MapId} with InstanceID {theirClient.Character.InstanceId}"));
+                                $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
                     }
 
                     break;
                 }
 
                 default:
-                    foreach (NecClient otherClient in Server.Clients.GetAll())
+                    foreach (NecClient otherClient in server.clients.GetAll())
                     {
-                        Character character = otherClient.Character;
+                        Character character = otherClient.character;
                         if (character == null)
                         {
                             continue;
                         }
 
-                        if (character.Name.Equals(command[0], StringComparison.InvariantCultureIgnoreCase))
+                        if (character.name.Equals(command[0], StringComparison.InvariantCultureIgnoreCase))
                         {
                             string mapName = "None";
-                            Map map = client.Map;
+                            Map map = client.map;
                             if (map != null)
                             {
-                                mapName = $"{map.Id} ({map.Place})";
+                                mapName = $"{map.id} ({map.place})";
                             }
 
                             responses.Add(ChatResponse.CommandInfo(client,
-                                $"CharacterName: {character.Name} SoulId:{character.SoulId} Map:{mapName} InstanceId: {character.InstanceId}"));
+                                $"CharacterName: {character.name} SoulId:{character.soulId} Map:{mapName} InstanceId: {character.instanceId}"));
                             return;
                         }
                     }

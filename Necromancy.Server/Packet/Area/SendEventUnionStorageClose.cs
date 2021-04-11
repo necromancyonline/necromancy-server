@@ -6,23 +6,23 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_event_union_storage_close : ClientHandler
+    public class SendEventUnionStorageClose : ClientHandler
     {
-        public send_event_union_storage_close(NecServer server) : base(server)
+        public SendEventUnionStorageClose(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_event_union_storage_close;
+        public override ushort id => (ushort) AreaPacketId.send_event_union_storage_close;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_event_union_storage_close_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_event_union_storage_close_r, res, ServerType.Area);
 
             RecvEventEnd eventEnd = new RecvEventEnd(0);
-            Router.Send(eventEnd, client);
+            router.Send(eventEnd, client);
         }
     }
 }

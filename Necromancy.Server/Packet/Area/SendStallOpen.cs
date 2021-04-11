@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_stall_open : ClientHandler
+    public class SendStallOpen : ClientHandler
     {
-        public send_stall_open(NecServer server) : base(server)
+        public SendStallOpen(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_stall_open;
+        public override ushort id => (ushort) AreaPacketId.send_stall_open;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(0);
 
-            Router.Send(client, (ushort) AreaPacketId.recv_stall_open_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_stall_open_r, res, ServerType.Area);
 
             SendStallNotifyOpend(client);
         }
@@ -29,8 +29,8 @@ namespace Necromancy.Server.Packet.Area
             //recv_stall_notify_opend = 0x7FC5,
             IBuffer res = BufferProvider.Provide();
 
-	        res.WriteUInt32(client.Character.InstanceId);
-	        res.WriteCString("Unky's Shop"); // find max size, shop name 
+	        res.WriteUInt32(client.character.instanceId);
+	        res.WriteCString("Unky's Shop"); // find max size, shop name
 	        int numEntries = 5;
             res.WriteInt32(numEntries); //less than or equal to 5
 
@@ -45,8 +45,8 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt16(0);//Item count I think
             res.WriteInt32(9);
 
-            res.WriteByte(0); //Bool //Changed Icon background and made it brownish? 
-            
+            res.WriteByte(0); //Bool //Changed Icon background and made it brownish?
+
             //2
             res.WriteInt32(0);
             res.WriteByte(0);
@@ -95,7 +95,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteByte(0); //Bool
 
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_stall_notify_opend, res, ServerType.Area, client);
+            router.Send(client.map, (ushort)AreaPacketId.recv_stall_notify_opend, res, ServerType.Area, client);
 	    }
     }
 }

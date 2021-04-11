@@ -5,23 +5,23 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_select_package_update : ClientHandler
+    public class SendSelectPackageUpdate : ClientHandler
     {
-        public send_select_package_update(NecServer server) : base(server)
+        public SendSelectPackageUpdate(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort)AreaPacketId.send_select_package_update;
+        public override ushort id => (ushort)AreaPacketId.send_select_package_update;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int objectID = packet.Data.ReadInt32();
-            int operation = packet.Data.ReadInt32();
+            int objectId = packet.data.ReadInt32();
+            int operation = packet.data.ReadInt32();
             int errcode = 0;
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(errcode);//Error message Call. 0 for success. see additional options in Sys_msg.csv
-            Router.Send(client, (ushort)AreaPacketId.recv_select_package_update_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_select_package_update_r, res, ServerType.Area);
 
 
             if (operation == 0x01 || operation == 0x0)//receive message
@@ -35,12 +35,12 @@ namespace Necromancy.Server.Packet.Area
             */
         }
 
-        private void SendLootAccessObject(NecClient client, int objectID)
+        private void SendLootAccessObject(NecClient client, int objectId)
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(objectID); //ObjectID or error check
+            res.WriteInt32(objectId); //ObjectID or error check
 
-            Router.Send(client, (ushort)AreaPacketId.recv_loot_access_object_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_loot_access_object_r, res, ServerType.Area);
         }
 
 
@@ -79,6 +79,6 @@ namespace Necromancy.Server.Packet.Area
             MAIL	GENERIC	Failed to send mail
 
         */
-        
+
     }
 }

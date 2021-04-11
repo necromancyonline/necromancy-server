@@ -7,13 +7,13 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
 {
     public class SendCmdExecHandler : ClientHandlerDeserializer<SendCmdExecRequest>
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(SendCmdExecHandler));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCmdExecHandler));
 
         public SendCmdExecHandler(NecServer server) : base(server, new SendCmdExecDeserializer())
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_cmd_exec;
+        public override ushort id => (ushort) AreaPacketId.send_cmd_exec;
 
         public override void HandleRequest(NecClient client, SendCmdExecRequest request)
         {
@@ -27,7 +27,7 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
                     if (i <= 0)
                     {
                         // first character already bad, exit
-                        Logger.Info(client, "Command will not be executed due to bad character");
+                        _Logger.Info(client, "Command will not be executed due to bad character");
                         return;
                     }
 
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
                 }
             }
 
-            Server.Chat.CommandHandler.HandleCommand(client, command);
+            server.chat.commandHandler.HandleCommand(client, command);
             // IBuffer res = BufferProvider.Provide();
             // res.WriteInt32(0);
             // Router.Send(client, (ushort) AreaPacketId.recv_cmd_exec_r, res, ServerType.Area);

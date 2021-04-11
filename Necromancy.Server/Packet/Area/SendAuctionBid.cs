@@ -8,31 +8,31 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_auction_bid : ClientHandler
+    public class SendAuctionBid : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_auction_bid));
-        public send_auction_bid(NecServer server) : base(server)  {    }
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendAuctionBid));
+        public SendAuctionBid(NecServer server) : base(server)  {    }
 
-        public override ushort Id => (ushort) AreaPacketId.send_auction_bid;
+        public override ushort id => (ushort) AreaPacketId.send_auction_bid;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte isBuyout = packet.Data.ReadByte();
-            int slot = packet.Data.ReadInt32();
-            ulong bid = packet.Data.ReadUInt64();
-            Logger.Debug(isBuyout.ToString() + " " + slot.ToString() + " " +  bid.ToString());
+            byte isBuyout = packet.data.ReadByte();
+            int slot = packet.data.ReadInt32();
+            ulong bid = packet.data.ReadUInt64();
+            _Logger.Debug(isBuyout.ToString() + " " + slot.ToString() + " " +  bid.ToString());
             int auctionError = 0;
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             try
             {
                 itemService.Bid(isBuyout, slot, bid);
             }
-            catch (AuctionException e) { auctionError = (int)e.Type;
-                Logger.Debug(e.ToString());
+            catch (AuctionException e) { auctionError = (int)e.type;
+                _Logger.Debug(e.ToString());
             }
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(auctionError);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_bid_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_auction_bid_r, res, ServerType.Area);
         }
     }
 }

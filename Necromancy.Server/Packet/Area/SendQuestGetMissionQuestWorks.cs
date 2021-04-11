@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_quest_get_mission_quest_works : ClientHandler
+    public class SendQuestGetMissionQuestWorks : ClientHandler
     {
-        public send_quest_get_mission_quest_works(NecServer server) : base(server)
+        public SendQuestGetMissionQuestWorks(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_quest_get_mission_quest_works;
+        public override ushort id => (ushort) AreaPacketId.send_quest_get_mission_quest_works;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -108,7 +108,7 @@ namespace Necromancy.Server.Packet.Area
             }
 
             //Commented out until further testing. this is called at login
-            Router.Send(client, (ushort) AreaPacketId.recv_quest_get_mission_quest_works_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_quest_get_mission_quest_works_r, res, ServerType.Area);
         }
     }
 }

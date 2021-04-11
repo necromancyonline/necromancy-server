@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_event_treasurebox_begin : PacketResponse
+    public class RecvEventTreasureboxBegin : PacketResponse
     {
-        public recv_event_treasurebox_begin()
+        public RecvEventTreasureboxBegin()
             : base((ushort) AreaPacketId.recv_event_treasurebox_begin, ServerType.Area)
         {
         }

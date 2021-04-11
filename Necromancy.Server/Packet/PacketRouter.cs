@@ -8,8 +8,8 @@ namespace Necromancy.Server.Packet
 {
     public class PacketRouter
     {
-        private readonly object AreaLock = new object();
-        private readonly object ClientLock = new object();
+        private readonly object _areaLock = new object();
+        private readonly object _clientLock = new object();
 
         /// <summary>
         /// Send a packet to a client.
@@ -41,7 +41,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(NecConnection connection, ushort id, IBuffer data)
         {
-            NecPacket packet = new NecPacket(id, data, connection.ServerType);
+            NecPacket packet = new NecPacket(id, data, connection.serverType);
             Send(connection, packet);
         }
 
@@ -83,7 +83,7 @@ namespace Necromancy.Server.Packet
         public void Send(Map map, NecPacket packet, params NecClient[] excepts)
         {
             if (map == null) return;
-            List<NecClient> clients = GetClients(map.ClientLookup.GetAll(), excepts);
+            List<NecClient> clients = GetClients(map.clientLookup.GetAll(), excepts);
             foreach (NecClient client in clients)
             {
                 Send(client, packet);
@@ -95,7 +95,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(PacketResponse response)
         {
-            foreach (NecClient client in response.Clients)
+            foreach (NecClient client in response.clients)
             {
                 Send(client, response.ToPacket());
             }
@@ -107,7 +107,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(Map map, List<PacketResponse> buffers, params NecClient[] excepts)
         {
-            lock (AreaLock)
+            lock (_areaLock)
             {
                 foreach (PacketResponse data in buffers)
                 {
@@ -122,11 +122,11 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(NecClient client, List<PacketResponse> buffers)
         {
-            lock (ClientLock)
+            lock (_clientLock)
             {
                 foreach (PacketResponse response in buffers)
                 {
-                    response.Clients.Add(client);
+                    response.clients.Add(client);
                     Send(response);
                 }
             }
@@ -137,11 +137,11 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(Map map, PacketResponse response, params NecClient[] excepts)
         {
-            List<NecClient> mapClients = map.ClientLookup.GetAll();
-            mapClients.AddRange(response.Clients);
-            response.Clients.Clear();
+            List<NecClient> mapClients = map.clientLookup.GetAll();
+            mapClients.AddRange(response.clients);
+            response.clients.Clear();
             List<NecClient> clients = GetClients(mapClients, excepts);
-            response.Clients.AddRange(clients);
+            response.clients.AddRange(clients);
             Send(response);
         }
 
@@ -152,7 +152,7 @@ namespace Necromancy.Server.Packet
         {
             foreach (NecClient client in clientList)
             {
-                response.Clients.Add(client);              
+                response.clients.Add(client);
             }
             Send(response);
         }
@@ -162,7 +162,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(PacketResponse response, params NecClient[] clients)
         {
-            response.Clients.AddRange(clients);
+            response.clients.AddRange(clients);
             Send(response);
         }
 
@@ -172,7 +172,7 @@ namespace Necromancy.Server.Packet
         public void Send(ChatResponse response)
         {
             RecvChatNotifyMessage notifyMessage = new RecvChatNotifyMessage(response);
-            notifyMessage.Clients.AddRange(response.Recipients);
+            notifyMessage.clients.AddRange(response.recipients);
             Send(notifyMessage);
         }
 

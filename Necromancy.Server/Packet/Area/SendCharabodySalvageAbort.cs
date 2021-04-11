@@ -8,50 +8,50 @@ using Necromancy.Server.Logging;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_charabody_salvage_abort : ClientHandler
+    public class SendCharabodySalvageAbort : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_charabody_salvage_abort));
-        public send_charabody_salvage_abort(NecServer server) : base(server)
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharabodySalvageAbort));
+        public SendCharabodySalvageAbort(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_charabody_salvage_abort;
+        public override ushort id => (ushort) AreaPacketId.send_charabody_salvage_abort;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint targetId = packet.Data.ReadUInt32();
-            client.BodyCollection.TryGetValue(targetId, out NecClient necClient);
-            client.BodyCollection.Remove(targetId);
-            DeadBody deadBody = Server.Instances.GetInstance(targetId) as DeadBody;
+            uint targetId = packet.data.ReadUInt32();
+            client.bodyCollection.TryGetValue(targetId, out NecClient necClient);
+            client.bodyCollection.Remove(targetId);
+            DeadBody deadBody = server.instances.GetInstance(targetId) as DeadBody;
 
             RecvCharaBodySelfSalvageEnd recvCharaBodySelfSalvageEnd = new RecvCharaBodySelfSalvageEnd(0);
-            Router.Send(necClient, recvCharaBodySelfSalvageEnd.ToPacket());
+            router.Send(necClient, recvCharaBodySelfSalvageEnd.ToPacket());
 
 
-            deadBody.X = client.Character.X;
-            deadBody.Y = client.Character.Y;
-            deadBody.Z = client.Character.Z;
-            necClient.Character.X = client.Character.X;
-            necClient.Character.Y = client.Character.Y;
-            necClient.Character.Z = client.Character.Z;
+            deadBody.x = client.character.x;
+            deadBody.y = client.character.y;
+            deadBody.z = client.character.z;
+            necClient.character.x = client.character.x;
+            necClient.character.y = client.character.y;
+            necClient.character.z = client.character.z;
 
-            deadBody.MapId = client.Character.MapId;
-            client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+            deadBody.mapId = client.character.mapId;
+            client.map.deadBodies.Add(deadBody.instanceId, deadBody);
             RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-            if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+            if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
             {
-                Server.Router.Send(client.Map, cBodyData.ToPacket());
+                server.router.Send(client.map, cBodyData.ToPacket());
             }
 
             //must occur after the charaBody notify.
-            RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.InstanceId, 1);
-            Router.Send(client, recvCharaBodySalvageEnd.ToPacket());
+            RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.instanceId, 1);
+            router.Send(client, recvCharaBodySalvageEnd.ToPacket());
 
             //send your soul to all the other souls runnin around
-            RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(necClient.Character, necClient.Soul.Name);
-            foreach (NecClient soulStateClient in client.Map.ClientLookup.GetAll())
+            RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(necClient.character, necClient.soul.name);
+            foreach (NecClient soulStateClient in client.map.clientLookup.GetAll())
             {
-                if (soulStateClient.Character.State == CharacterState.SoulForm) Server.Router.Send(soulStateClient, cData.ToPacket());
+                if (soulStateClient.character.state == CharacterState.SoulForm) server.router.Send(soulStateClient, cData.ToPacket());
             }
 
         }

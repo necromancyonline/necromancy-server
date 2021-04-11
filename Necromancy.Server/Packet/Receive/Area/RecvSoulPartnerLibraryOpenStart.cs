@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_library_open_start : PacketResponse
+    public class RecvSoulPartnerLibraryOpenStart : PacketResponse
     {
-        public recv_soul_partner_library_open_start()
+        public RecvSoulPartnerLibraryOpenStart()
             : base((ushort) AreaPacketId.recv_soul_partner_library_open_start, ServerType.Area)
         {
         }

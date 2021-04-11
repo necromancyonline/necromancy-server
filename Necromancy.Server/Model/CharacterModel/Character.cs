@@ -13,62 +13,62 @@ namespace Necromancy.Server.Model
 {
     public class Character : IInstance
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(Character));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(Character));
 
-        public uint InstanceId { get; set; }
+        public uint instanceId { get; set; }
 
         //core attributes
-        public int Id { get; set; } //TODO at some point make a uint
-        public int AccountId { get; set; }
-        public int SoulId { get; set; }
-        public DateTime Created { get; set; }
-        public byte Slot { get; set; }
-        public string Name { get; set; }
-        public byte Level { get; set; }
+        public int id { get; set; } //TODO at some point make a uint
+        public int accountId { get; set; }
+        public int soulId { get; set; }
+        public DateTime created { get; set; }
+        public byte slot { get; set; }
+        public string name { get; set; }
+        public byte level { get; set; }
 
 
         //Basic traits
-        public uint RaceId { get; set; }
-        public uint SexId { get; set; }
-        public byte HairId { get; set; }
-        public byte HairColorId { get; set; }
-        public byte FaceId { get; set; }
-        public uint ClassId { get; set; }
-        public byte FaceArrangeId { get; set; }
-        public byte VoiceId { get; set; }
+        public uint raceId { get; set; }
+        public uint sexId { get; set; }
+        public byte hairId { get; set; }
+        public byte hairColorId { get; set; }
+        public byte faceId { get; set; }
+        public uint classId { get; set; }
+        public byte faceArrangeId { get; set; }
+        public byte voiceId { get; set; }
 
 
         //Stats
-        public ushort Strength { get; set; }
-        public ushort Vitality { get; set; }
-        public ushort Dexterity { get; set; }
-        public ushort Agility { get; set; }
-        public ushort Intelligence { get; set; }
-        public ushort Piety { get; set; }
-        public ushort Luck { get; set; }
-        public BaseStat Hp;
-        public BaseStat Mp;
-        public BaseStat Od;
-        public BaseStat Gp;
-        public BaseStat Weight;
-        public BaseStat Condition;
-        public short OdRecoveryRate { get; set; }
-        public short HpRecoveryRate { get; set; }
-        public short MpRecoveryRate { get; set; }
+        public ushort strength { get; set; }
+        public ushort vitality { get; set; }
+        public ushort dexterity { get; set; }
+        public ushort agility { get; set; }
+        public ushort intelligence { get; set; }
+        public ushort piety { get; set; }
+        public ushort luck { get; set; }
+        public BaseStat hp;
+        public BaseStat mp;
+        public BaseStat od;
+        public BaseStat gp;
+        public BaseStat weight;
+        public BaseStat condition;
+        public short odRecoveryRate { get; set; }
+        public short hpRecoveryRate { get; set; }
+        public short mpRecoveryRate { get; set; }
         public BattleParam battleParam { get; set; }
 
         //Progression
-        public ulong ExperienceCurrent { get; set; }
-        public uint SkillPoints { get; set; }
+        public ulong experienceCurrent { get; set; }
+        public uint skillPoints { get; set; }
 
 
         //Model
         public int activeModel { get; set; }
         public short modelScale { get; set; }
-        public bool HasDied { get; set; }
+        public bool hasDied { get; set; }
         public short deadType { get; set; }
-        public uint DeadBodyInstanceId { get; set; }
-        public CharacterState State { get; set; }
+        public uint deadBodyInstanceId { get; set; }
+        public CharacterState state { get; set; }
         public byte soulFormState { get; set; }
         public byte criminalState { get; set; }
         public int beginnerProtection { get; set; }
@@ -79,23 +79,23 @@ namespace Necromancy.Server.Model
         public int unionId { get; set; }
 
         //Movement Related
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-        public byte Heading { get; set; }
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+        public byte heading { get; set; }
         public byte battleAnim { get; set; }
         public byte battleNext { get; set; }
         public int charaPose { get; set; }
         public byte movementPose { get; set; }
         public byte movementAnim { get; set; }
-        public int StepCount { get; set; }
+        public int stepCount { get; set; }
         public bool takeover { get; set; }
 
 
         //Map Related
-        public int MapId { get; set; }
+        public int mapId { get; set; }
         public bool mapChange { get; set; }
-        public int Channel { get; set; }
+        public int channel { get; set; }
 
 
         //Event helpers
@@ -118,55 +118,55 @@ namespace Necromancy.Server.Model
 
         //Task
         public CharacterTask characterTask;
-        public bool _characterActive { get; private set; }
+        public bool isCharacterActive { get; private set; }
 
         //Inventory
-        public ItemLocationVerifier ItemLocationVerifier { get; } = new ItemLocationVerifier(); //TODO make item service
-        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems { get; } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
+        public ItemLocationVerifier itemLocationVerifier { get; } = new ItemLocationVerifier(); //TODO make item service
+        public Dictionary<ItemEquipSlots, ItemInstance> equippedItems { get; } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
 
         /// <summary>
         /// Used to hold the ids of the items in the auction search window temporarily.
         /// </summary>
-        public ulong[] AuctionSearchIds { get; set; } = new ulong[0];
+        public ulong[] auctionSearchIds { get; set; } = new ulong[0];
         public ItemLocation lootNotify { get; set; }
-        public ulong AdventureBagGold { get; set; }
-        public ulong[] TradeWindowSlot { get; set; }
+        public ulong adventureBagGold { get; set; }
+        public ulong[] tradeWindowSlot { get; set; }
 
         //Statues
-        public uint[] StatusEffects { get; set; }
+        public uint[] statusEffects { get; set; }
 
         public Character()
         {
-            InstanceId = InstanceGenerator.InvalidInstanceId;
-            Id = IDatabase.InvalidDatabaseId;
-            AccountId = IDatabase.InvalidDatabaseId;
-            SoulId = IDatabase.InvalidDatabaseId;
-            Created = DateTime.Now;
-            MapId = IDatabase.InvalidDatabaseId;
-            X = 0;
-            Y = 0;
-            Z = 0;
-            Slot = 0;
-            Name = null;
-            Level = 0;
+            instanceId = InstanceGenerator.InvalidInstanceId;
+            id = IDatabase.InvalidDatabaseId;
+            accountId = IDatabase.InvalidDatabaseId;
+            soulId = IDatabase.InvalidDatabaseId;
+            created = DateTime.Now;
+            mapId = IDatabase.InvalidDatabaseId;
+            x = 0;
+            y = 0;
+            z = 0;
+            slot = 0;
+            name = null;
+            level = 0;
             activeModel = 0;
             deadType = 0;
             modelScale = 100;
-            AdventureBagGold = 0;
-            ExperienceCurrent = 0;
-            SkillPoints = 0;
+            adventureBagGold = 0;
+            experienceCurrent = 0;
+            skillPoints = 0;
             eventSelectExecCode = -1;
-            Hp = new BaseStat(10, 10);
-            Mp = new BaseStat(450, 500);
-            Od = new BaseStat(150, 200);
-            Gp = new BaseStat(0, 0);
-            Weight = new BaseStat(456, 1234);
-            Condition = new BaseStat(140, 200);
+            hp = new BaseStat(10, 10);
+            mp = new BaseStat(450, 500);
+            od = new BaseStat(150, 200);
+            gp = new BaseStat(0, 0);
+            weight = new BaseStat(456, 1234);
+            condition = new BaseStat(140, 200);
             takeover = false;
             skillStartCast = 0;
             battleAnim = 0;
-            HasDied = false;
-            State = CharacterState.NormalForm;
+            hasDied = false;
+            state = CharacterState.NormalForm;
             helperText = true;
             helperTextBlacksmith = true;
             helperTextDonkey = true;
@@ -174,35 +174,35 @@ namespace Necromancy.Server.Model
             beginnerProtection = 1;
             currentEvent = null;
             secondInnAccess = false;
-            _characterActive = true;
+            isCharacterActive = true;
             secondInnAccess = false;
             partyId = 0;
-            InstanceId = 0;
-            Name = "";
-            ClassId = 0;
+            instanceId = 0;
+            name = "";
+            classId = 0;
             unionId = 0;
-            FaceArrangeId = 0;
-            VoiceId = 0;
+            faceArrangeId = 0;
+            voiceId = 0;
             criminalState = 0;
             helperTextAbdul = true;
             mapChange = false;
-            StepCount = 0;
+            stepCount = 0;
             lootNotify = new ItemLocation((ItemZoneType)0, 0, 0);
-            OdRecoveryRate = 0;
-            StatusEffects = new uint[4]
+            odRecoveryRate = 0;
+            statusEffects = new uint[4]
             {
-                (uint)Statuses.Attack_Aura405,
-                (uint)Statuses.Mosquito_Buzz200,
-                (uint)Statuses.Porkul_Cake_Whole,
-                (uint)Statuses._Chimera_Killer_Hot_Mode
+                (uint)Statuses.AttackAura405,
+                (uint)Statuses.MosquitoBuzz200,
+                (uint)Statuses.PorkulCakeWhole,
+                (uint)Statuses.ChimeraKillerHotMode
             };
-            TradeWindowSlot = new ulong[20];
+            tradeWindowSlot = new ulong[20];
         }
 
         public bool characterActive
         {
-            get => _characterActive;
-            set { _characterActive = value; }
+            get => isCharacterActive;
+            set { isCharacterActive = value; }
         }
 
         public void CreateTask(NecServer server, NecClient client)
@@ -213,40 +213,40 @@ namespace Necromancy.Server.Model
 
         public void AddStateBit(CharacterState characterState)
         {
-            State |= characterState;
+            state |= characterState;
         }
 
         public void ClearStateBit(CharacterState characterState)
         {
-            State &= ~characterState;
+            state &= ~characterState;
         }
 
         public bool IsStealthed()
         {
-            return State.HasFlag(CharacterState.StealthForm);
+            return state.HasFlag(CharacterState.StealthForm);
         }
 
         public void ConditionBonus()
         {
-            if (this.Condition.current > 180) this.OdRecoveryRate = 16; //+8 to all stats
-            else if (this.Condition.current > 140) this.OdRecoveryRate = 8; //+4 to all stats
-            else if (this.Condition.current > 40) this.OdRecoveryRate = 4; //+0 
-            else if (this.Condition.current > 20) this.OdRecoveryRate = 2; //-2 to all stats
-            else this.OdRecoveryRate = 2; // -4 to all stats //should be 1 recovery rate, but our 500ms tick reduces to 0
+            if (this.condition.current > 180) this.odRecoveryRate = 16; //+8 to all stats
+            else if (this.condition.current > 140) this.odRecoveryRate = 8; //+4 to all stats
+            else if (this.condition.current > 40) this.odRecoveryRate = 4; //+0
+            else if (this.condition.current > 20) this.odRecoveryRate = 2; //-2 to all stats
+            else this.odRecoveryRate = 2; // -4 to all stats //should be 1 recovery rate, but our 500ms tick reduces to 0
         }
         public void LoginCheckDead() //todo,  further analysis on character states and poses. eliminate this HP based overide
         {
-            if (this.Hp.current <= 0)
+            if (this.hp.current <= 0)
             {
-                this.HasDied = true;
-                this.State = CharacterState.SoulForm;
+                this.hasDied = true;
+                this.state = CharacterState.SoulForm;
                 this.deadType = 1;
             }
-            if (this.Hp.current == -1)
+            if (this.hp.current == -1)
             {
                 this.deadType = 4;
             }
-            else if (this.Hp.current < -1)
+            else if (this.hp.current < -1)
             {
                 this.deadType = 5;
             }

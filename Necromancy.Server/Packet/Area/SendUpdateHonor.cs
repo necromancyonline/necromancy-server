@@ -9,24 +9,24 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_update_honor : ClientHandler
+    public class SendUpdateHonor : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_update_honor));
-        public send_update_honor(NecServer server) : base(server)
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendUpdateHonor));
+        public SendUpdateHonor(NecServer server) : base(server)
         {
         }
-        
 
-        public override ushort Id => (ushort) AreaPacketId.send_update_honor;
+
+        public override ushort id => (ushort) AreaPacketId.send_update_honor;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int honorTitleID = packet.Data.ReadInt32();
-            Server.SettingRepository.Honor.TryGetValue(honorTitleID, out HonorSetting honorSetting);
+            int honorTitleId = packet.data.ReadInt32();
+            server.settingRepository.honor.TryGetValue(honorTitleId, out HonorSetting honorSetting);
             IBuffer res = BufferProvider.Provide();
 
-            Logger.Debug($"You hovered over a new title. {honorSetting.Name}  Great job!");
-            
+            _Logger.Debug($"You hovered over a new title. {honorSetting.name}  Great job!");
+
             //Update the database entry for Honor ID (readInt32)  from new 0 to .. not-new  1
 
         }

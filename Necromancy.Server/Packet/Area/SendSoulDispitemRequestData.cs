@@ -9,22 +9,22 @@ using Necromancy.Server.Systems.Item;
 using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
-{    public class send_soul_dispitem_request_data : ClientHandler
+{    public class SendSoulDispitemRequestData : ClientHandler
     {
         private NecServer _server;
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_soul_dispitem_request_data));
-        public send_soul_dispitem_request_data(NecServer server) : base(server)
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSoulDispitemRequestData));
+        public SendSoulDispitemRequestData(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort)AreaPacketId.send_soul_dispitem_request_data;
+        public override ushort id => (ushort)AreaPacketId.send_soul_dispitem_request_data;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_request_data_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_request_data_r, res, ServerType.Area);
 
 
 
@@ -42,18 +42,18 @@ namespace Necromancy.Server.Packet.Area
             //notify you of the soul item you got based on something above.
             IBuffer res19 = BufferProvider.Provide();
             res19.WriteInt32(Util.GetRandomNumber(62000001, 62000015)); //soul_dispitem.csv
-            Router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_notify_data, res19, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_notify_data, res19, ServerType.Area);
         }
 
         public void LoadSoulState (NecClient client)
         {
-            if (client.Character.Hp.current <=0)
+            if (client.character.hp.current <=0)
             {
-                client.Character.State |= Model.CharacterModel.CharacterState.SoulForm;
-                client.Character.HasDied = true;
+                client.character.state |= Model.CharacterModel.CharacterState.SoulForm;
+                client.character.hasDied = true;
             }
-            if (client.Character.Hp.current < -1) client.Character.State |= Model.CharacterModel.CharacterState.LostState;
-            if ((int)client.Account.State == 100) client.Character.State |= Model.CharacterModel.CharacterState.GameMaster;
+            if (client.character.hp.current < -1) client.character.state |= Model.CharacterModel.CharacterState.LostState;
+            if ((int)client.account.state == 100) client.character.state |= Model.CharacterModel.CharacterState.GameMaster;
 
         }
 
@@ -64,10 +64,10 @@ namespace Necromancy.Server.Packet.Area
             for (int i = 0; i < 1; i++)
             {
                 res.WriteInt32(10010101);/*novice monster hunter*/
-                res.WriteUInt32(client.Character.InstanceId);
-                res.WriteByte(1); // bool	New Title 0:Yes  1:No	
+                res.WriteUInt32(client.character.instanceId);
+                res.WriteByte(1); // bool	New Title 0:Yes  1:No
             }
-            Router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
         }
         //Moved to Map entry to fix null character issue
         public void LoadBattleStats(NecClient client)
@@ -76,20 +76,20 @@ namespace Necromancy.Server.Packet.Area
 
         public void LoadInventory(NecClient client, NecServer server)
         {
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             List<ItemInstance> ownedItems = itemService.LoadOwneditemInstances(server);
             foreach (ItemInstance itemInstance in ownedItems)
             {
-                if (itemInstance.Statuses.HasFlag(ItemStatuses.Unidentified))
+                if (itemInstance.statuses.HasFlag(ItemStatuses.Unidentified))
                 {
                     RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
-                    Router.Send(client, recvItemInstanceUnidentified.ToPacket());
-                    Logger.Debug($" Unidentified item : {itemInstance.Location.ZoneType}");
+                    router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                    _Logger.Debug($" Unidentified item : {itemInstance.location.zoneType}");
                 }
                 else
                 {
                     RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
-                    Router.Send(client, recvItemInstance.ToPacket());
+                    router.Send(client, recvItemInstance.ToPacket());
                 }
 
             }

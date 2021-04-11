@@ -4,7 +4,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class ItemInfoCsvReader : CsvReader<ItemInfoSetting>
     {
-        protected override int NumExpectedItems => 2;
+        protected override int numExpectedItems => 2;
 
         protected override ItemInfoSetting CreateInstance(string[] properties)
         {
@@ -15,8 +15,8 @@ namespace Necromancy.Server.Data.Setting
 
             return new ItemInfoSetting
             {
-                Id = id,
-                Name = properties[1]
+                id = id,
+                name = properties[1]
             };
         }
     }

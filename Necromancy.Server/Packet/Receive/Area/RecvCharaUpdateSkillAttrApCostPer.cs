@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_chara_update_skill_attr_ap_cost_per : PacketResponse
+    public class RecvCharaUpdateSkillAttrApCostPer : PacketResponse
     {
-        public recv_chara_update_skill_attr_ap_cost_per()
+        public RecvCharaUpdateSkillAttrApCostPer()
             : base((ushort) AreaPacketId.recv_chara_update_skill_attr_ap_cost_per, ServerType.Area)
         {
         }

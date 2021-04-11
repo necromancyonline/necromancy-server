@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort) AreaPacketId.recv_self_money_notify, ServerType.Area)
         {
             _currentGold = currentGold;
-            Clients.Add(client);
+            clients.Add(client);
         }
         protected override IBuffer ToBuffer()
         {

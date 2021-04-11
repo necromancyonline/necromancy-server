@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_battle_report_action_attack_long_start : PacketResponse
+    public class RecvBattleReportActionAttackLongStart : PacketResponse
     {
-        public recv_battle_report_action_attack_long_start()
+        public RecvBattleReportActionAttackLongStart()
             : base((ushort) AreaPacketId.recv_battle_report_action_attack_long_start, ServerType.Area)
         {
         }

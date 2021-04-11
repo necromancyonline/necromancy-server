@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_event_quest_list_begin2 : PacketResponse
+    public class RecvEventQuestListBegin2 : PacketResponse
     {
-        public recv_event_quest_list_begin2()
+        public RecvEventQuestListBegin2()
             : base((ushort) AreaPacketId.recv_event_quest_list_begin2, ServerType.Area)
         {
         }
@@ -94,7 +94,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
             }
             numEntries = 1;
-            res.WriteInt32(numEntries); //Less than 0x1  
+            res.WriteInt32(numEntries); //Less than 0x1
             for (int j = 0; j < numEntries; j++)
             {
                 res.WriteInt32(0);

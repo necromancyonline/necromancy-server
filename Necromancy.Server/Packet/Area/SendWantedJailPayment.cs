@@ -5,20 +5,20 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_wanted_jail_payment : ClientHandler
+    public class SendWantedJailPayment : ClientHandler
     {
-        public send_wanted_jail_payment(NecServer server) : base(server)
+        public SendWantedJailPayment(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_wanted_jail_payment;
+        public override ushort id => (ushort) AreaPacketId.send_wanted_jail_payment;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_wanted_jail_payment_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_wanted_jail_payment_r, res, ServerType.Area);
         }
     }
 }

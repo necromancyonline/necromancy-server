@@ -9,7 +9,7 @@ namespace Necromancy.Server.Data.Setting
         {
         }
 
-        protected override int NumExpectedItems => 10;
+        protected override int numExpectedItems => 10;
 
 
 
@@ -109,16 +109,16 @@ namespace Necromancy.Server.Data.Setting
 
             return new MapSymbolSetting
             {
-                 Id = id,
-                 Map = map,
-                 DisplayConditionflag = displayConditionflag,
-                 SplitMapNumber = splitMapNumber,
-                 SettingTypeFlag = dettingTypeFlag,
-                 SettingIdOrText = settingIdOrText,
-                 IconType = iconType,
-                 DisplayPositionX = displayPositionX,
-                 DisplayPositionY = displayPositionY,
-                 DisplayPositionZ = displayPositionZ,
+                 id = id,
+                 map = map,
+                 displayConditionflag = displayConditionflag,
+                 splitMapNumber = splitMapNumber,
+                 settingTypeFlag = dettingTypeFlag,
+                 settingIdOrText = settingIdOrText,
+                 iconType = iconType,
+                 displayPositionX = displayPositionX,
+                 displayPositionY = displayPositionY,
+                 displayPositionZ = displayPositionZ,
             };
         }
     }

@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_item_scroll_export_check_r : PacketResponse
+    public class RecvItemScrollExportCheckR : PacketResponse
     {
-        public recv_item_scroll_export_check_r()
+        public RecvItemScrollExportCheckR()
             : base((ushort) AreaPacketId.recv_item_scroll_export_check_r, ServerType.Area)
         {
         }

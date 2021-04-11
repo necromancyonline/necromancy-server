@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_class_advancement_notify_learn_all : PacketResponse
+    public class RecvClassAdvancementNotifyLearnAll : PacketResponse
     {
-        public recv_class_advancement_notify_learn_all()
+        public RecvClassAdvancementNotifyLearnAll()
             : base((ushort) AreaPacketId.recv_class_advancement_notify_learn_all, ServerType.Area)
         {
         }

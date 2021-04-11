@@ -5,13 +5,13 @@ namespace Necromancy.Server.Data.Setting
     /// </summary>
     public class ItemNecromancySetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        
-        public int Physical { get; set; }
-        public int Magical { get; set; }
-        public int Durability { get; set; }
-        public int Hardness { get; set; }
-        public float Weight { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+
+        public int physical { get; set; }
+        public int magical { get; set; }
+        public int durability { get; set; }
+        public int hardness { get; set; }
+        public float weight { get; set; }
     }
 }

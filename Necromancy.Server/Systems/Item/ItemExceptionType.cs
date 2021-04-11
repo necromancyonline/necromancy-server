@@ -6,7 +6,7 @@ namespace Necromancy.Server.Systems.Item
 {
     public enum ItemExceptionType
     {
-        OK = 0,
+        Ok = 0,
         Generic = 1,
         BagLocation = -201,         //Store location is incorrect
         Amount = -204,              //Item amount is incorrect

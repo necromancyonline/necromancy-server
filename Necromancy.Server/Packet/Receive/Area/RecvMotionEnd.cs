@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_motion_end : PacketResponse
+    public class RecvMotionEnd : PacketResponse
     {
-        public recv_motion_end()
+        public RecvMotionEnd()
             : base((ushort) AreaPacketId.recv_motion_end, ServerType.Area)
         {
         }
@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            //No Structure			
+            //No Structure
 
             return res;
         }

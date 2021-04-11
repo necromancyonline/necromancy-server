@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_class_advancement_notify_param : PacketResponse
+    public class RecvClassAdvancementNotifyParam : PacketResponse
     {
-        public recv_class_advancement_notify_param()
+        public RecvClassAdvancementNotifyParam()
             : base((ushort) AreaPacketId.recv_class_advancement_notify_param, ServerType.Area)
         {
         }
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             int numEntries = 0x2;
 
             res.WriteByte(0);
-            res.WriteInt32(numEntries);   // less than 0xA        
+            res.WriteInt32(numEntries);   // less than 0xA
             for (int j = 0; j < numEntries; j++)
             {
                 res.WriteInt32(0);

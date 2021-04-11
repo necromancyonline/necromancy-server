@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_forge_gem_shift_execute_r : PacketResponse
+    public class RecvForgeGemShiftExecuteR : PacketResponse
     {
-        public recv_forge_gem_shift_execute_r()
+        public RecvForgeGemShiftExecuteR()
             : base((ushort) AreaPacketId.recv_forge_gem_shift_execute_r, ServerType.Area)
         {
         }

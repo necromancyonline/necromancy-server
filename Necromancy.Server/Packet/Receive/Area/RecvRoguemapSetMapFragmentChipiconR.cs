@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_roguemap_set_map_fragment_chipicon_r : PacketResponse
+    public class RecvRoguemapSetMapFragmentChipiconR : PacketResponse
     {
-        public recv_roguemap_set_map_fragment_chipicon_r()
+        public RecvRoguemapSetMapFragmentChipiconR()
             : base((ushort) AreaPacketId.recv_roguemap_set_map_fragment_chipicon_r, ServerType.Area)
         {
         }

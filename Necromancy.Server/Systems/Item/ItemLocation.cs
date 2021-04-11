@@ -9,23 +9,23 @@ namespace Necromancy.Server.Systems.Item
         public static readonly ItemLocation InvalidLocation = new ItemLocation(ItemZoneType.InvalidZone,0,0);
         public ItemLocation(ItemZoneType zoneType, byte container, short slot)
         {
-            ZoneType = zoneType;
-            Container = container;
-            Slot = slot;
+            this.zoneType = zoneType;
+            this.container = container;
+            this.slot = slot;
             _hashcode = ((int) zoneType << 24) + (container << 16) + slot;
         }
 
-        public ItemZoneType ZoneType { get; }
-        public byte Container { get; }
-        public short Slot { get; }
+        public ItemZoneType zoneType { get; }
+        public byte container { get; }
+        public short slot { get; }
 
         private readonly int _hashcode;
 
         public bool Equals(ItemLocation other)
         {
-            if(other.ZoneType != ZoneType)  return false;
-            if(other.Container  != Container)   return false;
-            if(other.Slot != Slot)  return false;
+            if(other.zoneType != zoneType)  return false;
+            if(other.container  != container)   return false;
+            if(other.slot != slot)  return false;
             return true;
         }
 

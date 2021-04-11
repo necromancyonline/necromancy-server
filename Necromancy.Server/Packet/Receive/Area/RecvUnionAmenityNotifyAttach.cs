@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_union_amenity_notify_attach : PacketResponse
+    public class RecvUnionAmenityNotifyAttach : PacketResponse
     {
-        public recv_union_amenity_notify_attach()
+        public RecvUnionAmenityNotifyAttach()
             : base((ushort) AreaPacketId.recv_union_amenity_notify_attach, ServerType.Area)
         {
         }

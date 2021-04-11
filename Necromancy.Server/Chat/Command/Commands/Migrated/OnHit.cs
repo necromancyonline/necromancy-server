@@ -6,7 +6,7 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
-    //  battle report attack on hit. 
+    //  battle report attack on hit.
     public class OnHit : ServerChatCommand
     {
         public OnHit(NecServer server) : base(server)
@@ -17,11 +17,11 @@ namespace Necromancy.Server.Chat.Command.Commands
             List<ChatResponse> responses)
         {
             IBuffer res = BufferProvider.Provide();
-            Router.Send(client, (ushort) AreaPacketId.recv_battle_report_action_attack_onhit, res,
+            router.Send(client, (ushort) AreaPacketId.recv_battle_report_action_attack_onhit, res,
                 ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "OnHit";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "OnHit";
     }
 }

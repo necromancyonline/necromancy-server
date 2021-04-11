@@ -20,19 +20,19 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt16((short)_character.Strength); //base Phys Attack
-            res.WriteInt16((short)_character.Dexterity); //base Phys Def
-            res.WriteInt16((short)_character.Intelligence); //base Mag attack
-            res.WriteInt16((short)_character.Piety); //base Mag Def
+            res.WriteInt16((short)_character.strength); //base Phys Attack
+            res.WriteInt16((short)_character.dexterity); //base Phys Def
+            res.WriteInt16((short)_character.intelligence); //base Mag attack
+            res.WriteInt16((short)_character.piety); //base Mag Def
 
-            res.WriteInt16((short)_character.Luck); //Ranged physical attack
+            res.WriteInt16((short)_character.luck); //Ranged physical attack
 
-            res.WriteInt16(_battleParam.PlusPhysicalAttack); //Equip Bonus Phys attack
-            res.WriteInt16(_battleParam.PlusPhysicalDefence); //Equip bonus Phys Def
-            res.WriteInt16(_battleParam.PlusMagicalAttack); //Equip Bonus Mag Attack
-            res.WriteInt16(_battleParam.PlusMagicalDefence); //Equip bonus Mag Def
+            res.WriteInt16(_battleParam.plusPhysicalAttack); //Equip Bonus Phys attack
+            res.WriteInt16(_battleParam.plusPhysicalDefence); //Equip bonus Phys Def
+            res.WriteInt16(_battleParam.plusMagicalAttack); //Equip Bonus Mag Attack
+            res.WriteInt16(_battleParam.plusMagicalDefence); //Equip bonus Mag Def
 
-            res.WriteInt16(_battleParam.PlusRangedAttack); //Ranged physical attack
+            res.WriteInt16(_battleParam.plusRangedAttack); //Ranged physical attack
             return res;
         }
     }

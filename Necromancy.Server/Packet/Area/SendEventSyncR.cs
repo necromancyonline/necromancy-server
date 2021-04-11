@@ -6,14 +6,14 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_event_sync_r : ClientHandler
+    public class SendEventSyncR : ClientHandler
     {
-        public send_event_sync_r(NecServer server) : base(server)
+        public SendEventSyncR(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort)AreaPacketId.send_event_sync_r;
+        public override ushort id => (ushort)AreaPacketId.send_event_sync_r;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -23,7 +23,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res9 = BufferProvider.Provide();
             res9.WriteByte(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res9, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_end, res9, ServerType.Area);
         }
 
 

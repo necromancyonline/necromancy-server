@@ -19,8 +19,8 @@ namespace Necromancy.Server.Packet.Receive.Auth
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteCString(_necSetting.DataMsgIpAddress);
-            res.WriteInt32(_necSetting.MsgPort);
+            res.WriteCString(_necSetting.dataMsgIpAddress);
+            res.WriteInt32(_necSetting.msgPort);
             return res;
         }
     }

@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_quest_get_story_quest_works : ClientHandler
+    public class SendQuestGetStoryQuestWorks : ClientHandler
     {
-        public send_quest_get_story_quest_works(NecServer server) : base(server)
+        public SendQuestGetStoryQuestWorks(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_quest_get_story_quest_works;
+        public override ushort id => (ushort) AreaPacketId.send_quest_get_story_quest_works;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -75,7 +75,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteFixedString("Get some mobs to kill you.", 385); //Quest description
             res.WriteInt64(2036854775807); //Time left #; maybe unix? Default on screenshots seem to be 6h
-            res.WriteByte(0); 
+            res.WriteByte(0);
             res.WriteFixedString("Go to map 1001902 and have the mobs kill you.", 385); //Brief quest objective
 
             for (int i = 0; i < 5; i++)
@@ -103,7 +103,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt16(0);//new
             res.WriteInt32(0);//new
 
-            Router.Send(client, (ushort) AreaPacketId.recv_quest_get_story_quest_works_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_quest_get_story_quest_works_r, res, ServerType.Area);
 
             //SendQuestDisplay(client);
         }
@@ -113,7 +113,7 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(0);
 
-            Router.Send(client, (ushort)AreaPacketId.recv_quest_display_r, res2, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_quest_display_r, res2, ServerType.Area);
 
 
         }

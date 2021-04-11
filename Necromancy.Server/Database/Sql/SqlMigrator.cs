@@ -12,11 +12,11 @@ namespace Necromancy.Server.Database.Sql
     /// </summary>
     public class SqlMigrator
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(SqlMigrator));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(SqlMigrator));
 
         /// <summary>The SQL database to apply migrations to.</summary>
         private readonly IDatabase _database;
-        
+
         /// <param name="database">The SQL database to apply migrations to.</param>
         public SqlMigrator(IDatabase database)
         {
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Database.Sql
         /// </remarks>
         public void Migrate(string migrationsFolder)
         {
-            long initialVersion = _database.Version, versionNumber = 0;
+            long initialVersion = _database.version, versionNumber = 0;
             var versionFileDict = new SortedList<long, string>();
             /* Prepare migration files, ordered by version number. */
             foreach (var f in Directory.GetFiles(migrationsFolder, "*.sql"))
@@ -57,9 +57,9 @@ namespace Necromancy.Server.Database.Sql
             }
 
             ApplyMigrations(versionFileDict);
-            if ((versionNumber = _database.Version) > initialVersion)
+            if ((versionNumber = _database.version) > initialVersion)
             {
-                Logger.Debug($"Database db.sqlite version is updated to {versionNumber}.");
+                _Logger.Debug($"Database db.sqlite version is updated to {versionNumber}.");
             }
         }
 
@@ -73,7 +73,7 @@ namespace Necromancy.Server.Database.Sql
         /// </remarks>
         private void ApplyMigrations(IDictionary<long, string> versionFileDict)
         {
-            long initialVersion = _database.Version, versionNumber = 0;
+            long initialVersion = _database.version, versionNumber = 0;
             ScriptRunner scriptRunner = new ScriptRunner(_database);
             /* Assert: All entries' version is above current DB version. */
             foreach (KeyValuePair<long, string> kvp in versionFileDict)
@@ -86,7 +86,7 @@ namespace Necromancy.Server.Database.Sql
                 }
 
                 scriptRunner.Run(kvp.Value);
-                _database.Version = versionNumber = kvp.Key;
+                _database.version = versionNumber = kvp.Key;
             }
         }
 
@@ -95,8 +95,8 @@ namespace Necromancy.Server.Database.Sql
         /// </summary>
         private void LogException(Exception exception)
         {
-            Logger.Error(exception.Message);
-            Logger.Exception(exception);
+            _Logger.Error(exception.Message);
+            _Logger.Exception(exception);
             throw exception;
         }
     }

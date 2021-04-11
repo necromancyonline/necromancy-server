@@ -5,18 +5,18 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_refusallist_remove_user : ClientHandler
+    public class SendRefusallistRemoveUser : ClientHandler
     {
-        public send_refusallist_remove_user(NecServer server) : base(server)
+        public SendRefusallistRemoveUser(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_refusallist_remove_user;
+        public override ushort id => (ushort) AreaPacketId.send_refusallist_remove_user;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
-            int targetSoulId = packet.Data.ReadInt32();
+            int targetSoulId = packet.data.ReadInt32();
 
             /*
             REFUSAL_LIST	0	%s is added to your Block List
@@ -35,10 +35,10 @@ namespace Necromancy.Server.Packet.Area
             REFUSAL_LIST	GENERIC	Unable to add to Block List
             */
 
-            res.WriteInt32(1); //Result 
+            res.WriteInt32(1); //Result
             res.WriteInt32(targetSoulId); //ref)soulId
 
-            Router.Send(client, (ushort) AreaPacketId.recv_refusallist_remove_user_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_refusallist_remove_user_r, res, ServerType.Area);
         }
     }
 }

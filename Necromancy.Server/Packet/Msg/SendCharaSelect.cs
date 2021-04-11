@@ -8,54 +8,54 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_chara_select : ClientHandler
+    public class SendCharaSelect : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_chara_select));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaSelect));
 
-        public send_chara_select(NecServer server) : base(server)
+        public SendCharaSelect(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_chara_select;
+        public override ushort id => (ushort) MsgPacketId.send_chara_select;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int characterId = packet.Data.ReadInt32();
-            Character character = Database.SelectCharacterById(characterId);
+            int characterId = packet.data.ReadInt32();
+            Character character = database.SelectCharacterById(characterId);
 
             if (character == null)
             {
-                Logger.Error(client, $"No character for CharacterId: {characterId}");
+                _Logger.Error(client, $"No character for CharacterId: {characterId}");
                 client.Close();
                 return;
             }
-            Server.Instances.AssignInstance(character); 
+            server.instances.AssignInstance(character);
 
-            client.Character = character;
-            client.Character.criminalState = client.Soul.CriminalLevel;
+            client.character = character;
+            client.character.criminalState = client.soul.criminalLevel;
             client.UpdateIdentity();
-            client.Character.CreateTask(Server, client);
+            client.character.CreateTask(server, client);
 
-            Logger.Debug(client, $"Selected Character: {character.Name}");
+            _Logger.Debug(client, $"Selected Character: {character.name}");
 
             IBuffer res3 = BufferProvider.Provide();
             res3.WriteInt32(0); //ERR-CHARSELECT error check
-            res3.WriteUInt32(client.Character.InstanceId);
+            res3.WriteUInt32(client.character.instanceId);
 
-            //sub_4E4210_2341 
-            res3.WriteInt32(client.Character.MapId);
-            res3.WriteInt32(client.Character.MapId);
-            res3.WriteInt32(client.Character.MapId);
+            //sub_4E4210_2341
+            res3.WriteInt32(client.character.mapId);
+            res3.WriteInt32(client.character.mapId);
+            res3.WriteInt32(client.character.mapId);
             res3.WriteByte(0);
             res3.WriteByte(0); //Bool
-            res3.WriteFixedString(Settings.DataAreaIpAddress, 0x41); //IP
-            res3.WriteUInt16(Settings.AreaPort); //Port
+            res3.WriteFixedString(settings.dataAreaIpAddress, 0x41); //IP
+            res3.WriteUInt16(settings.areaPort); //Port
 
-            res3.WriteFloat(client.Character.X);
-            res3.WriteFloat(client.Character.Y);
-            res3.WriteFloat(client.Character.Z);
-            res3.WriteByte(client.Character.Heading);
-            Router.Send(client, (ushort) MsgPacketId.recv_chara_select_r, res3, ServerType.Msg);
+            res3.WriteFloat(client.character.x);
+            res3.WriteFloat(client.character.y);
+            res3.WriteFloat(client.character.z);
+            res3.WriteByte(client.character.heading);
+            router.Send(client, (ushort) MsgPacketId.recv_chara_select_r, res3, ServerType.Msg);
 
             /*
              ERR_CHARSELECT	GENERIC	Failed to select a character (CODE:<errcode>)
@@ -66,11 +66,11 @@ namespace Necromancy.Server.Packet.Msg
 
             //Logic to support your dead body //Make this static.  need a predictable deadbody instance ID to support disconnect/reconnet
             DeadBody deadBody = new DeadBody();
-            deadBody.Id = character.Id;
-            Server.Instances.AssignInstance(deadBody);
-            character.DeadBodyInstanceId = deadBody.InstanceId;
-            deadBody.CharacterInstanceId = character.InstanceId;
-            Logger.Debug($"Dead Body Instance ID {deadBody.InstanceId}   |  Character Instance ID {character.InstanceId}");
+            deadBody.id = character.id;
+            server.instances.AssignInstance(deadBody);
+            character.deadBodyInstanceId = deadBody.instanceId;
+            deadBody.characterInstanceId = character.instanceId;
+            _Logger.Debug($"Dead Body Instance ID {deadBody.instanceId}   |  Character Instance ID {character.instanceId}");
 
         }
     }

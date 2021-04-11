@@ -6,18 +6,18 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_buff_shop_buy : ClientHandler
+    public class SendBuffShopBuy : ClientHandler
     {
-        public send_buff_shop_buy(NecServer server) : base(server)
+        public SendBuffShopBuy(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_buff_shop_buy;
+        public override ushort id => (ushort) AreaPacketId.send_buff_shop_buy;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             RecvBuffShopBuyR buffShopBuy = new RecvBuffShopBuyR();
-            Router.Send(buffShopBuy, client);
+            router.Send(buffShopBuy, client);
         }
     }
 }

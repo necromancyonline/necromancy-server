@@ -6,31 +6,31 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_party_leave : ClientHandler
+    public class SendPartyLeave : ClientHandler
     {
-        public send_party_leave(NecServer server) : base(server)
+        public SendPartyLeave(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_party_leave;
+        public override ushort id => (ushort) AreaPacketId.send_party_leave;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            Party myParty = Server.Instances.GetInstance(client.Character.partyId) as Party;
-            
+            Party myParty = server.instances.GetInstance(client.character.partyId) as Party;
+
 
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(client.Character.InstanceId);
+            res.WriteUInt32(client.character.instanceId);
 
-            Router.Send(client, (ushort) AreaPacketId.recv_party_leave_r, res, ServerType.Area);
-            Router.Send(client, (ushort) AreaPacketId.recv_chara_notify_party_leave, res, ServerType.Area);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_notify_party_leave, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_party_leave_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_chara_notify_party_leave, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_charabody_notify_party_leave, res, ServerType.Area);
 
             res = BufferProvider.Provide();
             res.WriteInt32(0); //Remove Reason
-            res.WriteUInt32(client.Character.InstanceId); //Instance ID
-            Router.Send(myParty.PartyMembers, (ushort)MsgPacketId.recv_party_notify_remove_member, res, ServerType.Msg);
+            res.WriteUInt32(client.character.instanceId); //Instance ID
+            router.Send(myParty.partyMembers, (ushort)MsgPacketId.recv_party_notify_remove_member, res, ServerType.Msg);
 
             /*
             PARTY_REMOVE	0	%s has left the party
@@ -41,14 +41,14 @@ namespace Necromancy.Server.Packet.Area
             myParty.Leave(client);
 
             //if the leader leaves appoint a new leader
-            if (myParty.PartyLeaderId == client.Character.InstanceId)
+            if (myParty.partyLeaderId == client.character.instanceId)
             {
-                uint newLeaderInstanceId = myParty.PartyMembers.ToArray()[0].Character.InstanceId;
+                uint newLeaderInstanceId = myParty.partyMembers.ToArray()[0].character.instanceId;
                 res = BufferProvider.Provide();
                 res.WriteUInt32(newLeaderInstanceId); //must be newLeaderInstanceId
-                Router.Send(myParty.PartyMembers, (ushort)MsgPacketId.recv_party_notify_change_leader, res, ServerType.Msg);
+                router.Send(myParty.partyMembers, (ushort)MsgPacketId.recv_party_notify_change_leader, res, ServerType.Msg);
 
-                myParty.PartyLeaderId = newLeaderInstanceId;
+                myParty.partyLeaderId = newLeaderInstanceId;
             }
         }
     }

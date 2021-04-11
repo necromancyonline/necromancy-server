@@ -17,8 +17,8 @@ namespace Necromancy.Server.Packet.Receive.Msg
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_client.Character.InstanceId); 
-            res.WriteInt32(_client.Character.Level); //Level Limit
+            res.WriteUInt32(_client.character.instanceId);
+            res.WriteInt32(_client.character.level); //Level Limit
             return res;
         }
     }

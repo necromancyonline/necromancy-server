@@ -5,17 +5,17 @@ namespace Necromancy.Server.Model
 {
     public class SkillTreeItem
     {
-        public int Id { get; set; }
-        public int SkillId { get; set; }
-        public int CharId { get; set; }
-        public int Level { get; set; }
+        public int id { get; set; }
+        public int skillId { get; set; }
+        public int charId { get; set; }
+        public int level { get; set; }
 
         public SkillTreeItem()
         {
-            Id = -1;
-            SkillId = -1;
-            CharId = -1;
-            Level = -1;
+            id = -1;
+            skillId = -1;
+            charId = -1;
+            level = -1;
         }
 
     }

@@ -5,23 +5,23 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_party_request_draw_item_list : ClientHandler
+    public class SendPartyRequestDrawItemList : ClientHandler
     {
-        public send_party_request_draw_item_list(NecServer server) : base(server)
+        public SendPartyRequestDrawItemList(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_party_request_draw_item_list;
+        public override ushort id => (ushort) AreaPacketId.send_party_request_draw_item_list;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
 
-            
+
             res.WriteInt32(0);//Error?
             res.WriteInt32(0);//Map ID?
-            res.WriteFixedString(Settings.DataAreaIpAddress, 65);
-            res.WriteUInt16(Settings.AreaPort);
+            res.WriteFixedString(settings.dataAreaIpAddress, 65);
+            res.WriteUInt16(settings.areaPort);
 
             //sub_484420
             res.WriteFloat(1);

@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_nurture_update_count : PacketResponse
+    public class RecvSoulPartnerNurtureUpdateCount : PacketResponse
     {
-        public recv_soul_partner_nurture_update_count()
+        public RecvSoulPartnerNurtureUpdateCount()
             : base((ushort) AreaPacketId.recv_soul_partner_nurture_update_count, ServerType.Area)
         {
         }

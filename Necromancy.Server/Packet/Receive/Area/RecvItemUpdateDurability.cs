@@ -13,13 +13,13 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort) AreaPacketId.recv_item_update_durability, ServerType.Area)
         {
             _durabilityChangedItem = durabilityChangedItem;
-            Clients.Add(client);
+            clients.Add(client);
         }
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt64(_durabilityChangedItem.InstanceID);
-            res.WriteInt32(_durabilityChangedItem.CurrentDurability);
+            res.WriteUInt64(_durabilityChangedItem.instanceId);
+            res.WriteInt32(_durabilityChangedItem.currentDurability);
             return res;
         }
     }

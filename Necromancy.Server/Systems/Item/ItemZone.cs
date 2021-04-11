@@ -6,96 +6,96 @@ namespace Necromancy.Server.Systems.Item
 {
     class ItemZone
     {
-        public const int NO_CONTAINERS_WITH_SPACE = -1;
-        public Container[] _containers { get; }
-        public int MaxContainers { get; }
-        public int MaxContainerSize { get; }
-        public int Size { get; private set; }
-        public int Count
+        public const int NoContainersWithSpace = -1;
+        public Container[] containers { get; }
+        public int maxContainers { get; }
+        public int maxContainerSize { get; }
+        public int size { get; private set; }
+        public int count
         {
             get
             {
                 int count = 0;
-                foreach(Container container in _containers)
+                foreach(Container container in containers)
                 {
                     if(container != null)
-                    count += container.Count;
+                    count += container.count;
                 }
                 return count;
             }
         }
 
-        public int TotalFreeSpace
+        public int totalFreeSpace
         {
             get
             {
-                return Size - Count;
+                return size - count;
             }
         }
 
-        public bool IsFull
+        public bool isFull
         {
             get
             {
-                foreach(Container container in _containers)
+                foreach(Container container in containers)
                 {
-                    if (container != null && !container.IsFull) return false;
+                    if (container != null && !container.isFull) return false;
                 }
                 return true;
             }
         }
-        
+
         public ItemZone(int maxContainers, int maxContainerSize)
         {
-            MaxContainers = maxContainers;
-            MaxContainerSize = maxContainerSize;
-            _containers = new Container[MaxContainers];
+            this.maxContainers = maxContainers;
+            this.maxContainerSize = maxContainerSize;
+            containers = new Container[this.maxContainers];
         }
 
-        public int NextContainerWithSpace
+        public int nextContainerWithSpace
         {
             get
             {
-                for (int i = 0; i < MaxContainers; i++)
+                for (int i = 0; i < maxContainers; i++)
                 {
-                    if (_containers[i] != null && _containers[i].NextOpenSlot != Container.NO_OPEN_SLOTS) return i;
+                    if (containers[i] != null && containers[i].nextOpenSlot != Container.NoOpenSlots) return i;
                 }
-                return NO_CONTAINERS_WITH_SPACE;
+                return NoContainersWithSpace;
             }
         }
         public void PutContainer(int index, int size)
         {
-            _containers[index] = new Container(size);
-            Size += size;
+            containers[index] = new Container(size);
+            this.size += size;
         }
         public Container GetContainer(int index)
         {
-            return _containers[index];
+            return containers[index];
         }
         public void RemoveContainer(int index)
         {
-            Size -= _containers[index].Size;
-            _containers[index] = null;
+            size -= containers[index].size;
+            containers[index] = null;
         }
         public bool HasContainer(int index)
         {
-            return _containers[index] != null;
+            return containers[index] != null;
         }
 
         public ItemLocation[] GetNextXFreeSpaces(ItemZoneType itemZoneType, int amount)
         {
             ItemLocation[] freeSpaces = new ItemLocation[amount];
             int index = 0;
-            for (int i = 0; i < MaxContainers; i++)
+            for (int i = 0; i < maxContainers; i++)
             {
-                if (_containers[i] != null && !_containers[i].IsFull)
+                if (containers[i] != null && !containers[i].isFull)
                 {
-                    int nextOpenSlot = _containers[i].NextOpenSlot;
+                    int nextOpenSlot = containers[i].nextOpenSlot;
                     while (index < amount)
                     {
                         freeSpaces[index] = new ItemLocation(itemZoneType, (byte)i, (short)nextOpenSlot);
                         index++;
-                        nextOpenSlot = _containers[i].GetNextOpenSlot(nextOpenSlot);
+                        nextOpenSlot = containers[i].GetNextOpenSlot(nextOpenSlot);
                     }
                 }
             }

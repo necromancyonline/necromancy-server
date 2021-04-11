@@ -17,15 +17,15 @@ namespace Necromancy.Server.Packet.Receive.Msg
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_client.Character.partyId); //Party ID?
-            res.WriteUInt32(_client.Character.InstanceId);
-            res.WriteFixedString($"{_client.Soul.Name}", 0x31);
-            res.WriteFixedString($"{_client.Character.Name}", 0x5B);
-            res.WriteUInt32(_client.Character.ClassId);
-            res.WriteByte(_client.Character.Level);
-            res.WriteByte(_client.Soul.Level);
-            res.WriteByte((byte)(_client.Character.criminalState+5)); //Criminal Status
-            res.WriteByte(0); //Beginner Protection (bool) 
+            res.WriteUInt32(_client.character.partyId); //Party ID?
+            res.WriteUInt32(_client.character.instanceId);
+            res.WriteFixedString($"{_client.soul.name}", 0x31);
+            res.WriteFixedString($"{_client.character.name}", 0x5B);
+            res.WriteUInt32(_client.character.classId);
+            res.WriteByte(_client.character.level);
+            res.WriteByte(_client.soul.level);
+            res.WriteByte((byte)(_client.character.criminalState+5)); //Criminal Status
+            res.WriteByte(0); //Beginner Protection (bool)
             res.WriteByte(3); //Membership Status
             res.WriteByte(0);
             return res;

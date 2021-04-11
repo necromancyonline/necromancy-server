@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_chara_update_job_attr_skill_casttime_per : PacketResponse
+    public class RecvCharaUpdateJobAttrSkillCasttimePer : PacketResponse
     {
-        public recv_chara_update_job_attr_skill_casttime_per()
+        public RecvCharaUpdateJobAttrSkillCasttimePer()
             : base((ushort) AreaPacketId.recv_chara_update_job_attr_skill_casttime_per, ServerType.Area)
         {
         }

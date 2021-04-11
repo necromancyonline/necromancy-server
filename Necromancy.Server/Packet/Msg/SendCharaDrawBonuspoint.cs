@@ -7,20 +7,20 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_chara_draw_bonuspoint : ClientHandler
+    public class SendCharaDrawBonuspoint : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_chara_draw_bonuspoint));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaDrawBonuspoint));
 
-        public send_chara_draw_bonuspoint(NecServer server) : base(server)
+        public SendCharaDrawBonuspoint(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_chara_draw_bonuspoint;
+        public override ushort id => (ushort) MsgPacketId.send_chara_draw_bonuspoint;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint unknown = packet.Data.ReadByte();
-            Logger.Info($"Unknown: {unknown}");
+            uint unknown = packet.data.ReadByte();
+            _Logger.Info($"Unknown: {unknown}");
 
             byte bonusPoints;
 
@@ -49,7 +49,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
             res.WriteByte(bonusPoints); // Number of points
 
-            Router.Send(client, (ushort) MsgPacketId.recv_chara_draw_bonuspoint_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_chara_draw_bonuspoint_r, res, ServerType.Msg);
         }
     }
 }

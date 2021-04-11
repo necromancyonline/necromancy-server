@@ -19,11 +19,11 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_client.Character.InstanceId + 100); //dragon statue objectId
+            res.WriteUInt32(_client.character.instanceId + 100); //dragon statue objectId
 
-            res.WriteFloat(_client.Character.X); // x
-            res.WriteFloat(_client.Character.Y); //y
-            res.WriteFloat(_client.Character.Z); //z
+            res.WriteFloat(_client.character.x); // x
+            res.WriteFloat(_client.character.y); //y
+            res.WriteFloat(_client.character.z); //z
 
             res.WriteByte(_activate); //on / off
             return res;

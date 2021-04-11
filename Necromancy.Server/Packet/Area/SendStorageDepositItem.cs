@@ -11,41 +11,41 @@ using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_storage_deposit_item : ClientHandler
+    public class SendStorageDepositItem : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_storage_deposit_item));
-        public send_storage_deposit_item(NecServer server) : base(server) { }
-        public override ushort Id => (ushort)AreaPacketId.send_storage_deposit_item;
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendStorageDepositItem));
+        public SendStorageDepositItem(NecServer server) : base(server) { }
+        public override ushort id => (ushort)AreaPacketId.send_storage_deposit_item;
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType fromZone = (ItemZoneType) packet.Data.ReadByte();
-            byte fromBag = packet.Data.ReadByte();
-            short fromSlot = packet.Data.ReadInt16();
-            ItemZoneType toZone = (ItemZoneType) packet.Data.ReadByte();
-            byte toBag = packet.Data.ReadByte();
-            short toSlot = packet.Data.ReadInt16();
-            byte quantity = packet.Data.ReadByte();
+            ItemZoneType fromZone = (ItemZoneType) packet.data.ReadByte();
+            byte fromBag = packet.data.ReadByte();
+            short fromSlot = packet.data.ReadInt16();
+            ItemZoneType toZone = (ItemZoneType) packet.data.ReadByte();
+            byte toBag = packet.data.ReadByte();
+            short toSlot = packet.data.ReadInt16();
+            byte quantity = packet.data.ReadByte();
 
-            Logger.Debug($"fromStoreType byte [{fromZone}] toStoreType byte [{toZone}]");
-            Logger.Debug($"fromBagId byte [{fromBag}] toBagId byte [{toBag}]");
-            Logger.Debug($"fromSlot byte [{fromSlot}] toSlot [{toSlot}]");
-            Logger.Debug($"itemCount [{quantity}]");
+            _Logger.Debug($"fromStoreType byte [{fromZone}] toStoreType byte [{toZone}]");
+            _Logger.Debug($"fromBagId byte [{fromBag}] toBagId byte [{toBag}]");
+            _Logger.Debug($"fromSlot byte [{fromSlot}] toSlot [{toSlot}]");
+            _Logger.Debug($"itemCount [{quantity}]");
 
             ItemLocation fromLoc = new ItemLocation(fromZone, fromBag, fromSlot);
             ItemLocation toLoc = new ItemLocation(toZone, toBag, toSlot);
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
 
             try
             {
                 MoveResult moveResult = itemService.Move(fromLoc, toLoc, quantity);
                 List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
-                Router.Send(client, responses);
+                router.Send(client, responses);
             }
-            catch (ItemException e) { error = (int) e.Type; }
+            catch (ItemException e) { error = (int) e.type; }
 
             RecvStorageDepositItem2 recvStorageDepositItem2 = new RecvStorageDepositItem2(client, error);
-            Router.Send(recvStorageDepositItem2);
+            router.Send(recvStorageDepositItem2);
         }
     }
 }

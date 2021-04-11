@@ -2,21 +2,21 @@ namespace Necromancy.Server.Data.Setting
 {
     public class ModelCommonSetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public int Radius { get; set; }
-        public int Height { get; set; }
-        public int CrouchHeight { get; set; }
-        public int NameHeight { get; set; }
-        public ModelAtrSetting Atr { get; set; }
-        public int ZRadiusOffset { get; set; }
-        public int Effect { get; set; }
-        public int Active { get; set; }
+        public int id { get; set; }
+        public int radius { get; set; }
+        public int height { get; set; }
+        public int crouchHeight { get; set; }
+        public int nameHeight { get; set; }
+        public ModelAtrSetting atr { get; set; }
+        public int zRadiusOffset { get; set; }
+        public int effect { get; set; }
+        public int active { get; set; }
 
         /// <summary>
         /// Developer Comment
         /// </summary>
-        public string Remarks { get; set; }
+        public string remarks { get; set; }
 
-        public MonsterSetting Monster { get; set; }
+        public MonsterSetting monster { get; set; }
     }
 }

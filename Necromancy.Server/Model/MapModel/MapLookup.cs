@@ -5,7 +5,7 @@ namespace Necromancy.Server.Model
 {
     public class MapLookup
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(MapLookup));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(MapLookup));
 
         private readonly Dictionary<int, Map> _maps;
 
@@ -37,7 +37,7 @@ namespace Necromancy.Server.Model
             {
                 if (!_maps.ContainsKey(mapId))
                 {
-                    Logger.Error($"MapId: {mapId} not found");
+                    _Logger.Error($"MapId: {mapId} not found");
                     return null;
                 }
 
@@ -54,7 +54,7 @@ namespace Necromancy.Server.Model
             {
                 if (!_maps.ContainsKey(mapId))
                 {
-                    Logger.Error($"MapId: {mapId} not found");
+                    _Logger.Error($"MapId: {mapId} not found");
                     map = null;
                     return false;
                 }
@@ -77,12 +77,12 @@ namespace Necromancy.Server.Model
 
             lock (_lock)
             {
-                if (_maps.ContainsKey(map.Id))
+                if (_maps.ContainsKey(map.id))
                 {
                     return;
                 }
 
-                _maps.Add(map.Id, map);
+                _maps.Add(map.id, map);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Necromancy.Server.Model
 
             lock (_lock)
             {
-                _maps.Add(map.Id, map);
+                _maps.Add(map.id, map);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Necromancy.Server.Model
         {
             lock (_lock)
             {
-                return _maps.Remove(map.Id);
+                return _maps.Remove(map.id);
             }
         }
     }

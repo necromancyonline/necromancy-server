@@ -7,11 +7,11 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class ShowCommand : ConsoleCommand
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(ShowCommand));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(ShowCommand));
 
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
-            if (parameter.Arguments.Contains("w"))
+            if (parameter.arguments.Contains("w"))
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(Environment.NewLine);
@@ -33,11 +33,11 @@ namespace Necromancy.Cli.Command.Commands
                 sb.Append(Environment.NewLine);
                 sb.Append("ALL NECESSARY SERVICING, REPAIR OR CORRECTION.");
                 sb.Append(Environment.NewLine);
-                Logger.Info(sb.ToString());
+                _Logger.Info(sb.ToString());
                 return CommandResultType.Completed;
             }
 
-            if (parameter.Arguments.Contains("c"))
+            if (parameter.arguments.Contains("c"))
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(Environment.NewLine);
@@ -86,16 +86,16 @@ namespace Necromancy.Cli.Command.Commands
                 sb.Append(Environment.NewLine);
                 sb.Append("makes it unnecessary.");
                 sb.Append(Environment.NewLine);
-                Logger.Info(sb.ToString());
+                _Logger.Info(sb.ToString());
                 return CommandResultType.Completed;
             }
 
             return CommandResultType.Continue;
         }
 
-        public override string Key => "show";
+        public override string key => "show";
 
-        public override string Description =>
+        public override string description =>
             $"Shows Copyright. Ex.:{Environment.NewLine}show w{Environment.NewLine}show c";
     }
 }

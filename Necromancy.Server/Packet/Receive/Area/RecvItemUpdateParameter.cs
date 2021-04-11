@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_item_update_parameter : PacketResponse
+    public class RecvItemUpdateParameter : PacketResponse
     {
-        public recv_item_update_parameter()
+        public RecvItemUpdateParameter()
             : base((ushort) AreaPacketId.recv_item_update_parameter, ServerType.Area)
         {
         }

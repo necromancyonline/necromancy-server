@@ -19,36 +19,36 @@ namespace Necromancy.Server.Packet.Receive.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(1); //PARTY_ADD_REASON
             /*
-            PARTY_ADD	0	%s is attending the party. 
-            PARTY_ADD	1	%s has joined the party. 
-            I participated in the party of PARTY_ADD	10	%s. 
+            PARTY_ADD	0	%s is attending the party.
+            PARTY_ADD	1	%s has joined the party.
+            I participated in the party of PARTY_ADD	10	%s.
             */
 
-            res.WriteUInt32(_client.Character.DeadBodyInstanceId);//DeadBodyId?
-            res.WriteUInt32(_client.Character.InstanceId); //Chara Instance Id
-            res.WriteFixedString($"{_client.Soul.Name}", 0x31); //Soul name
-            res.WriteFixedString($"{_client.Character.Name}", 0x5B); //Character name
-            res.WriteUInt32(_client.Character.ClassId); //Class/job
-            res.WriteByte(_client.Soul.Level); //Soul rank
-            res.WriteByte(_client.Character.Level); //Character level
-            res.WriteInt32(_client.Character.Hp.current); // current hp?
-            res.WriteInt32(_client.Character.Mp.current); // current mp?
-            res.WriteInt32(_client.Character.Od.current); // current od?
-            res.WriteInt32(_client.Character.Hp.max); // max hp?
-            res.WriteInt32(_client.Character.Mp.max); // maxmp?
-            res.WriteInt32(_client.Character.Od.max); // max od?
-            res.WriteInt32(_client.Character.MapId); //Might make the character selectable?
-            res.WriteInt32(_client.Character.MapId); //One half of location? 1001902 = Illfalo Port but is actually Deep Sea Port
+            res.WriteUInt32(_client.character.deadBodyInstanceId);//DeadBodyId?
+            res.WriteUInt32(_client.character.instanceId); //Chara Instance Id
+            res.WriteFixedString($"{_client.soul.name}", 0x31); //Soul name
+            res.WriteFixedString($"{_client.character.name}", 0x5B); //Character name
+            res.WriteUInt32(_client.character.classId); //Class/job
+            res.WriteByte(_client.soul.level); //Soul rank
+            res.WriteByte(_client.character.level); //Character level
+            res.WriteInt32(_client.character.hp.current); // current hp?
+            res.WriteInt32(_client.character.mp.current); // current mp?
+            res.WriteInt32(_client.character.od.current); // current od?
+            res.WriteInt32(_client.character.hp.max); // max hp?
+            res.WriteInt32(_client.character.mp.max); // maxmp?
+            res.WriteInt32(_client.character.od.max); // max od?
+            res.WriteInt32(_client.character.mapId); //Might make the character selectable?
+            res.WriteInt32(_client.character.mapId); //One half of location? 1001902 = Illfalo Port but is actually Deep Sea Port
             res.WriteInt32(500); // current guard points?
             res.WriteInt32(600); // max guard points?
-            res.WriteFixedString($"Channel {_client.Character.Channel}",0x61); //Location of player if not in same zone
+            res.WriteFixedString($"Channel {_client.character.channel}",0x61); //Location of player if not in same zone
             res.WriteInt32(3/*_client.Character.Ac*/); //AC? which is  like, chance to dodge
             res.WriteByte(3); // condition?
-            res.WriteFloat(_client.Character.X);
-            res.WriteFloat(_client.Character.Y);
-            res.WriteFloat(_client.Character.Z);
-            res.WriteByte(_client.Character.Heading);
-            res.WriteByte((byte)(_client.Character.criminalState+5)); //?
+            res.WriteFloat(_client.character.x);
+            res.WriteFloat(_client.character.y);
+            res.WriteFloat(_client.character.z);
+            res.WriteByte(_client.character.heading);
+            res.WriteByte((byte)(_client.character.criminalState+5)); //?
             res.WriteByte(1); //Beginner Protection (bool) ??? Dragon (in boss fight) ??
             res.WriteByte(3); //Membership Status???
 

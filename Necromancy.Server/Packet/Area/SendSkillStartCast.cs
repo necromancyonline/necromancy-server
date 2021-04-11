@@ -16,60 +16,60 @@ using Necromancy.Server.Model.CharacterModel;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_skill_start_cast : ClientHandler
+    public class SendSkillStartCast : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_skill_start_cast));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSkillStartCast));
 
         private NecServer _server;
 
-        public send_skill_start_cast(NecServer server) : base(server)
+        public SendSkillStartCast(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_skill_start_cast;
+        public override ushort id => (ushort) AreaPacketId.send_skill_start_cast;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int skillID = packet.Data.ReadInt32();
-            uint skillTarget = packet.Data.ReadUInt32();
-            client.Character.eventSelectReadyCode = skillTarget;
-            client.Character.skillStartCast = skillID;
-            int skillLookup = skillID / 1000;
-            Logger.Debug($"skillTarget [{skillTarget}]  skillID [{skillID}] skillLookup [{skillLookup}]");
+            int skillId = packet.data.ReadInt32();
+            uint skillTarget = packet.data.ReadUInt32();
+            client.character.eventSelectReadyCode = skillTarget;
+            client.character.skillStartCast = skillId;
+            int skillLookup = skillId / 1000;
+            _Logger.Debug($"skillTarget [{skillTarget}]  skillID [{skillId}] skillLookup [{skillLookup}]");
             {
-                var eventSwitchPerObjectID = new Dictionary<Func<int, bool>, Action>
+                var eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
                 {
-                    {x => (x > 114100 && x < 114199), () => ThiefSkill(client, skillID, skillTarget)},
-                    {x => (x > 114300 && x < 114399), () => ThiefSkill(client, skillID, skillTarget)},
-                    {x => (x > 113000 && x < 113999), () => MageSkill(client, skillID, skillTarget)},
-                    {x => x == 114607, () => ThiefSkill(client, skillID, skillTarget)},
+                    {x => (x > 114100 && x < 114199), () => ThiefSkill(client, skillId, skillTarget)},
+                    {x => (x > 114300 && x < 114399), () => ThiefSkill(client, skillId, skillTarget)},
+                    {x => (x > 113000 && x < 113999), () => MageSkill(client, skillId, skillTarget)},
+                    {x => x == 114607, () => ThiefSkill(client, skillId, skillTarget)},
                     {
-                        x => (x > 1 && x < 999999), () => MageSkill(client, skillID, skillTarget)
+                        x => (x > 1 && x < 999999), () => MageSkill(client, skillId, skillTarget)
                     } //this is a default catch statement for unmapped skills to prevent un-handled exceptions
                 };
-                eventSwitchPerObjectID.First(sw => sw.Key(skillLookup)).Value();
+                eventSwitchPerObjectId.First(sw => sw.Key(skillLookup)).Value();
             }
         }
 
         private void MageSkill(NecClient client, int skillId, uint skillTarget)
         {
-            Vector3 charCoord = new Vector3(client.Character.X, client.Character.Y, client.Character.Z);
+            Vector3 charCoord = new Vector3(client.character.x, client.character.y, client.character.z);
             Spell spell = new Spell(_server, client, skillId, skillTarget, charCoord);
-            Server.Instances.AssignInstance(spell);
-            client.Character.activeSkillInstance = spell.InstanceId;
+            server.instances.AssignInstance(spell);
+            client.character.activeSkillInstance = spell.instanceId;
             spell.StartCast();
         }
 
         private void ThiefSkill(NecClient client, int skillId, uint skillTarget)
         {
             int skillBase = skillId / 1000;
-            if (client.Character.IsStealthed() && skillBase != 114607)
+            if (client.character.IsStealthed() && skillBase != 114607)
             {
-                client.Character.ClearStateBit(CharacterState.StealthForm);
+                client.character.ClearStateBit(CharacterState.StealthForm);
                 RecvCharaNotifyStateflag charState =
-                    new RecvCharaNotifyStateflag(client.Character.InstanceId, (uint)client.Character.State);
-                _server.Router.Send(client.Map, charState);
+                    new RecvCharaNotifyStateflag(client.character.instanceId, (uint)client.character.state);
+                _server.router.Send(client.map, charState);
             }
 
             if (skillBase > 114300 && skillBase < 114399)
@@ -85,16 +85,16 @@ namespace Necromancy.Server.Packet.Area
 
             if (skillTarget == 0)
             {
-                Logger.Debug($"Skill requires target!! [{skillId}]");
+                _Logger.Debug($"Skill requires target!! [{skillId}]");
                 int errorCode = -1311;
                 RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, 0);
-                Router.Send(skillFail, client);
+                router.Send(skillFail, client);
                 return;
             }
 
             ThiefSkill thiefSkill = new ThiefSkill(_server, client, skillId, skillTarget);
-            Server.Instances.AssignInstance(thiefSkill);
-            client.Character.activeSkillInstance = thiefSkill.InstanceId;
+            server.instances.AssignInstance(thiefSkill);
+            client.character.activeSkillInstance = thiefSkill.instanceId;
             thiefSkill.StartCast();
         }
 
@@ -102,92 +102,92 @@ namespace Necromancy.Server.Packet.Area
         {
             if (!int.TryParse($"{skillId}".Substring(1, 5), out int skillBase))
             {
-                Logger.Error($"Creating skillBase from skillid [{skillId}]");
+                _Logger.Error($"Creating skillBase from skillid [{skillId}]");
                 int errorCode = -1;
                 RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, 0);
-                Router.Send(skillFail, client);
+                router.Send(skillFail, client);
                 return;
             }
 
             if (!int.TryParse($"{skillId}".Substring(1, 7), out int effectBase))
             {
-                Logger.Error($"Creating skillBase from skillid [{skillId}]");
+                _Logger.Error($"Creating skillBase from skillid [{skillId}]");
                 int errorCode = -1;
                 RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, 0);
-                Router.Send(skillFail, client);
+                router.Send(skillFail, client);
                 return;
             }
 
             effectBase += 1;
-            Logger.Debug($"skillId [{skillId}] skillBase [{skillBase}] effectBase [{effectBase}]");
-            if (!_server.SettingRepository.SkillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
+            _Logger.Debug($"skillId [{skillId}] skillBase [{skillBase}] effectBase [{effectBase}]");
+            if (!_server.settingRepository.skillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
             {
-                Logger.Error($"Getting SkillBaseSetting for skillid [{skillId}]");
+                _Logger.Error($"Getting SkillBaseSetting for skillid [{skillId}]");
                 return;
             }
 
-            if (!_server.SettingRepository.EoBase.TryGetValue(effectBase, out EoBaseSetting eoBaseSetting))
+            if (!_server.settingRepository.eoBase.TryGetValue(effectBase, out EoBaseSetting eoBaseSetting))
             {
-                Logger.Error($"Getting EoBaseSetting from effectBase [{effectBase}]");
+                _Logger.Error($"Getting EoBaseSetting from effectBase [{effectBase}]");
                 return;
             }
 
-            Vector3 charPos = new Vector3(client.Character.X, client.Character.Y, client.Character.Z);
-            bool isBaseTrap = TrapTask.baseTrap(skillBase);
+            Vector3 charPos = new Vector3(client.character.x, client.character.y, client.character.z);
+            bool isBaseTrap = TrapTask.BaseTrap(skillBase);
             TrapStack trapStack = null;
             if (isBaseTrap)
             {
-                int trapRadius = eoBaseSetting.EffectRadius;
+                int trapRadius = eoBaseSetting.effectRadius;
                 trapStack = new TrapStack(_server, client, charPos, trapRadius);
-                Server.Instances.AssignInstance(trapStack);
+                server.instances.AssignInstance(trapStack);
             }
             else
             {
-                trapStack = client.Map.GetTrapCharacterRange(client.Character.InstanceId, 75, charPos);
+                trapStack = client.map.GetTrapCharacterRange(client.character.instanceId, 75, charPos);
             }
 
             if (isBaseTrap)
             {
-                Logger.Debug(
-                    $"Is base trap skillId [{skillId}] skillBase [{skillBase}] trapStack._trapRadius [{trapStack._trapRadius}]");
-                if (client.Map.GetTrapsCharacterRange(client.Character.InstanceId, trapStack._trapRadius, charPos))
+                _Logger.Debug(
+                    $"Is base trap skillId [{skillId}] skillBase [{skillBase}] trapStack._trapRadius [{trapStack.trapRadius}]");
+                if (client.map.GetTrapsCharacterRange(client.character.instanceId, trapStack.trapRadius, charPos))
                 {
-                    Logger.Debug($"First trap with another trap too close [{skillId}]");
+                    _Logger.Debug($"First trap with another trap too close [{skillId}]");
                     int errorCode = -1309;
                     RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, 0);
-                    Router.Send(skillFail, client);
+                    router.Send(skillFail, client);
                     return;
                 }
             }
             else
             {
-                Logger.Debug(
-                    $"Is trap enhancement skillId [{skillId}] skillBase [{skillBase}] trapRadius [{trapStack._trapRadius}]");
-                if (!client.Map.GetTrapsCharacterRange(client.Character.InstanceId, trapStack._trapRadius, charPos))
+                _Logger.Debug(
+                    $"Is trap enhancement skillId [{skillId}] skillBase [{skillBase}] trapRadius [{trapStack.trapRadius}]");
+                if (!client.map.GetTrapsCharacterRange(client.character.instanceId, trapStack.trapRadius, charPos))
                 {
-                    Logger.Debug($"Trap enhancement without a base trap [{skillId}]");
+                    _Logger.Debug($"Trap enhancement without a base trap [{skillId}]");
                     int errorCode = -1;
                     RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, 0);
-                    Router.Send(skillFail, client);
+                    router.Send(skillFail, client);
                     return;
                 }
             }
 
-            Logger.Debug($"Valid position check for monsters skillId [{skillId}] skillBase [{skillBase}]");
-            if (client.Map.MonsterInRange(charPos, trapStack._trapRadius))
+            _Logger.Debug($"Valid position check for monsters skillId [{skillId}] skillBase [{skillBase}]");
+            if (client.map.MonsterInRange(charPos, trapStack.trapRadius))
             {
-                Logger.Debug($"Monster too close [{skillId}]");
+                _Logger.Debug($"Monster too close [{skillId}]");
                 int errorCode = -1310;
                 RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, 0);
-                Router.Send(skillFail, client);
+                router.Send(skillFail, client);
                 return;
             }
 
-            Logger.Debug(
-                $"skillBaseSetting.Id [{skillBaseSetting.Id}] skillBaseSetting.Name [{skillBaseSetting.Name} eoBaseSetting.]");
-            Logger.Debug($"spearTrap.InstanceId [{trapStack.InstanceId}] SpearTrap skillID [{skillId}]");
-            client.Character.activeSkillInstance = trapStack.InstanceId;
-            client.Character.castingSkill = true;
+            _Logger.Debug(
+                $"skillBaseSetting.Id [{skillBaseSetting.id}] skillBaseSetting.Name [{skillBaseSetting.name} eoBaseSetting.]");
+            _Logger.Debug($"spearTrap.InstanceId [{trapStack.instanceId}] SpearTrap skillID [{skillId}]");
+            client.character.activeSkillInstance = trapStack.instanceId;
+            client.character.castingSkill = true;
             trapStack.StartCast(skillBaseSetting);
         }
 
@@ -199,62 +199,62 @@ namespace Necromancy.Server.Packet.Area
 
             int errorCode = 0;
             Stealth stealth = new Stealth(_server, client, skillId);
-            Server.Instances.AssignInstance(stealth);
-            client.Character.activeSkillInstance = stealth.InstanceId;
-            if (!_server.SettingRepository.SkillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
+            server.instances.AssignInstance(stealth);
+            client.character.activeSkillInstance = stealth.instanceId;
+            if (!_server.settingRepository.skillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
             {
-                Logger.Error($"Getting SkillBaseSetting from skillid [{skillId}]");
+                _Logger.Error($"Getting SkillBaseSetting from skillid [{skillId}]");
                 errorCode = -1;
                 RecvSkillStartCastR startFail = new RecvSkillStartCastR(errorCode, 0.0F);
-                Router.Send(startFail, client);
+                router.Send(startFail, client);
                 return;
             }
 
-            RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, skillBaseSetting.CastingTime);
-            Router.Send(skillFail, client);
+            RecvSkillStartCastR skillFail = new RecvSkillStartCastR(errorCode, skillBaseSetting.castingTime);
+            router.Send(skillFail, client);
             stealth.StartCast();
         }
 
-        private void SendBattleReportSkillStartCast(NecClient client, int mySkillID)
+        private void SendBattleReportSkillStartCast(NecClient client, int mySkillId)
         {
             IBuffer res4 = BufferProvider.Provide();
-            res4.WriteInt32(mySkillID);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_action_skill_start_cast, res4,
+            res4.WriteInt32(mySkillId);
+            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_action_skill_start_cast, res4,
                 ServerType.Area);
         }
 
-        private void SendEoNotifyDisappearSchedule(NecClient client, int mySkillID, float castingTime)
+        private void SendEoNotifyDisappearSchedule(NecClient client, int mySkillId, float castingTime)
         {
             IBuffer res5 = BufferProvider.Provide();
-            res5.WriteInt32(mySkillID);
+            res5.WriteInt32(mySkillId);
             res5.WriteFloat(castingTime);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_eo_notify_disappear_schedule, res5, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_eo_notify_disappear_schedule, res5, ServerType.Area);
         }
 
         private void SendBattleReportStartNotify(NecClient client)
         {
             IBuffer res4 = BufferProvider.Provide();
-            res4.WriteUInt32(client.Character.InstanceId);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
+            res4.WriteUInt32(client.character.instanceId);
+            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
         }
 
         private void SendBattleReportEndNotify(NecClient client)
         {
             IBuffer res4 = BufferProvider.Provide();
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_end_notify, res4, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_end_notify, res4, ServerType.Area);
         }
 
-        private void SendSkillStartCast(NecClient client, int mySkillID, int mySkillTarget, float castingTime)
+        private void SkillStartCast(NecClient client, int mySkillId, int mySkillTarget, float castingTime)
         {
-            Logger.Debug($"Skill Int : {mySkillID}");
-            Logger.Debug($"Target Int : {mySkillTarget}");
-            Logger.Debug($"my Character ID : {client.Character.Id}");
-            Logger.Debug($"my Character instanceId : {client.Character.InstanceId}");
+            _Logger.Debug($"Skill Int : {mySkillId}");
+            _Logger.Debug($"Target Int : {mySkillTarget}");
+            _Logger.Debug($"my Character ID : {client.character.id}");
+            _Logger.Debug($"my Character instanceId : {client.character.instanceId}");
 
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); //Error check     | 0 - success  
-            /* 
+            res.WriteInt32(0); //Error check     | 0 - success
+            /*
             SKILLCAST_FAILED	-1	You failed to cast <skill name>
             SKILLCAST_FAILED	-236	This skill cannot be used in town
             SKILLCAST_FAILED	-1300	Not enough HP
@@ -282,47 +282,47 @@ namespace Necromancy.Server.Packet.Area
             */
 
             res.WriteFloat(
-                castingTime); //Casting time (countdown before auto-cast)    ./Skill_base.csv   Column I             
-            Router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_r, res, ServerType.Area);
+                castingTime); //Casting time (countdown before auto-cast)    ./Skill_base.csv   Column I
+            router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_r, res, ServerType.Area);
         }
 
-        private void SendSkillStartCastSelf(NecClient client, int mySkillID, uint mySkillTarget, float castingTime)
+        private void SendSkillStartCastSelf(NecClient client, int mySkillId, uint mySkillTarget, float castingTime)
         {
-            Logger.Debug($"Skill Int : {mySkillID}");
-            Logger.Debug($"Target Int : {mySkillTarget}");
-            Logger.Debug($"my Character ID : {client.Character.Id}");
-            Logger.Debug($"my Character instanceId : {client.Character.InstanceId}");
+            _Logger.Debug($"Skill Int : {mySkillId}");
+            _Logger.Debug($"Target Int : {mySkillTarget}");
+            _Logger.Debug($"my Character ID : {client.character.id}");
+            _Logger.Debug($"my Character instanceId : {client.character.instanceId}");
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(mySkillID); //previously Skill ID
+            res.WriteInt32(mySkillId); //previously Skill ID
             res.WriteFloat(castingTime);
-            Router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_self, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_self, res, ServerType.Area);
         }
 
-        private void SendSkillStartCastExR(NecClient client, int mySkillID, int mySkillTarget, float castingTime)
+        private void SendSkillStartCastExR(NecClient client, int mySkillId, int mySkillTarget, float castingTime)
         {
-            Logger.Debug($"Skill Int : {mySkillID}");
-            Logger.Debug($"Target Int : {mySkillTarget}");
-            Logger.Debug($"my Character ID : {client.Character.Id}");
-            Logger.Debug($"my Character instanceId : {client.Character.InstanceId}");
+            _Logger.Debug($"Skill Int : {mySkillId}");
+            _Logger.Debug($"Target Int : {mySkillTarget}");
+            _Logger.Debug($"my Character ID : {client.character.id}");
+            _Logger.Debug($"my Character instanceId : {client.character.instanceId}");
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //Error check     | 0 - success  See other codes above in SendSkillStartCast
             res.WriteFloat(castingTime); //casting time (countdown before auto-cast)    ./Skill_base.csv   Column L
 
             res.WriteInt32(100); //Cast Script?     ./Skill_base.csv   Column T
             res.WriteInt32(100); //Effect Script    ./Skill_base.csv   Column V
-            res.WriteInt32(100); //Effect ID?   ./Skill_base.csv   Column X 
-            res.WriteInt32(0100); //Effect ID 2     ./Skill_base.csv   Column Z 
+            res.WriteInt32(100); //Effect ID?   ./Skill_base.csv   Column X
+            res.WriteInt32(0100); //Effect ID 2     ./Skill_base.csv   Column Z
 
-            res.WriteInt32(mySkillID); //
+            res.WriteInt32(mySkillId); //
 
-            res.WriteInt32(10000); //Distance?              ./Skill_base.csv   Column AN 
-            res.WriteInt32(10000); //Height?                 ./Skill_base.csv   Column AO 
-            res.WriteInt32(500); //??                          ./Skill_base.csv   Column AP 
-            res.WriteInt32(client.Character.Heading); //??                       ./Skill_base.csv   Column AQ 
+            res.WriteInt32(10000); //Distance?              ./Skill_base.csv   Column AN
+            res.WriteInt32(10000); //Height?                 ./Skill_base.csv   Column AO
+            res.WriteInt32(500); //??                          ./Skill_base.csv   Column AP
+            res.WriteInt32(client.character.heading); //??                       ./Skill_base.csv   Column AQ
 
             res.WriteInt32(5); // Effect time?
 
-            Router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_ex_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_ex_r, res, ServerType.Area);
         }
     }
 }

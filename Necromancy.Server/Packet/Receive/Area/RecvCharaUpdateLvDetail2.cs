@@ -19,10 +19,10 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt16(_character.Level); // level
-            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level - 1).CumulativeExperience); // exp start
-            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level - 0).CumulativeExperience); // exp next
-            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level + 1).CumulativeExperience); // exp next 2
+            res.WriteInt16(_character.level); // level
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.level - 1).cumulativeExperience); // exp start
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.level - 0).cumulativeExperience); // exp next
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.level + 1).cumulativeExperience); // exp next 2
             return res;
         }
     }

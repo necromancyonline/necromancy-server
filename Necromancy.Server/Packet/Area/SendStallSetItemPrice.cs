@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_stall_set_item_price : ClientHandler
+    public class SendStallSetItemPrice : ClientHandler
     {
-        public send_stall_set_item_price(NecServer server) : base(server)
+        public SendStallSetItemPrice(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_stall_set_item_price;
+        public override ushort id => (ushort) AreaPacketId.send_stall_set_item_price;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -54,7 +54,7 @@ namespace Necromancy.Server.Packet.Area
                    STALL	GENERIC	Shop error
                 */
 
-            Router.Send(client, (ushort) AreaPacketId.recv_stall_set_item_price_r, res, ServerType.Area);            
+            router.Send(client, (ushort) AreaPacketId.recv_stall_set_item_price_r, res, ServerType.Area);
         }
     }
 }

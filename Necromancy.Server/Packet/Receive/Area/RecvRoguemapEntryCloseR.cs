@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_roguemap_entry_close_r : PacketResponse
+    public class RecvRoguemapEntryCloseR : PacketResponse
     {
-        public recv_roguemap_entry_close_r()
+        public RecvRoguemapEntryCloseR()
             : base((ushort) AreaPacketId.recv_roguemap_entry_close_r, ServerType.Area)
         {
         }

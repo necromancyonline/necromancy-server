@@ -5,20 +5,20 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_party_mentor_remove : ClientHandler
+    public class SendPartyMentorRemove : ClientHandler
     {
-        public send_party_mentor_remove(NecServer server) : base(server)
+        public SendPartyMentorRemove(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_party_mentor_remove;
+        public override ushort id => (ushort) AreaPacketId.send_party_mentor_remove;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_party_mentor_remove_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_party_mentor_remove_r, res, ServerType.Area);
         }
     }
 }

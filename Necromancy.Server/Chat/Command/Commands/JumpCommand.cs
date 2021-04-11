@@ -24,22 +24,22 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            client.Character.Z += x;
+            client.character.z += x;
 
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteUInt32(client.Character.InstanceId);
-            res.WriteFloat(client.Character.X);
-            res.WriteFloat(client.Character.Y);
-            res.WriteFloat(client.Character.Z);
-            res.WriteByte(client.Character.Heading);
-            res.WriteByte(client.Character.movementAnim);
+            res.WriteUInt32(client.character.instanceId);
+            res.WriteFloat(client.character.x);
+            res.WriteFloat(client.character.y);
+            res.WriteFloat(client.character.z);
+            res.WriteByte(client.character.heading);
+            res.WriteByte(client.character.movementAnim);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
-        public override string Key => "jump";
-        public override string HelpText => "usage: `/jump [# of units]` - Moves character x units upward.";
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "jump";
+        public override string helpText => "usage: `/jump [# of units]` - Moves character x units upward.";
     }
 }

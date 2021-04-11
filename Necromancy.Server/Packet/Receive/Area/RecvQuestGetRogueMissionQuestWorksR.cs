@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_quest_get_rogue_mission_quest_works_r : PacketResponse
+    public class RecvQuestGetRogueMissionQuestWorksR : PacketResponse
     {
-        public recv_quest_get_rogue_mission_quest_works_r()
+        public RecvQuestGetRogueMissionQuestWorksR()
             : base((ushort) AreaPacketId.recv_quest_get_rogue_mission_quest_works_r, ServerType.Area)
         {
         }

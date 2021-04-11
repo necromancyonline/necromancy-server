@@ -6,39 +6,39 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_create_package : ClientHandler
+    public class SendCreatePackage : ClientHandler
     {
-        public send_create_package(NecServer server) : base(server)
+        public SendCreatePackage(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_create_package;
+        public override ushort id => (ushort) AreaPacketId.send_create_package;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            string recipient = packet.Data.ReadCString();
-            string title = packet.Data.ReadCString();
-            string content = packet.Data.ReadCString();
-            int unknownInt = packet.Data.ReadInt32();
-            byte itemCount = packet.Data.ReadByte();
-            long money = packet.Data.ReadInt64();
+            string recipient = packet.data.ReadCString();
+            string title = packet.data.ReadCString();
+            string content = packet.data.ReadCString();
+            int unknownInt = packet.data.ReadInt32();
+            byte itemCount = packet.data.ReadByte();
+            long money = packet.data.ReadInt64();
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);//Failed to send message error if not 0
-            Router.Send(client, (ushort) AreaPacketId.recv_create_package_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_create_package_r, res, ServerType.Area);
 
             SendPackageNotifyAdd(client, recipient, title, content, unknownInt, itemCount,  money);
         }
         private void SendPackageNotifyAdd(NecClient client, string recipient, string title, string content,
                                          int unknownInt, byte itemCount,  long money)
         {
-            NecClient RecipientClient = Server.Clients.GetBySoulName(recipient);
+            NecClient recipientClient = server.clients.GetBySoulName(recipient);
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0);//Failed to send message error if not 0
             res.WriteInt32(Util.GetRandomNumber(900,921));//Object ID of mail package item
-            res.WriteFixedString(client.Soul.Name, 0x31);//Soul name of sender
-            res.WriteFixedString(client.Character.Name, 0x5B);//Character name but of what?
+            res.WriteFixedString(client.soul.name, 0x31);//Soul name of sender
+            res.WriteFixedString(client.character.name, 0x5B);//Character name but of what?
             res.WriteFixedString($"{title}", 0x5B);//Title
             res.WriteFixedString($"{content}", 0x259);//Content
             res.WriteInt32(Util.GetRandomNumber(0,10));
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(10200101);//Responsible for icon
             res.WriteFixedString("help", 0x49);//
             res.WriteFixedString($"me ", 0x49);//Item Title
-            res.WriteInt32(1);//Odd numbers here make the item have the title and correct icon, 1/3 = not broken, -1/5 = broken 
+            res.WriteInt32(1);//Odd numbers here make the item have the title and correct icon, 1/3 = not broken, -1/5 = broken
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
@@ -71,10 +71,10 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
 
-            res.WriteInt64(money);//Transfered money   
-            
+            res.WriteInt64(money);//Transfered money
 
-            Router.Send(RecipientClient, (ushort)AreaPacketId.recv_package_notify_add, res, ServerType.Area);
+
+            router.Send(recipientClient, (ushort)AreaPacketId.recv_package_notify_add, res, ServerType.Area);
             /*
             MAIL	-2400	Recipient inbox is full
             MAIL	-2401	You may not send parcels outside of a town

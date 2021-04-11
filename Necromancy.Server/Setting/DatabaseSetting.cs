@@ -11,42 +11,42 @@ namespace Necromancy.Server.Setting
     {
         public DatabaseSettings()
         {
-            Type = DatabaseType.SQLite;
-            SqLiteFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Database");
-            ScriptFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Database/Script");
-            Host = "localhost";
-            Port = 3306;
-            Database = "necromancy";
-            User = string.Empty;
-            Password = string.Empty;
+            type = DatabaseType.SqLite;
+            sqLiteFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Database");
+            scriptFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Database/Script");
+            host = "localhost";
+            port = 3306;
+            database = "necromancy";
+            user = string.Empty;
+            password = string.Empty;
         }
 
         public DatabaseSettings(DatabaseSettings databaseSettings)
         {
-            Type = databaseSettings.Type;
-            SqLiteFolder = databaseSettings.SqLiteFolder;
-            Host = databaseSettings.Host;
-            Port = databaseSettings.Port;
-            User = databaseSettings.User;
-            Password = databaseSettings.Password;
-            Database = databaseSettings.Database;
-            ScriptFolder = databaseSettings.ScriptFolder;
+            type = databaseSettings.type;
+            sqLiteFolder = databaseSettings.sqLiteFolder;
+            host = databaseSettings.host;
+            port = databaseSettings.port;
+            user = databaseSettings.user;
+            password = databaseSettings.password;
+            database = databaseSettings.database;
+            scriptFolder = databaseSettings.scriptFolder;
         }
 
-        [DataMember(Order = 0)] public DatabaseType Type { get; set; }
+        [DataMember(Order = 0)] public DatabaseType type { get; set; }
 
-        [DataMember(Order = 1)] public string SqLiteFolder { get; set; }
+        [DataMember(Order = 1)] public string sqLiteFolder { get; set; }
 
-        [DataMember(Order = 2)] public string Host { get; set; }
+        [DataMember(Order = 2)] public string host { get; set; }
 
-        [DataMember(Order = 3)] public short Port { get; set; }
+        [DataMember(Order = 3)] public short port { get; set; }
 
-        [DataMember(Order = 4)] public string User { get; set; }
+        [DataMember(Order = 4)] public string user { get; set; }
 
-        [DataMember(Order = 5)] public string Password { get; set; }
+        [DataMember(Order = 5)] public string password { get; set; }
 
-        [DataMember(Order = 6)] public string Database { get; set; }
-        
-        [DataMember(Order = 7)] public string ScriptFolder { get; set; }
+        [DataMember(Order = 6)] public string database { get; set; }
+
+        [DataMember(Order = 7)] public string scriptFolder { get; set; }
     }
 }

@@ -8,11 +8,11 @@ namespace Necromancy.Server.Chat.Command
         public abstract void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses);
 
-        public abstract AccountStateType AccountState { get; }
-        public abstract string Key { get; }
-        public string KeyToLowerInvariant => Key.ToLowerInvariant();
+        public abstract AccountStateType accountState { get; }
+        public abstract string key { get; }
+        public string keyToLowerInvariant => key.ToLowerInvariant();
 
-        public virtual string HelpText
+        public virtual string helpText
         {
             get { return null; }
         }

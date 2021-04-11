@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_forge_parameter_check_r : PacketResponse
+    public class RecvForgeParameterCheckR : PacketResponse
     {
-        public recv_forge_parameter_check_r()
+        public RecvForgeParameterCheckR()
             : base((ushort) AreaPacketId.recv_forge_parameter_check_r, ServerType.Area)
         {
         }

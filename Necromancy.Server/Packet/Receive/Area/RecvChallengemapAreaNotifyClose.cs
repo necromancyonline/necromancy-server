@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_challengemap_area_notify_close : PacketResponse
+    public class RecvChallengemapAreaNotifyClose : PacketResponse
     {
-        public recv_challengemap_area_notify_close()
+        public RecvChallengemapAreaNotifyClose()
             : base((ushort) AreaPacketId.recv_challengemap_area_notify_close, ServerType.Area)
         {
         }
@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            //No Structure	
+            //No Structure
 
             return res;
         }

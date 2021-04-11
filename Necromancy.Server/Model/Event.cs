@@ -5,8 +5,8 @@ namespace Necromancy.Server.Model
 {
     public class Event : IInstance
     {
-        public uint InstanceId { get; set; }
-        public ushort EventType { get; set; }
+        public uint instanceId { get; set; }
+        public ushort eventType { get; set; }
         public Event()
         {
         }

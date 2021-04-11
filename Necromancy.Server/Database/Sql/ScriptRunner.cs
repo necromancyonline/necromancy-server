@@ -7,10 +7,10 @@ namespace Necromancy.Server.Database.Sql
 {
     public class ScriptRunner
     {
-        private const string Delimiter = ";";
-        private const bool FullLineDelimiter = false;
+        private const string _Delimiter = ";";
+        private const bool _FullLineDelimiter = false;
 
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(ScriptRunner));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(ScriptRunner));
 
         private readonly IDatabase _database;
 
@@ -47,11 +47,11 @@ namespace Necromancy.Server.Database.Sql
                     {
                         // Print comment
                     }
-                    else if (!FullLineDelimiter && trimmedLine.EndsWith(Delimiter)
-                             || FullLineDelimiter && trimmedLine == Delimiter)
+                    else if (!_FullLineDelimiter && trimmedLine.EndsWith(_Delimiter)
+                             || _FullLineDelimiter && trimmedLine == _Delimiter)
                     {
                         command.Append(
-                            line.Substring(0, line.LastIndexOf(Delimiter, StringComparison.InvariantCulture)));
+                            line.Substring(0, line.LastIndexOf(_Delimiter, StringComparison.InvariantCulture)));
                         command.Append(" ");
                         _database.Execute(command.ToString());
                         command = null;
@@ -78,8 +78,8 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception exception)
             {
-                Logger.Error($"Sql error at Line: {index}");
-                Logger.Exception(exception);
+                _Logger.Error($"Sql error at Line: {index}");
+                _Logger.Exception(exception);
             }
         }
     }

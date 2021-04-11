@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_status_update_bonus_ability_r : PacketResponse
+    public class RecvSoulPartnerStatusUpdateBonusAbilityR : PacketResponse
     {
-        public recv_soul_partner_status_update_bonus_ability_r()
+        public RecvSoulPartnerStatusUpdateBonusAbilityR()
             : base((ushort) AreaPacketId.recv_soul_partner_status_update_bonus_ability_r, ServerType.Area)
         {
         }

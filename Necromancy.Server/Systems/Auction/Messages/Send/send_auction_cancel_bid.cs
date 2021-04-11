@@ -6,14 +6,14 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Systems.Item
 {
-    public class send_auction_cancel_bid : ClientHandler
+    public class SendAuctionCancelBid : ClientHandler
     {
-        public send_auction_cancel_bid(NecServer server) : base(server)
+        public SendAuctionCancelBid(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_auction_cancel_bid;
+        public override ushort id => (ushort) AreaPacketId.send_auction_cancel_bid;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -25,11 +25,11 @@ namespace Necromancy.Server.Systems.Item
             }
             catch (AuctionException e)
             {
-                error = (int)e.Type;
+                error = (int)e.type;
             }
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_cancel_bid_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_auction_cancel_bid_r, res, ServerType.Area);
         }
     }
 }

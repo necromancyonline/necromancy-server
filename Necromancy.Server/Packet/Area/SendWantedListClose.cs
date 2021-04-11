@@ -5,20 +5,20 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_wanted_list_close : ClientHandler
+    public class SendWantedListClose : ClientHandler
     {
-        public send_wanted_list_close(NecServer server) : base(server)
+        public SendWantedListClose(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_wanted_list_close;
+        public override ushort id => (ushort) AreaPacketId.send_wanted_list_close;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_wanted_list_close_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_wanted_list_close_r, res, ServerType.Area);
         }
     }
 }

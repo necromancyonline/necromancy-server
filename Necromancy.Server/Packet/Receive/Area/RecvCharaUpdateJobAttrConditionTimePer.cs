@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_chara_update_job_attr_condition_time_per : PacketResponse
+    public class RecvCharaUpdateJobAttrConditionTimePer : PacketResponse
     {
-        public recv_chara_update_job_attr_condition_time_per()
+        public RecvCharaUpdateJobAttrConditionTimePer()
             : base((ushort) AreaPacketId.recv_chara_update_job_attr_condition_time_per, ServerType.Area)
         {
         }

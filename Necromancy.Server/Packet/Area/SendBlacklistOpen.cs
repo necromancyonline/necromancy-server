@@ -6,19 +6,19 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_blacklist_open : ClientHandler
+    public class SendBlacklistOpen : ClientHandler
     {
-        public send_blacklist_open(NecServer server) : base(server)
+        public SendBlacklistOpen(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_blacklist_open;
+        public override ushort id => (ushort) AreaPacketId.send_blacklist_open;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
 
             TimeSpan differenceJoined = DateTime.Today.ToUniversalTime() - DateTime.UnixEpoch;
-            int DateAttackedCalculation = (int)Math.Floor(differenceJoined.TotalSeconds);
+            int dateAttackedCalculation = (int)Math.Floor(differenceJoined.TotalSeconds);
 
             IBuffer res = BufferProvider.Provide();
 
@@ -28,11 +28,11 @@ namespace Necromancy.Server.Packet.Area
 
             //for (int i = 0; i < 10; i++)
             int i = 0;
-            foreach (Character blackCharacter in Server.Database.SelectCharacters()) //Max 10 Loops. will break if more than 10 characters in Db.
+            foreach (Character blackCharacter in server.database.SelectCharacters()) //Max 10 Loops. will break if more than 10 characters in Db.
             {
-                Soul blackSoul = Server.Database.SelectSoulById(blackCharacter.SoulId);
+                Soul blackSoul = server.database.SelectSoulById(blackCharacter.soulId);
                 int onlineStatus = 0;
-                NecClient otherClient = Server.Clients.GetByCharacterId(blackCharacter.Id);
+                NecClient otherClient = server.clients.GetByCharacterId(blackCharacter.id);
                 if (otherClient == null)
                 {
                     //character = Server.Instances.GetCharacterByDatabaseId(unionMemberList.CharacterDatabaseId);
@@ -43,8 +43,8 @@ namespace Necromancy.Server.Packet.Area
                     onlineStatus = 1;
                 }
 
-                res.WriteInt32(DateAttackedCalculation); //TimeStamp of when you were PKed or Stolen from
-                res.WriteUInt32(blackCharacter.InstanceId); //
+                res.WriteInt32(dateAttackedCalculation); //TimeStamp of when you were PKed or Stolen from
+                res.WriteUInt32(blackCharacter.instanceId); //
                 res.WriteInt32(Util.GetRandomNumber(1, 10)); //Count of times BlackListMember PKed you
                 res.WriteInt32(Util.GetRandomNumber(0, 3)); //count of times BlackListMember looted you
                 res.WriteInt32(Util.GetRandomNumber(0, 150)); //Count of items BlackListMember looted from you
@@ -52,22 +52,22 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteByte((byte)Util.GetRandomNumber(0, 2)); //Locked entry on blacklist  1:yes 0:No
                 res.WriteByte((byte)Util.GetRandomNumber(0,2)); // Current Bounty on blackCharacter.  1:Yes  0:No
 
-                res.WriteInt32(blackSoul.Id); //Soul ID of BlackListMember for sending bounty to Area server
-                res.WriteFixedString(blackSoul.Name, 49); //Soul Name of BlackListMember
+                res.WriteInt32(blackSoul.id); //Soul ID of BlackListMember for sending bounty to Area server
+                res.WriteFixedString(blackSoul.name, 49); //Soul Name of BlackListMember
 
                 res.WriteInt32(onlineStatus); //online status. 0 = online, 1 = offline, 2 = away
-                res.WriteFixedString(blackCharacter.Name, 91); //character name of BlackListMember
-                res.WriteUInt32(blackCharacter.ClassId); // Character Class of BlackListMember
-                res.WriteByte(blackCharacter.Level); //Character level of BlackListMember
-                res.WriteInt32(blackCharacter.MapId); //Character Map ID of BlackListMember
-                res.WriteInt32(blackCharacter.MapId); //world number?? or Map Area?
-                res.WriteFixedString($"Channel {blackCharacter.Channel}", 97);
+                res.WriteFixedString(blackCharacter.name, 91); //character name of BlackListMember
+                res.WriteUInt32(blackCharacter.classId); // Character Class of BlackListMember
+                res.WriteByte(blackCharacter.level); //Character level of BlackListMember
+                res.WriteInt32(blackCharacter.mapId); //Character Map ID of BlackListMember
+                res.WriteInt32(blackCharacter.mapId); //world number?? or Map Area?
+                res.WriteFixedString($"Channel {blackCharacter.channel}", 97);
                 i++;
                 if (i == 10)
                     break;
             }
 
-            Router.Send(client, (ushort)AreaPacketId.recv_blacklist_open_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_blacklist_open_r, res, ServerType.Area);
         }
     }
 }

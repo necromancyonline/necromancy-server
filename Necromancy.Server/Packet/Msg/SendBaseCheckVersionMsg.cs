@@ -7,22 +7,22 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_base_check_version_msg : ConnectionHandler
+    public class SendBaseCheckVersionMsg : ConnectionHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_base_check_version_msg));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendBaseCheckVersionMsg));
 
-        public send_base_check_version_msg(NecServer server) : base(server)
+        public SendBaseCheckVersionMsg(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_base_check_version;
+        public override ushort id => (ushort) MsgPacketId.send_base_check_version;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
-            uint unknown = packet.Data.ReadUInt32();
-            uint major = packet.Data.ReadUInt32();
-            uint minor = packet.Data.ReadUInt32();
-            Logger.Info($"{major} - {minor}");
+            uint unknown = packet.data.ReadUInt32();
+            uint major = packet.data.ReadUInt32();
+            uint minor = packet.data.ReadUInt32();
+            _Logger.Info($"{major} - {minor}");
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
@@ -30,7 +30,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteUInt32(major);
             res.WriteUInt32(minor);
 
-            Router.Send(connection, (ushort) MsgPacketId.recv_base_check_version_r, res);
+            router.Send(connection, (ushort) MsgPacketId.recv_base_check_version_r, res);
         }
     }
 }

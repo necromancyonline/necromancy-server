@@ -8,55 +8,55 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string SqlInsertUnion =
+        private const string _SqlInsertUnion =
             "INSERT INTO `nec_union` (`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created`)VALUES(@name,@leader_character_id,@subleader1_character_id,@subleader2_character_id,@level,@current_exp,@next_level_exp,@member_limit_increase,@cape_design_id,@union_news,@created);";
-        
-        private const string SqlSelectUnionById =
+
+        private const string _SqlSelectUnionById =
             "SELECT `id`,`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created` FROM `nec_union` WHERE `id`=@id;";
 
-        private const string SqlSelectUnionByLeaderId =
+        private const string _SqlSelectUnionByLeaderId =
             "SELECT `id`,`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created` FROM `nec_union` WHERE `leader_character_id`=@leader_character_id;";
-        
-        private const string SqlSelectUnionByName =
+
+        private const string _SqlSelectUnionByName =
             "SELECT `id`,`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created` FROM `nec_union` WHERE `name`=@name;";
 
 
-        private const string SqlUpdateUnion =
+        private const string _SqlUpdateUnion =
             "UPDATE `nec_union` SET `id`=@id,`name`=@name,`leader_character_id`=@leader_character_id,`subleader1_character_id`=@subleader1_character_id,`subleader2_character_id`=@subleader2_character_id,`level`=@level,`current_exp`=@current_exp,`next_level_exp`=@next_level_exp,`member_limit_increase`=@member_limit_increase,`cape_design_id`=@cape_design_id,`union_news`=@union_news,`created`=@created WHERE `id`=@id;";
 
-        private const string SqlDeleteUnion =
+        private const string _SqlDeleteUnion =
             "DELETE FROM `nec_union` WHERE `id`=@id;";
 
         public bool InsertUnion(Union union)
         {
-            int rowsAffected = ExecuteNonQuery(SqlInsertUnion, command =>
+            int rowsAffected = ExecuteNonQuery(_SqlInsertUnion, command =>
             {
                 //AddParameter(command, "@id", union.Id);
-                AddParameter(command, "@name", union.Name);
-                AddParameter(command, "@leader_character_id", union.LeaderId);
-                AddParameter(command, "@subleader1_character_id", union.SubLeader1Id);
-                AddParameter(command, "@subleader2_character_id", union.SubLeader2Id);
-                AddParameter(command, "@level", union.Level);
-                AddParameter(command, "@current_exp", union.CurrentExp);
-                AddParameter(command, "@next_level_exp", union.NextLevelExp);
-                AddParameter(command, "@member_limit_increase", union.MemberLimitIncrease);
-                AddParameter(command, "@cape_design_id", union.CapeDesignID);
-                AddParameter(command, "@union_news", union.UnionNews);
-                AddParameter(command, "@created", union.Created);
+                AddParameter(command, "@name", union.name);
+                AddParameter(command, "@leader_character_id", union.leaderId);
+                AddParameter(command, "@subleader1_character_id", union.subLeader1Id);
+                AddParameter(command, "@subleader2_character_id", union.subLeader2Id);
+                AddParameter(command, "@level", union.level);
+                AddParameter(command, "@current_exp", union.currentExp);
+                AddParameter(command, "@next_level_exp", union.nextLevelExp);
+                AddParameter(command, "@member_limit_increase", union.memberLimitIncrease);
+                AddParameter(command, "@cape_design_id", union.capeDesignId);
+                AddParameter(command, "@union_news", union.unionNews);
+                AddParameter(command, "@created", union.created);
             }, out long autoIncrement);
             if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
             {
                 return false;
             }
 
-            union.Id = (int) autoIncrement;
+            union.id = (int) autoIncrement;
             return true;
         }
-        
+
         public Union SelectUnionById(int unionId)
         {
             Union union = null;
-            ExecuteReader(SqlSelectUnionById,
+            ExecuteReader(_SqlSelectUnionById,
                 command => { AddParameter(command, "@id", unionId); }, reader =>
                 {
                     if (reader.Read())
@@ -69,7 +69,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Union SelectUnionByLeaderId(int leaderId)
         {
             Union union = null;
-            ExecuteReader(SqlSelectUnionByLeaderId,
+            ExecuteReader(_SqlSelectUnionByLeaderId,
                 command => { AddParameter(command, "@leader_character_id", leaderId); }, reader =>
                 {
                     if (reader.Read())
@@ -83,7 +83,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Union SelectUnionByName(string unionName)
         {
             Union union = null;
-            ExecuteReader(SqlSelectUnionByName,
+            ExecuteReader(_SqlSelectUnionByName,
                 command => { AddParameter(command, "@name", unionName); }, reader =>
                 {
                     if (reader.Read())
@@ -96,27 +96,27 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateUnion(Union union)
         {
-            int rowsAffected = ExecuteNonQuery(SqlUpdateUnion, command =>
+            int rowsAffected = ExecuteNonQuery(_SqlUpdateUnion, command =>
             {
-                AddParameter(command, "@id", union.Id);
-                AddParameter(command, "@name", union.Name);
-                AddParameter(command, "@leader_character_id", union.LeaderId);
-                AddParameter(command, "@subleader1_character_id", union.SubLeader1Id);
-                AddParameter(command, "@subleader2_character_id", union.SubLeader2Id);
-                AddParameter(command, "@level", union.Level);
-                AddParameter(command, "@current_exp", union.CurrentExp);
-                AddParameter(command, "@next_level_exp", union.NextLevelExp);
-                AddParameter(command, "@member_limit_increase", union.MemberLimitIncrease);
-                AddParameter(command, "@cape_design_id", union.CapeDesignID);
-                AddParameter(command, "@union_news", union.UnionNews);
-                AddParameter(command, "@created", union.Created);
+                AddParameter(command, "@id", union.id);
+                AddParameter(command, "@name", union.name);
+                AddParameter(command, "@leader_character_id", union.leaderId);
+                AddParameter(command, "@subleader1_character_id", union.subLeader1Id);
+                AddParameter(command, "@subleader2_character_id", union.subLeader2Id);
+                AddParameter(command, "@level", union.level);
+                AddParameter(command, "@current_exp", union.currentExp);
+                AddParameter(command, "@next_level_exp", union.nextLevelExp);
+                AddParameter(command, "@member_limit_increase", union.memberLimitIncrease);
+                AddParameter(command, "@cape_design_id", union.capeDesignId);
+                AddParameter(command, "@union_news", union.unionNews);
+                AddParameter(command, "@created", union.created);
             });
             return rowsAffected > NoRowsAffected;
         }
 
         public bool DeleteUnion(int unionId)
         {
-            int rowsAffected = ExecuteNonQuery(SqlDeleteUnion, command => { AddParameter(command, "@id", unionId); });
+            int rowsAffected = ExecuteNonQuery(_SqlDeleteUnion, command => { AddParameter(command, "@id", unionId); });
             return rowsAffected > NoRowsAffected;
         }
 
@@ -124,18 +124,18 @@ namespace Necromancy.Server.Database.Sql.Core
         {
             {
                 Union union = new Union();
-                union.Id = GetInt32(reader, "id");
-                union.Name = GetStringNullable(reader, "name");
-                union.LeaderId = GetInt32(reader, "leader_character_id");
-                union.SubLeader1Id = GetInt32(reader, "subleader1_character_id");
-                union.SubLeader2Id = GetInt32(reader, "subleader1_character_id");
-                union.Level = (uint)GetInt32(reader, "level");
-                union.CurrentExp = (uint)GetInt32(reader, "current_exp");
-                union.NextLevelExp = (uint)GetInt32(reader, "next_level_exp");
-                union.MemberLimitIncrease = (byte)GetInt32(reader, "member_limit_increase");
-                union.CapeDesignID = GetInt16(reader, "cape_design_id");
-                union.UnionNews = GetStringNullable(reader, "union_news");
-                union.Created = GetDateTime(reader, "created");
+                union.id = GetInt32(reader, "id");
+                union.name = GetStringNullable(reader, "name");
+                union.leaderId = GetInt32(reader, "leader_character_id");
+                union.subLeader1Id = GetInt32(reader, "subleader1_character_id");
+                union.subLeader2Id = GetInt32(reader, "subleader1_character_id");
+                union.level = (uint)GetInt32(reader, "level");
+                union.currentExp = (uint)GetInt32(reader, "current_exp");
+                union.nextLevelExp = (uint)GetInt32(reader, "next_level_exp");
+                union.memberLimitIncrease = (byte)GetInt32(reader, "member_limit_increase");
+                union.capeDesignId = GetInt16(reader, "cape_design_id");
+                union.unionNews = GetStringNullable(reader, "union_news");
+                union.created = GetDateTime(reader, "created");
                 return union;
             }
         }

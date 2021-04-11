@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_gem_cancel_spall_support_item_r : PacketResponse
+    public class RecvGemCancelSpallSupportItemR : PacketResponse
     {
-        public recv_gem_cancel_spall_support_item_r()
+        public RecvGemCancelSpallSupportItemR()
             : base((ushort) AreaPacketId.recv_gem_cancel_spall_support_item_r, ServerType.Area)
         {
         }

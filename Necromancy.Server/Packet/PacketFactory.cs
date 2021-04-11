@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet
 {
     public class PacketFactory
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(PacketFactory));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(PacketFactory));
 
         public const int PacketIdSize = 2;
         public const int PacketLengthTypeSize = 1;
@@ -40,11 +40,11 @@ namespace Necromancy.Server.Packet
 
         public byte[] Write(NecPacket packet)
         {
-            byte[] data = packet.Data.GetAllBytes();
+            byte[] data = packet.data.GetAllBytes();
             IBuffer buffer = BufferProvider.Provide();
 
             PacketType packetType;
-            switch (packet.PacketType)
+            switch (packet.packetType)
             {
                 case PacketType.HeartBeat:
                     packetType = PacketType.HeartBeat;
@@ -83,17 +83,17 @@ namespace Necromancy.Server.Packet
                     }
                     else
                     {
-                        Logger.Error($"{dataSize} to big");
+                        _Logger.Error($"{dataSize} to big");
                         return null;
                     }
 
-                    buffer.WriteUInt16(packet.Id);
+                    buffer.WriteUInt16(packet.id);
                     buffer.WriteBytes(data);
                     break;
             }
 
             byte headerSize = CalculateHeaderSize(packetType);
-            packet.Header = buffer.GetBytes(0, headerSize);
+            packet.header = buffer.GetBytes(0, headerSize);
 
             return buffer.GetAllBytes();
         }
@@ -124,7 +124,7 @@ namespace Necromancy.Server.Packet
                     byte lengthType = _buffer.ReadByte();
                     if (!Enum.IsDefined(typeof(PacketType), lengthType))
                     {
-                        Logger.Error($"PacketType: '{lengthType}' not found");
+                        _Logger.Error($"PacketType: '{lengthType}' not found");
                         Reset();
                         return packets;
                     }
@@ -191,7 +191,7 @@ namespace Necromancy.Server.Packet
                         default:
                         {
                             // TODO update arrowgene buffer to read uint24 && int24
-                            Logger.Error($"PacketType: '{_packetType}' not supported");
+                            _Logger.Error($"PacketType: '{_packetType}' not supported");
                             Reset();
                             return packets;
                         }
@@ -206,7 +206,7 @@ namespace Necromancy.Server.Packet
                     byte[] packetData = _buffer.ReadBytes((int) _dataSize);
                     IBuffer buffer = BufferProvider.Provide(packetData);
                     NecPacket packet = new NecPacket(_id, buffer, serverType);
-                    packet.Header = _header;
+                    packet.header = _header;
                     packets.Add(packet);
                     _readPacketLengthType = false;
                     _readHeader = false;

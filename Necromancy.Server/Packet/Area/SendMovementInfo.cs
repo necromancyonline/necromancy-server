@@ -10,66 +10,66 @@ using System.Numerics;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_movement_info : ClientHandler
+    public class SendMovementInfo : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_movement_info));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendMovementInfo));
 
-        public send_movement_info(NecServer server) : base(server)
+        public SendMovementInfo(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_movement_info;
+        public override ushort id => (ushort) AreaPacketId.send_movement_info;
 
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             // If changing maps don't update position
-            if (client.Character.mapChange)
+            if (client.character.mapChange)
             {
                 return;
             }
 
-            client.Character.X = packet.Data.ReadFloat();
-            client.Character.Y = packet.Data.ReadFloat();
-            client.Character.Z = packet.Data.ReadFloat();
+            client.character.x = packet.data.ReadFloat();
+            client.character.y = packet.data.ReadFloat();
+            client.character.z = packet.data.ReadFloat();
 
-            float percentMovementIsX = packet.Data.ReadFloat();
-            float percentMovementIsY = packet.Data.ReadFloat();
+            float percentMovementIsX = packet.data.ReadFloat();
+            float percentMovementIsY = packet.data.ReadFloat();
             float verticalMovementSpeedMultiplier =
-                packet.Data.ReadFloat(); //  Confirm by climbing ladder at 1 up or -1 down. or Jumping
+                packet.data.ReadFloat(); //  Confirm by climbing ladder at 1 up or -1 down. or Jumping
 
-            float movementSpeed = packet.Data.ReadFloat();
+            float movementSpeed = packet.data.ReadFloat();
 
             float horizontalMovementSpeedMultiplier =
-                packet.Data
+                packet.data
                     .ReadFloat(); //always 1 when moving.  Confirm by Coliding with an  object and watching it Dip.
 
-            client.Character.movementPose =
-                packet.Data.ReadByte(); //Character Movement Type: Type 8 Falling / Jumping. Type 3 normal:  Type 9  climbing
+            client.character.movementPose =
+                packet.data.ReadByte(); //Character Movement Type: Type 8 Falling / Jumping. Type 3 normal:  Type 9  climbing
 
-            client.Character.movementAnim = packet.Data.ReadByte(); //Action Modifier Byte
-            //146 :ladder left Foot Up.      //147 Ladder right Foot Up. 
+            client.character.movementAnim = packet.data.ReadByte(); //Action Modifier Byte
+            //146 :ladder left Foot Up.      //147 Ladder right Foot Up.
             //151 Left Foot Down,            //150 Right Root Down .. //155 falling off ladder
             //81  jumping up,                //84  jumping down       //85 landing
 
 
             //Battle Logic until we find out how to write battle byte requrements in 'send_data_get_Self_chara_data_request' so the client can send the right info
-            if (client.Character.battleAnim != 0)
+            if (client.character.battleAnim != 0)
             {
-                client.Character.movementPose = 8 /*client.Character.battlePose*/
+                client.character.movementPose = 8 /*client.Character.battlePose*/
                     ; //Setting the pose byte to the 2nd and 3rd digits of our equipped weapon ID. For battle!!
-                client.Character.movementAnim =
-                    client.Character
+                client.character.movementAnim =
+                    client.character
                         .battleAnim; //Setting the animation byte to an animation from C:\WO\Chara\chara\00\041\anim. 231, 232, 233, and 244 are attack animations
             }
 
 
             IBuffer res2 = BufferProvider.Provide();
 
-            res2.WriteUInt32(client.Character.InstanceId); //Character ID
-            res2.WriteFloat(client.Character.X);
-            res2.WriteFloat(client.Character.Y);
-            res2.WriteFloat(client.Character.Z);
+            res2.WriteUInt32(client.character.instanceId); //Character ID
+            res2.WriteFloat(client.character.x);
+            res2.WriteFloat(client.character.y);
+            res2.WriteFloat(client.character.z);
 
             res2.WriteFloat(percentMovementIsX);
             res2.WriteFloat(percentMovementIsY);
@@ -79,33 +79,33 @@ namespace Necromancy.Server.Packet.Area
 
             res2.WriteFloat(horizontalMovementSpeedMultiplier);
 
-            res2.WriteByte(client.Character.movementPose); 
-            res2.WriteByte(client.Character.movementAnim); 
+            res2.WriteByte(client.character.movementPose);
+            res2.WriteByte(client.character.movementAnim);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_0x8D92, res2, ServerType.Area, client);
+            router.Send(client.map, (ushort) AreaPacketId.recv_0x8D92, res2, ServerType.Area, client);
 
-            client.Character.battleAnim = 0; //re-setting the byte to 0 at the end of every iteration to allow for normal movements.
+            client.character.battleAnim = 0; //re-setting the byte to 0 at the end of every iteration to allow for normal movements.
 
             //Cancel skill execution on movement start
-            if (client.Character.castingSkill)
+            if (client.character.castingSkill)
             {
                 RecvSkillCastCancel cancelCast = new RecvSkillCastCancel();
-                Router.Send(client.Map, cancelCast.ToPacket());
-                client.Character.activeSkillInstance = 0;
-                client.Character.castingSkill = false;
+                router.Send(client.map, cancelCast.ToPacket());
+                client.character.activeSkillInstance = 0;
+                client.character.castingSkill = false;
             }
 
             //Tell any charaBodies who are along for the ride that movement is happening.
-            foreach (NecClient necClient in client.BodyCollection.Values)
+            foreach (NecClient necClient in client.bodyCollection.Values)
             {
                 IBuffer res5 = BufferProvider.Provide();
-                res5.WriteUInt32(necClient.Character.InstanceId);
-                res5.WriteFloat(client.Character.X);
-                res5.WriteFloat(client.Character.Y);
-                res5.WriteFloat(client.Character.Z);
-                res5.WriteByte(client.Character.Heading); //Heading
-                res5.WriteByte(client.Character.movementAnim); //state
-                Router.Send(necClient, (ushort)AreaPacketId.recv_object_point_move_notify, res5, ServerType.Area);
+                res5.WriteUInt32(necClient.character.instanceId);
+                res5.WriteFloat(client.character.x);
+                res5.WriteFloat(client.character.y);
+                res5.WriteFloat(client.character.z);
+                res5.WriteByte(client.character.heading); //Heading
+                res5.WriteByte(client.character.movementAnim); //state
+                router.Send(necClient, (ushort)AreaPacketId.recv_object_point_move_notify, res5, ServerType.Area);
             }
 
 
@@ -136,22 +136,22 @@ namespace Necromancy.Server.Packet.Area
 
 
             //Support for /takeover command to enable moving objects administratively
-            if (client.Character.takeover == true)
+            if (client.character.takeover == true)
             {
-                Logger.Debug($"Moving object ID {client.Character.eventSelectReadyCode}.");
+                _Logger.Debug($"Moving object ID {client.character.eventSelectReadyCode}.");
                 IBuffer res = BufferProvider.Provide();
-                res.WriteUInt32(client.Character.eventSelectReadyCode);
-                res.WriteFloat(client.Character.X);
-                res.WriteFloat(client.Character.Y);
-                res.WriteFloat(client.Character.Z);
-                res.WriteByte(client.Character.Heading); //Heading
-                res.WriteByte(client.Character.movementAnim); //state
-                Router.Send(client.Map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                res.WriteUInt32(client.character.eventSelectReadyCode);
+                res.WriteFloat(client.character.x);
+                res.WriteFloat(client.character.y);
+                res.WriteFloat(client.character.z);
+                res.WriteByte(client.character.heading); //Heading
+                res.WriteByte(client.character.movementAnim); //state
+                router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
             }
 
             //Logic to see if you are in range of a map transition
-            client.Character.StepCount++;
-            if (client.Character.StepCount % 4 == 0)
+            client.character.stepCount++;
+            if (client.character.stepCount % 4 == 0)
             {
                 CheckMapChange(client);
             }
@@ -160,66 +160,64 @@ namespace Necromancy.Server.Packet.Area
 
         private void CheckMapChange(NecClient client)
         {
-            Character _character = client.Character;
-            NecClient _client = client;
-            Vector3 characterPos = new Vector3(_character.X, _character.Y, _character.Z);
-            if (_character == null | _client == null)
-            { 
-                return; 
+            Vector3 characterPos = new Vector3(client.character.x, client.character.y, client.character.z);
+            if (client.character == null)
+            {
+                return;
             }
 
-            foreach (MapTransition mapTransition in _client.Map.MapTransitions.Values)
+            foreach (MapTransition mapTransition in client.map.mapTransitions.Values)
             {
-                float lineProximity = pDistance(characterPos, mapTransition.LeftPos, mapTransition.RightPos);
+                float lineProximity = PDistance(characterPos, mapTransition.leftPos, mapTransition.rightPos);
                // Logger.Debug($"{_character.Name} checking map {mapTransition.MapId} [transition] id {mapTransition.Id} to destination {mapTransition.TransitionMapId}");
                // Logger.Debug($"Distance to transition : {lineProximity}");
                 if (lineProximity < 155)
                 {
-                    if (!Server.Maps.TryGet(mapTransition.TransitionMapId, out Map transitionMap))
+                    if (!server.maps.TryGet(mapTransition.transitionMapId, out Map transitionMap))
                     {
                         return;
                     }
-                    transitionMap.EnterForce(_client, mapTransition.ToPos);
+                    transitionMap.EnterForce(client, mapTransition.toPos);
                 }
 
 
             }
 
         }
-        static float pDistance(Vector3 a, Vector3 b, Vector3 c)
+        static float PDistance(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC)
         {
 
-            float A = a.X - b.X;
-            float B = a.Y - b.Y;
-            float C = c.X - b.X;
-            float D = c.Y - b.Y;
+            float distanceA = vectorA.X - vectorB.X;
+            float distanceB = vectorA.Y - vectorB.Y;
+            float distanceC = vectorC.X - vectorB.X;
+            float distanceD = vectorC.Y - vectorB.Y;
 
-            float dot = A * C + B * D;
-            float len_sq = C * C + D * D;
+            float dot = distanceA * distanceC + distanceB * distanceD;
+            float lenSq = distanceC * distanceC + distanceD * distanceD;
             float param = -1;
-            if (len_sq != 0) //in case of 0 length line
-                param = dot / len_sq;
+            if (lenSq != 0) //in case of 0 length line
+                param = dot / lenSq;
 
             float xx, yy;
 
             if (param < 0)
             {
-                xx = b.X;
-                yy = b.Y;
+                xx = vectorB.X;
+                yy = vectorB.Y;
             }
             else if (param > 1)
             {
-                xx = c.X;
-                yy = c.Y;
+                xx = vectorC.X;
+                yy = vectorC.Y;
             }
             else
             {
-                xx = b.X + param * C;
-                yy = b.Y + param * D;
+                xx = vectorB.X + param * distanceC;
+                yy = vectorB.Y + param * distanceD;
             }
 
-            float dx = a.X - xx;
-            float dy = a.Y - yy;
+            float dx = vectorA.X - xx;
+            float dy = vectorA.Y - yy;
             return (float)Math.Abs(Math.Sqrt(dx * dx + dy * dy));
         }
 

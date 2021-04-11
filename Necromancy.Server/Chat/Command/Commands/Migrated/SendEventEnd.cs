@@ -18,10 +18,10 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
-        public override string Key => "EndEvent";
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "EndEvent";
     }
 }

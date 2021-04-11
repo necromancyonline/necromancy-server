@@ -33,31 +33,31 @@ namespace Necromancy.Server.Chat.Command.Commands
             switch (command[0])
             {
                 case "open":
-                    recv_chara_arrange_notify_open openArrange = new recv_chara_arrange_notify_open();
-                    recv_chara_arrange_notify_update_unlock unlockArrange1 = new recv_chara_arrange_notify_update_unlock();
-                    Router.Send(unlockArrange1, client);
-                    Router.Send(openArrange, client);
+                    RecvCharaArrangeNotifyOpen openArrange = new RecvCharaArrangeNotifyOpen();
+                    RecvCharaArrangeNotifyUpdateUnlock unlockArrange1 = new RecvCharaArrangeNotifyUpdateUnlock();
+                    router.Send(unlockArrange1, client);
+                    router.Send(openArrange, client);
 
                     break;
 
                 case "update":
-                    recv_chara_arrange_update_form_r updateArrange = new recv_chara_arrange_update_form_r();
-                    Router.Send(updateArrange, client);
+                    RecvCharaArrangeUpdateFormR updateArrange = new RecvCharaArrangeUpdateFormR();
+                    router.Send(updateArrange, client);
                     break;
 
                 case "parts":
-                    recv_chara_arrange_notify_parts partsArrange = new recv_chara_arrange_notify_parts();
-                    Router.Send(partsArrange, client);
+                    RecvCharaArrangeNotifyParts partsArrange = new RecvCharaArrangeNotifyParts();
+                    router.Send(partsArrange, client);
                     break;
 
                 case "unlock":
-                    recv_chara_arrange_notify_update_unlock unlockArrange = new recv_chara_arrange_notify_update_unlock();
-                    Router.Send(unlockArrange, client);
+                    RecvCharaArrangeNotifyUpdateUnlock unlockArrange = new RecvCharaArrangeNotifyUpdateUnlock();
+                    router.Send(unlockArrange, client);
                     break;
 
                 case "form":
-                    recv_chara_arrange_update_form_r formArrange = new recv_chara_arrange_update_form_r();
-                    Router.Send(formArrange, client);
+                    RecvCharaArrangeUpdateFormR formArrange = new RecvCharaArrangeUpdateFormR();
+                    router.Send(formArrange, client);
                     break;
 
                 default:
@@ -66,7 +66,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     {
                         IBuffer res = BufferProvider.Provide();
                         res.WriteByte(0);
-                        Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
+                        router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
                     }
                     );
                     break;
@@ -74,14 +74,14 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "arrange";
-        public override string HelpText => "usage: `/arrange parts` - whatever chara arrange does.";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "arrange";
+        public override string helpText => "usage: `/arrange parts` - whatever chara arrange does.";
     }
-    //res.WriteInt32(numEntries); //less than 0x1E 
+    //res.WriteInt32(numEntries); //less than 0x1E
     //res.WriteInt32(0);
-    //res.WriteInt64(0); 
-    //res.WriteInt16(0); 
+    //res.WriteInt64(0);
+    //res.WriteInt16(0);
     //res.WriteByte(0);
     //res.WriteFixedString("Xeno", 0x10);
     //res.WriteCString("What");

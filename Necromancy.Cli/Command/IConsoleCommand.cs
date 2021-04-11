@@ -4,9 +4,9 @@ namespace Necromancy.Cli.Command
 {
     public interface IConsoleCommand
     {
-        CommandResultType Handle(ConsoleParameter parameter);        
+        CommandResultType Handle(ConsoleParameter parameter);
         void Shutdown();
-        string Key { get; }
-        string Description { get; }
+        string key { get; }
+        string description { get; }
     }
 }

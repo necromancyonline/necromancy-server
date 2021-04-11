@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_motion_notify : PacketResponse
+    public class RecvMotionNotify : PacketResponse
     {
-        public recv_motion_notify()
+        public RecvMotionNotify()
             : base((ushort) AreaPacketId.recv_motion_notify, ServerType.Area)
         {
         }

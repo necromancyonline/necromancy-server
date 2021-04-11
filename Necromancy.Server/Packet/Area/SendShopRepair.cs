@@ -8,44 +8,44 @@ using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_shop_repair : ClientHandler
+    public class SendShopRepair : ClientHandler
     {
-        public send_shop_repair(NecServer server) : base(server) { }
-        public override ushort Id => (ushort) AreaPacketId.send_shop_repair;
+        public SendShopRepair(NecServer server) : base(server) { }
+        public override ushort id => (ushort) AreaPacketId.send_shop_repair;
         public override void Handle(NecClient client, NecPacket packet)
         {
             List<ItemLocation> itemLocations = new List<ItemLocation>();
-            int repairCount = packet.Data.ReadInt32();
+            int repairCount = packet.data.ReadInt32();
             for (int i = 0; i < repairCount; i++)
             {
-                ItemZoneType zone = (ItemZoneType)packet.Data.ReadByte();
-                byte bag = packet.Data.ReadByte();
-                short slot = packet.Data.ReadInt16();
+                ItemZoneType zone = (ItemZoneType)packet.data.ReadByte();
+                byte bag = packet.data.ReadByte();
+                short slot = packet.data.ReadInt16();
 
                 ItemLocation location = new ItemLocation(zone, bag, slot);
-                itemLocations.Add(location);                
+                itemLocations.Add(location);
             }
-            ulong repairFee = packet.Data.ReadUInt64();
+            ulong repairFee = packet.data.ReadUInt64();
 
-            ItemService itemService = new ItemService(client.Character);            
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
             try
-            {                
+            {
                 ulong currentGold = itemService.SubtractGold(repairFee); //TODO ignore the "repair fee" and check server side
                 RecvSelfMoneyNotify recvSelfMoneyNotify = new RecvSelfMoneyNotify(client, currentGold);
-                Router.Send(recvSelfMoneyNotify);
+                router.Send(recvSelfMoneyNotify);
 
                 List<ItemInstance> repairedItems = itemService.Repair(itemLocations);
                 foreach (ItemInstance repairedItem in repairedItems)
                 {
-                    repairedItem.CurrentDurability = repairedItem.MaximumDurability;
+                    repairedItem.currentDurability = repairedItem.maximumDurability;
                     RecvItemUpdateDurability recvItemUpdateDurability = new RecvItemUpdateDurability(client, repairedItem);
-                    Router.Send(recvItemUpdateDurability);
-                }                                
-            } catch (ItemException e) { error = (int) e.Type; }
+                    router.Send(recvItemUpdateDurability);
+                }
+            } catch (ItemException e) { error = (int) e.type; }
 
             RecvShopRepair recvShopRepair = new RecvShopRepair(client, error);
-            Router.Send(recvShopRepair);
+            router.Send(recvShopRepair);
         }
     }
 }

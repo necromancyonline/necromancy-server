@@ -9,22 +9,22 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_item_equip : ClientHandler
+    public class SendItemEquip : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_item_equip));
-        public send_item_equip(NecServer server) : base(server) { }
-        public override ushort Id => (ushort) AreaPacketId.send_item_equip;
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemEquip));
+        public SendItemEquip(NecServer server) : base(server) { }
+        public override ushort id => (ushort) AreaPacketId.send_item_equip;
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte();
-            byte bag = packet.Data.ReadByte();
-            short slot = packet.Data.ReadInt16();
-            ItemEquipSlots equipSlot = (ItemEquipSlots) packet.Data.ReadInt32();
-            
-            Logger.Debug($"storageType:{zone} bagId:{bag} bagSlotIndex:{slot} equipBit:{equipSlot}");
+            ItemZoneType zone = (ItemZoneType) packet.data.ReadByte();
+            byte bag = packet.data.ReadByte();
+            short slot = packet.data.ReadInt16();
+            ItemEquipSlots equipSlot = (ItemEquipSlots) packet.data.ReadInt32();
+
+            _Logger.Debug($"storageType:{zone} bagId:{bag} bagSlotIndex:{slot} equipBit:{equipSlot}");
 
             ItemLocation location = new ItemLocation(zone, bag, slot);
-            ItemService itemService = new ItemService(client.Character);            
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
 
             try
@@ -33,31 +33,31 @@ namespace Necromancy.Server.Packet.Area
                 {
                     ItemInstance itemRight = itemService.CheckAlreadyEquipped(ItemEquipSlots.RightHand);
                     if (itemRight != null)
-                    { 
-                        itemRight = itemService.Unequip(itemRight.CurrentEquipSlot);
-                        itemRight.CurrentEquipSlot = ItemEquipSlots.None;
+                    {
+                        itemRight = itemService.Unequip(itemRight.currentEquipSlot);
+                        itemRight.currentEquipSlot = ItemEquipSlots.None;
                         RecvItemUpdateEqMask recvItemUpdateEqMaskCurr = new RecvItemUpdateEqMask(client, itemRight);
-                        Router.Send(recvItemUpdateEqMaskCurr, client);
+                        router.Send(recvItemUpdateEqMaskCurr, client);
                     }
                     ItemInstance itemLeft = itemService.CheckAlreadyEquipped(ItemEquipSlots.LeftHand);
                     if (itemLeft != null)
-                    { 
-                        itemLeft = itemService.Unequip(itemLeft.CurrentEquipSlot);
-                        itemRight.CurrentEquipSlot = ItemEquipSlots.None;
+                    {
+                        itemLeft = itemService.Unequip(itemLeft.currentEquipSlot);
+                        itemRight.currentEquipSlot = ItemEquipSlots.None;
                         RecvItemUpdateEqMask recvItemUpdateEqMaskCurr = new RecvItemUpdateEqMask(client, itemLeft);
-                        Router.Send(recvItemUpdateEqMaskCurr, client);
+                        router.Send(recvItemUpdateEqMaskCurr, client);
                     }
                 }
-                else //everything else besides 2h weapons. 
+                else //everything else besides 2h weapons.
                 {
                     //update the equipment array
                     ItemInstance equippedItem = itemService.CheckAlreadyEquipped(equipSlot);
                     if (equippedItem != null)
                     {
-                        equippedItem = itemService.Unequip(equippedItem.CurrentEquipSlot);
-                        equippedItem.CurrentEquipSlot = ItemEquipSlots.None;
+                        equippedItem = itemService.Unequip(equippedItem.currentEquipSlot);
+                        equippedItem.currentEquipSlot = ItemEquipSlots.None;
                         RecvItemUpdateEqMask recvItemUpdateEqMaskCurr = new RecvItemUpdateEqMask(client, equippedItem);
-                        Router.Send(recvItemUpdateEqMaskCurr, client);
+                        router.Send(recvItemUpdateEqMaskCurr, client);
                     }
                 }
 
@@ -66,20 +66,20 @@ namespace Necromancy.Server.Packet.Area
 
                 //Tell the client to move the icons to equipment slots
                 RecvItemUpdateEqMask recvItemUpdateEqMask = new RecvItemUpdateEqMask(client, newEquippedItem);
-                Router.Send(recvItemUpdateEqMask);
+                router.Send(recvItemUpdateEqMask);
 
                 //notify other players of your new look
-                RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
-                Router.Send(client.Map, myCharacterData, client);
+                RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.character, client.soul.name);
+                router.Send(client.map, myCharacterData, client);
             }
-            catch (ItemException e) { error = (int) e.Type; }
+            catch (ItemException e) { error = (int) e.type; }
 
             //tell the send if everything went well or not.  notify the client chat of any errors
             RecvItemEquip recvItemEquip = new RecvItemEquip(client, error);
-            Router.Send(recvItemEquip);
+            router.Send(recvItemEquip);
 
             //Re-do all your stats
-            Router.Send(client, itemService.CalculateBattleStats(client));
+            router.Send(client, itemService.CalculateBattleStats(client));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Necromancy.Server.Discord.Modules
         {
             EmbedBuilder builder = new EmbedBuilder();
             builder.WithTitle("Server Status");
-            builder.AddField("Connections", _server.Clients.GetCount());
+            builder.AddField("Connections", _server.clients.GetCount());
             await Context.Channel.SendMessageAsync(null, false, builder.Build());
         }
 

@@ -6,14 +6,14 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_event_quest_order_r : ClientHandler
+    public class SendEventQuestOrderR : ClientHandler
     {
-        public send_event_quest_order_r(NecServer server) : base(server)
+        public SendEventQuestOrderR(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort)AreaPacketId.send_event_quest_order_r;
+        public override ushort id => (ushort)AreaPacketId.send_event_quest_order_r;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(1); // 0 Show the soul level mission, 1 Deactive the Show soul level mission
             res.WriteFixedString("The Sexy Dwarf", 0x61); // Quest Name
             res.WriteInt32(70); // Quest Level
-            res.WriteInt32(80000); // Time limit 
+            res.WriteInt32(80000); // Time limit
             res.WriteFixedString("Marina", 0x61); // The NPC that send you the quest
             res.WriteByte(0);
             res.WriteByte(0);
@@ -73,7 +73,7 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
 
         }
 

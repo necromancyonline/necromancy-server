@@ -50,18 +50,18 @@ namespace Necromancy.Server
 {
     public class NecServer
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(NecServer));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecServer));
 
-        public NecSetting Setting { get; }
-        public PacketRouter Router { get; }
-        public ClientLookup Clients { get; }
-        public MapLookup Maps { get; }
-        public IDatabase Database { get; }
-        public SettingRepository SettingRepository { get; }
-        public ChatManager Chat { get; }
-        public NecromancyBot NecromancyBot { get; }
-        public InstanceGenerator Instances { get; }
-        public bool Running => _running;
+        public NecSetting setting { get; }
+        public PacketRouter router { get; }
+        public ClientLookup clients { get; }
+        public MapLookup maps { get; }
+        public IDatabase database { get; }
+        public SettingRepository settingRepository { get; }
+        public ChatManager chat { get; }
+        public NecromancyBot necromancyBot { get; }
+        public InstanceGenerator instances { get; }
+        public bool running => _running;
 
         private readonly NecQueueConsumer _authConsumer;
         private readonly NecQueueConsumer _msgConsumer;
@@ -74,43 +74,43 @@ namespace Necromancy.Server
         public NecServer(NecSetting setting)
         {
             _running = false;
-            Setting = new NecSetting(setting);
+            this.setting = new NecSetting(setting);
 
-            NecromancyBot = new NecromancyBot(Setting);
-            NecromancyBot.AddSingleton(this);
-            Instances = new InstanceGenerator(this);
-            Clients = new ClientLookup();
-            Maps = new MapLookup();
-            Chat = new ChatManager(this);
-            Router = new PacketRouter();
-            SettingRepository = new SettingRepository(Setting.RepositoryFolder).Initialize();
-            Database = new NecDatabaseBuilder(Setting, SettingRepository).Build();
-            _authConsumer = new NecQueueConsumer(ServerType.Auth, Setting, Setting.AuthSocketSettings);
-            _authConsumer.ClientDisconnected += AuthClientDisconnected;
-            _msgConsumer = new NecQueueConsumer(ServerType.Msg, Setting, Setting.MsgSocketSettings);
-            _msgConsumer.ClientDisconnected += MsgClientDisconnected;
-            _areaConsumer = new NecQueueConsumer(ServerType.Area, Setting, Setting.AreaSocketSettings);
-            _areaConsumer.ClientDisconnected += AreaClientDisconnected;
+            necromancyBot = new NecromancyBot(this.setting);
+            necromancyBot.AddSingleton(this);
+            instances = new InstanceGenerator(this);
+            clients = new ClientLookup();
+            maps = new MapLookup();
+            chat = new ChatManager(this);
+            router = new PacketRouter();
+            settingRepository = new SettingRepository(this.setting.repositoryFolder).Initialize();
+            database = new NecDatabaseBuilder(this.setting, settingRepository).Build();
+            _authConsumer = new NecQueueConsumer(ServerType.Auth, this.setting, this.setting.authSocketSettings);
+            _authConsumer.clientDisconnected += AuthClientDisconnected;
+            _msgConsumer = new NecQueueConsumer(ServerType.Msg, this.setting, this.setting.msgSocketSettings);
+            _msgConsumer.clientDisconnected += MsgClientDisconnected;
+            _areaConsumer = new NecQueueConsumer(ServerType.Area, this.setting, this.setting.areaSocketSettings);
+            _areaConsumer.clientDisconnected += AreaClientDisconnected;
 
             _authServer = new AsyncEventServer(
-                Setting.ListenIpAddress,
-                Setting.AuthPort,
+                this.setting.listenIpAddress,
+                this.setting.authPort,
                 _authConsumer,
-                Setting.AuthSocketSettings
+                this.setting.authSocketSettings
             );
 
             _msgServer = new AsyncEventServer(
-                Setting.ListenIpAddress,
-                Setting.MsgPort,
+                this.setting.listenIpAddress,
+                this.setting.msgPort,
                 _msgConsumer,
-                Setting.MsgSocketSettings
+                this.setting.msgSocketSettings
             );
 
             _areaServer = new AsyncEventServer(
-                Setting.ListenIpAddress,
-                Setting.AreaPort,
+                this.setting.listenIpAddress,
+                this.setting.areaPort,
                 _areaConsumer,
-                Setting.AreaSocketSettings
+                this.setting.areaSocketSettings
             );
 
             LoadChatCommands();
@@ -125,18 +125,18 @@ namespace Necromancy.Server
             _msgServer.Start();
             _areaServer.Start();
             _running = true;
-            NecromancyBot.Start();
-            NecromancyBot.EnqueueEvent_ServerStatus("Hello! I'm Online!");
+            necromancyBot.Start();
+            necromancyBot.EnqueueEvent_ServerStatus("Hello! I'm Online!");
         }
 
         public void Stop()
         {
-            NecromancyBot.Send_ServerStatus("Bye Byte, I'm Offline");
+            necromancyBot.Send_ServerStatus("Bye Byte, I'm Offline");
             _authServer.Stop();
             _msgServer.Stop();
             _areaServer.Stop();
             _running = false;
-            NecromancyBot.Stop();
+            necromancyBot.Stop();
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainOnUnhandledException;
         }
 
@@ -155,105 +155,105 @@ namespace Necromancy.Server
 
         private void AreaClientDisconnected(NecConnection connection)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client == null)
             {
                 return;
             }
             //Try to update the character stats.
-            if (!this.Database.UpdateCharacter(client.Character))
+            if (!this.database.UpdateCharacter(client.character))
             {
-                Logger.Error("Could not update the database with character details before disconnect");
+                _Logger.Error("Could not update the database with character details before disconnect");
             }
-            if (!this.Database.UpdateSoul(client.Soul))
+            if (!this.database.UpdateSoul(client.soul))
             {
-                Logger.Error("Could not update the database with soul details before disconnect");
+                _Logger.Error("Could not update the database with soul details before disconnect");
             }
-            Clients.Remove(client);
+            clients.Remove(client);
 
             //I disconnected while my dead body was being carried around by another player
-            if (client.Character.HasDied == true) 
+            if (client.character.hasDied == true)
             {
-                DeadBody deadBody = this.Instances.GetInstance(client.Character.DeadBodyInstanceId) as DeadBody;
-                if (deadBody.SalvagerId != 0)
+                DeadBody deadBody = this.instances.GetInstance(client.character.deadBodyInstanceId) as DeadBody;
+                if (deadBody.salvagerId != 0)
                 {
-                    NecClient mySalvager = this.Clients.GetByCharacterInstanceId(deadBody.SalvagerId);
+                    NecClient mySalvager = this.clients.GetByCharacterInstanceId(deadBody.salvagerId);
                     if (mySalvager != null)
                     {
-                        deadBody.X = mySalvager.Character.X;
-                        deadBody.Y = mySalvager.Character.Y;
-                        deadBody.Z = mySalvager.Character.Z;
-                        deadBody.MapId = mySalvager.Character.MapId;
-                        deadBody.ConnectionState = 0;
-                        mySalvager.BodyCollection.Remove(deadBody.InstanceId);
+                        deadBody.x = mySalvager.character.x;
+                        deadBody.y = mySalvager.character.y;
+                        deadBody.z = mySalvager.character.z;
+                        deadBody.mapId = mySalvager.character.mapId;
+                        deadBody.connectionState = 0;
+                        mySalvager.bodyCollection.Remove(deadBody.instanceId);
 
-                        mySalvager.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+                        mySalvager.map.deadBodies.Add(deadBody.instanceId, deadBody);
                         RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                        if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                        if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
                         {
-                            Router.Send(mySalvager.Map, cBodyData.ToPacket(), client);
+                            router.Send(mySalvager.map, cBodyData.ToPacket(), client);
                         }
-                        
+
                         //must occur after the charaBody notify.
-                        RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.InstanceId, 5);
-                        Router.Send(mySalvager, recvCharaBodySalvageEnd.ToPacket());
+                        RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.instanceId, 5);
+                        router.Send(mySalvager, recvCharaBodySalvageEnd.ToPacket());
                     }
                 }
             }
 
             //while i was dead and being carried around, the player carrying me disconnected
-            foreach (NecClient collectedBody in client.BodyCollection.Values)
+            foreach (NecClient collectedBody in client.bodyCollection.Values)
             {
-                DeadBody deadBody = this.Instances.GetInstance(collectedBody.Character.DeadBodyInstanceId) as DeadBody;
+                DeadBody deadBody = this.instances.GetInstance(collectedBody.character.deadBodyInstanceId) as DeadBody;
 
                 RecvCharaBodySelfSalvageEnd recvCharaBodySelfSalvageEnd = new RecvCharaBodySelfSalvageEnd(3);
-                Router.Send(collectedBody, recvCharaBodySelfSalvageEnd.ToPacket());
+                router.Send(collectedBody, recvCharaBodySelfSalvageEnd.ToPacket());
 
 
-                deadBody.X = client.Character.X;
-                deadBody.Y = client.Character.Y;
-                deadBody.Z = client.Character.Z;
-                collectedBody.Character.X = client.Character.X;
-                collectedBody.Character.Y = client.Character.Y;
-                collectedBody.Character.Z = client.Character.Z;
+                deadBody.x = client.character.x;
+                deadBody.y = client.character.y;
+                deadBody.z = client.character.z;
+                collectedBody.character.x = client.character.x;
+                collectedBody.character.y = client.character.y;
+                collectedBody.character.z = client.character.z;
                 //ToDo  add Town checking.  if map.ID.toString()[0]==1 skip deadbody rendering
-                deadBody.MapId = client.Character.MapId;
+                deadBody.mapId = client.character.mapId;
 
-                client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+                client.map.deadBodies.Add(deadBody.instanceId, deadBody);
                 RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                if (client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
                 {
-                    Router.Send(client.Map, cBodyData.ToPacket());
+                    router.Send(client.map, cBodyData.ToPacket());
                 }
 
                 //send your soul to all the other souls runnin around
-                RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(collectedBody.Character, collectedBody.Soul.Name);
-                foreach (NecClient soulStateClient in client.Map.ClientLookup.GetAll())
+                RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(collectedBody.character, collectedBody.soul.name);
+                foreach (NecClient soulStateClient in client.map.clientLookup.GetAll())
                 {
-                    if (soulStateClient.Character.State == CharacterState.SoulForm) this.Router.Send(soulStateClient, cData.ToPacket());
+                    if (soulStateClient.character.state == CharacterState.SoulForm) this.router.Send(soulStateClient, cData.ToPacket());
                 }
-            }                
+            }
 
-            Map map = client.Map;
+            Map map = client.map;
 
             //If i was dead, toggle my deadBody to a Rucksack
             if (map != null)
             {
-                if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                if (map.deadBodies.ContainsKey(client.character.deadBodyInstanceId))
                 {
-                    map.DeadBodies.TryGetValue(client.Character.DeadBodyInstanceId, out DeadBody deadBody);
-                    deadBody.ConnectionState = 0;
-                    RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.Character.DeadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
-                    Router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
+                    map.deadBodies.TryGetValue(client.character.deadBodyInstanceId, out DeadBody deadBody);
+                    deadBody.connectionState = 0;
+                    RecvCharaBodyNotifySpirit recvCharaBodyNotifySpirit = new RecvCharaBodyNotifySpirit(client.character.deadBodyInstanceId, (byte)RecvCharaBodyNotifySpirit.ValidSpirit.DisconnectedClient);
+                    router.Send(map, recvCharaBodyNotifySpirit.ToPacket());
 
                     Task.Delay(TimeSpan.FromSeconds(600)).ContinueWith
                     (t1 =>
                         {
-                            if (map.DeadBodies.ContainsKey(client.Character.DeadBodyInstanceId))
+                            if (map.deadBodies.ContainsKey(client.character.deadBodyInstanceId))
                             {
-                                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.DeadBodyInstanceId);
-                                Router.Send(client.Map, recvObjectDisappearNotify.ToPacket(), client);
-                                map.DeadBodies.Remove(client.Character.DeadBodyInstanceId);
+                                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.character.deadBodyInstanceId);
+                                router.Send(client.map, recvObjectDisappearNotify.ToPacket(), client);
+                                map.deadBodies.Remove(client.character.deadBodyInstanceId);
                             }
                         }
                     );
@@ -264,80 +264,80 @@ namespace Necromancy.Server
                 map.Leave(client);
             }
 
-            Union union = client.Union;
+            Union union = client.union;
             if (union != null)
             {
                 union.Leave(client);
             }
 
-            Character character = client.Character;
+            Character character = client.character;
             if (character != null)
             {
-                Instances.FreeInstance(character);
+                instances.FreeInstance(character);
                 character.characterActive = false;
             }
         }
 
         private void LoadChatCommands()
         {
-            Chat.CommandHandler.AddCommand(new RTestCommand(this));
-            Chat.CommandHandler.AddCommand(new BattleCommand(this));
-            Chat.CommandHandler.AddCommand(new ArrangeCommand(this));
-            Chat.CommandHandler.AddCommand(new ItemInstanceCommand(this));
-            Chat.CommandHandler.AddCommand(new ItemGeneratorCommand(this));
-            Chat.CommandHandler.AddCommand(new HonorCommand(this));
-            Chat.CommandHandler.AddCommand(new SummonCommand(this));
-            Chat.CommandHandler.AddCommand(new PlayersCommand(this));
-            Chat.CommandHandler.AddCommand(new MapTranCommand(this));
-            Chat.CommandHandler.AddCommand(new GGateCommand(this));
-            Chat.CommandHandler.AddCommand(new GimmickCommand(this));
-            Chat.CommandHandler.AddCommand(new ScriptCommand(this));
-            Chat.CommandHandler.AddCommand(new UnionCommand(this));
-            Chat.CommandHandler.AddCommand(new HelpCommand(this));
-            Chat.CommandHandler.AddCommand(new StatusCommand(this));
-            Chat.CommandHandler.AddCommand(new NpcCommand(this));
-            Chat.CommandHandler.AddCommand(new MonsterCommand(this));
-            Chat.CommandHandler.AddCommand(new ChangeFormMenu(this));
-            Chat.CommandHandler.AddCommand(new Died(this));
-            Chat.CommandHandler.AddCommand(new LogOut(this));
-            Chat.CommandHandler.AddCommand(new OnHit(this));
-            Chat.CommandHandler.AddCommand(new QuestStarted(this));
-            Chat.CommandHandler.AddCommand(new Revive(this));
-            Chat.CommandHandler.AddCommand(new SendAuctionNotifyOpen(this));
-            Chat.CommandHandler.AddCommand(new SendCharacterSave(this));
-            Chat.CommandHandler.AddCommand(new SendDataNotifyItemObjectData(this));
-            Chat.CommandHandler.AddCommand(new SendEventEnd(this));
-            Chat.CommandHandler.AddCommand(new SendEventTreasureboxBegin(this));
-            Chat.CommandHandler.AddCommand(new SendMapChangeForce(this));
-            Chat.CommandHandler.AddCommand(new SendRandomBoxNotifyOpen(this));
-            Chat.CommandHandler.AddCommand(new SendSalvageNotifyBody(this));
-            Chat.CommandHandler.AddCommand(new SendShopNotifyOpen(this));
-            Chat.CommandHandler.AddCommand(new SendSoulStorageEvent(this));
-            Chat.CommandHandler.AddCommand(new SendStallSellItem(this));
-            Chat.CommandHandler.AddCommand(new SendStallUpdateFeatureItem(this));
-            Chat.CommandHandler.AddCommand(new SendTestEvent(this));
-            Chat.CommandHandler.AddCommand(new SendTrapEvent(this));
-            Chat.CommandHandler.AddCommand(new SendWantedJailOpen(this));
-            Chat.CommandHandler.AddCommand(new SendWantedListOpen(this));
-            Chat.CommandHandler.AddCommand(new SoulShop(this));
-            Chat.CommandHandler.AddCommand(new JumpCommand(this));
-            Chat.CommandHandler.AddCommand(new NoStringTestCommand(this));
-            Chat.CommandHandler.AddCommand(new Takeover(this));
-            Chat.CommandHandler.AddCommand(new MobCommand(this));
-            Chat.CommandHandler.AddCommand(new CharaCommand(this));
-            Chat.CommandHandler.AddCommand(new ItemCommand(this));
-            Chat.CommandHandler.AddCommand(new TeleportCommand(this));
-            Chat.CommandHandler.AddCommand(new TeleportToCommand(this));
-            Chat.CommandHandler.AddCommand(new GetCommand(this));
+            chat.commandHandler.AddCommand(new RTestCommand(this));
+            chat.commandHandler.AddCommand(new BattleCommand(this));
+            chat.commandHandler.AddCommand(new ArrangeCommand(this));
+            chat.commandHandler.AddCommand(new ItemInstanceCommand(this));
+            chat.commandHandler.AddCommand(new ItemGeneratorCommand(this));
+            chat.commandHandler.AddCommand(new HonorCommand(this));
+            chat.commandHandler.AddCommand(new SummonCommand(this));
+            chat.commandHandler.AddCommand(new PlayersCommand(this));
+            chat.commandHandler.AddCommand(new MapTranCommand(this));
+            chat.commandHandler.AddCommand(new GGateCommand(this));
+            chat.commandHandler.AddCommand(new GimmickCommand(this));
+            chat.commandHandler.AddCommand(new ScriptCommand(this));
+            chat.commandHandler.AddCommand(new UnionCommand(this));
+            chat.commandHandler.AddCommand(new HelpCommand(this));
+            chat.commandHandler.AddCommand(new StatusCommand(this));
+            chat.commandHandler.AddCommand(new NpcCommand(this));
+            chat.commandHandler.AddCommand(new MonsterCommand(this));
+            chat.commandHandler.AddCommand(new ChangeFormMenu(this));
+            chat.commandHandler.AddCommand(new Died(this));
+            chat.commandHandler.AddCommand(new LogOut(this));
+            chat.commandHandler.AddCommand(new OnHit(this));
+            chat.commandHandler.AddCommand(new QuestStarted(this));
+            chat.commandHandler.AddCommand(new Revive(this));
+            chat.commandHandler.AddCommand(new SendAuctionNotifyOpen(this));
+            chat.commandHandler.AddCommand(new SendCharacterSave(this));
+            chat.commandHandler.AddCommand(new SendDataNotifyItemObjectData(this));
+            chat.commandHandler.AddCommand(new SendEventEnd(this));
+            chat.commandHandler.AddCommand(new SendEventTreasureboxBegin(this));
+            chat.commandHandler.AddCommand(new SendMapChangeForce(this));
+            chat.commandHandler.AddCommand(new SendRandomBoxNotifyOpen(this));
+            chat.commandHandler.AddCommand(new SendSalvageNotifyBody(this));
+            chat.commandHandler.AddCommand(new SendShopNotifyOpen(this));
+            chat.commandHandler.AddCommand(new SendSoulStorageEvent(this));
+            chat.commandHandler.AddCommand(new SendStallSellItem(this));
+            chat.commandHandler.AddCommand(new SendStallUpdateFeatureItem(this));
+            chat.commandHandler.AddCommand(new SendTestEvent(this));
+            chat.commandHandler.AddCommand(new SendTrapEvent(this));
+            chat.commandHandler.AddCommand(new SendWantedJailOpen(this));
+            chat.commandHandler.AddCommand(new SendWantedListOpen(this));
+            chat.commandHandler.AddCommand(new SoulShop(this));
+            chat.commandHandler.AddCommand(new JumpCommand(this));
+            chat.commandHandler.AddCommand(new NoStringTestCommand(this));
+            chat.commandHandler.AddCommand(new Takeover(this));
+            chat.commandHandler.AddCommand(new MobCommand(this));
+            chat.commandHandler.AddCommand(new CharaCommand(this));
+            chat.commandHandler.AddCommand(new ItemCommand(this));
+            chat.commandHandler.AddCommand(new TeleportCommand(this));
+            chat.commandHandler.AddCommand(new TeleportToCommand(this));
+            chat.commandHandler.AddCommand(new GetCommand(this));
         }
 
         private void LoadDatabaseObjects()
         {
-            List<MapData> maps = Database.SelectMaps();
+            List<MapData> maps = database.SelectMaps();
             foreach (MapData mapData in maps)
             {
                 Map map = new Map(mapData, this);
-                Maps.Add(map);
+                this.maps.Add(map);
             }
 
             //Logger.Info($"Maps: {maps.Count}");
@@ -356,258 +356,258 @@ namespace Necromancy.Server
             // Authentication Handler
             _authConsumer.AddHandler(new SendHeartbeat(this));
             _authConsumer.AddHandler(new SendUnknown1(this));
-            _authConsumer.AddHandler(new send_base_check_version_auth(this));
-            _authConsumer.AddHandler(new send_base_authenticate(this));
-            _authConsumer.AddHandler(new send_base_get_worldlist(this));
-            _authConsumer.AddHandler(new send_base_select_world(this));
+            _authConsumer.AddHandler(new SendBaseCheckVersionAuth(this));
+            _authConsumer.AddHandler(new SendBaseAuthenticate(this));
+            _authConsumer.AddHandler(new SendBaseGetWorldlist(this));
+            _authConsumer.AddHandler(new SendBaseSelectWorld(this));
 
             // Message Handler
             _msgConsumer.AddHandler(new SendDisconnect(this));
             _msgConsumer.AddHandler(new SendHeartbeat(this));
             _msgConsumer.AddHandler(new SendUnknown1(this));
-            _msgConsumer.AddHandler(new send_base_check_version_msg(this));
-            _msgConsumer.AddHandler(new send_base_login(this));
-            _msgConsumer.AddHandler(new send_cash_buy_premium(this));
-            _msgConsumer.AddHandler(new send_cash_get_url_common(this));
-            _msgConsumer.AddHandler(new send_cash_get_url_common_steam(this));
-            _msgConsumer.AddHandler(new send_cash_update(this));
-            _msgConsumer.AddHandler(new send_channel_select(this));
-            _msgConsumer.AddHandler(new send_chara_create(this));
-            _msgConsumer.AddHandler(new send_chara_delete(this));
-            _msgConsumer.AddHandler(new send_chara_draw_bonuspoint(this));
-            _msgConsumer.AddHandler(new send_chara_get_createinfo(this));
-            _msgConsumer.AddHandler(new send_chara_get_inheritinfo(this));
-            _msgConsumer.AddHandler(new send_chara_get_list(this));
-            _msgConsumer.AddHandler(new send_chara_select(this));
-            _msgConsumer.AddHandler(new send_chara_select_back(this));
-            _msgConsumer.AddHandler(new send_chara_select_back_soul_select(this));
-            _msgConsumer.AddHandler(new send_friend_reply_to_link2(this));
-            _msgConsumer.AddHandler(new send_friend_request_delete_friend(this));
-            _msgConsumer.AddHandler(new send_friend_request_link_target(this));
-            _msgConsumer.AddHandler(new send_friend_accept_request_link(this));
-            _msgConsumer.AddHandler(new send_friend_request_load_msg(this));
-            _msgConsumer.AddHandler(new send_soul_authenticate_passwd(this));
-            _msgConsumer.AddHandler(new send_soul_create(this));
-            _msgConsumer.AddHandler(new send_soul_delete(this));
-            _msgConsumer.AddHandler(new send_soul_rename(this));
-            _msgConsumer.AddHandler(new send_soul_select(this));
-            _msgConsumer.AddHandler(new send_soul_select_C44F(this));
-            _msgConsumer.AddHandler(new send_soul_set_passwd(this));
-            _msgConsumer.AddHandler(new send_system_register_error_report(this));
-            _msgConsumer.AddHandler(new send_skill_request_info(this));
-            _msgConsumer.AddHandler(new send_union_reply_to_invite2(this));
-            _msgConsumer.AddHandler(new send_union_request_change_role(this));
-            _msgConsumer.AddHandler(new send_union_request_disband(this));
-            _msgConsumer.AddHandler(new send_union_request_expel_member(this));
-            _msgConsumer.AddHandler(new send_union_request_invite_target(this));
-            _msgConsumer.AddHandler(new send_union_request_member_priv(this));
-            _msgConsumer.AddHandler(new send_union_request_news(this));
-            _msgConsumer.AddHandler(new send_union_request_secede(this));
-            _msgConsumer.AddHandler(new send_union_request_set_info(this));
-            _msgConsumer.AddHandler(new send_union_request_set_mantle(this));
+            _msgConsumer.AddHandler(new SendBaseCheckVersionMsg(this));
+            _msgConsumer.AddHandler(new SendBaseLogin(this));
+            _msgConsumer.AddHandler(new SendCashBuyPremium(this));
+            _msgConsumer.AddHandler(new SendCashGetUrlCommon(this));
+            _msgConsumer.AddHandler(new SendCashGetUrlCommonSteam(this));
+            _msgConsumer.AddHandler(new SendCashUpdate(this));
+            _msgConsumer.AddHandler(new SendChannelSelect(this));
+            _msgConsumer.AddHandler(new SendCharaCreate(this));
+            _msgConsumer.AddHandler(new SendCharaDelete(this));
+            _msgConsumer.AddHandler(new SendCharaDrawBonuspoint(this));
+            _msgConsumer.AddHandler(new SendCharaGetCreateinfo(this));
+            _msgConsumer.AddHandler(new SendCharaGetInheritinfo(this));
+            _msgConsumer.AddHandler(new SendCharaGetList(this));
+            _msgConsumer.AddHandler(new SendCharaSelect(this));
+            _msgConsumer.AddHandler(new SendCharaSelectBack(this));
+            _msgConsumer.AddHandler(new SendCharaSelectBackSoulSelect(this));
+            _msgConsumer.AddHandler(new SendFriendReplyToLink2(this));
+            _msgConsumer.AddHandler(new SendFriendRequestDeleteFriend(this));
+            _msgConsumer.AddHandler(new SendFriendRequestLinkTarget(this));
+            _msgConsumer.AddHandler(new SendFriendAcceptRequestLink(this));
+            _msgConsumer.AddHandler(new SendFriendRequestLoadMsg(this));
+            _msgConsumer.AddHandler(new SendSoulAuthenticatePasswd(this));
+            _msgConsumer.AddHandler(new SendSoulCreate(this));
+            _msgConsumer.AddHandler(new SendSoulDelete(this));
+            _msgConsumer.AddHandler(new SendSoulRename(this));
+            _msgConsumer.AddHandler(new SendSoulSelect(this));
+            _msgConsumer.AddHandler(new SendSoulSelectC44F(this));
+            _msgConsumer.AddHandler(new SendSoulSetPasswd(this));
+            _msgConsumer.AddHandler(new SendSystemRegisterErrorReport(this));
+            _msgConsumer.AddHandler(new SendSkillRequestInfo(this));
+            _msgConsumer.AddHandler(new SendUnionReplyToInvite2(this));
+            _msgConsumer.AddHandler(new SendUnionRequestChangeRole(this));
+            _msgConsumer.AddHandler(new SendUnionRequestDisband(this));
+            _msgConsumer.AddHandler(new SendUnionRequestExpelMember(this));
+            _msgConsumer.AddHandler(new SendUnionRequestInviteTarget(this));
+            _msgConsumer.AddHandler(new SendUnionRequestMemberPriv(this));
+            _msgConsumer.AddHandler(new SendUnionRequestNews(this));
+            _msgConsumer.AddHandler(new SendUnionRequestSecede(this));
+            _msgConsumer.AddHandler(new SendUnionRequestSetInfo(this));
+            _msgConsumer.AddHandler(new SendUnionRequestSetMantle(this));
 
             // Area Handler
             _areaConsumer.AddHandler(new SendDisconnect(this));
             _areaConsumer.AddHandler(new SendHeartbeat(this));
             _areaConsumer.AddHandler(new SendUnknown1(this));
-            _areaConsumer.AddHandler(new send_auction_bid(this));
-            _areaConsumer.AddHandler(new send_auction_cancel_bid(this));
-            _areaConsumer.AddHandler(new send_auction_cancel_exhibit(this));
-            _areaConsumer.AddHandler(new send_auction_close(this));
-            _areaConsumer.AddHandler(new send_auction_exhibit(this));
-            _areaConsumer.AddHandler(new send_auction_search(this));
-            _areaConsumer.AddHandler(new send_base_check_version_area(this));
-            _areaConsumer.AddHandler(new send_base_enter(this));
-            _areaConsumer.AddHandler(new send_battle_attack_exec(this));
-            _areaConsumer.AddHandler(new send_battle_attack_exec_direct(this));
-            _areaConsumer.AddHandler(new send_battle_attack_next(this));
-            _areaConsumer.AddHandler(new send_battle_attack_pose(this));
-            _areaConsumer.AddHandler(new send_battle_attack_start(this));
-            _areaConsumer.AddHandler(new send_battle_guard_end(this));
-            _areaConsumer.AddHandler(new send_battle_guard_start(this));
-            _areaConsumer.AddHandler(new send_battle_release_attack_pose(this));
-            _areaConsumer.AddHandler(new send_blacklist_clear(this));
-            _areaConsumer.AddHandler(new send_blacklist_close(this));
-            _areaConsumer.AddHandler(new send_blacklist_lock(this));
-            _areaConsumer.AddHandler(new send_blacklist_open(this));
-            _areaConsumer.AddHandler(new send_blacklist_unlock(this));
-            _areaConsumer.AddHandler(new send_cash_shop_open_by_menu(this));
-            _areaConsumer.AddHandler(new send_chara_pose_ladder(this));
-            _areaConsumer.AddHandler(new send_chara_pose(this));
-            _areaConsumer.AddHandler(new send_charabody_access_start(this));
-            _areaConsumer.AddHandler(new send_character_view_offset(this));
+            _areaConsumer.AddHandler(new SendAuctionBid(this));
+            _areaConsumer.AddHandler(new SendAuctionCancelBid(this));
+            _areaConsumer.AddHandler(new SendAuctionCancelExhibit(this));
+            _areaConsumer.AddHandler(new SendAuctionClose(this));
+            _areaConsumer.AddHandler(new SendAuctionExhibit(this));
+            _areaConsumer.AddHandler(new SendAuctionSearch(this));
+            _areaConsumer.AddHandler(new SendBaseCheckVersionArea(this));
+            _areaConsumer.AddHandler(new SendBaseEnter(this));
+            _areaConsumer.AddHandler(new SendBattleAttackExec(this));
+            _areaConsumer.AddHandler(new SendBattleAttackExecDirect(this));
+            _areaConsumer.AddHandler(new SendBattleAttackNext(this));
+            _areaConsumer.AddHandler(new SendBattleAttackPose(this));
+            _areaConsumer.AddHandler(new SendBattleAttackStart(this));
+            _areaConsumer.AddHandler(new SendBattleGuardEnd(this));
+            _areaConsumer.AddHandler(new SendBattleGuardStart(this));
+            _areaConsumer.AddHandler(new SendBattleReleaseAttackPose(this));
+            _areaConsumer.AddHandler(new SendBlacklistClear(this));
+            _areaConsumer.AddHandler(new SendBlacklistClose(this));
+            _areaConsumer.AddHandler(new SendBlacklistLock(this));
+            _areaConsumer.AddHandler(new SendBlacklistOpen(this));
+            _areaConsumer.AddHandler(new SendBlacklistUnlock(this));
+            _areaConsumer.AddHandler(new SendCashShopOpenByMenu(this));
+            _areaConsumer.AddHandler(new SendCharaPoseLadder(this));
+            _areaConsumer.AddHandler(new SendCharaPose(this));
+            _areaConsumer.AddHandler(new SendCharabodyAccessStart(this));
+            _areaConsumer.AddHandler(new SendCharacterViewOffset(this));
             _areaConsumer.AddHandler(new SendChatPostMessageHandler(this));
             _areaConsumer.AddHandler(new SendCmdExecHandler(this));
-            _areaConsumer.AddHandler(new send_comment_set(this));
-            _areaConsumer.AddHandler(new send_comment_switch(this));
-            _areaConsumer.AddHandler(new send_create_package(this));
-            _areaConsumer.AddHandler(new send_data_get_self_chara_data_request(this));
-            _areaConsumer.AddHandler(new send_emotion_update_type(this));
-            _areaConsumer.AddHandler(new send_event_access_object(this));
-            _areaConsumer.AddHandler(new send_event_quest_order_r(this));
-            _areaConsumer.AddHandler(new send_event_removetrap_end(this));
-            _areaConsumer.AddHandler(new send_event_removetrap_select(this));
-            _areaConsumer.AddHandler(new send_event_removetrap_skill(this));
-            _areaConsumer.AddHandler(new send_event_request_int_r(this));
-            _areaConsumer.AddHandler(new send_event_script_play_r(this));
-            _areaConsumer.AddHandler(new send_event_select_channel_r(this));
-            _areaConsumer.AddHandler(new send_event_select_exec_r(this));
-            _areaConsumer.AddHandler(new send_event_soul_rankup_close(this));
-            _areaConsumer.AddHandler(new Send_event_soul_storage_close(this));
-            _areaConsumer.AddHandler(new send_event_sync_r(this));
-            _areaConsumer.AddHandler(new send_event_tresurebox_end(this));
-            _areaConsumer.AddHandler(new send_help_new_remove(this));
-            _areaConsumer.AddHandler(new send_item_drop(this));
-            _areaConsumer.AddHandler(new send_item_equip(this));
-            _areaConsumer.AddHandler(new send_item_move(this));
-            _areaConsumer.AddHandler(new send_item_sort(this));
-            _areaConsumer.AddHandler(new send_item_unequip(this));
-            _areaConsumer.AddHandler(new send_logout_cancel_request(this));
-            _areaConsumer.AddHandler(new send_logout_start_request(this));
-            _areaConsumer.AddHandler(new send_loot_access_object(this));
-            _areaConsumer.AddHandler(new send_map_change_force_r(this));
-            _areaConsumer.AddHandler(new send_map_enter(this));
-            _areaConsumer.AddHandler(new send_map_entry(this));
-            _areaConsumer.AddHandler(new send_map_get_info(this));
-            _areaConsumer.AddHandler(new send_movement_info(this));
-            _areaConsumer.AddHandler(new send_open_mailbox(this));
-            _areaConsumer.AddHandler(new send_package_all_delete(this));
-            _areaConsumer.AddHandler(new send_party_accept_to_invite(this));
-            _areaConsumer.AddHandler(new send_party_decline_to_invite(this));
-            _areaConsumer.AddHandler(new send_party_establish(this));
-            _areaConsumer.AddHandler(new send_party_invite(this));
-            _areaConsumer.AddHandler(new send_party_leave(this));
-            _areaConsumer.AddHandler(new send_party_regist_member_recruit(this));
-            _areaConsumer.AddHandler(new send_party_regist_party_recruit(this));
-            _areaConsumer.AddHandler(new send_party_search_recruited_member(this));
-            _areaConsumer.AddHandler(new send_party_search_recruited_party(this));
-            _areaConsumer.AddHandler(new send_quest_abort(this));
-            _areaConsumer.AddHandler(new send_quest_check_target(this));
-            _areaConsumer.AddHandler(new send_quest_get_mission_quest_history(this));
-            _areaConsumer.AddHandler(new send_quest_get_soul_mission_quest_history(this));
-            _areaConsumer.AddHandler(new send_quest_get_story_quest_history(this));
-            _areaConsumer.AddHandler(new send_random_box_close(this));
-            _areaConsumer.AddHandler(new send_refusallist_add_user(this));
-            _areaConsumer.AddHandler(new send_select_package_update(this));
-            _areaConsumer.AddHandler(new send_shop_close(this));
-            _areaConsumer.AddHandler(new send_shop_identify(this));
-            _areaConsumer.AddHandler(new send_shop_sell_check(this));
-            _areaConsumer.AddHandler(new send_shop_sell(this));
-            _areaConsumer.AddHandler(new send_shortcut_request_regist(this));
-            _areaConsumer.AddHandler(new send_skill_cast_cancel_request(this));
-            _areaConsumer.AddHandler(new send_skill_exec(this));
-            _areaConsumer.AddHandler(new send_skill_onhit(this));
-            _areaConsumer.AddHandler(new send_skill_request_gain(this));
-            _areaConsumer.AddHandler(new send_skill_start_cast(this));
-            _areaConsumer.AddHandler(new send_soul_dispitem_request_data(this));
-            _areaConsumer.AddHandler(new send_stall_close(this));
-            _areaConsumer.AddHandler(new send_stall_deregist_item(this));
-            _areaConsumer.AddHandler(new send_stall_open(this));
-            _areaConsumer.AddHandler(new send_stall_regist_item(this));
-            _areaConsumer.AddHandler(new send_stall_set_item_price(this));
-            _areaConsumer.AddHandler(new send_stall_set_name(this));
-            _areaConsumer.AddHandler(new send_stall_shopping_abort(this));
-            _areaConsumer.AddHandler(new send_stall_shopping_start(this));
-            _areaConsumer.AddHandler(new send_storage_deposit_item(this));
-            _areaConsumer.AddHandler(new send_storage_deposit_money(this));
-            _areaConsumer.AddHandler(new send_storage_draw_money(this));
-            _areaConsumer.AddHandler(new send_sv_conf_option_request(this));
-            _areaConsumer.AddHandler(new send_temple_close(this));
-            _areaConsumer.AddHandler(new send_temple_cure_curse(this));
-            _areaConsumer.AddHandler(new send_trade_abort(this));
-            _areaConsumer.AddHandler(new send_trade_add_item(this));
-            _areaConsumer.AddHandler(new send_trade_fix(this));
-            _areaConsumer.AddHandler(new send_trade_invite(this));
-            _areaConsumer.AddHandler(new send_trade_offer(this));
-            _areaConsumer.AddHandler(new send_trade_remove_item(this));
-            _areaConsumer.AddHandler(new send_trade_reply(this));
-            _areaConsumer.AddHandler(new send_trade_revert(this));
-            _areaConsumer.AddHandler(new send_trade_set_money(this));
-            _areaConsumer.AddHandler(new send_union_close_window(this));
-            _areaConsumer.AddHandler(new send_union_mantle_close(this));
-            _areaConsumer.AddHandler(new send_union_request_establish(this));
-            _areaConsumer.AddHandler(new send_wanted_entry(this));
-            _areaConsumer.AddHandler(new send_wanted_jail_close(this));
-            _areaConsumer.AddHandler(new send_wanted_jail_draw_point(this));
-            _areaConsumer.AddHandler(new send_wanted_jail_payment(this));
-            _areaConsumer.AddHandler(new send_wanted_list_close(this));
-            //_areaConsumer.AddHandler(new send_gem_close(this));  
-            _areaConsumer.AddHandler(new send_get_refusallist(this));
-            _areaConsumer.AddHandler(new send_party_request_draw_item_list(this));
-            _areaConsumer.AddHandler(new send_quest_get_mission_quest_works(this));
-            _areaConsumer.AddHandler(new send_quest_get_soul_mission_quest_works(this));
-            _areaConsumer.AddHandler(new send_quest_get_story_quest_works(this));
-            _areaConsumer.AddHandler(new send_shortcut_request_data(this));
-            _areaConsumer.AddHandler(new send_skill_request_info(this));
-            _areaConsumer.AddHandler(new send_sv_conf_option_change(this));
-            _areaConsumer.AddHandler(new send_charabody_self_salvage_notify_r(this));
-            _areaConsumer.AddHandler(new send_return_home_request_exec(this));
-            _areaConsumer.AddHandler(new send_event_select_map_and_channel_r(this));
-            _areaConsumer.AddHandler(new send_gimmick_access_object(this));
-            _areaConsumer.AddHandler(new send_door_open(this));
-            _areaConsumer.AddHandler(new send_door_close(this));
-            _areaConsumer.AddHandler(new send_quest_check_time_limit(this));
-            _areaConsumer.AddHandler(new send_quest_display(this));
-            _areaConsumer.AddHandler(new send_charabody_access_abort(this));
-            _areaConsumer.AddHandler(new send_charabody_salvage_request(this));
-            _areaConsumer.AddHandler(new send_charabody_salvage_request_cancel(this));
-            _areaConsumer.AddHandler(new send_charabody_salvage_abort(this));
-            _areaConsumer.AddHandler(new send_party_disband(this));
-            _areaConsumer.AddHandler(new send_event_system_message_timer_r(this));
-            _areaConsumer.AddHandler(new send_raisescale_open_cash_shop(this));
-            _areaConsumer.AddHandler(new send_raisescale_move_money(this));
-            _areaConsumer.AddHandler(new send_raisescale_view_close_request(this));
-            _areaConsumer.AddHandler(new send_raisescale_add_item(this));
-            _areaConsumer.AddHandler(new send_raisescale_request_revive_event(this));
-            _areaConsumer.AddHandler(new send_raisescale_request_revive(this));
-            _areaConsumer.AddHandler(new send_shop_repair(this));
-            _areaConsumer.AddHandler(new send_storage_draw_item(this));
-            _areaConsumer.AddHandler(new send_union_request_detail(this)); // ORIGINALLY A MSG SEND
-            _areaConsumer.AddHandler(new send_friend_request_load_area(this)); // ORIGINALLY A MSG SEND
-            _areaConsumer.AddHandler(new send_party_entry_draw(this));
-            _areaConsumer.AddHandler(new send_party_pass_draw(this));
-            _areaConsumer.AddHandler(new send_party_change_leader(this));
-            _areaConsumer.AddHandler(new send_party_kick(this));
-            _areaConsumer.AddHandler(new send_party_change_mode(this));
-            _areaConsumer.AddHandler(new send_party_cancel_member_recruit(this));
-            _areaConsumer.AddHandler(new send_party_apply(this));
-            _areaConsumer.AddHandler(new send_party_accept_to_apply(this));
-            _areaConsumer.AddHandler(new send_party_decline_to_apply(this));
-            _areaConsumer.AddHandler(new send_message_board_close(this));
-            _areaConsumer.AddHandler(new send_refusallist_remove_user(this));
-            _areaConsumer.AddHandler(new send_union_request_rename(this));
-            _areaConsumer.AddHandler(new send_event_quest_report_list_end(this));
-            _areaConsumer.AddHandler(new send_event_quest_report_select(this));
-            _areaConsumer.AddHandler(new send_buff_shop_buy(this));
-            _areaConsumer.AddHandler(new send_equip_honor(this));
-            _areaConsumer.AddHandler(new send_update_honor(this));
-            _areaConsumer.AddHandler(new send_forge_check(this));
-            _areaConsumer.AddHandler(new send_gem_close(this));
-            _areaConsumer.AddHandler(new send_shop_buy(this));
-            _areaConsumer.AddHandler(new send_event_union_storage_close(this));
-            _areaConsumer.AddHandler(new send_union_storage_deposit_money(this));
-            _areaConsumer.AddHandler(new send_union_storage_move_item(this));
-            _areaConsumer.AddHandler(new send_union_storage_draw_money(this));
-            _areaConsumer.AddHandler(new send_chara_update_battle_target(this));
-            _areaConsumer.AddHandler(new send_storage_open_cash_shop(this));
-            _areaConsumer.AddHandler(new send_event_treasurebox_select(this));
-            _areaConsumer.AddHandler(new send_job_change_close(this));
-            _areaConsumer.AddHandler(new send_login_news_get_url(this));
-            _areaConsumer.AddHandler(new send_echo(this));
-            _areaConsumer.AddHandler(new send_soul_partner_status_open(this));
-            _areaConsumer.AddHandler(new send_party_mentor_create(this));
-            _areaConsumer.AddHandler(new send_party_mentor_remove(this));
-            _areaConsumer.AddHandler(new send_forge_execute(this));
-            _areaConsumer.AddHandler(new send_charabody_loot_start2(this));
-            _areaConsumer.AddHandler(new send_charabody_loot_complete2(this));
-            _areaConsumer.AddHandler(new send_charabody_loot_start3(this));
-            _areaConsumer.AddHandler(new send_charabody_loot_complete3(this));
-            _areaConsumer.AddHandler(new send_charabody_loot_start2_cancel(this));
-            _areaConsumer.AddHandler(new send_charabody_self_salvage_abort(this));
-            _areaConsumer.AddHandler(new send_auction_regist_search_equipment_cond(this));
-            _areaConsumer.AddHandler(new send_auction_deregist_search_equipment_cond(this));
-            _areaConsumer.AddHandler(new send_auction_regist_search_item_cond(this));
-            _areaConsumer.AddHandler(new send_auction_deregist_search_item_cond(this));
+            _areaConsumer.AddHandler(new SendCommentSet(this));
+            _areaConsumer.AddHandler(new SendCommentSwitch(this));
+            _areaConsumer.AddHandler(new SendCreatePackage(this));
+            _areaConsumer.AddHandler(new SendDataGetSelfCharaDataRequest(this));
+            _areaConsumer.AddHandler(new SendEmotionUpdateType(this));
+            _areaConsumer.AddHandler(new SendEventAccessObject(this));
+            _areaConsumer.AddHandler(new SendEventQuestOrderR(this));
+            _areaConsumer.AddHandler(new SendEventRemovetrapEnd(this));
+            _areaConsumer.AddHandler(new SendEventRemovetrapSelect(this));
+            _areaConsumer.AddHandler(new SendEventRemovetrapSkill(this));
+            _areaConsumer.AddHandler(new SendEventRequestIntR(this));
+            _areaConsumer.AddHandler(new SendEventScriptPlayR(this));
+            _areaConsumer.AddHandler(new SendEventSelectChannelR(this));
+            _areaConsumer.AddHandler(new SendEventSelectExecR(this));
+            _areaConsumer.AddHandler(new SendEventSoulRankupClose(this));
+            _areaConsumer.AddHandler(new SendEventSoulStorageClose(this));
+            _areaConsumer.AddHandler(new SendEventSyncR(this));
+            _areaConsumer.AddHandler(new SendEventTresureboxEnd(this));
+            _areaConsumer.AddHandler(new SendHelpNewRemove(this));
+            _areaConsumer.AddHandler(new SendItemDrop(this));
+            _areaConsumer.AddHandler(new SendItemEquip(this));
+            _areaConsumer.AddHandler(new SendItemMove(this));
+            _areaConsumer.AddHandler(new SendItemSort(this));
+            _areaConsumer.AddHandler(new SendItemUnequip(this));
+            _areaConsumer.AddHandler(new SendLogoutCancelRequest(this));
+            _areaConsumer.AddHandler(new SendLogoutStartRequest(this));
+            _areaConsumer.AddHandler(new SendLootAccessObject(this));
+            _areaConsumer.AddHandler(new SendMapChangeForceR(this));
+            _areaConsumer.AddHandler(new SendMapEnter(this));
+            _areaConsumer.AddHandler(new SendMapEntry(this));
+            _areaConsumer.AddHandler(new SendMapGetInfo(this));
+            _areaConsumer.AddHandler(new SendMovementInfo(this));
+            _areaConsumer.AddHandler(new SendOpenMailbox(this));
+            _areaConsumer.AddHandler(new SendPackageAllDelete(this));
+            _areaConsumer.AddHandler(new SendPartyAcceptToInvite(this));
+            _areaConsumer.AddHandler(new SendPartyDeclineToInvite(this));
+            _areaConsumer.AddHandler(new SendPartyEstablish(this));
+            _areaConsumer.AddHandler(new SendPartyInvite(this));
+            _areaConsumer.AddHandler(new SendPartyLeave(this));
+            _areaConsumer.AddHandler(new SendPartyRegistMemberRecruit(this));
+            _areaConsumer.AddHandler(new SendPartyRegistPartyRecruit(this));
+            _areaConsumer.AddHandler(new SendPartySearchRecruitedMember(this));
+            _areaConsumer.AddHandler(new SendPartySearchRecruitedParty(this));
+            _areaConsumer.AddHandler(new SendQuestAbort(this));
+            _areaConsumer.AddHandler(new SendQuestCheckTarget(this));
+            _areaConsumer.AddHandler(new SendQuestGetMissionQuestHistory(this));
+            _areaConsumer.AddHandler(new SendQuestGetSoulMissionQuestHistory(this));
+            _areaConsumer.AddHandler(new SendQuestGetStoryQuestHistory(this));
+            _areaConsumer.AddHandler(new SendRandomBoxClose(this));
+            _areaConsumer.AddHandler(new SendRefusallistAddUser(this));
+            _areaConsumer.AddHandler(new SendSelectPackageUpdate(this));
+            _areaConsumer.AddHandler(new SendShopClose(this));
+            _areaConsumer.AddHandler(new SendShopIdentify(this));
+            _areaConsumer.AddHandler(new SendShopSellCheck(this));
+            _areaConsumer.AddHandler(new SendShopSell(this));
+            _areaConsumer.AddHandler(new SendShortcutRequestRegist(this));
+            _areaConsumer.AddHandler(new SendSkillCastCancelRequest(this));
+            _areaConsumer.AddHandler(new SendSkillExec(this));
+            _areaConsumer.AddHandler(new SendSkillOnhit(this));
+            _areaConsumer.AddHandler(new SendSkillRequestGain(this));
+            _areaConsumer.AddHandler(new SendSkillStartCast(this));
+            _areaConsumer.AddHandler(new SendSoulDispitemRequestData(this));
+            _areaConsumer.AddHandler(new SendStallClose(this));
+            _areaConsumer.AddHandler(new SendStallDeregistItem(this));
+            _areaConsumer.AddHandler(new SendStallOpen(this));
+            _areaConsumer.AddHandler(new SendStallRegistItem(this));
+            _areaConsumer.AddHandler(new SendStallSetItemPrice(this));
+            _areaConsumer.AddHandler(new SendStallSetName(this));
+            _areaConsumer.AddHandler(new SendStallShoppingAbort(this));
+            _areaConsumer.AddHandler(new SendStallShoppingStart(this));
+            _areaConsumer.AddHandler(new SendStorageDepositItem(this));
+            _areaConsumer.AddHandler(new SendStorageDepositMoney(this));
+            _areaConsumer.AddHandler(new SendStorageDrawMoney(this));
+            _areaConsumer.AddHandler(new SendSvConfOptionRequest(this));
+            _areaConsumer.AddHandler(new SendTempleClose(this));
+            _areaConsumer.AddHandler(new SendTempleCureCurse(this));
+            _areaConsumer.AddHandler(new SendTradeAbort(this));
+            _areaConsumer.AddHandler(new SendTradeAddItem(this));
+            _areaConsumer.AddHandler(new SendTradeFix(this));
+            _areaConsumer.AddHandler(new SendTradeInvite(this));
+            _areaConsumer.AddHandler(new SendTradeOffer(this));
+            _areaConsumer.AddHandler(new SendTradeRemoveItem(this));
+            _areaConsumer.AddHandler(new SendTradeReply(this));
+            _areaConsumer.AddHandler(new SendTradeRevert(this));
+            _areaConsumer.AddHandler(new SendTradeSetMoney(this));
+            _areaConsumer.AddHandler(new SendUnionCloseWindow(this));
+            _areaConsumer.AddHandler(new SendUnionMantleClose(this));
+            _areaConsumer.AddHandler(new SendUnionRequestEstablish(this));
+            _areaConsumer.AddHandler(new SendWantedEntry(this));
+            _areaConsumer.AddHandler(new SendWantedJailClose(this));
+            _areaConsumer.AddHandler(new SendWantedJailDrawPoint(this));
+            _areaConsumer.AddHandler(new SendWantedJailPayment(this));
+            _areaConsumer.AddHandler(new SendWantedListClose(this));
+            //_areaConsumer.AddHandler(new send_gem_close(this));
+            _areaConsumer.AddHandler(new SendGetRefusallist(this));
+            _areaConsumer.AddHandler(new SendPartyRequestDrawItemList(this));
+            _areaConsumer.AddHandler(new SendQuestGetMissionQuestWorks(this));
+            _areaConsumer.AddHandler(new SendQuestGetSoulMissionQuestWorks(this));
+            _areaConsumer.AddHandler(new SendQuestGetStoryQuestWorks(this));
+            _areaConsumer.AddHandler(new SendShortcutRequestData(this));
+            _areaConsumer.AddHandler(new SendSkillRequestInfo(this));
+            _areaConsumer.AddHandler(new SendSvConfOptionChange(this));
+            _areaConsumer.AddHandler(new SendCharabodySelfSalvageNotifyR(this));
+            _areaConsumer.AddHandler(new SendReturnHomeRequestExec(this));
+            _areaConsumer.AddHandler(new SendEventSelectMapAndChannelR(this));
+            _areaConsumer.AddHandler(new SendGimmickAccessObject(this));
+            _areaConsumer.AddHandler(new SendDoorOpen(this));
+            _areaConsumer.AddHandler(new SendDoorClose(this));
+            _areaConsumer.AddHandler(new SendQuestCheckTimeLimit(this));
+            _areaConsumer.AddHandler(new SendQuestDisplay(this));
+            _areaConsumer.AddHandler(new SendCharabodyAccessAbort(this));
+            _areaConsumer.AddHandler(new SendCharabodySalvageRequest(this));
+            _areaConsumer.AddHandler(new SendCharabodySalvageRequestCancel(this));
+            _areaConsumer.AddHandler(new SendCharabodySalvageAbort(this));
+            _areaConsumer.AddHandler(new SendPartyDisband(this));
+            _areaConsumer.AddHandler(new SendEventSystemMessageTimerR(this));
+            _areaConsumer.AddHandler(new SendRaisescaleOpenCashShop(this));
+            _areaConsumer.AddHandler(new SendRaisescaleMoveMoney(this));
+            _areaConsumer.AddHandler(new SendRaisescaleViewCloseRequest(this));
+            _areaConsumer.AddHandler(new SendRaisescaleAddItem(this));
+            _areaConsumer.AddHandler(new SendRaisescaleRequestReviveEvent(this));
+            _areaConsumer.AddHandler(new SendRaisescaleRequestRevive(this));
+            _areaConsumer.AddHandler(new SendShopRepair(this));
+            _areaConsumer.AddHandler(new SendStorageDrawItem(this));
+            _areaConsumer.AddHandler(new SendUnionRequestDetail(this)); // ORIGINALLY A MSG SEND
+            _areaConsumer.AddHandler(new SendFriendRequestLoadArea(this)); // ORIGINALLY A MSG SEND
+            _areaConsumer.AddHandler(new SendPartyEntryDraw(this));
+            _areaConsumer.AddHandler(new SendPartyPassDraw(this));
+            _areaConsumer.AddHandler(new SendPartyChangeLeader(this));
+            _areaConsumer.AddHandler(new SendPartyKick(this));
+            _areaConsumer.AddHandler(new SendPartyChangeMode(this));
+            _areaConsumer.AddHandler(new SendPartyCancelMemberRecruit(this));
+            _areaConsumer.AddHandler(new SendPartyApply(this));
+            _areaConsumer.AddHandler(new SendPartyAcceptToApply(this));
+            _areaConsumer.AddHandler(new SendPartyDeclineToApply(this));
+            _areaConsumer.AddHandler(new SendMessageBoardClose(this));
+            _areaConsumer.AddHandler(new SendRefusallistRemoveUser(this));
+            _areaConsumer.AddHandler(new SendUnionRequestRename(this));
+            _areaConsumer.AddHandler(new SendEventQuestReportListEnd(this));
+            _areaConsumer.AddHandler(new SendEventQuestReportSelect(this));
+            _areaConsumer.AddHandler(new SendBuffShopBuy(this));
+            _areaConsumer.AddHandler(new SendEquipHonor(this));
+            _areaConsumer.AddHandler(new SendUpdateHonor(this));
+            _areaConsumer.AddHandler(new SendForgeCheck(this));
+            _areaConsumer.AddHandler(new SendGemClose(this));
+            _areaConsumer.AddHandler(new SendShopBuy(this));
+            _areaConsumer.AddHandler(new SendEventUnionStorageClose(this));
+            _areaConsumer.AddHandler(new SendUnionStorageDepositMoney(this));
+            _areaConsumer.AddHandler(new SendUnionStorageMoveItem(this));
+            _areaConsumer.AddHandler(new SendUnionStorageDrawMoney(this));
+            _areaConsumer.AddHandler(new SendCharaUpdateBattleTarget(this));
+            _areaConsumer.AddHandler(new SendStorageOpenCashShop(this));
+            _areaConsumer.AddHandler(new SendEventTreasureboxSelect(this));
+            _areaConsumer.AddHandler(new SendJobChangeClose(this));
+            _areaConsumer.AddHandler(new SendLoginNewsGetUrl(this));
+            _areaConsumer.AddHandler(new SendEcho(this));
+            _areaConsumer.AddHandler(new SendSoulPartnerStatusOpen(this));
+            _areaConsumer.AddHandler(new SendPartyMentorCreate(this));
+            _areaConsumer.AddHandler(new SendPartyMentorRemove(this));
+            _areaConsumer.AddHandler(new SendForgeExecute(this));
+            _areaConsumer.AddHandler(new SendCharabodyLootStart2(this));
+            _areaConsumer.AddHandler(new SendCharabodyLootComplete2(this));
+            _areaConsumer.AddHandler(new SendCharabodyLootStart3(this));
+            _areaConsumer.AddHandler(new SendCharabodyLootComplete3(this));
+            _areaConsumer.AddHandler(new SendCharabodyLootStart2Cancel(this));
+            _areaConsumer.AddHandler(new SendCharabodySelfSalvageAbort(this));
+            _areaConsumer.AddHandler(new SendAuctionRegistSearchEquipmentCond(this));
+            _areaConsumer.AddHandler(new SendAuctionDeregistSearchEquipmentCond(this));
+            _areaConsumer.AddHandler(new SendAuctionRegistSearchItemCond(this));
+            _areaConsumer.AddHandler(new SendAuctionDeregistSearchItemCond(this));
         }
     }
 }

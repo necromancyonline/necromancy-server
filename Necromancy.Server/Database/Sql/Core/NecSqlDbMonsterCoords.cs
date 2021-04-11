@@ -9,34 +9,34 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string SqlInsertMonsterCoord =
+        private const string _SqlInsertMonsterCoord =
             "INSERT INTO `nec_monster_coords` (`monster_id`, `map_id`, `coord_idx`, `x`, `y`, `z`) VALUES (@monster_id, @map_id, @coord_idx, @x, @y, @z);";
 
-        private const string SqlSelectMonsterCoords =
+        private const string _SqlSelectMonsterCoords =
             "SELECT `id`, `monster_id`, `map_id`, `coord_idx`, `x`, `y`, `z` FROM `nec_monster_coords`;";
 
-        private const string SqlSelectMonsterCoordByMapId =
+        private const string _SqlSelectMonsterCoordByMapId =
             "SELECT `id`, `monster_id`, `map_id`, `coord_idx`, `x`, `y`, `z` FROM `nec_monster_coords` WHERE `map_id`=@map_id;";
 
-        private const string SqlSelectMonsterCoordById =
+        private const string _SqlSelectMonsterCoordById =
             "SELECT `id`, `monster_id`, `map_id`, `coord_idx`, `x`, `y`, `z` FROM `nec_monster_coords` WHERE `id`=@id;";
 
-        private const string SqlSelectMonsterCoordByMonsterId =
+        private const string _SqlSelectMonsterCoordByMonsterId =
             "SELECT `id`, `monster_id`, `map_id`, `coord_idx`, `x`, `y`, `z` FROM `nec_monster_coords` WHERE `monster_id`=@monster_id;";
 
-        private const string SqlUpdateMonsterCoord =
+        private const string _SqlUpdateMonsterCoord =
             "UPDATE `nec_monster_coords` SET `monster_id`=@monster_id, `map_id`=@map_id, `coord_idx`=@coord_idx, `x`=@x, `y`=@y, `z`=@z WHERE `id`=@id;";
 
-        private const string SqlDeleteMonsterCoord =
+        private const string _SqlDeleteMonsterCoord =
             "DELETE FROM `nec_monster_coords` WHERE `id`=@id;";
 
         public bool InsertMonsterCoords(MonsterCoord monsterCoord)
         {
-            int rowsAffected = ExecuteNonQuery(SqlInsertMonsterCoord, command =>
+            int rowsAffected = ExecuteNonQuery(_SqlInsertMonsterCoord, command =>
             {
-                AddParameter(command, "@monster_id", monsterCoord.MonsterId);
-                AddParameter(command, "@map_id", monsterCoord.MapId);
-                AddParameter(command, "@coord_idx", monsterCoord.CoordIdx);
+                AddParameter(command, "@monster_id", monsterCoord.monsterId);
+                AddParameter(command, "@map_id", monsterCoord.mapId);
+                AddParameter(command, "@coord_idx", monsterCoord.coordIdx);
                 AddParameter(command, "@x", monsterCoord.destination.X);
                 AddParameter(command, "@y", monsterCoord.destination.Y);
                 AddParameter(command, "@z", monsterCoord.destination.Z);
@@ -46,14 +46,14 @@ namespace Necromancy.Server.Database.Sql.Core
                 return false;
             }
 
-            monsterCoord.Id = (int) autoIncrement;
+            monsterCoord.id = (int) autoIncrement;
             return true;
         }
 
         public List<MonsterCoord> SelectMonsterCoords()
         {
             List<MonsterCoord> monsterCoords = new List<MonsterCoord>();
-            ExecuteReader(SqlSelectMonsterCoords, reader =>
+            ExecuteReader(_SqlSelectMonsterCoords, reader =>
             {
                 while (reader.Read())
                 {
@@ -64,11 +64,11 @@ namespace Necromancy.Server.Database.Sql.Core
             return monsterCoords;
         }
 
-        public List<MonsterCoord> SelectMonsterCoordsById(int Id)
+        public List<MonsterCoord> SelectMonsterCoordsById(int id)
         {
             List<MonsterCoord> monsterCoords = new List<MonsterCoord>();
-            ExecuteReader(SqlSelectMonsterCoordById,
-                command => { AddParameter(command, "@id", Id); },
+            ExecuteReader(_SqlSelectMonsterCoordById,
+                command => { AddParameter(command, "@id", id); },
                 reader =>
                 {
                     while (reader.Read())
@@ -82,7 +82,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<MonsterCoord> SelectMonsterCoordsByMonsterId(int mapId)
         {
             List<MonsterCoord> monsterCoords = new List<MonsterCoord>();
-            ExecuteReader(SqlSelectMonsterCoordByMonsterId,
+            ExecuteReader(_SqlSelectMonsterCoordByMonsterId,
                 command => { AddParameter(command, "@monster_id", mapId); },
                 reader =>
                 {
@@ -97,7 +97,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<MonsterCoord> SelectMonsterCoordsByMapId(int mapId)
         {
             List<MonsterCoord> monsterCoords = new List<MonsterCoord>();
-            ExecuteReader(SqlSelectMonsterCoordByMapId,
+            ExecuteReader(_SqlSelectMonsterCoordByMapId,
                 command => { AddParameter(command, "@map_id", mapId); },
                 reader =>
                 {
@@ -112,22 +112,22 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateMonsterCoord(MonsterCoord monsterCoord)
         {
-            int rowsAffected = ExecuteNonQuery(SqlUpdateMonsterCoord, command =>
+            int rowsAffected = ExecuteNonQuery(_SqlUpdateMonsterCoord, command =>
             {
-                AddParameter(command, "@monster_id", monsterCoord.MonsterId);
-                AddParameter(command, "@map_id", monsterCoord.MapId);
-                AddParameter(command, "@coord_idx", monsterCoord.CoordIdx);
+                AddParameter(command, "@monster_id", monsterCoord.monsterId);
+                AddParameter(command, "@map_id", monsterCoord.mapId);
+                AddParameter(command, "@coord_idx", monsterCoord.coordIdx);
                 AddParameter(command, "@x", monsterCoord.destination.X);
                 AddParameter(command, "@y", monsterCoord.destination.Y);
                 AddParameter(command, "@z", monsterCoord.destination.Z);
-                AddParameter(command, "@id", monsterCoord.Id);
+                AddParameter(command, "@id", monsterCoord.id);
             });
             return rowsAffected > NoRowsAffected;
         }
 
         public bool DeleteMonsterCoord(int coordId)
         {
-            int rowsAffected = ExecuteNonQuery(SqlDeleteMonsterCoord,
+            int rowsAffected = ExecuteNonQuery(_SqlDeleteMonsterCoord,
                 command => { AddParameter(command, "@id", coordId); });
             return rowsAffected > NoRowsAffected;
         }
@@ -136,10 +136,10 @@ namespace Necromancy.Server.Database.Sql.Core
         {
             MonsterCoord monsterCoord = new MonsterCoord();
             Vector3 coords = new Vector3();
-            monsterCoord.Id = GetInt32(reader, "id");
-            monsterCoord.MonsterId = (uint)GetInt32(reader, "monster_id");
-            monsterCoord.MapId = (uint)GetInt32(reader, "map_id");
-            monsterCoord.CoordIdx = GetInt32(reader, "coord_idx");
+            monsterCoord.id = GetInt32(reader, "id");
+            monsterCoord.monsterId = (uint)GetInt32(reader, "monster_id");
+            monsterCoord.mapId = (uint)GetInt32(reader, "map_id");
+            monsterCoord.coordIdx = GetInt32(reader, "coord_idx");
             coords.X = GetFloat(reader, "x");
             coords.Y = GetFloat(reader, "y");
             coords.Z = GetFloat(reader, "z");

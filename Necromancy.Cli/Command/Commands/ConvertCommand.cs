@@ -9,11 +9,11 @@ namespace Necromancy.Cli.Command.Commands
     {
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
-            if (parameter.Arguments.Count == 3)
+            if (parameter.arguments.Count == 3)
             {
-                string[] itemInfo = System.IO.File.ReadAllLines(parameter.Arguments[0]);
-                string[] items = System.IO.File.ReadAllLines(parameter.Arguments[1]);
-                System.IO.StreamWriter outFile = new System.IO.StreamWriter(parameter.Arguments[2]);
+                string[] itemInfo = System.IO.File.ReadAllLines(parameter.arguments[0]);
+                string[] items = System.IO.File.ReadAllLines(parameter.arguments[1]);
+                System.IO.StreamWriter outFile = new System.IO.StreamWriter(parameter.arguments[2]);
                 foreach (string infoline in itemInfo)
                 {
                     if (infoline.StartsWith("#"))
@@ -42,12 +42,12 @@ namespace Necromancy.Cli.Command.Commands
                 return CommandResultType.Completed;
             }
 
-            
+
             return CommandResultType.Completed;
         }
 
 
-        public override string Key => "convert";
-        public override string Description => $"Find English iteminfo in Japanese ItemInfo and add to new file substituting name.{Environment.NewLine}";
+        public override string key => "convert";
+        public override string description => $"Find English iteminfo in Japanese ItemInfo and add to new file substituting name.{Environment.NewLine}";
     }
 }

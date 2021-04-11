@@ -6,31 +6,31 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_trade_offer : ClientHandler
+    public class SendTradeOffer : ClientHandler
     {
-        public send_trade_offer(NecServer server) : base(server)
+        public SendTradeOffer(NecServer server) : base(server)
         {
         }
-        
 
-        public override ushort Id => (ushort) AreaPacketId.send_trade_offer;
+
+        public override ushort id => (ushort) AreaPacketId.send_trade_offer;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             NecClient targetClient = null;
-            if (client.Character.eventSelectExecCode != 0)
-                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+            if (client.character.eventSelectExecCode != 0)
+                targetClient = server.clients.GetByCharacterInstanceId((uint)client.character.eventSelectExecCode);
 
 
 
             if (targetClient != null)
             {
                 RecvTradeNotifyOfferd notifyOfferd = new RecvTradeNotifyOfferd();
-                Router.Send(notifyOfferd, targetClient);
+                router.Send(notifyOfferd, targetClient);
             }
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
-            Router.Send(client, (ushort)AreaPacketId.recv_trade_offer_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_trade_offer_r, res, ServerType.Area);
         }
 
     }

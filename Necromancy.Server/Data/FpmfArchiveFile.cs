@@ -13,57 +13,57 @@ namespace Necromancy.Server.Data
         private uint _fileTime;
         private uint _unknown1;
 
-        public uint Size
+        public uint size
         {
             get => _size;
             set => _size = value;
         }
 
-        public uint Offset
+        public uint offset
         {
             get => _offset;
             set => _offset = value;
         }
 
-        public string FilePath
+        public string filePath
         {
             get => _filePath;
             set => _filePath = value;
         }
 
-        public uint FilePathSize
+        public uint filePathSize
         {
             get => _filePathSize;
             set => _filePathSize = value;
         }
-        public string DirectoryPath
+        public string directoryPath
         {
             get => _directoryPath;
             set => _directoryPath = value;
         }
 
-        public uint DirectoryPathSize
+        public uint directoryPathSize
         {
             get => _directoryPathSize;
             set => _directoryPathSize = value;
         }
-        public uint DatNumber
+        public uint datNumber
         {
             get => _datNumber;
             set => _datNumber = value;
         }
 
-        public byte[] Data
+        public byte[] data
         {
             get => _data;
             set => _data = value;
         }
-        public uint Unknown0
+        public uint unknown0
         {
             get => _fileTime;
             set => _fileTime = value;
         }
-        public uint Unknown1
+        public uint unknown1
         {
             get => _unknown1;
             set => _unknown1 = value;

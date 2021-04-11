@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_quest_time_end_updated : PacketResponse
+    public class RecvQuestTimeEndUpdated : PacketResponse
     {
-        public recv_quest_time_end_updated()
+        public RecvQuestTimeEndUpdated()
             : base((ushort) AreaPacketId.recv_quest_time_end_updated, ServerType.Area)
         {
         }

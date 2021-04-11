@@ -6,24 +6,24 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_door_open : ClientHandler
+    public class SendDoorOpen : ClientHandler
     {
-        public send_door_open(NecServer server) : base(server)
+        public SendDoorOpen(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort)AreaPacketId.send_door_open;
+        public override ushort id => (ushort)AreaPacketId.send_door_open;
 
-        
+
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int doorInstanceId = packet.Data.ReadInt32();
-            int doorState = packet.Data.ReadInt32();
+            int doorInstanceId = packet.data.ReadInt32();
+            int doorState = packet.data.ReadInt32();
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); //Door instance Id?            
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_door_open_r, res, ServerType.Area);
+            res.WriteInt32(0); //Door instance Id?
+            router.Send(client.map, (ushort)AreaPacketId.recv_door_open_r, res, ServerType.Area);
             SendDoorUpdateNotify(client, doorInstanceId, doorState);
         }
 
@@ -32,7 +32,7 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(doorInstanceId); //Door instance id?
             res.WriteInt32(doorState); //Door state
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_door_update_notify, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_door_update_notify, res, ServerType.Area);
         }
     }
 }

@@ -15,32 +15,32 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_skill_exec : ClientHandler
+    public class SendSkillExec : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_skill_exec));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSkillExec));
 
         private readonly NecServer _server;
 
-        public send_skill_exec(NecServer server) : base(server)
+        public SendSkillExec(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_skill_exec;
+        public override ushort id => (ushort) AreaPacketId.send_skill_exec;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int targetId = packet.Data.ReadInt32();
-            int skillId = client.Character.skillStartCast;
-            float X = packet.Data.ReadFloat();
-            float Y = packet.Data.ReadFloat();
-            float Z = packet.Data.ReadFloat();
+            int targetId = packet.data.ReadInt32();
+            int skillId = client.character.skillStartCast;
+            float xCoordinate = packet.data.ReadFloat();
+            float yCoordinate = packet.data.ReadFloat();
+            float zCoodrinate = packet.data.ReadFloat();
 
-            int errcode = packet.Data.ReadInt32();
+            int errcode = packet.data.ReadInt32();
 
-            Logger.Debug($"myTargetID : {targetId}");
-            Logger.Debug($"Target location : X-{X}Y-{Y}Z-{Z}");
-            Logger.Debug($"ErrorCode : {errcode}");
+            _Logger.Debug($"myTargetID : {targetId}");
+            _Logger.Debug($"Target location : X-{xCoordinate}Y-{yCoordinate}Z-{zCoodrinate}");
+            _Logger.Debug($"ErrorCode : {errcode}");
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(errcode); //see sys_msg.csv
             /*
@@ -50,23 +50,23 @@ namespace Necromancy.Server.Packet.Area
                 1       Not enough distance
                 GENERIC Unable to use skill: < errcode >
             */
-            res.WriteFloat(2); //Cool time      ./Skill_base.csv   Column J 
-            res.WriteFloat(1); //Rigidity time  ./Skill_base.csv   Column L  
+            res.WriteFloat(2); //Cool time      ./Skill_base.csv   Column J
+            res.WriteFloat(1); //Rigidity time  ./Skill_base.csv   Column L
             //Router.Send(client.Map, (ushort)AreaPacketId.recv_skill_exec_r, res, ServerType.Area);
 
             int skillLookup = skillId / 1000;
-            Logger.Debug($"skillLookup : {skillLookup}");
-            var eventSwitchPerObjectID = new Dictionary<Func<int, bool>, Action>
+            _Logger.Debug($"skillLookup : {skillLookup}");
+            var eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
             {
                 {x => (x > 114100 && x < 114199), () => ThiefSkill(client, skillId, targetId)},
                 {x => (x > 114300 && x < 114399), () => ThiefSkill(client, skillId, targetId)},
                 {x => x == 114607               , () => ThiefSkill(client, skillId, targetId)},
                 {x => (x > 113000 && x < 113999), () => MageSkill(client, skillId, targetId)},
-                {x => (x > 1 && x < 999999), () => MageSkill(client, skillId, targetId)} //this is a default catch statement for unmapped skills to prevent un-handled exceptions 
+                {x => (x > 1 && x < 999999), () => MageSkill(client, skillId, targetId)} //this is a default catch statement for unmapped skills to prevent un-handled exceptions
             };
 
-            eventSwitchPerObjectID.First(sw => sw.Key(skillLookup)).Value();
-            client.Character.castingSkill = false;
+            eventSwitchPerObjectId.First(sw => sw.Key(skillLookup)).Value();
+            client.character.castingSkill = false;
 
 
             ////////////////////Battle testing below this line.
@@ -85,32 +85,32 @@ namespace Necromancy.Server.Packet.Area
 
         private void MageSkill(NecClient client, int skillId, int targetId)
         {
-            if (!_server.SettingRepository.SkillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
+            if (!_server.settingRepository.skillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
             {
-                Logger.Error($"Getting SkillBaseSetting from skillid [{skillId}]");
+                _Logger.Error($"Getting SkillBaseSetting from skillid [{skillId}]");
                 int errorCode = -1;
                 RecvSkillExecR execFail = new RecvSkillExecR(errorCode, 0, 0);
-                Router.Send(execFail, client);
+                router.Send(execFail, client);
                 return;
             }
 
             RecvSkillExecR execSuccess =
-                new RecvSkillExecR(0, skillBaseSetting.CastingCooldown, skillBaseSetting.RigidityTime);
-            Router.Send(execSuccess, client);
+                new RecvSkillExecR(0, skillBaseSetting.castingCooldown, skillBaseSetting.rigidityTime);
+            router.Send(execSuccess, client);
 
-            Spell spell = (Spell) Server.Instances.GetInstance((uint) client.Character.activeSkillInstance);
+            Spell spell = (Spell) server.instances.GetInstance((uint) client.character.activeSkillInstance);
             spell.SkillExec();
         }
 
         private void ThiefSkill(NecClient client, int skillId, int targetId)
         {
             int skillBase = skillId / 1000;
-            if (!_server.SettingRepository.SkillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
+            if (!_server.settingRepository.skillBase.TryGetValue(skillId, out SkillBaseSetting skillBaseSetting))
             {
-                Logger.Error($"Getting SkillBaseSetting from skillid [{skillId}]");
+                _Logger.Error($"Getting SkillBaseSetting from skillid [{skillId}]");
                 int errorCode = -1;
                 RecvSkillExecR execFail = new RecvSkillExecR(errorCode, 0, 0);
-                Router.Send(execFail, client);
+                router.Send(execFail, client);
                 return;
             }
 
@@ -126,77 +126,77 @@ namespace Necromancy.Server.Packet.Area
             }
 
             RecvSkillExecR execSuccess =
-                new RecvSkillExecR(0, skillBaseSetting.CastingCooldown, skillBaseSetting.RigidityTime);
-            Router.Send(execSuccess, client);
+                new RecvSkillExecR(0, skillBaseSetting.castingCooldown, skillBaseSetting.rigidityTime);
+            router.Send(execSuccess, client);
             ThiefSkill thiefSkill =
-                (ThiefSkill) Server.Instances.GetInstance((uint) client.Character.activeSkillInstance);
+                (ThiefSkill) server.instances.GetInstance((uint) client.character.activeSkillInstance);
             thiefSkill.SkillExec();
         }
 
         private void Trap(NecClient client, int skillId, SkillBaseSetting skillBaseSetting)
         {
-            Logger.Debug($"skillId : {skillId}");
+            _Logger.Debug($"skillId : {skillId}");
             if (!int.TryParse($"{skillId}".Substring(1, 5), out int skillBase))
             {
-                Logger.Error($"Creating skillBase from skillid [{skillId}]");
+                _Logger.Error($"Creating skillBase from skillid [{skillId}]");
                 int errorCode = -1;
                 RecvSkillExecR execFail = new RecvSkillExecR(errorCode, 0, 0);
-                Router.Send(execFail, client);
+                router.Send(execFail, client);
                 return;
             }
 
             if (!int.TryParse($"{skillId}".Substring(1, 7), out int effectBase))
             {
-                Logger.Error($"Creating skillBase from skillid [{skillId}]");
+                _Logger.Error($"Creating skillBase from skillid [{skillId}]");
                 int errorCode = -1;
                 RecvSkillExecR execFail = new RecvSkillExecR(errorCode, 0, 0);
-                Router.Send(execFail, client);
+                router.Send(execFail, client);
                 return;
             }
 
-            bool isBaseTrap = TrapTask.baseTrap(skillBase);
+            bool isBaseTrap = TrapTask.BaseTrap(skillBase);
             effectBase += 1;
-            if (!_server.SettingRepository.EoBase.TryGetValue(effectBase, out EoBaseSetting eoBaseSetting))
+            if (!_server.settingRepository.eoBase.TryGetValue(effectBase, out EoBaseSetting eoBaseSetting))
             {
-                Logger.Error($"Getting EoBaseSetting from effectBase [{effectBase}]");
+                _Logger.Error($"Getting EoBaseSetting from effectBase [{effectBase}]");
                 int errorCode = -1;
                 RecvSkillExecR execFail = new RecvSkillExecR(errorCode, 0, 0);
-                Router.Send(execFail, client);
+                router.Send(execFail, client);
                 return;
             }
 
-            if (!_server.SettingRepository.EoBase.TryGetValue(effectBase + 1, out EoBaseSetting eoBaseSettingTriggered))
+            if (!_server.settingRepository.eoBase.TryGetValue(effectBase + 1, out EoBaseSetting eoBaseSettingTriggered))
             {
-                Logger.Error($"Getting EoBaseSetting from effectBase+1 [{effectBase + 1}]");
+                _Logger.Error($"Getting EoBaseSetting from effectBase+1 [{effectBase + 1}]");
                 int errorCode = -1;
                 RecvSkillExecR execFail = new RecvSkillExecR(errorCode, 0, 0);
-                Router.Send(execFail, client);
+                router.Send(execFail, client);
                 return;
             }
 
             RecvSkillExecR execSuccess =
-                new RecvSkillExecR(0, skillBaseSetting.CastingCooldown, skillBaseSetting.RigidityTime);
-            Router.Send(execSuccess, client);
+                new RecvSkillExecR(0, skillBaseSetting.castingCooldown, skillBaseSetting.rigidityTime);
+            router.Send(execSuccess, client);
 
             // ToDo  verify trap parts available and remove correct number from inventory
-            TrapStack trapStack = (TrapStack) Server.Instances.GetInstance((uint) client.Character.activeSkillInstance);
+            TrapStack trapStack = (TrapStack) server.instances.GetInstance((uint) client.character.activeSkillInstance);
             Trap trap = new Trap(skillBase, skillBaseSetting, eoBaseSetting, eoBaseSettingTriggered);
-            _server.Instances.AssignInstance(trap);
-            Logger.Debug($"trap.InstanceId [{trap.InstanceId}]  trap.Name [{trap._name}]  skillId[{skillId}]");
+            _server.instances.AssignInstance(trap);
+            _Logger.Debug($"trap.InstanceId [{trap.instanceId}]  trap.Name [{trap.name}]  skillId[{skillId}]");
             trapStack.SkillExec(trap, isBaseTrap);
-            Vector3 trapPos = new Vector3(client.Character.X, client.Character.Y, client.Character.Z);
+            Vector3 trapPos = new Vector3(client.character.x, client.character.y, client.character.z);
         }
 
         private void Stealth(NecClient client, int skillId, SkillBaseSetting skillBaseSetting)
         {
             float cooldown = 0.0F;
-            Logger.Debug($"IsStealthed [{client.Character.IsStealthed()}]");
-            if (client.Character.IsStealthed())
-                cooldown = skillBaseSetting.CastingCooldown;
-            RecvSkillExecR execSuccess = new RecvSkillExecR(0, cooldown, skillBaseSetting.RigidityTime);
-            Router.Send(execSuccess, client);
+            _Logger.Debug($"IsStealthed [{client.character.IsStealthed()}]");
+            if (client.character.IsStealthed())
+                cooldown = skillBaseSetting.castingCooldown;
+            RecvSkillExecR execSuccess = new RecvSkillExecR(0, cooldown, skillBaseSetting.rigidityTime);
+            router.Send(execSuccess, client);
 
-            Stealth stealth = (Stealth) Server.Instances.GetInstance((uint) client.Character.activeSkillInstance);
+            Stealth stealth = (Stealth) server.instances.GetInstance((uint) client.character.activeSkillInstance);
             stealth.SkillExec();
         }
     }

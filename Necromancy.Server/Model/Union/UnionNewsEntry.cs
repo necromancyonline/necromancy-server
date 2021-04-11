@@ -7,24 +7,24 @@ namespace Necromancy.Server.Model.Union
 {
     public class UnionNewsEntry : IInstance
     {
-        public uint InstanceId { get; set; }
-        public string CharacterSoulName { get; set; }
+        public uint instanceId { get; set; }
+        public string characterSoulName { get; set; }
 
-        public string CharacterName { get; set; }
-        public uint Activity { get; set; }
-        public string String3 { get; set; }
-        public string String4 { get; set; }
-        public int ItemCount { get; set; }
+        public string characterName { get; set; }
+        public uint activity { get; set; }
+        public string string3 { get; set; }
+        public string string4 { get; set; }
+        public int itemCount { get; set; }
 
         public UnionNewsEntry()
         {
-            InstanceId = 0;
-            CharacterSoulName = "";
-            CharacterName = "";
-            String3 = "";
-            String4 = "";
-            ItemCount = 0;
-            
+            instanceId = 0;
+            characterSoulName = "";
+            characterName = "";
+            string3 = "";
+            string4 = "";
+            itemCount = 0;
+
 
         }
 

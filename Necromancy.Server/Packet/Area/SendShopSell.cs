@@ -8,20 +8,20 @@ using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_shop_sell : ClientHandler
+    public class SendShopSell : ClientHandler
     {
-        public send_shop_sell(NecServer server) : base(server) { }
-        public override ushort Id => (ushort) AreaPacketId.send_shop_sell;
+        public SendShopSell(NecServer server) : base(server) { }
+        public override ushort id => (ushort) AreaPacketId.send_shop_sell;
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte();
-            byte bag = packet.Data.ReadByte();
-            short slot = packet.Data.ReadInt16();
-            ulong saleGold = packet.Data.ReadUInt64(); //irrelevant, check sale price server side
-            byte quantity = packet.Data.ReadByte(); 
+            ItemZoneType zone = (ItemZoneType) packet.data.ReadByte();
+            byte bag = packet.data.ReadByte();
+            short slot = packet.data.ReadInt16();
+            ulong saleGold = packet.data.ReadUInt64(); //irrelevant, check sale price server side
+            byte quantity = packet.data.ReadByte();
 
             ItemLocation location = new ItemLocation(zone, bag, slot);
-            ItemService itemService = new ItemService(client.Character);            
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
 
             try
@@ -29,16 +29,16 @@ namespace Necromancy.Server.Packet.Area
                 //ulong currentGold = itemService.Sell(location, quantity);
                 ulong currentGold = itemService.AddGold(saleGold);
                 RecvSelfMoneyNotify recvSelfMoneyNotify = new RecvSelfMoneyNotify(client, currentGold);
-                Router.Send(recvSelfMoneyNotify);
+                router.Send(recvSelfMoneyNotify);
 
                 ItemInstance itemInstance = itemService.Remove(new ItemLocation(zone, bag, slot), quantity);
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
-                Router.Send(recvItemRemove);
+                router.Send(recvItemRemove);
             }
-            catch (ItemException e) { error = (int) e.Type; }
+            catch (ItemException e) { error = (int) e.type; }
 
             RecvShopSell recvShopSell = new RecvShopSell(client, error);
-            Router.Send(recvShopSell);
+            router.Send(recvShopSell);
         }
     }
 }

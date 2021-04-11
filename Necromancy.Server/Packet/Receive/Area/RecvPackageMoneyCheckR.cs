@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_package_money_check_r : PacketResponse
+    public class RecvPackageMoneyCheckR : PacketResponse
     {
-        public recv_package_money_check_r()
+        public RecvPackageMoneyCheckR()
             : base((ushort) AreaPacketId.recv_package_money_check_r, ServerType.Area)
         {
         }

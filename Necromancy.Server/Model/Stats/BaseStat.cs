@@ -6,97 +6,97 @@ namespace Necromancy.Server.Model.Stats
 {
     public class BaseStat
     {
-        protected readonly object CurrentLock = new object();
-        protected readonly object MaxLock = new object();
-        protected int _max;
-        protected int _current;
-        protected uint _instanceId;
-        protected bool _depleted;
-        public BaseStat(int currVal, int maxVal)
+        protected readonly object currentLock = new object();
+        protected readonly object maxLock = new object();
+        protected int statMax;
+        protected int statCurrent;
+        protected uint instanceId;
+        protected bool isDepleted;
+        public BaseStat(int currVal, int statMaxVal)
         {
-            _current = currVal;
-            _max = maxVal;
-            _depleted = false;
+            statCurrent = currVal;
+            statMax = statMaxVal;
+            isDepleted = false;
         }
 
         public bool depleted
         {
-            get => _depleted;
+            get => isDepleted;
             set
             {
-                _depleted = value;
+                isDepleted = value;
             }
         }
 
-        public void setCurrent(int value)
+        public void SetCurrent(int value)
         {
-            lock (CurrentLock)
+            lock (currentLock)
             {
-                _current = value;
+                statCurrent = value;
             }
         }
 
         // Set current to +/- value % of _current/_max
-        public int setCurrent(sbyte value, bool useMax = false)
+        public int SetCurrent(sbyte value, bool useMax = false)
         {
-            lock (CurrentLock)
+            lock (currentLock)
             {
                 if (useMax)
-                    _current += (_max * (value / 100));
+                    statCurrent += (statMax * (value / 100));
                 else
-                    _current += (_current * (value / 100));
+                    statCurrent += (statCurrent * (value / 100));
             }
-            return _current;
+            return statCurrent;
         }
-        public int setMax(int value)
+        public int SetMax(int value)
         {
-            lock (MaxLock)
+            lock (maxLock)
             {
-                _max = value;
+                statMax = value;
             }
-            return _max;
+            return statMax;
         }
-        public void toMax()
+        public void ToMax()
         {
-            _current = _max;
-            _depleted = false;
+            statCurrent = statMax;
+            isDepleted = false;
         }
         public int current
         {
-            get => _current;
+            get => statCurrent;
             protected set
             {
-                lock (CurrentLock)
+                lock (currentLock)
                 {
-                    _current = value;
+                    statCurrent = value;
                 }
             }
         }
         public int max
         {
-            get => _max;
+            get => statMax;
             private set
             {
-                lock (MaxLock)
+                lock (maxLock)
                 {
-                    _current = value;
+                    statCurrent = value;
                 }
             }
         }
         public int Modify(int amount, uint instanceId = 0)
         {
-            lock (CurrentLock)
+            lock (currentLock)
             {
-                if (_depleted)
-                    return _current;
-                _current += amount;
-                if (_current <= 0)
+                if (isDepleted)
+                    return statCurrent;
+                statCurrent += amount;
+                if (statCurrent <= 0)
                 {
-                    _depleted = true;
-                    _instanceId = instanceId;
+                    isDepleted = true;
+                    this.instanceId = instanceId;
                 }
             }
-            return _current;
+            return statCurrent;
         }
     }
 }

@@ -10,192 +10,192 @@ using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_chara_create : ClientHandler
+    public class SendCharaCreate : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_chara_create));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaCreate));
 
-        public send_chara_create(NecServer server) : base(server)
+        public SendCharaCreate(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort)MsgPacketId.send_chara_create;
+        public override ushort id => (ushort)MsgPacketId.send_chara_create;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte character_slot_id = packet.Data.ReadByte();
-            string character_name = packet.Data.ReadCString();
-            uint race_id = packet.Data.ReadUInt32();
-            uint sex_id = packet.Data.ReadUInt32();
+            byte characterSlotId = packet.data.ReadByte();
+            string characterName = packet.data.ReadCString();
+            uint raceId = packet.data.ReadUInt32();
+            uint sexId = packet.data.ReadUInt32();
 
-            byte hair_id = packet.Data.ReadByte();
-            byte hair_color_id = packet.Data.ReadByte();
-            byte face_id = packet.Data.ReadByte();
-            byte face_arrange_id = packet.Data.ReadByte();
-            byte voice_id = packet.Data.ReadByte();
+            byte hairId = packet.data.ReadByte();
+            byte hairColorId = packet.data.ReadByte();
+            byte faceId = packet.data.ReadByte();
+            byte faceArrangeId = packet.data.ReadByte();
+            byte voiceId = packet.data.ReadByte();
 
-            uint alignment_id = packet.Data.ReadUInt32();
+            uint alignmentId = packet.data.ReadUInt32();
 
-            ushort strength = packet.Data.ReadUInt16(); //bonus stat, not base
-            ushort vitality = packet.Data.ReadUInt16();//bonus stat, not base
-            ushort dexterity = packet.Data.ReadUInt16();//bonus stat, not base
-            ushort agility = packet.Data.ReadUInt16();//bonus stat, not base
-            ushort intelligence = packet.Data.ReadUInt16();//bonus stat, not base
-            ushort piety = packet.Data.ReadUInt16();//bonus stat, not base
-            ushort luck = packet.Data.ReadUInt16();//bonus stat, not base
+            ushort strength = packet.data.ReadUInt16(); //bonus stat, not base
+            ushort vitality = packet.data.ReadUInt16();//bonus stat, not base
+            ushort dexterity = packet.data.ReadUInt16();//bonus stat, not base
+            ushort agility = packet.data.ReadUInt16();//bonus stat, not base
+            ushort intelligence = packet.data.ReadUInt16();//bonus stat, not base
+            ushort piety = packet.data.ReadUInt16();//bonus stat, not base
+            ushort luck = packet.data.ReadUInt16();//bonus stat, not base
 
-            uint class_id = packet.Data.ReadUInt32();
-            int error_check = packet.Data.ReadInt32();
-            byte unknown = packet.Data.ReadByte();
+            uint classId = packet.data.ReadUInt32();
+            int errorCheck = packet.data.ReadInt32();
+            byte unknown = packet.data.ReadByte();
 
 
             //-------------------------------------
             // Send Character Creation packets to Database for laster use.
 
-            if (!Maps.TryGet(Map.NewCharacterMapId, out Map map))
+            if (!maps.TryGet(Map.NewCharacterMapId, out Map map))
             {
-                Logger.Error($"New character map not found MapId: {Map.NewCharacterMapId}");
+                _Logger.Error($"New character map not found MapId: {Map.NewCharacterMapId}");
                 client.Close();
             }
 
             Character character = new Character();
             Attribute attribute = new Attribute();
-            attribute.DefaultClassAtributes(race_id);
+            attribute.DefaultClassAtributes(raceId);
 
-            character.MapId = map.Id;
-            character.X = map.X;
-            character.Y = map.Y;
-            character.Z = map.Z;
-            character.Heading = (byte)map.Orientation;
+            character.mapId = map.id;
+            character.x = map.x;
+            character.y = map.y;
+            character.z = map.z;
+            character.heading = (byte)map.orientation;
 
-            character.AccountId = client.Account.Id;
-            character.SoulId = client.Soul.Id;
-            character.Slot = character_slot_id;
-            character.Name = character_name;
+            character.accountId = client.account.id;
+            character.soulId = client.soul.id;
+            character.slot = characterSlotId;
+            character.name = characterName;
 
-            character.RaceId = race_id;
-            character.SexId = sex_id;
-            character.HairId = hair_id;
-            character.HairColorId = hair_color_id;
-            character.FaceId = face_id;
-            character.FaceArrangeId = face_arrange_id;
-            character.VoiceId = voice_id;
-            character.Hp.setMax(attribute.Hp);
-            character.Hp.setCurrent(attribute.Hp);
-            character.Mp.setMax(attribute.Mp);
-            character.Mp.setCurrent(attribute.Mp);
-            character.Strength = (ushort)(strength + attribute.Str);
-            character.Vitality = (ushort)(vitality + attribute.Vit);
-            character.Dexterity = (ushort)(dexterity + attribute.Dex);
-            character.Agility = (ushort)(agility + attribute.Agi);
-            character.Intelligence = (ushort)(intelligence + attribute.Int);
-            character.Piety = (ushort)(piety + attribute.Pie);
-            character.Luck = (ushort)(luck + attribute.Luck);
-            character.ClassId = class_id;
-            character.Level = 1;
+            character.raceId = raceId;
+            character.sexId = sexId;
+            character.hairId = hairId;
+            character.hairColorId = hairColorId;
+            character.faceId = faceId;
+            character.faceArrangeId = faceArrangeId;
+            character.voiceId = voiceId;
+            character.hp.SetMax(attribute.hp);
+            character.hp.SetCurrent(attribute.hp);
+            character.mp.SetMax(attribute.mp);
+            character.mp.SetCurrent(attribute.mp);
+            character.strength = (ushort)(strength + attribute.str);
+            character.vitality = (ushort)(vitality + attribute.vit);
+            character.dexterity = (ushort)(dexterity + attribute.dex);
+            character.agility = (ushort)(agility + attribute.agi);
+            character.intelligence = (ushort)(intelligence + attribute.@int);
+            character.piety = (ushort)(piety + attribute.pie);
+            character.luck = (ushort)(luck + attribute.luck);
+            character.classId = classId;
+            character.level = 1;
 
             //----------------------------------------------------------
             // Character Slot ID
 
-            if (!Database.InsertCharacter(character))
+            if (!database.InsertCharacter(character))
             {
-                Logger.Error(client, $"Failed to create CharacterSlot: {character_slot_id}");
+                _Logger.Error(client, $"Failed to create CharacterSlot: {characterSlotId}");
                 client.Close();
                 return;
             }
             //after the DB instert, so Character has a valid ID.
-            Server.Instances.AssignInstance(character);
-            client.Character = character;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+            server.instances.AssignInstance(character);
+            client.character = character;
 
-            CreateSkillTreeItems(client, character, class_id);
-            CreateShortcutBars(client, character, class_id);
-            CreateEquipmentItems(client, character, class_id);
 
-            Logger.Info($"Created CharacterSlot: {character_slot_id}");
-            Logger.Info($"Created CharacterName: {character_name}");
-            Logger.Info($"Created race: {race_id}");
-            Logger.Info($"Created sex: {sex_id}");
-            Logger.Info($"Created hair: {hair_id}");
-            Logger.Info($"Created hair color: {hair_color_id}");
-            Logger.Info($"Created faceid: {face_id}");
-            Logger.Info($"Created alignment_id: {alignment_id}");
-            Logger.Info($"Created strength: {strength}");
-            Logger.Info($"Created vitality: {vitality}");
-            Logger.Info($"Created dexterity: {dexterity}");
-            Logger.Info($"Created agility: {agility}");
-            Logger.Info($"Created intelligence: {intelligence}");
-            Logger.Info($"Created piety: {piety}");
-            Logger.Info($"Created luck: {luck}");
-            Logger.Info($"Created class_id: {class_id}");
+            CreateSkillTreeItems(client, character, classId);
+            CreateShortcutBars(client, character, classId);
+            CreateEquipmentItems(client, character, classId);
+
+            _Logger.Info($"Created CharacterSlot: {characterSlotId}");
+            _Logger.Info($"Created CharacterName: {characterName}");
+            _Logger.Info($"Created race: {raceId}");
+            _Logger.Info($"Created sex: {sexId}");
+            _Logger.Info($"Created hair: {hairId}");
+            _Logger.Info($"Created hair color: {hairColorId}");
+            _Logger.Info($"Created faceid: {faceId}");
+            _Logger.Info($"Created alignment_id: {alignmentId}");
+            _Logger.Info($"Created strength: {strength}");
+            _Logger.Info($"Created vitality: {vitality}");
+            _Logger.Info($"Created dexterity: {dexterity}");
+            _Logger.Info($"Created agility: {agility}");
+            _Logger.Info($"Created intelligence: {intelligence}");
+            _Logger.Info($"Created piety: {piety}");
+            _Logger.Info($"Created luck: {luck}");
+            _Logger.Info($"Created class_id: {classId}");
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(error_check);
-            res.WriteInt32(character.Id); //CharacterId
+            res.WriteInt32(errorCheck);
+            res.WriteInt32(character.id); //CharacterId
 
-            Router.Send(client, (ushort)MsgPacketId.recv_chara_create_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_chara_create_r, res, ServerType.Msg);
         }
 
-        private void CreateSkillTreeItems(NecClient client, Character character, uint class_id)
+        private void CreateSkillTreeItems(NecClient client, Character character, uint classId)
         {
-            if (class_id == 0) // Fighter
+            if (classId == 0) // Fighter
             {
-                for (int i = 0; i < fighterSkills.Length; i++)
+                for (int i = 0; i < _fighterSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
-                    skillTreeItem.Level = 1;
-                    skillTreeItem.SkillId = fighterSkills[i];
-                    skillTreeItem.CharId = character.Id;
-                    if (!Database.InsertSkillTreeItem(skillTreeItem))
+                    skillTreeItem.level = 1;
+                    skillTreeItem.skillId = _fighterSkills[i];
+                    skillTreeItem.charId = character.id;
+                    if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, $"Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
             }
-            else if (class_id == 1) // Thief
+            else if (classId == 1) // Thief
             {
-                for (int i = 0; i < thiefSkills.Length; i++)
+                for (int i = 0; i < _thiefSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
-                    skillTreeItem.Level = 1;
-                    skillTreeItem.SkillId = thiefSkills[i];
-                    skillTreeItem.CharId = character.Id;
-                    if (!Database.InsertSkillTreeItem(skillTreeItem))
+                    skillTreeItem.level = 1;
+                    skillTreeItem.skillId = _thiefSkills[i];
+                    skillTreeItem.charId = character.id;
+                    if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, $"Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
             }
-            else if (class_id == 2) // Mage
+            else if (classId == 2) // Mage
             {
-                for (int i = 0; i < mageSkills.Length; i++)
+                for (int i = 0; i < _mageSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
-                    skillTreeItem.Level = 1;
-                    skillTreeItem.SkillId = mageSkills[i];
-                    skillTreeItem.CharId = character.Id;
-                    if (!Database.InsertSkillTreeItem(skillTreeItem))
+                    skillTreeItem.level = 1;
+                    skillTreeItem.skillId = _mageSkills[i];
+                    skillTreeItem.charId = character.id;
+                    if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, $"Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
             }
-            else if (class_id == 3) // Priest
+            else if (classId == 3) // Priest
             {
-                for (int i = 0; i < priestSkills.Length; i++)
+                for (int i = 0; i < _priestSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
-                    skillTreeItem.Level = 1;
-                    skillTreeItem.SkillId = priestSkills[i];
-                    skillTreeItem.CharId = character.Id;
-                    if (!Database.InsertSkillTreeItem(skillTreeItem))
+                    skillTreeItem.level = 1;
+                    skillTreeItem.skillId = _priestSkills[i];
+                    skillTreeItem.charId = character.id;
+                    if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, $"Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
@@ -204,80 +204,80 @@ namespace Necromancy.Server.Packet.Msg
         }
 
         // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
-        int[] thiefSkills = new int[] { 14101, 14302, 14803 };
-        int[] fighterSkills = new int[] { 11101, 11201 };
-        int[] mageSkills = new int[] { 13101, 13404 };
-        int[] priestSkills = new int[] { 12501, 12601 };
+        int[] _thiefSkills = new int[] { 14101, 14302, 14803 };
+        int[] _fighterSkills = new int[] { 11101, 11201 };
+        int[] _mageSkills = new int[] { 13101, 13404 };
+        int[] _priestSkills = new int[] { 12501, 12601 };
 
-        private void CreateShortcutBars(NecClient client, Character character, uint class_id)
+        private void CreateShortcutBars(NecClient client, Character character, uint classId)
         {
-            if (class_id == 0) // Fighter
+            if (classId == 0) // Fighter
             {
                 //TODO Fix magic numbers all over the place
-                Database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(11101, ShortcutItem.ShortcutType.SKILL));
-                Database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(11201, ShortcutItem.ShortcutType.SKILL));
+                database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(11101, ShortcutItem.ShortcutType.Skill));
+                database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(11201, ShortcutItem.ShortcutType.Skill));
             }
-            else if (class_id == 1) // Thief
+            else if (classId == 1) // Thief
             {
-                Database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(14101, ShortcutItem.ShortcutType.SKILL));
-                Database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(14302, ShortcutItem.ShortcutType.SKILL));
-                Database.InsertOrReplaceShortcutItem(character, 0, 2, new ShortcutItem(14803, ShortcutItem.ShortcutType.SKILL));
+                database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(14101, ShortcutItem.ShortcutType.Skill));
+                database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(14302, ShortcutItem.ShortcutType.Skill));
+                database.InsertOrReplaceShortcutItem(character, 0, 2, new ShortcutItem(14803, ShortcutItem.ShortcutType.Skill));
             }
-            else if (class_id == 2) // Mage
+            else if (classId == 2) // Mage
             {
-                Database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(13101, ShortcutItem.ShortcutType.SKILL));
-                Database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(13404, ShortcutItem.ShortcutType.SKILL));
+                database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(13101, ShortcutItem.ShortcutType.Skill));
+                database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(13404, ShortcutItem.ShortcutType.Skill));
             }
-            else if (class_id == 3) // Priest
+            else if (classId == 3) // Priest
             {
-                Database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(12501, ShortcutItem.ShortcutType.SKILL));
-                Database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(12601, ShortcutItem.ShortcutType.SKILL));
+                database.InsertOrReplaceShortcutItem(character, 0, 0, new ShortcutItem(12501, ShortcutItem.ShortcutType.Skill));
+                database.InsertOrReplaceShortcutItem(character, 0, 1, new ShortcutItem(12601, ShortcutItem.ShortcutType.Skill));
             }
 
-            Database.InsertOrReplaceShortcutItem(character, 0, 4, new ShortcutItem(11, ShortcutItem.ShortcutType.SYSTEM));
-            Database.InsertOrReplaceShortcutItem(character, 0, 6, new ShortcutItem(18, ShortcutItem.ShortcutType.SYSTEM));
-            Database.InsertOrReplaceShortcutItem(character, 0, 7, new ShortcutItem(22, ShortcutItem.ShortcutType.SYSTEM));
-            Database.InsertOrReplaceShortcutItem(character, 0, 9, new ShortcutItem(2, ShortcutItem.ShortcutType.SYSTEM));
+            database.InsertOrReplaceShortcutItem(character, 0, 4, new ShortcutItem(11, ShortcutItem.ShortcutType.System));
+            database.InsertOrReplaceShortcutItem(character, 0, 6, new ShortcutItem(18, ShortcutItem.ShortcutType.System));
+            database.InsertOrReplaceShortcutItem(character, 0, 7, new ShortcutItem(22, ShortcutItem.ShortcutType.System));
+            database.InsertOrReplaceShortcutItem(character, 0, 9, new ShortcutItem(2, ShortcutItem.ShortcutType.System));
 
 
             ShortcutBar shortcutBar1 = new ShortcutBar();
-            Database.InsertOrReplaceShortcutItem(character, 1, 0, new ShortcutItem(1, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 1, new ShortcutItem(2, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 2, new ShortcutItem(4, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 3, new ShortcutItem(5, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 4, new ShortcutItem(6, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 5, new ShortcutItem(7, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 6, new ShortcutItem(11, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 7, new ShortcutItem(14, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 8, new ShortcutItem(15, ShortcutItem.ShortcutType.EMOTE));
-            Database.InsertOrReplaceShortcutItem(character, 1, 9, new ShortcutItem(16, ShortcutItem.ShortcutType.EMOTE));
+            database.InsertOrReplaceShortcutItem(character, 1, 0, new ShortcutItem(1, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 1, new ShortcutItem(2, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 2, new ShortcutItem(4, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 3, new ShortcutItem(5, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 4, new ShortcutItem(6, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 5, new ShortcutItem(7, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 6, new ShortcutItem(11, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 7, new ShortcutItem(14, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 8, new ShortcutItem(15, ShortcutItem.ShortcutType.Emote));
+            database.InsertOrReplaceShortcutItem(character, 1, 9, new ShortcutItem(16, ShortcutItem.ShortcutType.Emote));
         }
 
-        private void CreateEquipmentItems(NecClient client, Character character, uint class_id)
+        private void CreateEquipmentItems(NecClient client, Character character, uint classId)
         {
-            if (class_id == 0) // Fighter
+            if (classId == 0) // Fighter
             {
-                SendItems(client, fighterItems);
+                SendItems(client, _fighterItems);
             }
-            else if (class_id == 1) // Thief
+            else if (classId == 1) // Thief
             {
-                SendItems(client, thiefItems);
+                SendItems(client, _thiefItems);
             }
-            else if (class_id == 2) // Mage
+            else if (classId == 2) // Mage
             {
-                SendItems(client, mageItems);
+                SendItems(client, _mageItems);
             }
-            else if (class_id == 3) // Priest
+            else if (classId == 3) // Priest
             {
-                SendItems(client, priestItems);
+                SendItems(client, _priestItems);
             }
         }
 
         // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
-        int[] thiefItems = new int[]    { 10200199, 15000199, 110101, 200101, 300101, 400101, 500101};
-        int[] fighterItems = new int[]  { 10300199, 15000199, 100101, 200109, 310101, 410101, 510101};
-        int[] mageItems = new int[]     { 11300199,           120110, 220101, 320101, 420101, 520101};
-        int[] priestItems = new int[]   { 11000199, 15000199, 120111, 220101, 320101, 420101, 520101};
+        int[] _thiefItems = new int[]    { 10200199, 15000199, 110101, 200101, 300101, 400101, 500101};
+        int[] _fighterItems = new int[]  { 10300199, 15000199, 100101, 200109, 310101, 410101, 510101};
+        int[] _mageItems = new int[]     { 11300199,           120110, 220101, 320101, 420101, 520101};
+        int[] _priestItems = new int[]   { 11000199, 15000199, 120111, 220101, 320101, 420101, 520101};
 
 
         public void SendItems(NecClient client, int[] itemIds)
@@ -286,9 +286,9 @@ namespace Necromancy.Server.Packet.Msg
             for (int i = 0; i < itemIds.Length; i++)
             {
                 spawmParams[i] = new ItemSpawnParams();
-                spawmParams[i].ItemStatuses = ItemStatuses.Identified;
+                spawmParams[i].itemStatuses = ItemStatuses.Identified;
             }
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
         }
 

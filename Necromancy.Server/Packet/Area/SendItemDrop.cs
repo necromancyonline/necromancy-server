@@ -7,29 +7,29 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_item_drop : ClientHandler
+    public class SendItemDrop : ClientHandler
     {
-        public send_item_drop(NecServer server) : base(server)  { } 
-        public override ushort Id => (ushort) AreaPacketId.send_item_drop;
+        public SendItemDrop(NecServer server) : base(server)  { }
+        public override ushort id => (ushort) AreaPacketId.send_item_drop;
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType zone = (ItemZoneType) packet.Data.ReadByte();
-            byte bag = packet.Data.ReadByte();
-            short slot = packet.Data.ReadInt16();
-            byte quantity = packet.Data.ReadByte();
+            ItemZoneType zone = (ItemZoneType) packet.data.ReadByte();
+            byte bag = packet.data.ReadByte();
+            short slot = packet.data.ReadInt16();
+            byte quantity = packet.data.ReadByte();
 
             ItemLocation location = new ItemLocation(zone, bag, slot);
-            ItemService itemService = new ItemService(client.Character);
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
 
-            try { 
+            try {
                 ItemInstance item = itemService.Remove(location, quantity);
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, item);
-                Router.Send(recvItemRemove);
-            } catch(ItemException e) { error = (int) e.Type; }
+                router.Send(recvItemRemove);
+            } catch(ItemException e) { error = (int) e.type; }
 
             RecvItemDrop recvItemDrop = new RecvItemDrop(client, error);
-            Router.Send(recvItemDrop);
+            router.Send(recvItemDrop);
         }
     }
 }

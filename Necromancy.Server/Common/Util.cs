@@ -11,13 +11,13 @@ namespace Necromancy.Server.Common
     {
         public static readonly CryptoRandom Random = new CryptoRandom();
 
-        private static readonly Random RandomNum = new Random();
+        private static readonly Random _RandomNum = new Random();
 
         public static int GetRandomNumber(int min, int max)
         {
-            lock (RandomNum)
+            lock (_RandomNum)
             {
-                return RandomNum.Next(min, max);
+                return _RandomNum.Next(min, max);
             }
         }
 
@@ -317,7 +317,7 @@ namespace Necromancy.Server.Common
             return RelativeDirectory(Environment.CurrentDirectory, CommonDirectory());
         }
 
-        public static string CreateMD5(string input)
+        public static string CreateMd5(string input)
         {
             MD5 md5 = MD5.Create();
             byte[] inputBytes = Encoding.ASCII.GetBytes(input);

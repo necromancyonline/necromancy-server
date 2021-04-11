@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_blacklist_close : ClientHandler
+    public class SendBlacklistClose : ClientHandler
     {
-        public send_blacklist_close(NecServer server) : base(server)
+        public SendBlacklistClose(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_blacklist_close;
+        public override ushort id => (ushort) AreaPacketId.send_blacklist_close;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

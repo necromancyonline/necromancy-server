@@ -18,12 +18,12 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             IBuffer res = BufferProvider.Provide(); // it appear in the collected body
             res.WriteInt32(1); //  slots
-            res.WriteCString($"{client.Soul.Name}"); // Soul Name
-            res.WriteCString($"{client.Character.Name}"); // Character Name
-            Router.Send(client, (ushort) AreaPacketId.recv_charabody_salvage_notify_body, res, ServerType.Area);
+            res.WriteCString($"{client.soul.name}"); // Soul Name
+            res.WriteCString($"{client.character.name}"); // Character Name
+            router.Send(client, (ushort) AreaPacketId.recv_charabody_salvage_notify_body, res, ServerType.Area);
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "salv";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "salv";
     }
 }

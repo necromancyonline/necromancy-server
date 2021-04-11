@@ -119,7 +119,7 @@ namespace Necromancy.Cli
             }
 
             Logger.Info("Press `e'-key to exit.");
-            
+
             ConsoleKeyInfo keyInfo = Console.ReadKey();
             while (keyInfo.Key != ConsoleKey.E)
             {
@@ -192,14 +192,14 @@ namespace Necromancy.Cli
         {
             ConsoleParameter parameter = ParseParameter(arguments);
 
-            if (!_commands.ContainsKey(parameter.Key))
+            if (!_commands.ContainsKey(parameter.key))
             {
                 Logger.Error(
-                    $"Command: '{parameter.Key}' not available. Type `help' for a list of available commands.");
+                    $"Command: '{parameter.key}' not available. Type `help' for a list of available commands.");
                 return CommandResultType.Continue;
             }
 
-            IConsoleCommand consoleCommand = _commands[parameter.Key];
+            IConsoleCommand consoleCommand = _commands[parameter.key];
             if (consoleCommand != _switchCommand)
             {
                 _switchCommand.Handle(parameter);
@@ -242,23 +242,23 @@ namespace Necromancy.Cli
                         string value = keyValue[1];
                         if (key.StartsWith('-'))
                         {
-                            if (key.Length <= 2 || parameter.SwitchMap.ContainsKey(key))
+                            if (key.Length <= 2 || parameter.switchMap.ContainsKey(key))
                             {
                                 Logger.Error($"Invalid switch key: '{key}' is empty or duplicated.");
                                 continue;
                             }
 
-                            parameter.SwitchMap.Add(key, value);
+                            parameter.switchMap.Add(key, value);
                             continue;
                         }
 
-                        if (key.Length <= 0 || parameter.ArgumentMap.ContainsKey(key))
+                        if (key.Length <= 0 || parameter.argumentMap.ContainsKey(key))
                         {
                             Logger.Error($"Invalid argument key: '{key}' is empty or duplicated.");
                             continue;
                         }
 
-                        parameter.ArgumentMap.Add(key, value);
+                        parameter.argumentMap.Add(key, value);
                         continue;
                     }
                 }
@@ -266,23 +266,23 @@ namespace Necromancy.Cli
                 if (arg.StartsWith('-'))
                 {
                     string switchStr = arg;
-                    if (switchStr.Length <= 2 || parameter.Switches.Contains(switchStr))
+                    if (switchStr.Length <= 2 || parameter.switches.Contains(switchStr))
                     {
                         Logger.Error($"Invalid switch: '{switchStr}' is empty or duplicated.");
                         continue;
                     }
 
-                    parameter.Switches.Add(switchStr);
+                    parameter.switches.Add(switchStr);
                     continue;
                 }
 
-                if (arg.Length <= 0 || parameter.Switches.Contains(arg))
+                if (arg.Length <= 0 || parameter.switches.Contains(arg))
                 {
                     Logger.Error($"Invalid argument: '{arg}' is empty or duplicated.");
                     continue;
                 }
 
-                parameter.Arguments.Add(arg);
+                parameter.arguments.Add(arg);
             }
 
             return parameter;
@@ -365,7 +365,7 @@ namespace Necromancy.Cli
 
         private void AddCommand(IConsoleCommand command)
         {
-            _commands.Add(command.Key, command);
+            _commands.Add(command.key, command);
         }
 
         private void ShutdownCommands()

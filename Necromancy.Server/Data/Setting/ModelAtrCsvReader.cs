@@ -2,7 +2,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class ModelAtrCsvReader : CsvReader<ModelAtrSetting>
     {
-        protected override int NumExpectedItems => 7;
+        protected override int numExpectedItems => 7;
 
         protected override ModelAtrSetting CreateInstance(string[] properties)
         {
@@ -43,13 +43,13 @@ namespace Necromancy.Server.Data.Setting
 
             return new ModelAtrSetting
             {
-                Id = id,
-                NormalMagnification = normal,
-                CrouchingMagnification = crouching,
-                SittingMagnification = sitting,
-                RollingMagnification = rolling,
-                DeathMagnification = death,
-                MotionMagnification = motion,
+                id = id,
+                normalMagnification = normal,
+                crouchingMagnification = crouching,
+                sittingMagnification = sitting,
+                rollingMagnification = rolling,
+                deathMagnification = death,
+                motionMagnification = motion,
             };
         }
     }

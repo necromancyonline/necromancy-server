@@ -67,8 +67,8 @@ namespace Necromancy.Server.Model
             List<NecClient> clients = GetAll();
             foreach (NecClient client in clients)
             {
-                Soul soul = client.Soul;
-                if (soul != null && soul.Name == soulName)
+                Soul soul = client.soul;
+                if (soul != null && soul.name == soulName)
                 {
                     return client;
                 }
@@ -85,8 +85,8 @@ namespace Necromancy.Server.Model
             List<NecClient> clients = GetAll();
             foreach (NecClient client in clients)
             {
-                Character character = client.Character;
-                if (character != null && character.Id == characterId)
+                Character character = client.character;
+                if (character != null && character.id == characterId)
                 {
                     return client;
                 }
@@ -106,7 +106,7 @@ namespace Necromancy.Server.Model
                 return null;
             }
 
-            Character character = client.Character;
+            Character character = client.character;
             return character;
         }
 
@@ -118,8 +118,8 @@ namespace Necromancy.Server.Model
             List<NecClient> clients = GetAll();
             foreach (NecClient client in clients)
             {
-                Account account = client.Account;
-                if (account != null && account.Id == accountId)
+                Account account = client.account;
+                if (account != null && account.id == accountId)
                 {
                     return client;
                 }
@@ -136,8 +136,8 @@ namespace Necromancy.Server.Model
             List<NecClient> clients = GetAll();
             foreach (NecClient client in clients)
             {
-                Character character = client.Character;
-                if (character != null && character.InstanceId == instanceId)
+                Character character = client.character;
+                if (character != null && character.instanceId == instanceId)
                 {
                     return client;
                 }

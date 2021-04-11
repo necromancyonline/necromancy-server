@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_challengemap_interval_start : PacketResponse
+    public class RecvChallengemapIntervalStart : PacketResponse
     {
-        public recv_challengemap_interval_start()
+        public RecvChallengemapIntervalStart()
             : base((ushort) AreaPacketId.recv_challengemap_interval_start, ServerType.Area)
         {
         }

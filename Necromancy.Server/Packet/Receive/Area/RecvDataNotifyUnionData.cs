@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_character.InstanceId);
+            res.WriteUInt32(_character.instanceId);
             res.WriteInt32(_character.unionId);
             res.WriteCString(_unionName);
             return res;

@@ -25,40 +25,40 @@ namespace Necromancy.Server.Data
         private uint _unknown11 = 4;
         private uint _fileInfoSize;
 
-        public uint Size
+        public uint size
         {
             get => _size;
             set => _size = value;
         }
-        public uint NumFiles
+        public uint numFiles
         {
             get => _numFiles;
             set => _numFiles = value;
         }
 
-        public int DatPathLen
+        public int datPathLen
         {
             get => _datPathLen;
             set => _datPathLen = value;
         }
-        public string DatPath
+        public string datPath
         {
             get => _datPath;
             set => _datPath = value;
         }
 
-        public int KeyLen
+        public int keyLen
         {
             get => _keyLen;
             set => _keyLen = value;
         }
-        public byte[] Key
+        public byte[] key
         {
             get => _key;
             set => _key = value;
         }
 
-        public byte[] Header
+        public byte[] header
         {
             get => _header;
             set => _header = value;
@@ -77,67 +77,67 @@ namespace Necromancy.Server.Data
         {
             _files.Add(file);
         }
-        public uint Unknown0
+        public uint unknown0
         {
             get => _unknown0;
             set => _unknown0 = value;
         }
-        public uint Unknown1
+        public uint unknown1
         {
             get => _unknown1;
             set => _unknown1 = value;
         }
-        public uint Unknown2
+        public uint unknown2
         {
             get => _unknown2;
             set => _unknown2 = value;
         }
-        public byte Unknown3
+        public byte unknown3
         {
             get => _unknown3;
             set => _unknown3 = value;
         }
-        public byte Unknown4
+        public byte unknown4
         {
             get => _unknown4;
             set => _unknown4 = value;
         }
-        public uint Unknown5
+        public uint unknown5
         {
             get => _unknown5;
             set => _unknown5 = value;
         }
-        public uint Unknown6
+        public uint unknown6
         {
             get => _unknown6;
             set => _unknown6 = value;
         }
-        public uint Unknown7
+        public uint unknown7
         {
             get => _unknown7;
             set => _unknown7 = value;
         }
-        public uint Unknown8
+        public uint unknown8
         {
             get => _unknown8;
             set => _unknown8 = value;
         }
-        public uint Unknown9
+        public uint unknown9
         {
             get => _unknown9;
             set => _unknown9 = value;
         }
-        public uint Unknown10
+        public uint unknown10
         {
             get => _unknown10;
             set => _unknown10 = value;
         }
-        public uint Unknown11
+        public uint unknown11
         {
             get => _unknown11;
             set => _unknown11 = value;
         }
-        public uint FileInfoSize
+        public uint fileInfoSize
         {
             get => _fileInfoSize;
             set => _fileInfoSize = value;

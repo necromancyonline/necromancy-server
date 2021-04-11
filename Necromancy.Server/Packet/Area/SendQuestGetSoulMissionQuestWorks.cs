@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_quest_get_soul_mission_quest_works : ClientHandler
+    public class SendQuestGetSoulMissionQuestWorks : ClientHandler
     {
-        public send_quest_get_soul_mission_quest_works(NecServer server) : base(server)
+        public SendQuestGetSoulMissionQuestWorks(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_quest_get_soul_mission_quest_works;
+        public override ushort id => (ushort) AreaPacketId.send_quest_get_soul_mission_quest_works;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -83,7 +83,7 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(0);
 
-            Router.Send(client, (ushort)AreaPacketId.recv_quest_display_r, res2, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_quest_display_r, res2, ServerType.Area);
 
 
         }

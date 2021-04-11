@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_rogue_point_shop_buy_r : PacketResponse
+    public class RecvRoguePointShopBuyR : PacketResponse
     {
-        public recv_rogue_point_shop_buy_r()
+        public RecvRoguePointShopBuyR()
             : base((ushort) AreaPacketId.recv_rogue_point_shop_buy_r, ServerType.Area)
         {
         }

@@ -9,40 +9,40 @@ using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_item_unequip : ClientHandler
+    public class SendItemUnequip : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_item_unequip));
-        public send_item_unequip(NecServer server) : base(server)
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemUnequip));
+        public SendItemUnequip(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_item_unequip;
+        public override ushort id => (ushort) AreaPacketId.send_item_unequip;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemEquipSlots equipSlot = (ItemEquipSlots) (1 << packet.Data.ReadInt32()); 
-            
-            ItemService itemService = new ItemService(client.Character);
+            ItemEquipSlots equipSlot = (ItemEquipSlots) (1 << packet.data.ReadInt32());
+
+            ItemService itemService = new ItemService(client.character);
             int error = 0;
-            Logger.Debug(equipSlot.ToString());
+            _Logger.Debug(equipSlot.ToString());
             try
             {
                 ItemInstance unequippedItem = itemService.CheckAlreadyEquipped(equipSlot);
-                unequippedItem = itemService.Unequip(unequippedItem.CurrentEquipSlot);
+                unequippedItem = itemService.Unequip(unequippedItem.currentEquipSlot);
                 RecvItemUpdateEqMask recvItemUpdateEqMask = new RecvItemUpdateEqMask(client, unequippedItem);
-                Router.Send(recvItemUpdateEqMask);
+                router.Send(recvItemUpdateEqMask);
 
                 //notify other players of your new look
-                RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
-                Router.Send(client.Map, myCharacterData, client);
+                RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.character, client.soul.name);
+                router.Send(client.map, myCharacterData, client);
             }
-            catch (ItemException e) { error = (int) e.Type; }
+            catch (ItemException e) { error = (int) e.type; }
 
             RecvItemUnequip recvItemUnequip = new RecvItemUnequip(client, error);
-            Router.Send(recvItemUnequip);
+            router.Send(recvItemUnequip);
 
             //Re-do all your stats
-            Router.Send(client, itemService.CalculateBattleStats(client));
+            router.Send(client, itemService.CalculateBattleStats(client));
         }
     }
 }

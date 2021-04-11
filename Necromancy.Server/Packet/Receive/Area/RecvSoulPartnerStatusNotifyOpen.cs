@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_status_notify_open : PacketResponse
+    public class RecvSoulPartnerStatusNotifyOpen : PacketResponse
     {
-        public recv_soul_partner_status_notify_open()
+        public RecvSoulPartnerStatusNotifyOpen()
             : base((ushort) AreaPacketId.recv_soul_partner_status_notify_open, ServerType.Area)
         {
         }
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             int numEntries = 0x2;
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(numEntries); //less than 0x5 
+            res.WriteInt32(numEntries); //less than 0x5
             for (int j = 0; j < numEntries; j++)
             {
                 //sub_495C70

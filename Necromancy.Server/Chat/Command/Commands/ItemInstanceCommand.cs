@@ -17,27 +17,27 @@ namespace Necromancy.Server.Chat.Command.Commands
     /// </summary>
     public class ItemInstanceCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ItemInstanceCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ItemInstanceCommand));
 
         public ItemInstanceCommand(NecServer server) : base(server)
         {
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "itemi";
-        public override string HelpText => "usage: `/itemi [itemId]`";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "itemi";
+        public override string helpText => "usage: `/itemi [itemId]`";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
             IBuffer res = BufferProvider.Provide();
-            
 
-            const int NUMBER = 10;
-            for(int i = 0; i < NUMBER; i++) {
+
+            const int Number = 10;
+            for(int i = 0; i < Number; i++) {
                 res = BufferProvider.Provide();
                 res.WriteInt32(2);
-                Router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
 
                 res = BufferProvider.Provide();
                 ulong instanceId = (ulong)(10001 + i);
@@ -75,7 +75,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteByte(0);       //IS FILLED
                     res.WriteInt32(1);      //GEM TYPE
                     res.WriteInt32(0);      //GEM BASE ID
-                    res.WriteInt32(0);      //unknown maybe gem item 2 id for diamon 2 gem combine 
+                    res.WriteInt32(0);      //unknown maybe gem item 2 id for diamon 2 gem combine
                 }
 
                 res.WriteInt32(0);              //V|PROTECT UNTIL DATE IN SECONDS
@@ -140,13 +140,13 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 res.WriteInt32(0);                  //misc field for displaying enchant removal / extraction I think: 0 - off, 1 - on, 5 percent sign, 6 remove, 7- extract
                 res.WriteInt32(0);                  //enchantment effect statement, 100,1250,{stringID
-                res.WriteInt16((short)0);           //enchantment effect value            
+                res.WriteInt16((short)0);           //enchantment effect value
                 res.WriteInt16((short)0);           //unknown
 
                 res.WriteInt32(0);                  //misc field for displaying enchant removal / extraction I think: 0 - off, 1 - on, 5 percent sign, 6 remove, 7- extract
                 res.WriteInt32(0);                  //enchantment effect statement, 100,1250,{stringID
-                res.WriteInt16((short)0);           //enchantment effect value            
-                res.WriteInt16((short)0);     //unknown            
+                res.WriteInt16((short)0);           //enchantment effect value
+                res.WriteInt16((short)0);     //unknown
 
                 //sub enchantment, values hidden unless viewed at enchant shop maybe
                 numEntries = 5;
@@ -155,16 +155,16 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteInt16((short)(0));          //Sub Enchant Scroll ID
                     res.WriteInt32(1);                  //misc field for displaying enchant removal / extraction I think: 0 - off, 1 - on, 5 percent sign, 6 remove, 7- extract
                     res.WriteInt32(7);                  //enchantment effect statement, 100,1250,{stringID
-                    res.WriteInt16((short)3);           //enchantment effect value            
+                    res.WriteInt16((short)3);           //enchantment effect value
                     res.WriteInt16((short)i);           //unknown
                 }
 
                 res.WriteInt16(2);                  //enchant max cost allowance
 
-                Router.Send(client, (ushort)AreaPacketId.recv_item_instance, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_item_instance, res, ServerType.Area);
 
                 res = BufferProvider.Provide();
-                Router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
 
                 res = BufferProvider.Provide();
                 res.WriteUInt64(instanceId);
@@ -174,7 +174,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 //Router.Send(client, (ushort)AreaPacketId.recv_item_update_place, res, ServerType.Area);
             }
 
-            
+
 
 
         }

@@ -9,56 +9,56 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_base_login : ConnectionHandler
+    public class SendBaseLogin : ConnectionHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_base_login));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendBaseLogin));
 
-        public send_base_login(NecServer server) : base(server)
+        public SendBaseLogin(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_base_login;
+        public override ushort id => (ushort) MsgPacketId.send_base_login;
 
         public const int SoulCount = 8;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
-            int accountId = packet.Data.ReadInt32();
-            byte[] unknown = packet.Data.ReadBytes(20); // Suspect SessionId
+            int accountId = packet.data.ReadInt32();
+            byte[] unknown = packet.data.ReadBytes(20); // Suspect SessionId
             // TODO replace with sessionId
-            NecClient client = Server.Clients.GetByAccountId(accountId);
+            NecClient client = server.clients.GetByAccountId(accountId);
             if (client == null)
             {
-                Logger.Error(connection, $"AccountId: {accountId} has no active session");
+                _Logger.Error(connection, $"AccountId: {accountId} has no active session");
                 // TODO refactor null check
                 SendResponse(connection, client);
-                connection.Socket.Close();
+                connection.socket.Close();
                 return;
             }
 
-            client.MsgConnection = connection;
-            connection.Client = client;
+            client.msgConnection = connection;
+            connection.client = client;
             SendResponse(connection, client);
         }
 
         private void SendResponse(NecConnection connection, NecClient client)
         {
-            List<Soul> souls = Database.SelectSoulsByAccountId(client.Account.Id);
+            List<Soul> souls = database.SelectSoulsByAccountId(client.account.id);
             if (souls.Count <= 0)
             {
                 IBuffer resq = BufferProvider.Provide();
                 resq.WriteInt32(0); //  Error
                 for(int i = 0; i < 8; i++)
-                {  
+                {
                     resq.WriteByte(1);
                     resq.WriteFixedString(String.Empty, 49); // Soul Name
-                    resq.WriteByte(client.Soul.Level); // Soul Level
+                    resq.WriteByte(client.soul.level); // Soul Level
                     resq.WriteByte(0); // bool - if use value 1, can't join in msg server character list
                 }
                 resq.WriteInt32(0);
                 resq.WriteByte(0); //bool
-                resq.WriteByte(0); 
-                Router.Send(client, (ushort) MsgPacketId.recv_base_login_r, resq, ServerType.Msg);
+                resq.WriteByte(0);
+                router.Send(client, (ushort) MsgPacketId.recv_base_login_r, resq, ServerType.Msg);
                 return;
             }
 
@@ -70,8 +70,8 @@ namespace Necromancy.Server.Packet.Msg
                 {
                     Soul soul = souls[0];
                     res.WriteByte(1);
-                    res.WriteFixedString(soul.Name, 49);
-                    res.WriteByte(soul.Level);
+                    res.WriteFixedString(soul.name, 49);
+                    res.WriteByte(soul.level);
                     res.WriteByte(1); // bool - if use value 1, can't join in msg server character list
                 }
                 else
@@ -86,7 +86,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteByte(1); // bool
             res.WriteByte(1);
 
-            Router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
         }
     }
 }

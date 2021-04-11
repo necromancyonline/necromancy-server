@@ -6,23 +6,23 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_battle_attack_pose : ClientHandler
+    public class SendBattleAttackPose : ClientHandler
     {
-        public send_battle_attack_pose(NecServer server) : base(server)
+        public SendBattleAttackPose(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_battle_attack_pose;
+        public override ushort id => (ushort) AreaPacketId.send_battle_attack_pose;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
-            Router.Send(client, (ushort) AreaPacketId.recv_battle_attack_pose_self, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_battle_attack_pose_self, res, ServerType.Area);
 
-            res.WriteUInt32(client.Character.InstanceId);
+            res.WriteUInt32(client.character.instanceId);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_attack_pose_r, res, ServerType.Area);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_attack_pose_start_notify, res, ServerType.Area, client);
+            router.Send(client.map, (ushort) AreaPacketId.recv_battle_attack_pose_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_battle_attack_pose_start_notify, res, ServerType.Area, client);
         }
 
     }

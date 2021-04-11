@@ -12,29 +12,29 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvAuctionNotifyOpenItem : PacketResponse
     {
 
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(RecvAuctionNotifyOpenItem));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(RecvAuctionNotifyOpenItem));
         List<ItemInstance> _auctionList;
-        public RecvAuctionNotifyOpenItem(NecClient necClient, List<ItemInstance> auctionList) : base((ushort) AreaPacketId.recv_auction_notify_open_item, ServerType.Area) 
+        public RecvAuctionNotifyOpenItem(NecClient necClient, List<ItemInstance> auctionList) : base((ushort) AreaPacketId.recv_auction_notify_open_item, ServerType.Area)
         {
-            Clients.Add(necClient);
+            clients.Add(necClient);
             _auctionList = auctionList;
         }
-        protected override IBuffer ToBuffer() 
+        protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(_auctionList.Count); // cmp to 0x64 = 100
             int i = 0;
             foreach (ItemInstance auctionItem in _auctionList)
             {
-                res.WriteInt32(auctionItem.Location.Slot); //row identifier?
-                res.WriteUInt64(auctionItem.InstanceID);
-                res.WriteUInt64(auctionItem.MinimumBid);
-                res.WriteUInt64(auctionItem.BuyoutPrice);
-                res.WriteFixedString(auctionItem.ConsignerSoulName, 49);
+                res.WriteInt32(auctionItem.location.slot); //row identifier?
+                res.WriteUInt64(auctionItem.instanceId);
+                res.WriteUInt64(auctionItem.minimumBid);
+                res.WriteUInt64(auctionItem.buyoutPrice);
+                res.WriteFixedString(auctionItem.consignerSoulName, 49);
                 res.WriteByte(0); // appears to be boolean if owner criminal it is 1
-                res.WriteFixedString(auctionItem.Comment, 385);
-                res.WriteInt16((short)auctionItem.CurrentBid);
-                res.WriteInt32(auctionItem.SecondsUntilExpiryTime);
+                res.WriteFixedString(auctionItem.comment, 385);
+                res.WriteInt16((short)auctionItem.currentBid);
+                res.WriteInt32(auctionItem.secondsUntilExpiryTime);
                 i++;
             }
             return res;

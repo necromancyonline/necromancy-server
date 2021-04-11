@@ -5,13 +5,13 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_get_refusallist : ClientHandler
+    public class SendGetRefusallist : ClientHandler
     {
-        public send_get_refusallist(NecServer server) : base(server)
+        public SendGetRefusallist(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_get_refusallist;
+        public override ushort id => (ushort) AreaPacketId.send_get_refusallist;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -35,7 +35,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteFixedString("soul name", 49);
             }
 
-            Router.Send(client, (ushort)AreaPacketId.recv_get_refusallist_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_get_refusallist_r, res, ServerType.Area);
         }
     }
 }

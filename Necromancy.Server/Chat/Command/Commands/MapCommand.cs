@@ -10,7 +10,7 @@ namespace Necromancy.Server.Chat.Command.Commands
     /// </summary>
     public class SendMapChangeForce : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(SendMapChangeForce));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendMapChangeForce));
 
         public SendMapChangeForce(NecServer server) : base(server)
         {
@@ -21,8 +21,8 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
             if (command[0].Length == 0)
             {
-                Logger.Debug("Re-entering current map");
-                command[0] = $"{client.Character.MapId}";
+                _Logger.Debug("Re-entering current map");
+                command[0] = $"{client.character.mapId}";
             }
 
             if (!int.TryParse(command[0], out int mapId))
@@ -31,7 +31,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            if (!Server.Maps.TryGet(mapId, out Map map))
+            if (!server.maps.TryGet(mapId, out Map map))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid MapId: {mapId}"));
                 return;
@@ -40,8 +40,8 @@ namespace Necromancy.Server.Chat.Command.Commands
             map.EnterForce(client);
         }
 
-        public override AccountStateType AccountState => AccountStateType.User;
-        public override string Key => "map";
-        public override string HelpText => "usage: `/map [mapId]` - Changes the map";
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "map";
+        public override string helpText => "usage: `/map [mapId]` - Changes the map";
     }
 }

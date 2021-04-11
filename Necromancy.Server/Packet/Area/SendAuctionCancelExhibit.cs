@@ -9,27 +9,27 @@ using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_auction_cancel_exhibit : ClientHandler
+    public class SendAuctionCancelExhibit : ClientHandler
     {
-        public send_auction_cancel_exhibit(NecServer server) : base(server)  {  }
-        public override ushort Id => (ushort) AreaPacketId.send_auction_cancel_exhibit;
+        public SendAuctionCancelExhibit(NecServer server) : base(server)  {  }
+        public override ushort id => (ushort) AreaPacketId.send_auction_cancel_exhibit;
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte slot = packet.Data.ReadByte();
-            ItemService itemService = new ItemService(client.Character);
+            byte slot = packet.data.ReadByte();
+            ItemService itemService = new ItemService(client.character);
 
             int auctionError = 0;
             try
             {
                 MoveResult moveResult = itemService.CancelExhibit(slot);
-                List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);                
-                Router.Send(client, responses); //TODO figure out if you can get a popup for this and the winning auction
+                List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
+                router.Send(client, responses); //TODO figure out if you can get a popup for this and the winning auction
             }
-            catch (AuctionException e) { auctionError = (int)e.Type; }
+            catch (AuctionException e) { auctionError = (int)e.type; }
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(auctionError);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_cancel_exhibit_r, res, ServerType.Area);
+            router.Send(client.map, (ushort) AreaPacketId.recv_auction_cancel_exhibit_r, res, ServerType.Area);
         }
     }
 }

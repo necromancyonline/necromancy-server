@@ -11,7 +11,7 @@ namespace Necromancy.Server.Chat.Command
         public const char ChatCommandStart = '/';
         public const char ChatCommandSeparator = ' ';
 
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ChatCommandHandler));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ChatCommandHandler));
 
         private readonly Dictionary<string, ChatCommand> _commands;
         private readonly NecServer _server;
@@ -24,7 +24,7 @@ namespace Necromancy.Server.Chat.Command
 
         public void AddCommand(ChatCommand command)
         {
-            _commands.Add(command.KeyToLowerInvariant, command);
+            _commands.Add(command.keyToLowerInvariant, command);
         }
 
         public Dictionary<string, ChatCommand> GetCommands()
@@ -39,12 +39,12 @@ namespace Necromancy.Server.Chat.Command
                 return;
             }
 
-            ChatMessage message = new ChatMessage(ChatMessageType.ChatCommand, client.Character.Name, command);
+            ChatMessage message = new ChatMessage(ChatMessageType.ChatCommand, client.character.name, command);
             List<ChatResponse> responses = new List<ChatResponse>();
             Handle(client, message, new ChatResponse(), responses);
             foreach (ChatResponse response in responses)
             {
-                _server.Router.Send(response);
+                _server.router.Send(response);
             }
         }
 
@@ -56,37 +56,37 @@ namespace Necromancy.Server.Chat.Command
                 return;
             }
 
-            if (message.Message == null || message.Message.Length <= 1)
+            if (message.message == null || message.message.Length <= 1)
             {
                 return;
             }
 
-            if (!message.Message.StartsWith(ChatCommandStart))
+            if (!message.message.StartsWith(ChatCommandStart))
             {
                 return;
             }
-            
-            string commandMessage = message.Message.Substring(1);
+
+            string commandMessage = message.message.Substring(1);
             string[] command = commandMessage.Split(ChatCommandSeparator);
             if (command.Length <= 0)
             {
-                Logger.Error(client, $"Command '{message.Message}' is invalid");
+                _Logger.Error(client, $"Command '{message.message}' is invalid");
                 return;
             }
 
             string commandKey = command[0].ToLowerInvariant();
             if (!_commands.ContainsKey(commandKey))
             {
-                Logger.Error(client, $"Command '{commandKey}' does not exist");
+                _Logger.Error(client, $"Command '{commandKey}' does not exist");
                 responses.Add(ChatResponse.CommandError(client, $"Command does not exist: {commandKey}"));
                 return;
             }
 
             ChatCommand chatCommand = _commands[commandKey];
-            if (client.Account.State < chatCommand.AccountState)
+            if (client.account.state < chatCommand.accountState)
             {
-                Logger.Error(client,
-                    $"Not entitled to execute command '{chatCommand.Key}' (State < Required: {client.Account.State} < {chatCommand.AccountState})");
+                _Logger.Error(client,
+                    $"Not entitled to execute command '{chatCommand.key}' (State < Required: {client.account.state} < {chatCommand.accountState})");
                 return;
             }
 

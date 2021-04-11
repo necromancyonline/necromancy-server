@@ -12,30 +12,30 @@ using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_battle_attack_exec : ClientHandler
+    public class SendBattleAttackExec : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_battle_attack_exec));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendBattleAttackExec));
 
         private readonly NecServer _server;
 
-        public send_battle_attack_exec(NecServer server) : base(server)
+        public SendBattleAttackExec(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort Id => (ushort) AreaPacketId.send_battle_attack_exec;
+        public override ushort id => (ushort) AreaPacketId.send_battle_attack_exec;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int Unknown1 = packet.Data.ReadInt32();
-            uint instanceId = packet.Data.ReadUInt32();
-            int Unknown2 = packet.Data.ReadInt32();
+            int unknown1 = packet.data.ReadInt32();
+            uint instanceId = packet.data.ReadUInt32();
+            int unknown2 = packet.data.ReadInt32();
 
-            client.Character.eventSelectReadyCode = (uint) instanceId;
-            Logger.Debug($"Just attacked Target {client.Character.eventSelectReadyCode}");
+            client.character.eventSelectReadyCode = (uint) instanceId;
+            _Logger.Debug($"Just attacked Target {client.character.eventSelectReadyCode}");
 
 
-            int damage = client.Character.battleParam.PlusPhysicalAttack;
+            int damage = client.character.battleParam.plusPhysicalAttack;
             int seed = Util.GetRandomNumber(0, 20);
             if (seed < 2)
                 damage += Util.GetRandomNumber(1, 4); // Light hit
@@ -44,25 +44,25 @@ namespace Necromancy.Server.Packet.Area
             else
                 damage *= 2;
                 damage += Util.GetRandomNumber(32, 48); // Critical hit
-            if (client.Account.State == AccountStateType.Admin) damage *= 100; //testing death and revival is slow with low dmg. 
-            
+            if (client.account.state == AccountStateType.Admin) damage *= 100; //testing death and revival is slow with low dmg.
+
             AttackObjectsInRange(client, damage);
 
 
             SendBattleAttackExecR(client);
         }
 
-        //What do the other _r  recvs do? 
+        //What do the other _r  recvs do?
         private void SendBattleAttackExecR(NecClient client)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // If not zero next attack is allowed before first complete
-            Router.Send(client, (ushort) AreaPacketId.recv_battle_attack_exec_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_battle_attack_exec_r, res, ServerType.Area);
         }
 
-        static double distance(double targetX, double targetY, double objectX, double objectY)
+        static double Distance(double targetX, double targetY, double objectX, double objectY)
         {
-            // Calculating distance 
+            // Calculating distance
             return Math.Sqrt(Math.Pow(objectX - targetX, 2) +
                              Math.Pow(objectY - targetY, 2) * 1.0);
         }
@@ -72,112 +72,112 @@ namespace Necromancy.Server.Packet.Area
             float perHp = 100.0f;
 
             //Damage Players in range
-            foreach (NecClient targetClient in client.Map.ClientLookup.GetAll())
+            foreach (NecClient targetClient in client.map.clientLookup.GetAll())
             {
                 if (targetClient == client) continue; //skip damaging yourself
-                if (targetClient.Character.partyId == client.Character.partyId && client.Character.partyId != 0) continue; //skip damaging party members
+                if (targetClient.character.partyId == client.character.partyId && client.character.partyId != 0) continue; //skip damaging party members
                 //if (targetClient.Soul.CriminalLevel == 0 && client.CriminalOnlyDamage == true) continue; //skip attacking non criminal players.  TODO
 
-                double distanceToCharacter = distance(targetClient.Character.X, targetClient.Character.Y,
-                    client.Character.X, client.Character.Y);
-                Logger.Debug(
-                    $"target Character name [{targetClient.Character.Name}] distanceToCharacter [{distanceToCharacter}] Radius { /*[{monsterSpawn.Radius}]*/"125"} {targetClient.Character.Name}");
+                double distanceToCharacter = Distance(targetClient.character.x, targetClient.character.y,
+                    client.character.x, client.character.y);
+                _Logger.Debug(
+                    $"target Character name [{targetClient.character.name}] distanceToCharacter [{distanceToCharacter}] Radius { /*[{monsterSpawn.Radius}]*/"125"} {targetClient.character.name}");
                 if (distanceToCharacter > /*targetClient.Character.Radius +*/ 125)
                 {
                     continue;
                 }
 
-                if (targetClient.Character.Hp.depleted)
+                if (targetClient.character.hp.depleted)
                 {
                     continue;
                 }
 
-                damage -= targetClient.Character.battleParam.PlusPhysicalDefence;
+                damage -= targetClient.character.battleParam.plusPhysicalDefence;
                 if (damage < 0) damage = 1; //pity damage
 
-                targetClient.Character.Hp.Modify(-damage, client.Character.InstanceId);
-                perHp = (float) targetClient.Character.Hp.current / targetClient.Character.Hp.max * 100;
-                Logger.Debug(
-                    $"CurrentHp [{targetClient.Character.Hp.current}] MaxHp[{targetClient.Character.Hp.max}] perHp[{perHp}]");
-                RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(targetClient.Character.Hp.current);
-                _server.Router.Send(targetClient, cHpUpdate.ToPacket());
+                targetClient.character.hp.Modify(-damage, client.character.instanceId);
+                perHp = (float) targetClient.character.hp.current / targetClient.character.hp.max * 100;
+                _Logger.Debug(
+                    $"CurrentHp [{targetClient.character.hp.current}] MaxHp[{targetClient.character.hp.max}] perHp[{perHp}]");
+                RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(targetClient.character.hp.current);
+                _server.router.Send(targetClient, cHpUpdate.ToPacket());
 
                 //logic to turn characters to criminals on criminal actions.  possibly should move to character task.
-                client.Character.criminalState += 1;
-                if (client.Character.criminalState == 1 | client.Character.criminalState == 2 |
-                    client.Character.criminalState == 3)
+                client.character.criminalState += 1;
+                if (client.character.criminalState == 1 | client.character.criminalState == 2 |
+                    client.character.criminalState == 3)
                 {
                     IBuffer res40 = BufferProvider.Provide();
-                    res40.WriteUInt32(client.Character.InstanceId);
-                    res40.WriteByte(client.Character.criminalState);
+                    res40.WriteUInt32(client.character.instanceId);
+                    res40.WriteByte(client.character.criminalState);
 
-                    Logger.Debug($"Setting crime level for Character {client.Character.Name} to {client.Character.criminalState}");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_update_notify_crime_lv, res40, ServerType.Area);
+                    _Logger.Debug($"Setting crime level for Character {client.character.name} to {client.character.criminalState}");
+                    router.Send(client.map, (ushort) AreaPacketId.recv_chara_update_notify_crime_lv, res40, ServerType.Area);
                     //Router.Send(client.Map, (ushort) AreaPacketId.recv_charabody_notify_crime_lv, res40, ServerType.Area, client);
                 }
 
-                if (client.Character.criminalState > 255)
+                if (client.character.criminalState > 255)
                 {
-                    client.Character.criminalState = 255;
+                    client.character.criminalState = 255;
                 }
 
-                DamageTheObject(client, targetClient.Character.InstanceId, damage, perHp);
+                DamageTheObject(client, targetClient.character.instanceId, damage, perHp);
             }
 
             //Damage Monsters in range
-            foreach (MonsterSpawn monsterSpawn in client.Map.MonsterSpawns.Values)
+            foreach (MonsterSpawn monsterSpawn in client.map.monsterSpawns.Values)
             {
                 double distanceToObject =
-                    distance(monsterSpawn.X, monsterSpawn.Y, client.Character.X, client.Character.Y);
-                Logger.Debug(
-                    $"target Monster name [{monsterSpawn.Name}] distanceToObject [{distanceToObject}] Radius [{monsterSpawn.Radius}] {monsterSpawn.Name}");
-                if (distanceToObject > monsterSpawn.Radius * 5
+                    Distance(monsterSpawn.x, monsterSpawn.y, client.character.x, client.character.y);
+                _Logger.Debug(
+                    $"target Monster name [{monsterSpawn.name}] distanceToObject [{distanceToObject}] Radius [{monsterSpawn.radius}] {monsterSpawn.name}");
+                if (distanceToObject > monsterSpawn.radius * 5
                 ) //increased hitbox for monsters by a factor of 5.  Beetle radius is 40
                 {
                     continue;
                 }
 
-                if (monsterSpawn.Hp.depleted)
+                if (monsterSpawn.hp.depleted)
                 {
                     continue;
                 }
 
-                monsterSpawn.Hp.Modify(-damage, client.Character.InstanceId);
-                perHp = (float) monsterSpawn.Hp.current / monsterSpawn.Hp.max * 100;
-                Logger.Debug($"CurrentHp [{monsterSpawn.Hp.current}] MaxHp[{monsterSpawn.Hp.max}] perHp[{perHp}]");
+                monsterSpawn.hp.Modify(-damage, client.character.instanceId);
+                perHp = (float) monsterSpawn.hp.current / monsterSpawn.hp.max * 100;
+                _Logger.Debug($"CurrentHp [{monsterSpawn.hp.current}] MaxHp[{monsterSpawn.hp.max}] perHp[{perHp}]");
 
                 //just for fun. turn on inactive monsters
-                if(monsterSpawn.Active == false) 
-                { 
-                    monsterSpawn.Active = true;
-                    monsterSpawn.SpawnActive = true;
-                    if (!monsterSpawn.TaskActive)
+                if(monsterSpawn.active == false)
+                {
+                    monsterSpawn.active = true;
+                    monsterSpawn.spawnActive = true;
+                    if (!monsterSpawn.taskActive)
                     {
                         Tasks.MonsterTask monsterTask = new Tasks.MonsterTask(_server, monsterSpawn);
                         if (monsterSpawn.defaultCoords)
                             monsterTask.monsterHome = monsterSpawn.monsterCoords[0];
                         else
-                            monsterTask.monsterHome = monsterSpawn.monsterCoords.Find(x => x.CoordIdx == 64);
+                            monsterTask.monsterHome = monsterSpawn.monsterCoords.Find(x => x.coordIdx == 64);
                         monsterTask.Start();
                     }
 
                 }
 
-                DamageTheObject(client, monsterSpawn.InstanceId, damage, perHp);
+                DamageTheObject(client, monsterSpawn.instanceId, damage, perHp);
             }
 
             //Damage NPCs in range
-            foreach (NpcSpawn npcSpawn in client.Map.NpcSpawns.Values)
+            foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
             {
-                double distanceToObject = distance(npcSpawn.X, npcSpawn.Y, client.Character.X, client.Character.Y);
-                Logger.Debug(
-                    $"target NPC name [{npcSpawn.Name}] distanceToObject [{distanceToObject}] Radius [{npcSpawn.Radius}] {npcSpawn.Name}");
-                if (distanceToObject > npcSpawn.Radius)
+                double distanceToObject = Distance(npcSpawn.x, npcSpawn.y, client.character.x, client.character.y);
+                _Logger.Debug(
+                    $"target NPC name [{npcSpawn.name}] distanceToObject [{distanceToObject}] Radius [{npcSpawn.radius}] {npcSpawn.name}");
+                if (distanceToObject > npcSpawn.radius)
                 {
                     continue;
                 }
 
-                DamageTheObject(client, npcSpawn.InstanceId, damage, perHp);
+                DamageTheObject(client, npcSpawn.instanceId, damage, perHp);
             }
         }
 
@@ -203,7 +203,7 @@ namespace Necromancy.Server.Packet.Area
             brTargetList.Add(oHpUpdate);
             //brTargetList.Add(brKnockBack); //knockback doesn't look right here. need to make it better.
             brTargetList.Add(brEnd);
-            Router.Send(client.Map, brTargetList);
+            router.Send(client.map, brTargetList);
         }
 
         //To be implemented for monsters
@@ -211,12 +211,12 @@ namespace Necromancy.Server.Packet.Area
         {
             MonsterSpawn monster = (MonsterSpawn) instance;
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(monster.InstanceId);
+            res.WriteUInt32(monster.instanceId);
             res.WriteFloat(0);
             res.WriteFloat(2); // delay in seconds
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_battle_report_noact_notify_knockback, res,
+            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_noact_notify_knockback, res,
                 ServerType.Area);
         }
-        
+
     }
 }

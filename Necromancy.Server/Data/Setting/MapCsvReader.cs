@@ -4,7 +4,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class MapCsvReader : CsvReader<MapSetting>
     {
-        private const string RegexNamePattern =
+        private const string _RegexNamePattern =
             @"(<str [0-9]+ [0-9]+ [0-9]+>)\\(<str [0-9]+ [0-9]+ [0-9]+>)\\(<str [0-9]+ [0-9]+ [0-9]+>)";
 
         private readonly StrTableSettingLookup _stringLookup;
@@ -14,7 +14,7 @@ namespace Necromancy.Server.Data.Setting
             _stringLookup = null;
         }
 
-        protected override int NumExpectedItems => 7;
+        protected override int numExpectedItems => 7;
 
         public MapCsvReader(StrTableSettingLookup stringLookup)
         {
@@ -34,25 +34,25 @@ namespace Necromancy.Server.Data.Setting
             string nameReference = properties[3];
             if (!string.IsNullOrEmpty(nameReference))
             {
-                Match match = Regex.Match(nameReference, RegexNamePattern);
+                Match match = Regex.Match(nameReference, _RegexNamePattern);
                 if (match.Success && match.Groups.Count == 4)
                 {
                     StrTableSetting countryStr = _stringLookup.Get(match.Groups[1].Value);
                     if (countryStr != null)
                     {
-                        country = countryStr.Text;
+                        country = countryStr.text;
                     }
 
                     StrTableSetting areaStr = _stringLookup.Get(match.Groups[2].Value);
                     if (areaStr != null)
                     {
-                        area = areaStr.Text;
+                        area = areaStr.text;
                     }
 
                     StrTableSetting placeStr = _stringLookup.Get(match.Groups[3].Value);
                     if (placeStr != null)
                     {
-                        place = placeStr.Text;
+                        place = placeStr.text;
                     }
                 }
                 else
@@ -83,14 +83,14 @@ namespace Necromancy.Server.Data.Setting
 
             return new MapSetting
             {
-                Id = id,
-                Country = country,
-                Area = area,
-                Place = place,
-                X = x,
-                Y = y,
-                Z = z,
-                Orientation = orientation
+                id = id,
+                country = country,
+                area = area,
+                place = place,
+                x = x,
+                y = y,
+                z = z,
+                orientation = orientation
             };
         }
     }

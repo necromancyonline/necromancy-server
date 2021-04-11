@@ -5,22 +5,22 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Area
 {
-    public class send_echo : ClientHandler
+    public class SendEcho : ClientHandler
     {
-        public send_echo(NecServer server) : base(server)
+        public SendEcho(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_echo;
+        public override ushort id => (ushort) AreaPacketId.send_echo;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int unknown = packet.Data.ReadInt32(); //Chat type?
-            int unknown2 = packet.Data.ReadInt32(); //Chat type also maybe?
-            int size = packet.Data.ReadInt32();
-            byte[] message = packet.Data.ReadBytes(size);
-            
+            int unknown = packet.data.ReadInt32(); //Chat type?
+            int unknown2 = packet.data.ReadInt32(); //Chat type also maybe?
+            int size = packet.data.ReadInt32();
+            byte[] message = packet.data.ReadBytes(size);
+
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(unknown);
             res2.WriteInt32(unknown2);
@@ -30,10 +30,10 @@ namespace Necromancy.Server.Packet.Area
             {
                 res2.WriteByte(message[i]);
             }
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_echo_notify, res2, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_echo_notify, res2, ServerType.Area);
 
             IBuffer res = BufferProvider.Provide();
-            Router.Send(client, (ushort) AreaPacketId.recv_echo_r, res, ServerType.Area);
+            router.Send(client, (ushort) AreaPacketId.recv_echo_r, res, ServerType.Area);
         }
     }
 }

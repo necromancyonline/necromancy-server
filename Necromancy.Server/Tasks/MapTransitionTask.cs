@@ -17,8 +17,8 @@ namespace Necromancy.Server.Tasks
 
     public class MapTransitionTask : PeriodicTask
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(MapTransitionTask));
-        private NecServer _server { get; }
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MapTransitionTask));
+        private NecServer server { get; }
         private Vector3 _transitionPos1;
         private Vector3 _transitionPos2;
         private Vector3 _referencePos;
@@ -37,7 +37,7 @@ namespace Necromancy.Server.Tasks
             Vector3 transitionPos1, Vector3 transitionPos2, uint instanceId, bool invertedTransition, MapPosition toPos,
             int id)
         {
-            _server = server;
+            this.server = server;
             _map = map;
             _transitionPos1 = transitionPos1;
             _transitionPos2 = transitionPos2;
@@ -52,9 +52,9 @@ namespace Necromancy.Server.Tasks
             _id = id;
         }
 
-        public override string TaskName => $"MapTransitionTask : {_map.Id}";
-        public override TimeSpan TaskTimeSpan { get; }
-        protected override bool TaskRunAtStart =>  false;
+        public override string taskName => $"MapTransitionTask : {_map.id}";
+        public override TimeSpan taskTimeSpan { get; }
+        protected override bool taskRunAtStart =>  false;
 
 
         protected override void Execute()
@@ -71,22 +71,22 @@ namespace Necromancy.Server.Tasks
                         continue;
                     }
 
-                    Vector3 characterPos = new Vector3(character.X, character.Y, character.Z);
+                    Vector3 characterPos = new Vector3(character.x, character.y, character.z);
                     bool transition = TransitionCheck(characterPos);
                     if (transition)
                     {
-                        if (!_server.Maps.TryGet(_transitionMapId, out Map transitionMap))
+                        if (!server.maps.TryGet(_transitionMapId, out Map transitionMap))
                         {
                             return;
                         }
 
-                        NecClient client = _map.ClientLookup.GetByCharacterInstanceId(character.InstanceId);
-                        client.Character.mapChange = true;
+                        NecClient client = _map.clientLookup.GetByCharacterInstanceId(character.instanceId);
+                        client.character.mapChange = true;
                         transitionMap.EnterForce(client, _toPos);
                     }
 
-                    Logger.Debug(
-                        $"{character.Name} in range [transition] id {this._id} Instance {this._instanceId} to destination {this._transitionMapId}[{transition}].");
+                    _Logger.Debug(
+                        $"{character.name} in range [transition] id {this._id} Instance {this._instanceId} to destination {this._transitionMapId}[{transition}].");
                 }
 
                 Thread.Sleep(_tickTime);

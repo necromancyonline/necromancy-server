@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_soul_partner_create_partner_effect_end : PacketResponse
+    public class RecvSoulPartnerCreatePartnerEffectEnd : PacketResponse
     {
-        public recv_soul_partner_create_partner_effect_end()
+        public RecvSoulPartnerCreatePartnerEffectEnd()
             : base((ushort) AreaPacketId.recv_soul_partner_create_partner_effect_end, ServerType.Area)
         {
         }

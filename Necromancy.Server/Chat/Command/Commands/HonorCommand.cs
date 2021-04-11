@@ -25,27 +25,27 @@ namespace Necromancy.Server.Chat.Command.Commands
             if (command[0] == "all")
             {
                 //foreach (HonorSetting honorSetting in Server.SettingRepository.Honor.Values)
-                int[] honorSettings = Server.SettingRepository.Honor.Keys.ToArray();
-                int numEntries = Server.SettingRepository.Honor.Count; //its over 1000!
+                int[] honorSettings = server.settingRepository.honor.Keys.ToArray();
+                int numEntries = server.settingRepository.honor.Count; //its over 1000!
 
                 IBuffer res = BufferProvider.Provide();
                 res.WriteInt32(1000); // must be under 0x3E8 // wtf?
                 for (int i = 0; i < 1000; i++)
                 {
                     res.WriteInt32(honorSettings[i]);
-                    res.WriteUInt32(client.Character.InstanceId);
-                    res.WriteByte(1); // bool	New Title 0:Yes  1:No	
+                    res.WriteUInt32(client.character.instanceId);
+                    res.WriteByte(1); // bool	New Title 0:Yes  1:No
                 }
-                Router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
                 res = BufferProvider.Provide();
                 res.WriteInt32(numEntries-1000); // must be under 0x3E8 // wtf?
                 for (int i = 1000; i < numEntries; i++)
                 {
                     res.WriteInt32(honorSettings[i]);
-                    res.WriteUInt32(client.Character.InstanceId);
-                    res.WriteByte(0); // bool	New Title 0:Yes  1:No	
+                    res.WriteUInt32(client.character.instanceId);
+                    res.WriteByte(0); // bool	New Title 0:Yes  1:No
                 }
-                Router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
             }
             else if (!int.TryParse(command[0], out x))
             {
@@ -57,15 +57,15 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 res2 = BufferProvider.Provide();
                 res2.WriteInt32(x);
-                res2.WriteUInt32(client.Character.InstanceId);
-                res2.WriteByte(1); // bool		New Title 0:Yes  1:No	
-                Router.Send(client, (ushort)AreaPacketId.recv_get_honor, res2, ServerType.Area);
+                res2.WriteUInt32(client.character.instanceId);
+                res2.WriteByte(1); // bool		New Title 0:Yes  1:No
+                router.Send(client, (ushort)AreaPacketId.recv_get_honor, res2, ServerType.Area);
 
         }
 
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "honor";
-        public override string HelpText => "usage: `/honor 10010101` - gives you the novice monster hunter title.";
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "honor";
+        public override string helpText => "usage: `/honor 10010101` - gives you the novice monster hunter title.";
     }
 }
 /*
@@ -79,7 +79,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 res.WriteInt32(titles[i]);
                 res.WriteUInt32(client.Character.InstanceId);
-                res.WriteByte(1); // bool		
+                res.WriteByte(1); // bool
             }
             Router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
 

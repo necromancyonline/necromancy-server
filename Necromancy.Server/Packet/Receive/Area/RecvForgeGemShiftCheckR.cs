@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_forge_gem_shift_check_r : PacketResponse
+    public class RecvForgeGemShiftCheckR : PacketResponse
     {
-        public recv_forge_gem_shift_check_r()
+        public RecvForgeGemShiftCheckR()
             : base((ushort) AreaPacketId.recv_forge_gem_shift_check_r, ServerType.Area)
         {
         }

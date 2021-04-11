@@ -7,37 +7,37 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_soul_create : ClientHandler
+    public class SendSoulCreate : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_soul_create));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSoulCreate));
 
-        public send_soul_create(NecServer server) : base(server)
+        public SendSoulCreate(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_soul_create;
+        public override ushort id => (ushort) MsgPacketId.send_soul_create;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            byte unknown = packet.Data.ReadByte();
-            string soulName = packet.Data.ReadCString();
+            byte unknown = packet.data.ReadByte();
+            string soulName = packet.data.ReadCString();
 
             Soul soul = new Soul();
-            soul.Name = soulName;
-            soul.AccountId = client.Account.Id;
-            if (!Database.InsertSoul(soul))
+            soul.name = soulName;
+            soul.accountId = client.account.id;
+            if (!database.InsertSoul(soul))
             {
-                Logger.Error(client, $"Failed to create SoulName: {soulName}");
+                _Logger.Error(client, $"Failed to create SoulName: {soulName}");
                 client.Close();
                 return;
             }
 
-            client.Soul = soul;
-            Logger.Info($"Created SoulName: {soulName}");
+            client.soul = soul;
+            _Logger.Info($"Created SoulName: {soulName}");
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client, (ushort) MsgPacketId.recv_soul_create_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_soul_create_r, res, ServerType.Msg);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Necromancy.Server.Data.Setting
             _modelAtrSettings = modelAtrSettings;
         }
 
-        protected override int NumExpectedItems => 14;
+        protected override int numExpectedItems => 14;
 
         protected override ModelCommonSetting CreateInstance(string[] properties)
         {
@@ -80,7 +80,7 @@ namespace Necromancy.Server.Data.Setting
             //        monster = _monsterSetting[monsterId];
             //    }
             //}
-            
+
             ModelAtrSetting atr = null;
             if (_modelAtrSettings.ContainsKey(modelAtrId))
             {
@@ -89,17 +89,17 @@ namespace Necromancy.Server.Data.Setting
 
             return new ModelCommonSetting
             {
-                Id = id,
-                Radius = radius,
-                Height = height,
-                CrouchHeight = crouchHeight,
-                NameHeight = nameHeight,
-                Atr = atr,
-                ZRadiusOffset = zRadiusOffset,
-                Effect = effectScaling,
-                Active = active,
-                Remarks = properties[14], //this is the name of the model
-                Monster = monster
+                id = id,
+                radius = radius,
+                height = height,
+                crouchHeight = crouchHeight,
+                nameHeight = nameHeight,
+                atr = atr,
+                zRadiusOffset = zRadiusOffset,
+                effect = effectScaling,
+                active = active,
+                remarks = properties[14], //this is the name of the model
+                monster = monster
             };
         }
     }

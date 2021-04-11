@@ -8,43 +8,43 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
 {
-    public class send_soul_select_C44F : ClientHandler
+    public class SendSoulSelectC44F : ClientHandler
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(send_soul_select_C44F));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSoulSelectC44F));
 
-        public send_soul_select_C44F(NecServer server) : base(server)
+        public SendSoulSelectC44F(NecServer server) : base(server)
         {
         }
 
-        public override ushort Id => (ushort) MsgPacketId.send_soul_select_C44F;
+        public override ushort id => (ushort) MsgPacketId.send_soul_select_C44F;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            string soulName = packet.Data.ReadCString();
-            List<Soul> souls = Database.SelectSoulsByAccountId(client.Account.Id);
+            string soulName = packet.data.ReadCString();
+            List<Soul> souls = database.SelectSoulsByAccountId(client.account.id);
             foreach (Soul soul in souls)
             {
-                if (soul.Name == soulName)
+                if (soul.name == soulName)
                 {
-                    client.Soul = soul;
+                    client.soul = soul;
                     break;
                 }
             }
 
             IBuffer res = BufferProvider.Provide();
-            if (client.Soul == null)
+            if (client.soul == null)
             {
-                Logger.Error(client, $"Soul with name: '{soulName}' not found");
+                _Logger.Error(client, $"Soul with name: '{soulName}' not found");
                 res.WriteInt32(1); // 0 = OK | 1 = Failed to return to soul selection
-                Router.Send(client, (ushort) MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
+                router.Send(client, (ushort) MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
                 client.Close();
                 return;
             }
 
             res.WriteInt32(0); // 0 = OK | 1 = Failed to return to soul selection
-            if (client.Soul.Password == null)
+            if (client.soul.password == null)
             {
-                Logger.Info(client, "Password not set, initiating set password");
+                _Logger.Info(client, "Password not set, initiating set password");
                 res.WriteByte(0); // bool - 0 = Set New Password | 1 = Enter Password
             }
             else
@@ -53,7 +53,7 @@ namespace Necromancy.Server.Packet.Msg
             }
 
 
-            Router.Send(client, (ushort) MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
+            router.Send(client, (ushort) MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
         }
     }
 }

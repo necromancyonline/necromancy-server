@@ -12,15 +12,15 @@ namespace Necromancy.Server.Model.Skills
 {
     public class TrapStack : IInstance
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(TrapStack));
-        
-        public uint InstanceId { get; set; }
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(TrapStack));
+
+        public uint instanceId { get; set; }
 
         private NecClient _client;
         private readonly NecServer _server;
         private uint _ownerInstanceId;
-        public int _trapRadius { get; }
-        public TrapTask _trapTask;
+        public int trapRadius { get; }
+        public TrapTask trapTask;
         private Map _map;
         private Vector3 _trapPos;
 
@@ -28,61 +28,61 @@ namespace Necromancy.Server.Model.Skills
         {
             _server = server;
             _client = client;
-            _map = _client.Map;
-            _ownerInstanceId = client.Character.InstanceId;
+            _map = _client.map;
+            _ownerInstanceId = client.character.instanceId;
             _trapPos = trapPos;
-            _trapRadius = trapRadius;
+            this.trapRadius = trapRadius;
         }
 
         public void StartCast(SkillBaseSetting skillBase)
         {
-            Logger.Debug(
-                $"Trap StartCast skillBase.Id [{skillBase.Id}] skillBase.CastingTime [{skillBase.CastingTime}]");
-            RecvSkillStartCastSelf startCast = new RecvSkillStartCastSelf(skillBase.Id, skillBase.CastingTime);
-            _server.Router.Send(startCast, _client);
+            _Logger.Debug(
+                $"Trap StartCast skillBase.Id [{skillBase.id}] skillBase.CastingTime [{skillBase.castingTime}]");
+            RecvSkillStartCastSelf startCast = new RecvSkillStartCastSelf(skillBase.id, skillBase.castingTime);
+            _server.router.Send(startCast, _client);
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.InstanceId);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
-            RecvBattleReportActionSkillStartCast brStartCast = new RecvBattleReportActionSkillStartCast(skillBase.Id);
+            RecvBattleReportActionSkillStartCast brStartCast = new RecvBattleReportActionSkillStartCast(skillBase.id);
 
             brList.Add(brStart);
             brList.Add(brStartCast);
             brList.Add(brEnd);
-            _server.Router.Send(_client.Map, brList);
+            _server.router.Send(_client.map, brList);
         }
 
         public void SkillExec(Trap trap, bool isBaseTrap)
         {
-            Vector3 trgCoord = new Vector3(_client.Character.X, _client.Character.Y, _client.Character.Z);
-            if (!int.TryParse($"{trap._skillId}".Substring(1, 6) + 1, out int effectId))
+            Vector3 trgCoord = new Vector3(_client.character.x, _client.character.y, _client.character.z);
+            if (!int.TryParse($"{trap.skillId}".Substring(1, 6) + 1, out int effectId))
             {
-                Logger.Error($"Creating effectId from skillid [{trap._skillId}]");
+                _Logger.Error($"Creating effectId from skillid [{trap.skillId}]");
             }
 
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.InstanceId);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
-            RecvBattleReportActionSkillExec brExec = new RecvBattleReportActionSkillExec(trap._skillId);
+            RecvBattleReportActionSkillExec brExec = new RecvBattleReportActionSkillExec(trap.skillId);
 
             brList.Add(brStart);
             brList.Add(brExec);
             brList.Add(brEnd);
-            _server.Router.Send(_client.Map, brList);
-            Logger.Debug($"SpearTrap effectId [{effectId}]");
-            RecvDataNotifyEoData eoData = new RecvDataNotifyEoData(trap.InstanceId, _client.Character.InstanceId,
+            _server.router.Send(_client.map, brList);
+            _Logger.Debug($"SpearTrap effectId [{effectId}]");
+            RecvDataNotifyEoData eoData = new RecvDataNotifyEoData(trap.instanceId, _client.character.instanceId,
                 effectId, trgCoord, 2, 2);
-            _server.Router.Send(_map, eoData);
+            _server.router.Send(_map, eoData);
 
             if (isBaseTrap)
             {
-                _trapTask = new TrapTask(_server, _map, _trapPos, _ownerInstanceId, trap, this.InstanceId);
-                _trapTask.AddTrap(trap);
-                _map.AddTrap(this.InstanceId, this);
-                _trapTask.Start();
+                trapTask = new TrapTask(_server, _map, _trapPos, _ownerInstanceId, trap, this.instanceId);
+                trapTask.AddTrap(trap);
+                _map.AddTrap(this.instanceId, this);
+                trapTask.Start();
             }
             else
             {
-                _trapTask.AddTrap(trap);
+                trapTask.AddTrap(trap);
             }
         }
     }
