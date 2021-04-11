@@ -55,6 +55,7 @@ namespace Necromancy.Server.Model
         public short OdRecoveryRate { get; set; }
         public short HpRecoveryRate { get; set; }
         public short MpRecoveryRate { get; set; }
+        public BattleParam battleParam { get; set; }
 
         //Progression
         public ulong ExperienceCurrent { get; set; }

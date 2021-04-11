@@ -511,11 +511,11 @@ namespace Necromancy.Server.Packet.Id
         recv_quest_check_time_limit_r = 0xC2E9,
         recv_quest_display_r = 0x42B8,
         recv_quest_ended = 0xB02C,
-        //NoJP recv_quest_get_mission_quest_history = 0x0,//missing recv?
+        recv_quest_get_mission_quest_history_r = 0x0,//missing recv?
         recv_quest_get_mission_quest_works_r = 0x1BD6,
-        //NoJP recv_quest_get_soul_mission_quest_history = 0x0,//missing recv?
+        recv_quest_get_soul_mission_quest_history_r = 0x0,//missing recv?
         recv_quest_get_soul_mission_quest_works_r = 0x266C,
-        //NoJP recv_quest_get_story_quest_history = 0x0,//missing recv?
+        recv_quest_get_story_quest_history_r = 0x0,//missing recv?
         recv_quest_get_story_quest_works_r = 0x73A1,
         recv_quest_hint = 0x505E,
         recv_quest_hint_othermap = 0xFFD6,

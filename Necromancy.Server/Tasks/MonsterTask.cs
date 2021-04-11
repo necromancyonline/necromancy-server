@@ -105,6 +105,7 @@ namespace Necromancy.Server.Tasks
             {
                 if (spawnMonster)
                 {
+                    _monster.loot = new Loot(_monster.Level, _monster.Id); //reload loot table
                     Thread.Sleep(respawnTime / 2);
                     updateTime = pathingTick;
                     _monster.CurrentCoordIndex = 1;
@@ -519,7 +520,13 @@ namespace Necromancy.Server.Tasks
             _monster.Hp.toMax();
             respawnTime = _monster.RespawnTime;
             RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(_monster);
-            _server.Router.Send(Map, monsterData);
+            foreach (NecClient client in Map.ClientLookup.GetAll())
+            {
+                if (client.Character.HasDied == false)
+                {
+                    _server.Router.Send(client, monsterData.ToPacket());
+                }
+            }
             spawnMonster = false;
             _monster.MonsterVisible = true;
             _monster.ClearAgroList();
@@ -534,6 +541,21 @@ namespace Necromancy.Server.Tasks
                 foreach (uint instanceId in _monster.GetAgroInstanceList())
                 {
                     _monster.MonsterHate(_server, false, instanceId);
+
+                    NecClient client = _server.Clients.GetByCharacterInstanceId(instanceId);
+                    client.Character.ExperienceCurrent += _monster.loot.Experience;
+
+                    IBuffer res = BufferProvider.Provide();
+                    res.WriteUInt64(client.Character.ExperienceCurrent);
+                    res.WriteByte(0);//bool
+                    _server.Router.Send(client, (ushort)AreaPacketId.recv_self_exp_notify, res, ServerType.Area); //This should go to the party of whomever did the most damage.  TODO
+
+                    //To-Do,  make a variable to track union gold
+                    client.Character.AdventureBagGold += _monster.loot.Gold; //Updates your Character.AdventureBagGold
+
+                    res = BufferProvider.Provide();
+                    res.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
+                    _server.Router.Send(client, (ushort)AreaPacketId.recv_self_money_notify, res, ServerType.Area);
                 }
 
                 Logger.Debug($"Monster is dead InstanceId [{_monster.InstanceId}]");
@@ -558,8 +580,7 @@ namespace Necromancy.Server.Tasks
                 //decompose the body
                 IBuffer res7 = BufferProvider.Provide();
                 res7.WriteUInt32(_monster.InstanceId);
-                res7.WriteInt32(
-                    5); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
+                res7.WriteInt32(Util.GetRandomNumber(1,5)); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
                 res7.WriteInt32(1);
                 _server.Router.Send(Map, (ushort) AreaPacketId.recv_charabody_notify_deadstate, res7, ServerType.Area);
                 Thread.Sleep(2000);

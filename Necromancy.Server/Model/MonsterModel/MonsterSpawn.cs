@@ -65,6 +65,7 @@ namespace Necromancy.Server.Model
         public BaseStat Hp;
         public BaseStat Mp;
         public BaseStat Od;
+        public Loot loot;
 
         public MonsterSpawn()
         {
@@ -82,6 +83,7 @@ namespace Necromancy.Server.Model
             MonsterWalkVelocity = 175;
             MonsterRunVelocity = 300;
             MonsterVisible = false;
+            loot = new Loot(this.Level, this.Id);
         }
 
         public void MonsterMove(NecServer server, NecClient client, int monsterVelocity, byte pose, byte animation,

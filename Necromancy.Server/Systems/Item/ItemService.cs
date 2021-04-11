@@ -185,7 +185,11 @@ namespace Necromancy.Server.Systems.Item
             }
             foreach (ItemInstance itemInstance in ownedItems)
             {
-
+                if (itemInstance.Location.Slot < 0) //remove invalid db rows on login.
+                {
+                    _itemDao.DeleteItemInstance(itemInstance.InstanceID);
+                    continue;
+                }
                 if (itemInstance.Location.ZoneType != ItemZoneType.BagSlot)
                 {
                     ItemLocation location = itemInstance.Location; //only needed on load inventory because item's location is already populated and it is not in the manager

@@ -67,6 +67,7 @@ namespace Necromancy.Server.Systems.Item
         GEM_SPALL = 67, //gem extract   ** no way to distinguish gem spall vs gem synthesis
         GEM_SYNTHESIS = 94, //GEM synthetic material ** why is this 94.. ..
         MAP_FRAGMENT = 68, //MAP PC  divided map
+        OTHER = 69,
         OTHERS = 69, //OTHER
         AVATAR = 70, //avatar
         ALLCHT = 71, // "blank

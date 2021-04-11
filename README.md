@@ -176,6 +176,7 @@ but will eventually be merged back into develop (to definitely add the new featu
 # Attribution
 ## Contributors
 - Unknownone69 [@Unknownone69](https://github.com/Unknownone69) 
+- Nothilvien [@sebastian-heinz](https://github.com/sebastian-heinz)
 - WizOnHiraeth [@WizOnHiraeth](https://github.com/WizOnHiraeth) 
 - blackice36 [@blackice36](https://github.com/blackice36) 
 - Aidoxilia [@Aidoxilia](https://github.com/Aidoxilia) 
@@ -183,7 +184,7 @@ but will eventually be merged back into develop (to definitely add the new featu
 - koffeeMist [@koffeeMist](https://github.com/koffeeMist) 
 - WIZONMAGLOVE [@WIZONMAGLOVE](https://github.com/WIZONMAGLOVE) 
 - Wolfzennn [@Wolfzennn](https://github.com/Wolfzennn)
-- Nothilvien [@sebastian-heinz](https://github.com/sebastian-heinz)
+- Raezaiel [@Raezaiel](https://github.com/Raezaiel) 
 
 ## 3rd Parties and Libraries
 - System.Data.SQLite (https://system.data.sqlite.org/)
