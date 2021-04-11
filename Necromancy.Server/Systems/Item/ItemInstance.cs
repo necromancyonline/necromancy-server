@@ -88,6 +88,18 @@ namespace Necromancy.Server.Systems.Item
 
         public byte SPCardColor { get; internal set; }
 
+        //Auction properties
+        public string ConsignerSoulName { get; set; }
+        public int SecondsUntilExpiryTime { get; set; }
+        public ulong MinimumBid { get; set; }
+        public ulong BuyoutPrice { get; set; }
+        public int BidderSoulId { get; set; }
+        public string BidderName { get; set; }
+        public int CurrentBid { get; set; }
+        public bool IsBidCancelled { get; internal set; }
+        public int MaxBid { get; set; }
+        public string Comment { get; set; }
+
 
         /// <summary>
         /// Helper function to check if the item is identified or not.
@@ -98,6 +110,6 @@ namespace Necromancy.Server.Systems.Item
                 return ((ItemStatuses.Identified & Statuses) != 0) && ((ItemStatuses.Unidentified & Statuses) == 0);
             } 
         }
-        
+
     }
 }

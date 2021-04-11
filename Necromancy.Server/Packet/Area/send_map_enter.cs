@@ -59,7 +59,6 @@ namespace Necromancy.Server.Packet.Area
                 deadBody.Level = client.Character.Level;
                 deadBody.ClassId = client.Character.ClassId;
                 deadBody.EquippedItems = client.Character.EquippedItems;
-                deadBody.ItemManager = client.Character.ItemManager;
                 deadBody.ConnectionState = 1;
                 client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
                 RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);

@@ -36,7 +36,7 @@ namespace Necromancy.Server.Packet.Area
             //TODO
 
             ItemService itemService = new ItemService(client.Character);
-            ItemInstance itemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
+            ItemInstance itemInstance = client.Character.ItemLocationVerifier.GetItem(new ItemLocation((ItemZoneType)storageType, Bag, Slot));
             ForgeMultiplier forgeMultiplier = itemService.ForgeMultiplier(itemInstance.EnhancementLevel + 1);
 
             IBuffer res = BufferProvider.Provide();

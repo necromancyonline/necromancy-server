@@ -82,7 +82,7 @@ namespace Necromancy.Server.Packet.Area
             {
                 if (itemInstance.Statuses.HasFlag(ItemStatuses.Unidentified))
                 {
-                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance, (byte)itemInstance.Location.ZoneType);
+                    RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                     Router.Send(client, recvItemInstanceUnidentified.ToPacket());
                     Logger.Debug($" Unidentified item : {itemInstance.Location.ZoneType}");
                 }

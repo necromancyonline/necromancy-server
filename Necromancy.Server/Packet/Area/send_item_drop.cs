@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
                 ItemInstance item = itemService.Remove(location, quantity);
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, item);
                 Router.Send(recvItemRemove);
-            } catch(ItemException e) { error = (int) e.ExceptionType; }
+            } catch(ItemException e) { error = (int) e.Type; }
 
             RecvItemDrop recvItemDrop = new RecvItemDrop(client, error);
             Router.Send(recvItemDrop);

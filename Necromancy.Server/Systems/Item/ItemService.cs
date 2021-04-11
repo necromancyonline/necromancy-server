@@ -39,13 +39,17 @@ namespace Necromancy.Server.Systems.Item
             }
         }
 
+        internal ItemInstance GetItem(ItemLocation location)
+        {
+            return _character.ItemLocationVerifier.GetItem(location);
+        }
+
         internal ItemInstance GetIdentifiedItem(ItemLocation location)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             if (item.Statuses.HasFlag(ItemStatuses.Unidentified))
-            { 
+            {
                 item.Statuses &= ~ItemStatuses.Unidentified;
-                _itemDao.UpdateItemOwnerAndStatus(item.InstanceID, _character.Id, (int)item.Statuses);
             }
             return item;
         }
@@ -74,12 +78,12 @@ namespace Necromancy.Server.Systems.Item
 
         public ItemInstance Equip(ItemLocation location, ItemEquipSlots equipSlot)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             item.CurrentEquipSlot = equipSlot;
             if (_character.EquippedItems.ContainsKey(equipSlot))
             {
                 _character.EquippedItems[equipSlot] = item;
-            } 
+            }
             else
             {
                 _character.EquippedItems.Add(equipSlot, item);
@@ -119,23 +123,23 @@ namespace Necromancy.Server.Systems.Item
         }
         internal ItemInstance GetLootedItem(ItemLocation location)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             if (item.CurrentEquipSlot != ItemEquipSlots.None)
             {
                 Unequip(item.CurrentEquipSlot);
             }
             return item;
         }
-        public ItemInstance PutLootedItem(ItemInstance itemInstance) 
+        public ItemInstance PutLootedItem(ItemInstance itemInstance)
         {
             ItemInstance myNewItem = itemInstance;
 
             //ToDo,  make this find space in more than just your adventure bag.
-            ItemLocation nextOpenLocation = _character.ItemManager.NextOpenSlot(ItemZoneType.AdventureBag);
+            ItemLocation nextOpenLocation = _character.ItemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
             myNewItem.Location = nextOpenLocation;
             _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
             _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
-            _character.ItemManager.PutItem(myNewItem.Location, myNewItem);            
+            _character.ItemLocationVerifier.PutItem(myNewItem.Location, myNewItem);
             return myNewItem;
         }
 
@@ -150,12 +154,12 @@ namespace Necromancy.Server.Systems.Item
 
         public List<ItemInstance> SpawnItemInstances(ItemZoneType itemZoneType, int[] baseIds, ItemSpawnParams[] spawnParams)
         {
-            if (_character.ItemManager.GetTotalFreeSpace(itemZoneType) < baseIds.Length) throw new ItemException(ItemExceptionType.InventoryFull);
-            ItemLocation[] nextOpenLocations = _character.ItemManager.NextOpenSlots(itemZoneType, baseIds.Length);
+            if (_character.ItemLocationVerifier.GetTotalFreeSpace(itemZoneType) < baseIds.Length) throw new ItemException(ItemExceptionType.InventoryFull);
+            ItemLocation[] nextOpenLocations = _character.ItemLocationVerifier.NextOpenSlots(itemZoneType, baseIds.Length);
             List<ItemInstance> itemInstances = _itemDao.InsertItemInstances(_character.Id, nextOpenLocations, baseIds, spawnParams);
             foreach (ItemInstance item in itemInstances)
             {
-                _character.ItemManager.PutItem(item.Location, item);
+                _character.ItemLocationVerifier.PutItem(item.Location, item);
             }
             return itemInstances;
         }
@@ -168,7 +172,7 @@ namespace Necromancy.Server.Systems.Item
         {
             //Clear Equipped Items from send_data_get_self_chara_data_request
             _character.EquippedItems.Clear();
-            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
+            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
             //load bags first
             foreach (ItemInstance item in ownedItems)
             {
@@ -176,7 +180,7 @@ namespace Necromancy.Server.Systems.Item
                 {
                     ItemLocation location = item.Location; //only needed on load inventory because item's location is already populated and it is not in the manager
                     item.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
-                    _character.ItemManager.PutItem(location, item);
+                    _character.ItemLocationVerifier.PutItem(location, item);
                 }
             }
             foreach (ItemInstance itemInstance in ownedItems)
@@ -192,7 +196,7 @@ namespace Necromancy.Server.Systems.Item
                     itemInstance.Location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
 
                     //Temporary ItemLibrary.CSV lookup until Item_decrypted.csv and Table are fully mapped/ populated
-                     server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
+                    server.SettingRepository.ItemLibrary.TryGetValue(itemInstance.BaseID, out ItemLibrarySetting itemLibrarySetting);
                     if (itemLibrarySetting != null)
                     {
                         itemInstance.MaximumDurability = itemLibrarySetting.Durability; //Temporary until we get durability in itemLibrary
@@ -213,15 +217,7 @@ namespace Necromancy.Server.Systems.Item
                     itemInstance.Weight = (short)(itemInstance.Weight - forgeMultiplier.Weight);
                     if (itemInstance.Weight < 0) { itemInstance.Weight = 0; } //this is lazy, fix the weight math issue.
 
-                    if (location.ZoneType == ItemZoneType.AdventureBag && location.Slot > 23) //Temporary Bug fix for index out of range . todo: fix next slots detection.
-                    {
-                        _itemDao.DeleteItemInstance(itemInstance.InstanceID);
-                        continue;                      
-                    }
-                    else
-                    {
-                        _character.ItemManager.PutItem(location, itemInstance);
-                    }
+                    _character.ItemLocationVerifier.PutItem(location, itemInstance);
                 }
                 if (itemInstance.CurrentEquipSlot != ItemEquipSlots.None)
                 {
@@ -234,7 +230,7 @@ namespace Necromancy.Server.Systems.Item
         public void LoadEquipmentModels()
         {
             _character.EquippedItems.Clear();
-            List<ItemInstance> ownedItems = _itemDao.SelectOwneditemInstances(_character.Id);
+            List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.Id);
             foreach (ItemInstance item in ownedItems)
             {
                 if (item.CurrentEquipSlot != ItemEquipSlots.None)
@@ -254,7 +250,7 @@ namespace Necromancy.Server.Systems.Item
         }
         public ItemInstance Remove(ItemLocation location, byte quantity)
         {
-            ItemInstance item = _character.ItemManager.GetItem(location);
+            ItemInstance item = _character.ItemLocationVerifier.GetItem(location);
             ulong instanceId = item.InstanceID;
             if (item is null) throw new ItemException(ItemExceptionType.Generic);
             if (item.Quantity < quantity) throw new ItemException(ItemExceptionType.Amount);
@@ -263,13 +259,13 @@ namespace Necromancy.Server.Systems.Item
             if (item.Quantity == 0)
             {
                 _itemDao.DeleteItemInstance(instanceId);
-                _character.ItemManager.RemoveItem(item);
+                _character.ItemLocationVerifier.RemoveItem(item);
             }
             else
             {
                 ulong[] instanceIds = new ulong[1];
                 byte[] quantities = new byte[1];
-                instanceIds[0] = instanceId;                
+                instanceIds[0] = instanceId;
                 quantities[0] = item.Quantity;
                 _itemDao.UpdateItemQuantities(instanceIds, quantities);
             }
@@ -281,16 +277,16 @@ namespace Necromancy.Server.Systems.Item
         }
         public MoveResult Move(ItemLocation from, ItemLocation to, byte quantity)
         {
-            ItemInstance fromItem = _character.ItemManager.GetItem(from);
-            bool hasToItem = _character.ItemManager.HasItem(to);
-            ItemInstance toItem = _character.ItemManager.GetItem(to);
+            ItemInstance fromItem = _character.ItemLocationVerifier.GetItem(from);
+            bool hasToItem = _character.ItemLocationVerifier.HasItem(to);
+            ItemInstance toItem = _character.ItemLocationVerifier.GetItem(to);
             MoveResult moveResult = new MoveResult();
 
             //check possible errors. these should only occur if client is compromised
             if (fromItem is null || quantity == 0) throw new ItemException(ItemExceptionType.Generic);
             if (quantity > fromItem.Quantity) throw new ItemException(ItemExceptionType.Amount);
             if (quantity > 1 && quantity < fromItem.Quantity && hasToItem && toItem.BaseID != fromItem.BaseID) throw new ItemException(ItemExceptionType.BagLocation);
-            if (fromItem.Location.ZoneType == ItemZoneType.BagSlot && !_character.ItemManager.IsEmptyContainer(ItemZoneType.EquippedBags, fromItem.Location.Slot)) throw new ItemException(ItemExceptionType.BagLocation);
+            if (fromItem.Location.ZoneType == ItemZoneType.BagSlot && !_character.ItemLocationVerifier.IsEmptyContainer(ItemZoneType.EquippedBags, fromItem.Location.Slot)) throw new ItemException(ItemExceptionType.BagLocation);
 
             if (!hasToItem && quantity == fromItem.Quantity)
             {
@@ -325,7 +321,7 @@ namespace Necromancy.Server.Systems.Item
         private MoveResult MoveItemPlace(ItemLocation to, ItemInstance fromItem)
         {
             MoveResult moveResult = new MoveResult(MoveType.Place);
-            _character.ItemManager.PutItem(to, fromItem);
+            _character.ItemLocationVerifier.PutItem(to, fromItem);
             moveResult.DestItem = fromItem;
 
             ulong[] instanceIds = new ulong[1];
@@ -348,10 +344,10 @@ namespace Necromancy.Server.Systems.Item
         private MoveResult MoveItemSwap(ItemLocation from, ItemLocation to, ItemInstance fromItem, ItemInstance toItem)
         {
             MoveResult moveResult = new MoveResult(MoveType.Swap);
-            _character.ItemManager.PutItem(to, fromItem);
-            _character.ItemManager.PutItem(from, toItem);
+            _character.ItemLocationVerifier.PutItem(to, fromItem);
+            _character.ItemLocationVerifier.PutItem(from, toItem);
             moveResult.DestItem = fromItem;
-            moveResult.OriginItem = toItem;            
+            moveResult.OriginItem = toItem;
 
             ulong[] instanceIds = new ulong[2];
             ItemLocation[] locs = new ItemLocation[2];
@@ -391,7 +387,7 @@ namespace Necromancy.Server.Systems.Item
             spawnParams[0] = spawnParam;
 
             List<ItemInstance> insertedItem = _itemDao.InsertItemInstances(fromItem.OwnerID, locs, baseIds, spawnParams);
-            _character.ItemManager.PutItem(to, insertedItem[0]);
+            _character.ItemLocationVerifier.PutItem(to, insertedItem[0]);
             moveResult.DestItem = insertedItem[0];
 
             return moveResult;
@@ -439,7 +435,7 @@ namespace Necromancy.Server.Systems.Item
             MoveResult moveResult = new MoveResult(MoveType.AllQuantity);
             moveResult.DestItem = toItem;
             moveResult.DestItem.Quantity += quantity;
-            _character.ItemManager.RemoveItem(fromItem.Location);
+            _character.ItemLocationVerifier.RemoveItem(fromItem.Location);
 
             ulong[] instanceIds = new ulong[1];
             byte[] quantities = new byte[1];
@@ -450,87 +446,6 @@ namespace Necromancy.Server.Systems.Item
             _itemDao.UpdateItemQuantities(instanceIds, quantities);
 
             return moveResult;
-        }
-
-        public ForgeMultiplier LoginLoadMultiplier(int level)
-        {
-            double factor = 1;
-            double durability = 1;
-            int hardness = 0;
-            switch (level)
-            {
-                case 0:     factor = 1.00; durability = 1.0; hardness = 0; break;
-                case 1:     factor = 1.05; durability = 1.1; hardness = 0; break;
-                case 2:     factor = 1.15; durability = 1.2; hardness = 0; break;
-                case 3:     factor = 1.27; durability = 1.3; hardness = 0; break;
-                case 4:     factor = 1.39; durability = 1.4; hardness = 0; break;
-                case 5:     factor = 1.54; durability = 1.5; hardness = 1; break;
-                case 6:     factor = 1.69; durability = 1.6; hardness = 0; break;
-                case 7:     factor = 1.84; durability = 1.7; hardness = 0; break;
-                case 8:     factor = 1.99; durability = 1.8; hardness = 0; break;
-                case 9:     factor = 2.14; durability = 1.9; hardness = 0; break;
-                case 10:    factor = 2.29; durability = 2.0; hardness = 2; break;
-                default: break;
-            }
-            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
-            forgeMultiplier.Factor = factor;
-            forgeMultiplier.Durability = durability;
-            forgeMultiplier.Hardness = hardness;
-            forgeMultiplier.Weight = 100; //toDo
-            return forgeMultiplier;
-        }
-        public ForgeMultiplier ForgeMultiplier(int level)
-        {
-            double factor = 1;
-            double durability = 1;
-            int hardness = 0;
-            switch (level)
-            {
-                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
-                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
-                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
-                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
-                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
-                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
-                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
-                default: factor = 1.00; durability = 1.0; hardness = 0; break;
-            }
-            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
-            forgeMultiplier.Factor = factor;
-            forgeMultiplier.Durability = durability;
-            forgeMultiplier.Hardness = hardness;
-            forgeMultiplier.Weight = 100; //toDo
-            return forgeMultiplier;
-        }
-        public void UpdateEnhancementLevel(ItemInstance itemInstance)
-        {
-            _itemDao.UpdateItemEnhancementLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
-        }
-
-        public List<ItemInstance> Repair(List<ItemLocation> locations)
-        {
-            List<ItemInstance> ItemInstances = new List<ItemInstance>();
-            foreach (ItemLocation location in locations)
-            {
-                ItemInstance itemInstance = _character.ItemManager.GetItem(location);
-                ItemInstances.Add(itemInstance);
-                _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
-            }
-            return ItemInstances;
-        }
-        public ulong SubtractGold(ulong amount)
-        {
-            _character.AdventureBagGold -= amount;
-            return _character.AdventureBagGold;
-        }
-        public ulong AddGold(ulong amount)
-        {
-            _character.AdventureBagGold += amount;
-            return _character.AdventureBagGold;
         }
 
         public List<PacketResponse> GetMoveResponses(NecClient client, MoveResult moveResult)
@@ -564,13 +479,14 @@ namespace Necromancy.Server.Systems.Item
                     RecvItemUpdateNum recvItemUpdateNum2 = new RecvItemUpdateNum(client, moveResult.DestItem);
                     responses.Add(recvItemUpdateNum2);
                     break;
-                case MoveType.None:                    
+                case MoveType.None:
                     break;
             }
             return responses;
         }
 
-        public List<PacketResponse>CalculateBattleStats(NecClient client)
+        //TODO no character stats should be calculated, should be updated on equip and unequip / buff application move
+        public List<PacketResponse> CalculateBattleStats(NecClient client)
         {
             List<PacketResponse> responses = new List<PacketResponse>();
             BattleParam battleParam = new BattleParam();
@@ -599,17 +515,17 @@ namespace Necromancy.Server.Systems.Item
             }
 
             //if you dont have a shield on,  set your GP to 0.  no blocking for you
-            if (ShieldCheck == false) 
-            { 
+            if (ShieldCheck == false)
+            {
                 client.Character.Gp.setMax(0);
                 RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.Character.Gp.max);
                 responses.Add(recvCharaUpdateAc);
             }
 
-            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Weight.max/10, client.Character.Weight.current/10/*Weight.Diff*/);
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.Character.Weight.max / 10, client.Character.Weight.current / 10/*Weight.Diff*/);
             responses.Add(recvCharaUpdateMaxWeight);
 
-            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current/10);
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.Character.Weight.current / 10);
             responses.Add(recvCharaUpdateWeight);
 
             RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.Character.Gp.max);
@@ -618,11 +534,265 @@ namespace Necromancy.Server.Systems.Item
             RecvCharaUpdateBattleBaseParam recvCharaUpdateBattleBaseParam = new RecvCharaUpdateBattleBaseParam(client.Character, battleParam);
             responses.Add(recvCharaUpdateBattleBaseParam);
 
-            client.Character.battleParam = battleParam;
-
             return responses;
         }
 
+        public List<ItemInstance> getLootableItems(uint characterId)
+        {
+            //TODO ADD PROTECTIONS TO SQL CALL SO ALL ITEMS CANT BE LOOTED
+            List<ItemInstance> lootableItems = _itemDao.SelectLootableInventoryItems(characterId);
+            foreach (ItemInstance itemInstance in lootableItems)
+            {
+                itemInstance.Statuses &= ItemStatuses.Unidentified;
+            }
+            return lootableItems;
+        }
 
+
+
+        //TODO What is this for?
+        public ForgeMultiplier LoginLoadMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2: factor = 1.15; durability = 1.2; hardness = 0; break;
+                case 3: factor = 1.27; durability = 1.3; hardness = 0; break;
+                case 4: factor = 1.39; durability = 1.4; hardness = 0; break;
+                case 5: factor = 1.54; durability = 1.5; hardness = 1; break;
+                case 6: factor = 1.69; durability = 1.6; hardness = 0; break;
+                case 7: factor = 1.84; durability = 1.7; hardness = 0; break;
+                case 8: factor = 1.99; durability = 1.8; hardness = 0; break;
+                case 9: factor = 2.14; durability = 1.9; hardness = 0; break;
+                case 10: factor = 2.29; durability = 2.0; hardness = 2; break;
+                default: break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+
+        //TODO What is this for?
+        public ForgeMultiplier ForgeMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
+                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
+                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
+                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
+                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
+                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
+                default: factor = 1.00; durability = 1.0; hardness = 0; break;
+            }
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.Factor = factor;
+            forgeMultiplier.Durability = durability;
+            forgeMultiplier.Hardness = hardness;
+            forgeMultiplier.Weight = 100; //toDo
+            return forgeMultiplier;
+        }
+        public void UpdateEnhancementLevel(ItemInstance itemInstance)
+        {
+            _itemDao.UpdateItemEnhancementLevel(itemInstance.InstanceID, itemInstance.EnhancementLevel);
+        }
+
+        //todo add checks
+        public List<ItemInstance> Repair(List<ItemLocation> locations)
+        {
+            List<ItemInstance> ItemInstances = new List<ItemInstance>();
+            foreach (ItemLocation location in locations)
+            {
+                ItemInstance itemInstance = _character.ItemLocationVerifier.GetItem(location);
+                ItemInstances.Add(itemInstance);
+                _itemDao.UpdateItemCurrentDurability(itemInstance.InstanceID, itemInstance.MaximumDurability);
+            }
+            return ItemInstances;
+        }
+
+        //TODO remove and move to utils
+        public ulong SubtractGold(ulong amount)
+        {
+            _character.AdventureBagGold -= amount;
+            return _character.AdventureBagGold;
+        }
+        public ulong AddGold(ulong amount)
+        {
+            _character.AdventureBagGold += amount;
+            return _character.AdventureBagGold;
+        }
+
+        /// <summary>
+        /// This may seem insane but the client requires every auction house listing, this dumps it into the client.
+        /// </summary>
+        /// <returns>Every single auction house listing.</returns>
+        public List<ItemInstance> GetItemsUpForAuction()
+        {
+            List<ItemInstance> auctions = _itemDao.SelectAuctions((uint)_character.SoulId); //TODO make all ids unsigned
+            _character.AuctionSearchIds = new ulong[auctions.Count];
+            short i = 0;
+            foreach (ItemInstance itemInstance in auctions)
+            {
+                _character.AuctionSearchIds[i] = itemInstance.InstanceID;
+                itemInstance.Location = new ItemLocation(ItemZoneType.ProbablyAuctionSearch, 0, i);
+                i++;
+            }
+            return auctions;
+        }
+
+
+        //TODO ADD LOCKS ON ALL AUCTION WHEN THESE ARE NOT ALL RUN IN THE SAME THREAD
+        public void Bid(byte isBuyout, int slot, ulong bid)
+        {
+            ulong instanceId = _character.AuctionSearchIds[slot];
+            ulong buyoutPrice = _itemDao.SelectBuyoutPrice(instanceId);
+            bool IsAlreadyBought = _itemDao.SelectAuctionWinnerSoulId(instanceId) != 0;
+
+            if (IsAlreadyBought) throw new AuctionException(AuctionExceptionType.BiddingCompleted);
+            if (isBuyout == 1 && bid != buyoutPrice) throw new AuctionException(AuctionExceptionType.Generic);
+            if (isBuyout == 0 && bid == buyoutPrice) throw new AuctionException(AuctionExceptionType.Generic);
+            if (bid > buyoutPrice) throw new AuctionException(AuctionExceptionType.Generic);
+
+
+            _itemDao.InsertAuctionBid(instanceId, _character.SoulId, bid);
+            if (isBuyout == 1)
+            {
+                _itemDao.UpdateAuctionWinner(instanceId, _character.SoulId);
+            } 
+        }
+
+        //auction functions
+        public MoveResult Exhibit(ItemLocation itemLocation, byte exhibitSlot, byte quantity, int auctionTimeSelector, ulong minBid, ulong buyoutPrice, string comment)
+        {
+            const int MAX_LOTS = 10; //TODO update with dimento?
+            ItemInstance fromItem = _character.ItemLocationVerifier.GetItem(itemLocation);
+            ItemLocation exhibitLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, exhibitSlot);
+            bool hasToItem = _character.ItemLocationVerifier.HasItem(exhibitLocation);
+            MoveResult moveResult = new MoveResult();
+
+            //check possible errors. these should only occur if client is compromised
+            if (hasToItem) throw new AuctionException(AuctionExceptionType.InvalidListing);
+            //if (currentNumLots >= MAX_LOTS) throw new AuctionException(AuctionExceptionType.LotSlotsFull); //TODO check later if too many slots
+            if (_character.EquippedItems.ContainsValue(fromItem)) throw new AuctionException(AuctionExceptionType.EquipListing); //TODO Might not work because equipment hasn't been fleshed out            
+            //if (false) throw new AuctionException(AuctionExceptionType.InvalidListing); //TODO CHECK IF INVALID ITEM like protect or no trade            
+            //if (false) throw new AuctionException(AuctionExceptionType.LotDimentoMedalExpired); //TODO CHECK DIMETO MEDAL ROYAL ACCOUNT STATUS
+            //if (false) throw new AuctionException(AuctionExceptionType.ItemAlreadyListed); //TODO CHECK ITEM ALREADY_LISTED items must have a unique instance ID! 
+            if (fromItem is null || quantity == 0) throw new AuctionException(AuctionExceptionType.Generic);
+            if (quantity > fromItem.Quantity) throw new AuctionException(AuctionExceptionType.IllegalItemAmount);
+
+            //int gold = _auctionDao.SelectGold(_client.Character); //TODO CHECK GOLD AMOUNT AND SUBTRACT, WAIT FOR UTIL FUNCTION
+            //InventoryService iManager = new InventoryService(_client); //remove this 
+            //iManager.SubtractGold((int) Math.Ceiling(auctionItem.BuyoutPrice * LISTING_FEE_PERCENT));             
+
+            if (quantity == fromItem.Quantity)
+            {
+                moveResult = MoveItemPlace(exhibitLocation, fromItem);
+            }
+            else if (quantity < fromItem.Quantity)
+            {
+                moveResult = MoveItemPlaceQuantity(exhibitLocation, fromItem, quantity);
+            }
+
+            moveResult.DestItem.ConsignerSoulName = _character.Name;
+            moveResult.DestItem.MinimumBid = minBid;
+            moveResult.DestItem.BuyoutPrice = buyoutPrice;
+            moveResult.DestItem.Comment = comment;
+
+            int auctionTimeInSecondsFromNow = 0;
+            const int SECONDS_PER_FOUR_HOURS = 60 * 60 * 4;
+            switch (auctionTimeSelector) //TODO something not working
+            {
+                case 0: // 4 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS;
+                    break;
+                case 1: // 8 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 2;
+                    break;
+                case 2: // 12 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 3;
+                    break;
+                case 3: // 24 hours
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 6;
+                    break;
+            }
+            moveResult.DestItem.SecondsUntilExpiryTime = auctionTimeInSecondsFromNow;
+
+            _itemDao.UpdateAuctionExhibit(moveResult.DestItem);
+            return moveResult;
+        }
+
+        public MoveResult CancelExhibit(byte slot)
+        {
+            //TODO don't allow cancelling auctions with bids
+            ItemLocation itemLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, slot);
+            ItemInstance fromItem = _character.ItemLocationVerifier.GetItem(itemLocation);
+            ItemLocation nextOpenSlot = _character.ItemLocationVerifier.NextOpenSlotInInventory();
+
+            //check possible errors. these should only occur if client is compromised
+            if (fromItem is null || nextOpenSlot.Equals(ItemLocation.InvalidLocation)) throw new AuctionException(AuctionExceptionType.Generic);
+            if (fromItem.BidderSoulId > 0) throw new AuctionException(AuctionExceptionType.BiddingCompleted);
+
+            MoveResult moveResult = MoveItemPlace(nextOpenSlot, fromItem);
+
+            _itemDao.UpdateAuctionCancelExhibit(fromItem.InstanceID);
+
+            return moveResult;
+        }
+
+        public void CancelBid(byte slot)
+        {
+            //_itemDao.DeleteAuctionBid(_character.SoulId, instanceId);
+        }
+
+        public List<ItemInstance> GetBids()
+        {
+            //TODO modify their location to be bids
+            return _itemDao.SelectBids(_character.SoulId);
+        }
+
+        public List<ItemInstance> GetLots()
+        {
+            List<ItemInstance> itemInstances = _itemDao.SelectLots(_character.Id);
+            foreach (ItemInstance item in itemInstances)
+            {
+                _character.ItemLocationVerifier.PutItem(item.Location, item);
+            }
+            return _itemDao.SelectLots(_character.SoulId);
+        }
+
+        public List<AuctionItemSearchConditions> GetItemSearchConditions()
+        {
+            return new List<AuctionItemSearchConditions>(); //TODO
+        }
+
+        public List<AuctionEquipmentSearchConditions> GetEquipmentSearchConditions()
+        {
+            return new List<AuctionEquipmentSearchConditions>(); //TODO
+        }
+
+        public void PutItemSearchConditions(AuctionItemSearchConditions auctionItemSearchConditions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PutEquipmentSearchConditions(AuctionEquipmentSearchConditions auctionEquipmentSearchConditions)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

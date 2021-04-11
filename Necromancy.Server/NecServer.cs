@@ -603,7 +603,11 @@ namespace Necromancy.Server
             _areaConsumer.AddHandler(new send_charabody_loot_start3(this));
             _areaConsumer.AddHandler(new send_charabody_loot_complete3(this));
             _areaConsumer.AddHandler(new send_charabody_loot_start2_cancel(this));
-            _areaConsumer.AddHandler(new send_charabody_self_salvage_abort(this));            
+            _areaConsumer.AddHandler(new send_charabody_self_salvage_abort(this));
+            _areaConsumer.AddHandler(new send_auction_regist_search_equipment_cond(this));
+            _areaConsumer.AddHandler(new send_auction_deregist_search_equipment_cond(this));
+            _areaConsumer.AddHandler(new send_auction_regist_search_item_cond(this));
+            _areaConsumer.AddHandler(new send_auction_deregist_search_item_cond(this));
         }
     }
 }

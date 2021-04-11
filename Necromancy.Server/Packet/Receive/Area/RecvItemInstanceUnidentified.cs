@@ -10,14 +10,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly ItemInstance _itemInstance;
         private readonly NecClient _client;
-        private readonly byte _itemZoneOverride;
 
-        public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance, byte itemZoneOverride)
+        public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance)
             : base((ushort) AreaPacketId.recv_item_instance_unidentified, ServerType.Area)
         {
             _itemInstance = itemInstance;
             _client = client;
-            _itemZoneOverride = itemZoneOverride;
         }
 
         protected override IBuffer ToBuffer()
@@ -53,8 +51,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(0); // separate in assembly
             res.WriteByte(0); // separate in assembly
 
-
-            res.WriteByte(_itemZoneOverride/*(byte)_itemInstance.Location.ZoneType*/); 
+            res.WriteByte((byte) _itemInstance.Location.ZoneType); 
             res.WriteByte(_itemInstance.Location.Container); 
             res.WriteInt16(_itemInstance.Location.Slot);
             res.WriteInt32((int)_itemInstance.CurrentEquipSlot); //CURRENT EQUIP SLOT

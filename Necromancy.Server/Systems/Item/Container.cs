@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Necromancy.Server.Systems.Item
 {
     class Container
     {
         public const int NO_OPEN_SLOTS = -1;
-        public readonly ItemInstance[] _slots;
+        private readonly ItemInstance[] _slots;
         public int Size { get; }
         public int Count { get; private set; }
         public bool IsSorted { get; private set; }

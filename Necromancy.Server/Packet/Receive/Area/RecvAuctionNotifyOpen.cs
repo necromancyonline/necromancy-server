@@ -14,7 +14,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
         protected override IBuffer ToBuffer()
         {
-            IBuffer res = BufferProvider.Provide();
+             IBuffer res = BufferProvider.Provide();
             int numEntries = 0xF;
             res.WriteInt32(numEntries); //Less than or equal to 0xF
 
@@ -33,7 +33,6 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
 
                 res.WriteInt64(0);
-                res.WriteInt32(0);
                 res.WriteInt32(0);
             }
 
@@ -70,7 +69,6 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 res.WriteInt16(0);
-                res.WriteInt16(0);
                 res.WriteInt64(0);
                 res.WriteByte(0);
                 res.WriteByte(0); //Bool
@@ -102,10 +100,9 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt64(0);
                 res.WriteFixedString("fs0xC1V2", 0xC1);//Fixed string of 0xC1 or 0xC1 bytes.
                 res.WriteByte(0);
-                res.WriteByte(0);
             }
 
-            res.WriteByte(0); //Bool
+            res.WriteInt32(0);
             res.WriteInt32(0);
             return res;
         }
