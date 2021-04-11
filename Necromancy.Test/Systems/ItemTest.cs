@@ -122,6 +122,26 @@ namespace Necromancy.Test.Systems
             {
                 throw new NotImplementedException();
             }
+
+            public ulong SelectBuyoutPrice(ulong instanceId)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void InsertAuctionBid(ulong instanceId, int bidderSoulId, ulong bid)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void UpdateAuctionWinner(ulong instanceId, int winnerSoulId)
+            {
+                throw new NotImplementedException();
+            }
+
+            public int SelectAuctionWinnerSoulId(ulong instanceId)
+            {
+                throw new NotImplementedException();
+            }
         }
 
             public class TestMove

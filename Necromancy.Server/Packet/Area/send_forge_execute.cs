@@ -128,7 +128,7 @@ namespace Necromancy.Server.Packet.Area
             }
             for (int i = 0; i < forgeItemCount; i++)
             {
-                ItemInstance forgeItemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)forgeItemStorageType[i], forgeItemBag[i], forgeItemSlot[i]));
+                ItemInstance forgeItemInstance = client.Character.ItemLocationVerifier.GetItem(new ItemLocation((ItemZoneType)forgeItemStorageType[i], forgeItemBag[i], forgeItemSlot[i]));
                 if (forgeItemInstance != null)
                 {
                     RecvItemRemove recvItemRemove = new RecvItemRemove(client, forgeItemInstance);
@@ -139,7 +139,7 @@ namespace Necromancy.Server.Packet.Area
             }
             for (int i = 0; i < supportItemCount; i++)
             {
-                ItemInstance supportItemInstance = client.Character.ItemManager.GetItem(new ItemLocation((ItemZoneType)supportItemStorageType, supportItemBag, supportItemSlot));
+                ItemInstance supportItemInstance = client.Character.ItemLocationVerifier.GetItem(new ItemLocation((ItemZoneType)supportItemStorageType, supportItemBag, supportItemSlot));
                 if (supportItemInstance != null)
                 {
                     RecvItemRemove recvItemRemove = new RecvItemRemove(client, supportItemInstance);
