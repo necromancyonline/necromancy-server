@@ -22,7 +22,7 @@ namespace Necromancy.Server.Packet.Area
 
             short fromSlot = packet.Data.ReadInt16();
             ulong itemId = client.Character.TradeWindowSlot[fromSlot];
-            ItemInstance itemInstance = client.Character.ItemManager.GetItemByInstanceId(itemId);
+            ItemInstance itemInstance = client.Character.ItemLocationVerifier.GetItemByInstanceId(itemId);
 
             if (targetClient != null)
             {

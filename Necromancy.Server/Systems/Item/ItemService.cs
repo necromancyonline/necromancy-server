@@ -136,7 +136,7 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.Location = _character.ItemLocationVerifier.PutItemInNextOpenSlot(ItemZoneType.AdventureBag, itemInstance);
             _itemDao.UpdateItemOwnerAndStatus(itemInstance.InstanceID, _character.Id, (int)itemInstance.Statuses);
             _itemDao.UpdateItemLocation(itemInstance.InstanceID, itemInstance.Location);                     
-            return myNewItem;
+            return itemInstance;
         }
 
         public ItemInstance SpawnItemInstance(ItemZoneType itemZoneType, int baseId, ItemSpawnParams spawnParam)

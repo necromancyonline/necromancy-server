@@ -41,11 +41,11 @@ namespace Necromancy.Server.Packet.Area
                 if (targetClient.Character.TradeWindowSlot[i] > 0) targetClientItemcount++;
             }
             Logger.Debug($"Transferred items {clientItemCount}:{targetClientItemcount}");
-            Logger.Debug($"Free Space{client.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag)}:{targetClient.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
+            Logger.Debug($"Free Space{client.Character.ItemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}:{targetClient.Character.ItemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
 
             //ToDo:  improve this logic when GetTotalFreeSpace can check all bags
-            if (client.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag) < (targetClientItemcount-clientItemCount)) notifyProblemSysMsg = 1; //doesnt work. GetTotalFreeSpace is not accurate. problem with itemService.PutLootedItem updating count.
-            if (targetClient.Character.ItemManager.GetTotalFreeSpace(ItemZoneType.AdventureBag) < (clientItemCount-targetClientItemcount)) notifyProblemSysMsg = 1;
+            if (client.Character.ItemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag) < (targetClientItemcount-clientItemCount)) notifyProblemSysMsg = 1; //doesnt work. GetTotalFreeSpace is not accurate. problem with itemService.PutLootedItem updating count.
+            if (targetClient.Character.ItemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag) < (clientItemCount-targetClientItemcount)) notifyProblemSysMsg = 1;
             //ToDo:  add other trade preventing scenarios here
 
 
@@ -70,13 +70,13 @@ namespace Necromancy.Server.Packet.Area
                 //Get stuff from targetClient
                 for (int i = 0; i < 20; i++)
                 {
-                    ItemInstance itemInstance = targetClient.Character.ItemManager.GetItemByInstanceId(targetClient.Character.TradeWindowSlot[i]);
+                    ItemInstance itemInstance = targetClient.Character.ItemLocationVerifier.GetItemByInstanceId(targetClient.Character.TradeWindowSlot[i]);
                     if (itemInstance != null)
                     {
                         RecvItemRemove recvItemRemove = new RecvItemRemove(targetClient, itemInstance);
                         if (targetClient != null) Router.Send(recvItemRemove);
 
-                        targetClient.Character.ItemManager.RemoveItem(itemInstance);
+                        targetClient.Character.ItemLocationVerifier.RemoveItem(itemInstance);
 
                         //put the item in the new owners inventory
                         itemInstance = itemService.PutLootedItem(itemInstance);
@@ -88,13 +88,13 @@ namespace Necromancy.Server.Packet.Area
                 //give stuff to targetClient
                 //for (int i = 0; i < 20; i++)
                 //{
-                    ItemInstance itemInstance2 = client.Character.ItemManager.GetItemByInstanceId(client.Character.TradeWindowSlot[i]);
+                    ItemInstance itemInstance2 = client.Character.ItemLocationVerifier.GetItemByInstanceId(client.Character.TradeWindowSlot[i]);
                     if (itemInstance2 != null)
                     {
                         RecvItemRemove recvItemRemove2 = new RecvItemRemove(client, itemInstance2);
                         if (client != null) Router.Send(recvItemRemove2);
 
-                        client.Character.ItemManager.RemoveItem(itemInstance2);
+                        client.Character.ItemLocationVerifier.RemoveItem(itemInstance2);
 
                         //put the item in the new owners inventory
                         itemInstance2 = targetItemService.PutLootedItem(itemInstance2);
