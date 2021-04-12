@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvTradeNotifyFixed : PacketResponse
     {
-        public RecvTradeNotifyFixed()
+        private int _result;
+        public RecvTradeNotifyFixed(int result)
             : base((ushort) AreaPacketId.recv_trade_notify_fixed, ServerType.Area)
         {
+            _result = result;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
+            res.WriteInt32(_result);
             return res;
         }
     }

@@ -1,8 +1,9 @@
-﻿using Arrowgene.Buffers;
+using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
+using Necromancy.Server.Packet.Receive.Area;
+using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -17,10 +18,21 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
+            NecClient targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
+
+            short fromSlot = packet.Data.ReadInt16();
+            ulong itemId = client.Character.TradeWindowSlot[fromSlot];
+            ItemInstance itemInstance = client.Character.ItemLocationVerifier.GetItemByInstanceId(itemId);
+
+            if (targetClient != null)
+            {
+                RecvItemRemove itemRemove = new RecvItemRemove(targetClient, itemInstance);
+                Router.Send(itemRemove);
+            }
+
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_remove_item_r, res, ServerType.Area);
+            Router.Send(client, (ushort)AreaPacketId.recv_trade_remove_item_r, res, ServerType.Area);
         }
-
     }
 }

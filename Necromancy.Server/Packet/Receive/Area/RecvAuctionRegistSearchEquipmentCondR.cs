@@ -5,10 +5,10 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class recv_auction_regist_search_item_cond_r : PacketResponse
+    public class RecvAuctionRegistSearchEquipmentCondR : PacketResponse
     {
-        public recv_auction_regist_search_item_cond_r()
-            : base((ushort) AreaPacketId.recv_auction_regist_search_item_cond_r, ServerType.Area)
+        public RecvAuctionRegistSearchEquipmentCondR()
+            : base((ushort) AreaPacketId.recv_auction_regist_search_equipment_cond_r, ServerType.Area)
         {
         }
 
@@ -16,7 +16,6 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-
             return res;
         }
     }

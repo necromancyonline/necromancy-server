@@ -36,7 +36,7 @@ namespace Necromancy.Server.Packet.Area
                 RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.Character, client.Soul.Name);
                 Router.Send(client.Map, myCharacterData, client);
             }
-            catch (ItemException e) { error = (int) e.ExceptionType; }
+            catch (ItemException e) { error = (int) e.Type; }
 
             RecvItemUnequip recvItemUnequip = new RecvItemUnequip(client, error);
             Router.Send(recvItemUnequip);

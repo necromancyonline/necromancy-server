@@ -18,7 +18,7 @@ namespace Necromancy.Server.Model
         public uint InstanceId { get; set; }
 
         //core attributes
-        public int Id { get; set; }
+        public int Id { get; set; } //TODO at some point make a uint
         public int AccountId { get; set; }
         public int SoulId { get; set; }
         public DateTime Created { get; set; }
@@ -121,10 +121,16 @@ namespace Necromancy.Server.Model
         public bool _characterActive { get; private set; }
 
         //Inventory
-        public ItemManager ItemManager { get; } = new ItemManager(); //TODO make item service
+        public ItemLocationVerifier ItemLocationVerifier { get; } = new ItemLocationVerifier(); //TODO make item service
         public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems { get; } = new Dictionary<ItemEquipSlots, ItemInstance>(); //TODO temp crap this is not the equipment system.
+
+        /// <summary>
+        /// Used to hold the ids of the items in the auction search window temporarily.
+        /// </summary>
+        public ulong[] AuctionSearchIds { get; set; } = new ulong[0];
         public ItemLocation lootNotify { get; set; }
         public ulong AdventureBagGold { get; set; }
+        public ulong[] TradeWindowSlot { get; set; }
 
         //Statues
         public uint[] StatusEffects { get; set; }
@@ -183,13 +189,14 @@ namespace Necromancy.Server.Model
             StepCount = 0;
             lootNotify = new ItemLocation((ItemZoneType)0, 0, 0);
             OdRecoveryRate = 0;
-            StatusEffects = new uint[4] 
+            StatusEffects = new uint[4]
             {
                 (uint)Statuses.Attack_Aura405,
                 (uint)Statuses.Mosquito_Buzz200,
                 (uint)Statuses.Porkul_Cake_Whole,
-                (uint)Statuses._Chimera_Killer_Hot_Mode 
+                (uint)Statuses._Chimera_Killer_Hot_Mode
             };
+            TradeWindowSlot = new ulong[20];
         }
 
         public bool characterActive

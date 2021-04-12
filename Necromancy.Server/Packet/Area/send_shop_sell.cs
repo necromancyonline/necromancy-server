@@ -35,7 +35,7 @@ namespace Necromancy.Server.Packet.Area
                 RecvItemRemove recvItemRemove = new RecvItemRemove(client, itemInstance);
                 Router.Send(recvItemRemove);
             }
-            catch (ItemException e) { error = (int) e.ExceptionType; }
+            catch (ItemException e) { error = (int) e.Type; }
 
             RecvShopSell recvShopSell = new RecvShopSell(client, error);
             Router.Send(recvShopSell);

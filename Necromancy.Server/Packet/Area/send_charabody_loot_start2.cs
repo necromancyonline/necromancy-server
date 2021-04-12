@@ -23,9 +23,9 @@ namespace Necromancy.Server.Packet.Area
             byte fromContainer = packet.Data.ReadByte();
             short fromSlot = packet.Data.ReadInt16();
 
-            if (fromZone == ItemZoneType.BCAdventureBag) fromZone = ItemZoneType.AdventureBag;
-            if (fromZone == ItemZoneType.BCEquippedBag) fromZone = ItemZoneType.EquippedBags;
-            if (fromZone == ItemZoneType.BCPremiumBag) fromZone = ItemZoneType.PremiumBag;
+            if (fromZone == ItemZoneType.CorpseAdventureBag) fromZone = ItemZoneType.AdventureBag;
+            if (fromZone == ItemZoneType.CorpseEquippedBags) fromZone = ItemZoneType.EquippedBags;
+            if (fromZone == ItemZoneType.CorpsePremiumBag) fromZone = ItemZoneType.PremiumBag;
             ItemLocation fromLoc = new ItemLocation(fromZone, fromContainer, fromSlot); //subtract 71 to get from BodyCollection to Adventurer
 
             client.Map.DeadBodies.TryGetValue(client.Character.eventSelectReadyCode, out DeadBody deadBody);

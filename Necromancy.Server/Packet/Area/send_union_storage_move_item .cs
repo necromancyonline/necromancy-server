@@ -46,7 +46,7 @@ namespace Necromancy.Server.Packet.Area
                 List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
                 Router.Send(client, responses);
             }
-            catch (ItemException e) { error = (int)e.ExceptionType; }
+            catch (ItemException e) { error = (int)e.Type; }
 
             RecvUnionStorageMoveItem recvUnionStorageMoveItem = new RecvUnionStorageMoveItem(client, error);
             Router.Send(recvUnionStorageMoveItem);
