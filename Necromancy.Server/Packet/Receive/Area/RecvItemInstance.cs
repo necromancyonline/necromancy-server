@@ -50,7 +50,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(numOfGemSlots); //NUMBER OF GEM SLOTS
             for (int j = 0; j < numOfGemSlots; j++)
             {
-                byte isFilled = _itemInstance.gemSlots[j].isFilled ? 1 : 0;
+                byte isFilled = _itemInstance.gemSlots[j].isFilled ? (byte)1 : (byte)0;
                 res.WriteByte(isFilled); //IS FILLED
                 res.WriteInt32((int)_itemInstance.gemSlots[j].type); //GEM TYPE
                 res.WriteInt32(_itemInstance.gemSlots[j].gem.baseId); //GEM BASE ID
