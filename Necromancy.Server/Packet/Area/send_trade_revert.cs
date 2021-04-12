@@ -1,8 +1,8 @@
-﻿using Arrowgene.Buffers;
+using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -17,20 +17,21 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); // error check?
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_revert_r, res, ServerType.Area);
-            recvTradeNotifyRevert(client);
-        }
+            NecClient targetClient = null;
+            if (client.Character.eventSelectExecCode != 0)
+                targetClient = Server.Clients.GetByCharacterInstanceId((uint)client.Character.eventSelectExecCode);
 
-        private void recvTradeNotifyRevert(NecClient client)
-        {
-            IBuffer res = BufferProvider.Provide();
+            RecvTradeRevert tradeRevert = new RecvTradeRevert();
+            Router.Send(tradeRevert, client);
+            //client.Character.TradeWindowSlot = new ulong[20];
 
-            res.WriteInt32(0); //?
-
-            Router.Send(client.Map, (ushort)AreaPacketId.recv_trade_notify_reverted, res, ServerType.Area, client);
-
+            if (targetClient != null)
+            {
+                RecvTradeNotifyReverted notifyReverted = new RecvTradeNotifyReverted();
+                Router.Send(notifyReverted, targetClient);
+                //targetClient.Character.TradeWindowSlot = new ulong[20];
+            }
+            //client.Character.eventSelectExecCode = 0;
         }
     }
 }

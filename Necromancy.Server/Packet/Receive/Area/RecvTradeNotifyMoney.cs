@@ -7,15 +7,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvTradeNotifyMoney : PacketResponse
     {
-        public RecvTradeNotifyMoney()
+        private readonly ulong _gold;
+        public RecvTradeNotifyMoney(ulong gold)
             : base((ushort) AreaPacketId.recv_trade_notify_money, ServerType.Area)
         {
+            _gold = gold;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt64(0);
+            res.WriteUInt64(_gold);
             return res;
         }
     }

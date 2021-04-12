@@ -132,15 +132,11 @@ namespace Necromancy.Server.Systems.Item
         }
         public ItemInstance PutLootedItem(ItemInstance itemInstance)
         {
-            ItemInstance myNewItem = itemInstance;
-
             //ToDo,  make this find space in more than just your adventure bag.
-            ItemLocation nextOpenLocation = _character.ItemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
-            myNewItem.Location = nextOpenLocation;
-            _itemDao.UpdateItemOwnerAndStatus(myNewItem.InstanceID, _character.Id, (int)myNewItem.Statuses);
-            _itemDao.UpdateItemLocation(myNewItem.InstanceID, myNewItem.Location);
-            _character.ItemLocationVerifier.PutItem(myNewItem.Location, myNewItem);
-            return myNewItem;
+            itemInstance.Location = _character.ItemLocationVerifier.PutItemInNextOpenSlot(ItemZoneType.AdventureBag, itemInstance);
+            _itemDao.UpdateItemOwnerAndStatus(itemInstance.InstanceID, _character.Id, (int)itemInstance.Statuses);
+            _itemDao.UpdateItemLocation(itemInstance.InstanceID, itemInstance.Location);                     
+            return itemInstance;
         }
 
         public ItemInstance SpawnItemInstance(ItemZoneType itemZoneType, int baseId, ItemSpawnParams spawnParam)

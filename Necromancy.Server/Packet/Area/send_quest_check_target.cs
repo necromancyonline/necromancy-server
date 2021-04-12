@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_quest_check_target_r, res, ServerType.Area); //Virtual function call?  add logic at later time
+            Router.Send(client, (ushort) AreaPacketId.recv_quest_check_target_r, res, ServerType.Area); //Virtual function call?  add logic at later time
         }
 
     }

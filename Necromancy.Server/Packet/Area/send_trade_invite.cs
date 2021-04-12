@@ -2,7 +2,7 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
+using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -17,25 +17,14 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            int myTargetID = packet.Data.ReadInt32();
+            uint myTargetID = packet.Data.ReadUInt32();
             
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);  // error check.  1 auto cancels the trade,  0 "the trade has been presented to %d. Awaiting response"
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_invite_r, res, ServerType.Area);
-            SendTradeInviteNotify(client);
+            Router.Send(client, (ushort) AreaPacketId.recv_trade_invite_r, res, ServerType.Area);
+
+            RecvTradeNotifyInvited notifyInvited = new RecvTradeNotifyInvited(client.Character.InstanceId);
+            Router.Send(notifyInvited, Server.Clients.GetByCharacterInstanceId(myTargetID));
         }
-        
-        private void SendTradeInviteNotify(NecClient client)
-        {
-            IBuffer res = BufferProvider.Provide();
-            
-            res.WriteUInt32(client.Character.InstanceId);
-
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_trade_notify_invited, res, ServerType.Area, client);
-
-        }
-
-       
-        
     }
 }

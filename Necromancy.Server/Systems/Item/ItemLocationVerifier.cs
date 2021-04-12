@@ -67,7 +67,6 @@ namespace Necromancy.Server.Systems.Item
             ZoneMap[ItemZoneType.AvatarInventory].PutContainer(8, MAX_CONTAINER_SIZE_AVATAR);
 
             ZoneMap.Add(ItemZoneType.TreasureBox, new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
-
             ZoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
             ZoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
 
@@ -87,7 +86,7 @@ namespace Necromancy.Server.Systems.Item
             if (ZoneMap[loc.ZoneType].GetContainer(loc.Container) == null) return false;
             if (ZoneMap[loc.ZoneType].GetContainer(loc.Container).GetItem(loc.Slot) == null) return false;
             return true;
-        }
+        }        
 
         public void PutItem(ItemLocation loc, ItemInstance item)
         {
@@ -191,6 +190,23 @@ namespace Necromancy.Server.Systems.Item
         public bool IsEmptyContainer(ItemZoneType itemZoneType, int container)
         {
             return ZoneMap[itemZoneType].GetContainer(container).Count == 0;
+        }
+
+        public ItemInstance GetItemByInstanceId (ulong instanceId)
+        {
+            foreach (ItemZone itemZone in ZoneMap.Values)
+            {
+                foreach (Container container in itemZone._containers)
+                {
+                    if (container == null) continue;
+                    foreach (ItemInstance itemInstance in container._slots)
+                    {
+                        if (itemInstance == null) continue;
+                        if (itemInstance.InstanceID == instanceId) return itemInstance;
+                    }                    
+                }                
+            }
+            return null;
         }
     }
 }

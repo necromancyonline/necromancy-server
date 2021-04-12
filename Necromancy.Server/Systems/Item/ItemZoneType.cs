@@ -18,7 +18,7 @@ namespace Necromancy.Server.Systems.Item
         AvatarInventory = 12,
 
         TreasureBox     = 66,
-
+        TradeWindow     = 69,
         CorpseAdventureBag  = 71,
         CorpseEquippedBags = 72,
         CorpsePremiumBag = 74,
