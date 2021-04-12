@@ -5,7 +5,13 @@ namespace Necromancy.Server.Model
 {
     public class NpcSpawn : IInstance
     {
-        public uint instanceId { get; set; }
+        public NpcSpawn()
+        {
+            created = DateTime.Now;
+            updated = DateTime.Now;
+            radius = 100;
+        }
+
         public int id { get; set; }
         public int npcId { get; set; }
         public int modelId { get; set; }
@@ -28,14 +34,6 @@ namespace Necromancy.Server.Model
         public int statusY { get; set; }
         public int statusZ { get; set; }
         public int radius { get; set; }
-
-
-
-        public NpcSpawn()
-        {
-            created = DateTime.Now;
-            updated = DateTime.Now;
-            radius = 100;
-        }
+        public uint instanceId { get; set; }
     }
 }

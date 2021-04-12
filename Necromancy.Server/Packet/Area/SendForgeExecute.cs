@@ -13,7 +13,8 @@ namespace Necromancy.Server.Packet.Area
         public SendForgeExecute(NecServer server) : base(server)
         {
         }
-        public override ushort id => (ushort) AreaPacketId.send_forge_execute;
+
+        public override ushort id => (ushort)AreaPacketId.send_forge_execute;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -31,6 +32,7 @@ namespace Necromancy.Server.Packet.Area
                 forgeItemBag[i] = packet.data.ReadByte();
                 forgeItemSlot[i] = packet.data.ReadInt16();
             }
+
             byte supportItemCount = packet.data.ReadByte();
             byte supportItemStorageType = packet.data.ReadByte();
             byte supportItemBag = packet.data.ReadByte();
@@ -45,10 +47,9 @@ namespace Necromancy.Server.Packet.Area
             //if ((result == 2) & (forgeItemCount > 2) && Util.GetRandomNumber(0, client.Character.Luck) < 5) result = 1; // use 3 forge stone, get a 4th chance
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);// 0 is a pass, anything but 0 is a fail; seems like a check for if you can still upgrade the weapon
-            res.WriteInt32(result);// anything but a 1 here is a fail condition, 1 here is a pass condition.
+            res.WriteInt32(0); // 0 is a pass, anything but 0 is a fail; seems like a check for if you can still upgrade the weapon
+            res.WriteInt32(result); // anything but a 1 here is a fail condition, 1 here is a pass condition.
             router.Send(client, (ushort)AreaPacketId.recv_forge_execute_r, res, ServerType.Area);
-
 
 
             RecvForgeNotifyExecuteResult recvForgeNotifyExecuteResult = new RecvForgeNotifyExecuteResult(client.character.instanceId, result);
@@ -68,21 +69,20 @@ namespace Necromancy.Server.Packet.Area
 
             if (result == 1)
             {
-            RecvItemUpdateLevel recvItemUpdateLevel = new RecvItemUpdateLevel(itemInstance.instanceId, itemInstance.enhancementLevel);
-            router.Send(client, recvItemUpdateLevel.ToPacket());
-            RecvItemUpdatePhysics recvItemUpdatePhysics = new RecvItemUpdatePhysics(itemInstance.instanceId, itemInstance.physical);
-            router.Send(client, recvItemUpdatePhysics.ToPacket());
-            RecvItemUpdateMagic recvItemUpdateMagic = new RecvItemUpdateMagic(itemInstance.instanceId, itemInstance.magical);
-            router.Send(client, recvItemUpdateMagic.ToPacket());
-            RecvItemUpdateMaxDur recvItemUpdateMaxDur = new RecvItemUpdateMaxDur(itemInstance.instanceId, itemInstance.maximumDurability);
-            router.Send(client, recvItemUpdateMaxDur.ToPacket());
-            RecvItemUpdateHardness recvItemUpdateHardness = new RecvItemUpdateHardness(itemInstance.instanceId, itemInstance.hardness);
-            router.Send(client, recvItemUpdateHardness.ToPacket());
-            RecvItemUpdateWeight recvItemUpdateWeight = new RecvItemUpdateWeight(itemInstance.instanceId, itemInstance.weight);
-            router.Send(client, recvItemUpdateWeight.ToPacket());
+                RecvItemUpdateLevel recvItemUpdateLevel = new RecvItemUpdateLevel(itemInstance.instanceId, itemInstance.enhancementLevel);
+                router.Send(client, recvItemUpdateLevel.ToPacket());
+                RecvItemUpdatePhysics recvItemUpdatePhysics = new RecvItemUpdatePhysics(itemInstance.instanceId, itemInstance.physical);
+                router.Send(client, recvItemUpdatePhysics.ToPacket());
+                RecvItemUpdateMagic recvItemUpdateMagic = new RecvItemUpdateMagic(itemInstance.instanceId, itemInstance.magical);
+                router.Send(client, recvItemUpdateMagic.ToPacket());
+                RecvItemUpdateMaxDur recvItemUpdateMaxDur = new RecvItemUpdateMaxDur(itemInstance.instanceId, itemInstance.maximumDurability);
+                router.Send(client, recvItemUpdateMaxDur.ToPacket());
+                RecvItemUpdateHardness recvItemUpdateHardness = new RecvItemUpdateHardness(itemInstance.instanceId, itemInstance.hardness);
+                router.Send(client, recvItemUpdateHardness.ToPacket());
+                RecvItemUpdateWeight recvItemUpdateWeight = new RecvItemUpdateWeight(itemInstance.instanceId, itemInstance.weight);
+                router.Send(client, recvItemUpdateWeight.ToPacket());
 
-            itemService.UpdateEnhancementLevel(itemInstance);
-
+                itemService.UpdateEnhancementLevel(itemInstance);
             }
             else if (supportItemCount == 0)
             {
@@ -126,6 +126,7 @@ namespace Necromancy.Server.Packet.Area
 
                 itemService.UpdateEnhancementLevel(itemInstance);
             }
+
             for (int i = 0; i < forgeItemCount; i++)
             {
                 ItemInstance forgeItemInstance = client.character.itemLocationVerifier.GetItem(new ItemLocation((ItemZoneType)forgeItemStorageType[i], forgeItemBag[i], forgeItemSlot[i]));
@@ -135,8 +136,8 @@ namespace Necromancy.Server.Packet.Area
                     router.Send(recvItemRemove);
                     itemService.Remove(forgeItemInstance.location, forgeItemInstance.quantity);
                 }
-
             }
+
             for (int i = 0; i < supportItemCount; i++)
             {
                 ItemInstance supportItemInstance = client.character.itemLocationVerifier.GetItem(new ItemLocation((ItemZoneType)supportItemStorageType, supportItemBag, supportItemSlot));
@@ -147,9 +148,6 @@ namespace Necromancy.Server.Packet.Area
                     itemService.Remove(supportItemInstance.location, supportItemInstance.quantity);
                 }
             }
-
-
-
         }
     }
 }

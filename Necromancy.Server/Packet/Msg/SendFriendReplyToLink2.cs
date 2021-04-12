@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_friend_reply_to_link2;
+        public override ushort id => (ushort)MsgPacketId.send_friend_reply_to_link2;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Msg
 
             res.WriteInt32(0); // 0  = msg friend added
 
-            router.Send(client, (ushort) MsgPacketId.recv_friend_result_reply_link2, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_friend_result_reply_link2, res, ServerType.Msg);
             /* Logic for all the possibilities below goes above here.
             FRIEND_REGIST	10	Sent Friend Request to %s
             FRIEND_REGIST	20	Denied the Friend Request

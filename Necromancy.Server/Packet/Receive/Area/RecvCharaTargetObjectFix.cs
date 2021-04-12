@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaTargetObjectFix : PacketResponse
     {
         public RecvCharaTargetObjectFix()
-            : base((ushort) AreaPacketId.recv_chara_target_object_fix, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_target_object_fix, ServerType.Area)
         {
         }
 

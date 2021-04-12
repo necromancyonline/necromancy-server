@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventStandAloneR : PacketResponse
     {
         public RecvEventStandAloneR()
-            : base((ushort) AreaPacketId.recv_event_stand_alone_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_stand_alone_r, ServerType.Area)
         {
         }
 

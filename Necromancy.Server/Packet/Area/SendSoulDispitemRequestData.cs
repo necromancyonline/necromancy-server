@@ -1,18 +1,21 @@
+using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
-{    public class SendSoulDispitemRequestData : ClientHandler
+{
+    public class SendSoulDispitemRequestData : ClientHandler
     {
-        private NecServer _server;
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSoulDispitemRequestData));
+        private readonly NecServer _server;
+
         public SendSoulDispitemRequestData(NecServer server) : base(server)
         {
             _server = server;
@@ -25,7 +28,6 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_request_data_r, res, ServerType.Area);
-
 
 
             //ToDo  find a better home for these functionalities . This send is the last stop before initial map entry.
@@ -45,16 +47,16 @@ namespace Necromancy.Server.Packet.Area
             router.Send(client, (ushort)AreaPacketId.recv_soul_dispitem_notify_data, res19, ServerType.Area);
         }
 
-        public void LoadSoulState (NecClient client)
+        public void LoadSoulState(NecClient client)
         {
-            if (client.character.hp.current <=0)
+            if (client.character.hp.current <= 0)
             {
-                client.character.state |= Model.CharacterModel.CharacterState.SoulForm;
+                client.character.state |= CharacterState.SoulForm;
                 client.character.hasDied = true;
             }
-            if (client.character.hp.current < -1) client.character.state |= Model.CharacterModel.CharacterState.LostState;
-            if ((int)client.account.state == 100) client.character.state |= Model.CharacterModel.CharacterState.GameMaster;
 
+            if (client.character.hp.current < -1) client.character.state |= CharacterState.LostState;
+            if ((int)client.account.state == 100) client.character.state |= CharacterState.GameMaster;
         }
 
         public void LoadHonor(NecClient client)
@@ -63,12 +65,14 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(1); // must be under 0x3E8 // DBLoad your honor titles, and dump them here. 1000 at a time
             for (int i = 0; i < 1; i++)
             {
-                res.WriteInt32(10010101);/*novice monster hunter*/
+                res.WriteInt32(10010101); /*novice monster hunter*/
                 res.WriteUInt32(client.character.instanceId);
                 res.WriteByte(1); // bool	New Title 0:Yes  1:No
             }
+
             router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
         }
+
         //Moved to Map entry to fix null character issue
         public void LoadBattleStats(NecClient client)
         {
@@ -79,7 +83,6 @@ namespace Necromancy.Server.Packet.Area
             ItemService itemService = new ItemService(client.character);
             List<ItemInstance> ownedItems = itemService.LoadOwneditemInstances(server);
             foreach (ItemInstance itemInstance in ownedItems)
-            {
                 if (itemInstance.statuses.HasFlag(ItemStatuses.Unidentified))
                 {
                     RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
@@ -91,13 +94,11 @@ namespace Necromancy.Server.Packet.Area
                     RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
                     router.Send(client, recvItemInstance.ToPacket());
                 }
-
-            }
         }
+
         public void LoadCloakRoom(NecClient client)
         {
             //populate soul inventory from database.
-
         }
     }
 }

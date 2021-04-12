@@ -11,10 +11,8 @@ namespace Necromancy.Server.Data.Setting
         protected override SkillBaseSetting CreateInstance(string[] properties)
         {
             if (!int.TryParse(properties[0], out int id))
-            {
                 //Logger.Debug("First entry empty!!");
                 return null;
-            }
 
             int.TryParse(properties[2], out int logId);
             bool logBlockEnemy = false;

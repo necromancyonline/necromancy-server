@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteInt32(0);//Level?
+            res.WriteInt32(0); //Level?
             res.WriteByte(0); //Bool
             res.WriteByte(0); //Bool
             return res;

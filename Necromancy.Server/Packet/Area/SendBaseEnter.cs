@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_base_enter;
+        public override ushort id => (ushort)AreaPacketId.send_base_enter;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
@@ -37,7 +37,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //  Error
-            router.Send(connection, (ushort) AreaPacketId.recv_base_enter_r, res);
+            router.Send(connection, (ushort)AreaPacketId.recv_base_enter_r, res);
         }
     }
 }

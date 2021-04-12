@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_friend_request_delete_friend;
+        public override ushort id => (ushort)MsgPacketId.send_friend_request_delete_friend;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -21,16 +21,16 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteInt32(1);
-            router.Send(client, (ushort) MsgPacketId.recv_friend_request_delete_friend_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_friend_request_delete_friend_r, res, ServerType.Msg);
 
             IBuffer res3 = BufferProvider.Provide();
             res3.WriteUInt32(targetInstanceId);
-            router.Send(client, (ushort) MsgPacketId.recv_friend_notify_delete_member, res3, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_friend_notify_delete_member, res3, ServerType.Msg);
 
             IBuffer res4 = BufferProvider.Provide();
             res4.WriteUInt32(client.character.instanceId);
             router.Send(server.clients.GetByCharacterInstanceId(targetInstanceId),
-                (ushort) MsgPacketId.recv_friend_notify_delete_member, res4, ServerType.Msg);
+                (ushort)MsgPacketId.recv_friend_notify_delete_member, res4, ServerType.Msg);
         }
     }
 }

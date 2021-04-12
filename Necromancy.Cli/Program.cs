@@ -40,31 +40,14 @@ namespace Necromancy.Cli
 
         public static readonly ILogger Logger = LogProvider.Logger(typeof(Program));
 
-        private static void Main(string[] args)
-        {
-            Console.WriteLine("Program started");
-            LogProvider.Start();
-            Program program = new Program();
-            if (args.Length > 0)
-            {
-                program.RunArguments(args);
-            }
-            else
-            {
-                program.RunInteractive();
-            }
-            LogProvider.Stop();
-            Console.WriteLine("Program ended");
-        }
-
         private readonly CancellationTokenSource _cancellationTokenSource;
-        private readonly BlockingCollection<string> _inputQueue;
-        private readonly Thread _consoleThread;
         private readonly Dictionary<string, IConsoleCommand> _commands;
-        private readonly List<ISwitchConsumer> _parameterConsumers;
+        private readonly Thread _consoleThread;
+        private readonly BlockingCollection<string> _inputQueue;
         private readonly LogWriter _logWriter;
-        private readonly SwitchCommand _switchCommand;
+        private readonly List<ISwitchConsumer> _parameterConsumers;
         private readonly ServerCommand _serverCommand;
+        private readonly SwitchCommand _switchCommand;
 
         private Program()
         {
@@ -77,6 +60,19 @@ namespace Necromancy.Cli
             _serverCommand = new ServerCommand();
             _switchCommand = new SwitchCommand(_parameterConsumers);
             Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+        }
+
+        private static void Main(string[] args)
+        {
+            Console.WriteLine("Program started");
+            LogProvider.Start();
+            Program program = new Program();
+            if (args.Length > 0)
+                program.RunArguments(args);
+            else
+                program.RunInteractive();
+            LogProvider.Stop();
+            Console.WriteLine("Program ended");
         }
 
         private void LoadCommands()
@@ -121,10 +117,7 @@ namespace Necromancy.Cli
             Logger.Info("Press `e'-key to exit.");
 
             ConsoleKeyInfo keyInfo = Console.ReadKey();
-            while (keyInfo.Key != ConsoleKey.E)
-            {
-                keyInfo = Console.ReadKey();
-            }
+            while (keyInfo.Key != ConsoleKey.E) keyInfo = Console.ReadKey();
 
             ShutdownCommands();
         }
@@ -154,10 +147,8 @@ namespace Necromancy.Cli
                 }
 
                 if (line == null)
-                {
                     // Ctrl+Z, Ctrl+C or error
                     break;
-                }
 
                 string[] arguments = Util.ParseTextArguments(line, CliSeparator, '"');
                 if (arguments.Length <= 0)
@@ -167,20 +158,13 @@ namespace Necromancy.Cli
                 }
 
                 CommandResultType result = ProcessArguments(arguments);
-                if (result == CommandResultType.Exit)
-                {
-                    break;
-                }
+                if (result == CommandResultType.Exit) break;
 
-                if (result == CommandResultType.Continue)
-                {
-                    continue;
-                }
+                if (result == CommandResultType.Continue) continue;
 
                 if (result == CommandResultType.Completed)
                 {
                     Logger.Info("Command Completed");
-                    continue;
                 }
             }
 
@@ -200,16 +184,13 @@ namespace Necromancy.Cli
             }
 
             IConsoleCommand consoleCommand = _commands[parameter.key];
-            if (consoleCommand != _switchCommand)
-            {
-                _switchCommand.Handle(parameter);
-            }
+            if (consoleCommand != _switchCommand) _switchCommand.Handle(parameter);
 
             return consoleCommand.Handle(parameter);
         }
 
         /// <summary>
-        /// Parses the input text into arguments and switches.
+        ///     Parses the input text into arguments and switches.
         /// </summary>
         private ConsoleParameter ParseParameter(string[] args)
         {
@@ -222,10 +203,7 @@ namespace Necromancy.Cli
             string paramKey = args[0];
             int cmdLength = args.Length - 1;
             string[] newArguments = new string[cmdLength];
-            if (cmdLength > 0)
-            {
-                Array.Copy(args, 1, newArguments, 0, cmdLength);
-            }
+            if (cmdLength > 0) Array.Copy(args, 1, newArguments, 0, cmdLength);
 
             args = newArguments;
 
@@ -292,12 +270,8 @@ namespace Necromancy.Cli
         {
             int count = 0;
             foreach (char c in str)
-            {
                 if (c == chr)
-                {
                     count++;
-                }
-            }
 
             return count;
         }
@@ -307,10 +281,7 @@ namespace Necromancy.Cli
         {
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
-                if (Console.ReadKey().Key != ConsoleKey.Enter)
-                {
-                    continue;
-                }
+                if (Console.ReadKey().Key != ConsoleKey.Enter) continue;
 
                 _logWriter.Pause();
                 Console.WriteLine("Enter Command:");
@@ -345,7 +316,6 @@ namespace Necromancy.Cli
                 }
 
                 if (!_consoleThread.Join(TimeSpan.FromMilliseconds(500)))
-                {
                     try
                     {
                         _consoleThread.Abort();
@@ -354,7 +324,6 @@ namespace Necromancy.Cli
                     {
                         // Ignored
                     }
-                }
             }
         }
 
@@ -370,10 +339,7 @@ namespace Necromancy.Cli
 
         private void ShutdownCommands()
         {
-            foreach (IConsoleCommand command in _commands.Values)
-            {
-                command.Shutdown();
-            }
+            foreach (IConsoleCommand command in _commands.Values) command.Shutdown();
         }
 
         private void ShowCopyright()

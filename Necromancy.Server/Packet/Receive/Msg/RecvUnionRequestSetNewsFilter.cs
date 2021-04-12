@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionRequestSetNewsFilter : PacketResponse
     {
         public RecvUnionRequestSetNewsFilter()
-            : base((ushort) MsgPacketId.recv_union_request_set_news_filter_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_request_set_news_filter_r, ServerType.Msg)
         {
         }
 

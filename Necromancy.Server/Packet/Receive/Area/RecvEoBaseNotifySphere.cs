@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly int _radius;
 
         public RecvEoBaseNotifySphere(uint instanceId, int radius)
-            : base((ushort) AreaPacketId.recv_eo_base_notify_sphere, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_eo_base_notify_sphere, ServerType.Area)
         {
             _instanceId = instanceId;
             _radius = radius;

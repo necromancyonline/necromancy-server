@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfSoulPointNotify : PacketResponse
     {
         public RecvSelfSoulPointNotify()
-            : base((ushort) AreaPacketId.recv_self_soul_point_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_soul_point_notify, ServerType.Area)
         {
         }
 

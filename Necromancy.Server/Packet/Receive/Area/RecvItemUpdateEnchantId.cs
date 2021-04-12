@@ -9,7 +9,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         public RecvItemUpdateEnchantId
             ()
-            : base((ushort) AreaPacketId.recv_item_update_enchantid, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_enchantid, ServerType.Area)
         {
         }
 

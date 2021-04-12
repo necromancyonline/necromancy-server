@@ -17,6 +17,9 @@ namespace Necromancy.Cli.Command.Commands
             _commands = commands;
         }
 
+        public override string key => "help";
+        public override string description => "Displays this text";
+
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
             if (parameter.arguments.Count >= 1)
@@ -63,8 +66,5 @@ namespace Necromancy.Cli.Command.Commands
             sb.Append($"- {command.description}");
             return sb.ToString();
         }
-
-        public override string key => "help";
-        public override string description => "Displays this text";
     }
 }

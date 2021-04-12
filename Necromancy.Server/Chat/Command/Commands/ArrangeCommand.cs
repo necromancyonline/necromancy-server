@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Arrowgene.Buffers;
-using Arrowgene.Logging;
 using Necromancy.Server.Common;
-using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -12,13 +10,17 @@ using Necromancy.Server.Packet.Receive.Area;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Character Arrange stuff.
+    ///     Character Arrange stuff.
     /// </summary>
     public class ArrangeCommand : ServerChatCommand
     {
         public ArrangeCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "arrange";
+        public override string helpText => "usage: `/arrange parts` - whatever chara arrange does.";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -28,6 +30,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 responses.Add(ChatResponse.CommandError(client, $"pick a command: {command[0]}"));
                 return;
             }
+
             IBuffer res = BufferProvider.Provide();
 
             switch (command[0])
@@ -61,23 +64,19 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 default:
-                    Task.Delay(TimeSpan.FromMilliseconds((int)(10 * 1000))).ContinueWith
+                    Task.Delay(TimeSpan.FromMilliseconds(10 * 1000)).ContinueWith
                     (t1 =>
-                    {
-                        IBuffer res = BufferProvider.Provide();
-                        res.WriteByte(0);
-                        router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
-                    }
+                        {
+                            IBuffer res = BufferProvider.Provide();
+                            res.WriteByte(0);
+                            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
+                        }
                     );
                     break;
             }
-
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "arrange";
-        public override string helpText => "usage: `/arrange parts` - whatever chara arrange does.";
     }
+
     //res.WriteInt32(numEntries); //less than 0x1E
     //res.WriteInt32(0);
     //res.WriteInt64(0);

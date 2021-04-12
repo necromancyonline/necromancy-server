@@ -13,6 +13,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "sssi";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -27,10 +30,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteInt16(16);
             res.WriteUInt32(client.character.instanceId); //Item id
 
-            router.Send(client, (ushort) AreaPacketId.recv_stall_sell_item, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_stall_sell_item, res, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "sssi";
     }
 }

@@ -1,6 +1,5 @@
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
-using Necromancy.Server.Chat;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
@@ -17,7 +16,7 @@ namespace Necromancy.Server.Packet.Auth
         {
         }
 
-        public override ushort id => (ushort) AuthPacketId.send_base_authenticate;
+        public override ushort id => (ushort)AuthPacketId.send_base_authenticate;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
@@ -74,7 +73,7 @@ namespace Necromancy.Server.Packet.Auth
                 res.WriteInt32(account.id);
             }
 
-            router.Send(connection, (ushort) AuthPacketId.recv_base_authenticate_r, res);
+            router.Send(connection, (ushort)AuthPacketId.recv_base_authenticate_r, res);
         }
     }
 }

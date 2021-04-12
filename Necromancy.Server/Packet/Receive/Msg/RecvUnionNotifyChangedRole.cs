@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionNotifyChangedRole : PacketResponse
     {
         public RecvUnionNotifyChangedRole()
-            : base((ushort) MsgPacketId.recv_union_notify_changed_role, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_notify_changed_role, ServerType.Msg)
         {
         }
 

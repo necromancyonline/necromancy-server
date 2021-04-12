@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_chara_update_battle_target;
+        public override ushort id => (ushort)AreaPacketId.send_chara_update_battle_target;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

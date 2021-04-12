@@ -1,22 +1,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using Arrowgene.Buffers;
-using Arrowgene.Logging;
 using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// gives you a title from honor.csv
+    ///     gives you a title from honor.csv
     /// </summary>
     public class HonorCommand : ServerChatCommand
     {
         public HonorCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "honor";
+        public override string helpText => "usage: `/honor 10010101` - gives you the novice monster hunter title.";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -36,15 +38,17 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteUInt32(client.character.instanceId);
                     res.WriteByte(1); // bool	New Title 0:Yes  1:No
                 }
+
                 router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
                 res = BufferProvider.Provide();
-                res.WriteInt32(numEntries-1000); // must be under 0x3E8 // wtf?
+                res.WriteInt32(numEntries - 1000); // must be under 0x3E8 // wtf?
                 for (int i = 1000; i < numEntries; i++)
                 {
                     res.WriteInt32(honorSettings[i]);
                     res.WriteUInt32(client.character.instanceId);
                     res.WriteByte(0); // bool	New Title 0:Yes  1:No
                 }
+
                 router.Send(client, (ushort)AreaPacketId.recv_get_honor_notify, res, ServerType.Area);
             }
             else if (!int.TryParse(command[0], out x))
@@ -53,19 +57,14 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            IBuffer  res2 = BufferProvider.Provide();
+            IBuffer res2 = BufferProvider.Provide();
 
-                res2 = BufferProvider.Provide();
-                res2.WriteInt32(x);
-                res2.WriteUInt32(client.character.instanceId);
-                res2.WriteByte(1); // bool		New Title 0:Yes  1:No
-                router.Send(client, (ushort)AreaPacketId.recv_get_honor, res2, ServerType.Area);
-
+            res2 = BufferProvider.Provide();
+            res2.WriteInt32(x);
+            res2.WriteUInt32(client.character.instanceId);
+            res2.WriteByte(1); // bool		New Title 0:Yes  1:No
+            router.Send(client, (ushort)AreaPacketId.recv_get_honor, res2, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "honor";
-        public override string helpText => "usage: `/honor 10010101` - gives you the novice monster hunter title.";
     }
 }
 /*

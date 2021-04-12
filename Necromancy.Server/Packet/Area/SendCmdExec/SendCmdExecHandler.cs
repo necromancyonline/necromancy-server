@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_cmd_exec;
+        public override ushort id => (ushort)AreaPacketId.send_cmd_exec;
 
         public override void HandleRequest(NecClient client, SendCmdExecRequest request)
         {

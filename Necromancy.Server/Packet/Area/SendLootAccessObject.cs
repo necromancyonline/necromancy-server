@@ -4,10 +4,8 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -22,14 +20,14 @@ namespace Necromancy.Server.Packet.Area
             _server = server;
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_loot_access_object;
+        public override ushort id => (ushort)AreaPacketId.send_loot_access_object;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             ItemService itemService = new ItemService(client.character);
             int result = 0;
             int instanceId = packet.data.ReadInt32();
-            MonsterSpawn monster = client.map.GetMonsterByInstanceId((uint) instanceId);
+            MonsterSpawn monster = client.map.GetMonsterByInstanceId((uint)instanceId);
             _Logger.Debug($"{client.character.name} is trying to loot object {instanceId}.  Inventory Space {client.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
             ItemLocation nextOpenLocation = client.character.itemLocationVerifier.NextOpenSlot(ItemZoneType.AdventureBag);
 
@@ -39,7 +37,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(result);
-            router.Send(client, (ushort) AreaPacketId.recv_loot_access_object_r, res2, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_loot_access_object_r, res2, ServerType.Area);
             //LOOT, -1, I don't have anything. , SYSTEM_WARNING,
             //LOOT, -10, no route target, SYSTEM_WARNING,
             //LOOT, -207, There is no space in the inventory. , SYSTEM_WARNING,
@@ -63,8 +61,6 @@ namespace Necromancy.Server.Packet.Area
                 res = BufferProvider.Provide();
                 router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             }
-
-
         }
     }
 }

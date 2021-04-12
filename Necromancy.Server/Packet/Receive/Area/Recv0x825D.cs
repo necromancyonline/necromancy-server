@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class Recv0X825D : PacketResponse
     {
         public Recv0X825D()
-            : base((ushort) AreaPacketId.recv_0x825D, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0x825D, ServerType.Area)
         {
         }
 

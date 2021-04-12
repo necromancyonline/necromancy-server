@@ -9,6 +9,11 @@ namespace Necromancy.Cli.Command.Commands
     {
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(ShowCommand));
 
+        public override string key => "show";
+
+        public override string description =>
+            $"Shows Copyright. Ex.:{Environment.NewLine}show w{Environment.NewLine}show c";
+
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
             if (parameter.arguments.Contains("w"))
@@ -92,10 +97,5 @@ namespace Necromancy.Cli.Command.Commands
 
             return CommandResultType.Continue;
         }
-
-        public override string key => "show";
-
-        public override string description =>
-            $"Shows Copyright. Ex.:{Environment.NewLine}show w{Environment.NewLine}show c";
     }
 }

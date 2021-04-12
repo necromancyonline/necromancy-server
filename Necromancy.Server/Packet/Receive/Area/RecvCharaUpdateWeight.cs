@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateWeight : PacketResponse
     {
-        private int _weight;
+        private readonly int _weight;
+
         public RecvCharaUpdateWeight(int weight)
-            : base((ushort) AreaPacketId.recv_chara_update_weight, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_weight, ServerType.Area)
         {
             _weight = weight;
         }

@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_reply_to_invite2;
+        public override ushort id => (ushort)MsgPacketId.send_union_reply_to_invite2;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Packet.Msg
 
             res5.WriteUInt32(resultAcceptOrDeny); //Result
             res5.WriteUInt32(client.character.instanceId); //object id | Instance ID
-            router.Send(replyToClient, (ushort) MsgPacketId.recv_union_reply_to_invite_r, res5, ServerType.Msg);
+            router.Send(replyToClient, (ushort)MsgPacketId.recv_union_reply_to_invite_r, res5, ServerType.Msg);
 
             if (resultAcceptOrDeny == 0)
             {
@@ -46,12 +46,12 @@ namespace Necromancy.Server.Packet.Msg
 
                 UnionMember myUnionMember = new UnionMember();
                 server.instances.AssignInstance(myUnionMember);
-                myUnionMember.unionId = (int) myUnion.id;
+                myUnionMember.unionId = myUnion.id;
                 myUnionMember.characterDatabaseId = client.character.id;
 
                 if (!server.database.InsertUnionMember(myUnionMember))
                 {
-                    _Logger.Error($"union member could not be saved to database table nec_union_member");
+                    _Logger.Error("union member could not be saved to database table nec_union_member");
                     return;
                 }
 
@@ -62,7 +62,7 @@ namespace Necromancy.Server.Packet.Msg
                 uint unionSubLeader2InstanceId = server.instances.GetCharacterInstanceId(myUnion.subLeader2Id);
 
                 TimeSpan difference = client.union.created.ToUniversalTime() - DateTime.UnixEpoch;
-                int unionCreatedCalculation = (int) Math.Floor(difference.TotalSeconds);
+                int unionCreatedCalculation = (int)Math.Floor(difference.TotalSeconds);
 
                 //Notify client if msg server found Union settings in database(memory) for client character Unique Persistant ID.
                 IBuffer res = BufferProvider.Provide();
@@ -75,7 +75,7 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteInt32(-1);
                 res.WriteUInt32(unionSubLeader2InstanceId); //subleader2
                 res.WriteInt32(-1);
-                res.WriteByte((byte) myUnion.level); //Union Level
+                res.WriteByte((byte)myUnion.level); //Union Level
                 res.WriteUInt32(myUnion.currentExp); //Union EXP Current
                 res.WriteUInt32(myUnion.nextLevelExp); //Union EXP next level Target
                 res.WriteByte(myUnion
@@ -88,35 +88,26 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteInt32(i);
                 res.WriteByte(0);
 
-                router.Send(client, (ushort) MsgPacketId.recv_union_notify_detail, res, ServerType.Msg);
+                router.Send(client, (ushort)MsgPacketId.recv_union_notify_detail, res, ServerType.Msg);
 
                 //Add all union members to your own instance of the union member list on your client
                 foreach (UnionMember unionMemberList in server.database.SelectUnionMembersByUnionId(client.union.id))
                 {
                     _Logger.Debug($"Loading union info for Member Id {unionMemberList.id}");
                     NecClient otherClient = server.clients.GetByCharacterId(unionMemberList.characterDatabaseId);
-                    if (otherClient == null)
-                    {
-                        continue;
-                    }
+                    if (otherClient == null) continue;
 
                     Character character = otherClient.character;
-                    if (character == null)
-                    {
-                        continue;
-                    }
+                    if (character == null) continue;
 
                     Soul soul = otherClient.soul;
-                    if (soul == null)
-                    {
-                        continue;
-                    }
+                    if (soul == null) continue;
 
 
                     _Logger.Debug($"character is named {character.name}");
                     _Logger.Debug($"Soul is named {soul.name}");
                     TimeSpan differenceJoined = unionMemberList.joined.ToUniversalTime() - DateTime.UnixEpoch;
-                    int unionJoinedCalculation = (int) Math.Floor(differenceJoined.TotalSeconds);
+                    int unionJoinedCalculation = (int)Math.Floor(differenceJoined.TotalSeconds);
                     IBuffer res3 = BufferProvider.Provide();
                     res3.WriteInt32(client.character.unionId); //Union Id
                     res3.WriteUInt32(character.instanceId);
@@ -134,11 +125,11 @@ namespace Necromancy.Server.Packet.Msg
                     res3.WriteInt32(unionJoinedCalculation); //Date Joined in seconds since unix time
                     res3.WriteInt32(Util.GetRandomNumber(0, 3));
                     res3.WriteInt32(Util.GetRandomNumber(0, 3));
-                    router.Send(client, (ushort) MsgPacketId.recv_union_notify_detail_member, res3, ServerType.Msg);
+                    router.Send(client, (ushort)MsgPacketId.recv_union_notify_detail_member, res3, ServerType.Msg);
                 }
 
                 TimeSpan differenceInviteted = DateTime.Now - DateTime.UnixEpoch;
-                int unionInvitedCalculation = (int) Math.Floor(differenceInviteted.TotalSeconds);
+                int unionInvitedCalculation = (int)Math.Floor(differenceInviteted.TotalSeconds);
 
                 //add you to all the member list of your union mates that were logged in when you joined.
                 IBuffer res4 = BufferProvider.Provide();
@@ -160,14 +151,14 @@ namespace Necromancy.Server.Packet.Msg
                 res4.WriteInt32(Util.GetRandomNumber(0, 3));
                 res4.WriteInt32(Util.GetRandomNumber(0, 3));
 
-                router.Send(client.union.unionMembers, (ushort) MsgPacketId.recv_union_notify_detail_member, res4,
+                router.Send(client.union.unionMembers, (ushort)MsgPacketId.recv_union_notify_detail_member, res4,
                     ServerType.Msg, client);
 
                 IBuffer res36 = BufferProvider.Provide();
                 res36.WriteUInt32(client.character.instanceId);
                 res36.WriteInt32(client.character.unionId);
                 res36.WriteCString(myUnion.name);
-                router.Send(client.map, (ushort) AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
+                router.Send(client.map, (ushort)AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
             }
         }
     }

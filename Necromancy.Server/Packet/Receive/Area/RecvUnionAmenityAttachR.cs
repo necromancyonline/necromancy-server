@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionAmenityAttachR : PacketResponse
     {
         public RecvUnionAmenityAttachR()
-            : base((ushort) AreaPacketId.recv_union_amenity_attach_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_amenity_attach_r, ServerType.Area)
         {
         }
 

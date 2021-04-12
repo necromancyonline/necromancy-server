@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvDbgMessage : PacketResponse
     {
         public RecvDbgMessage()
-            : base((ushort) MsgPacketId.recv_dbg_message, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_dbg_message, ServerType.Msg)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteByte(0);
             res.WriteByte(0);
             res.WriteByte(0);
-            res.WriteCString("");//max size 0x601
+            res.WriteCString(""); //max size 0x601
             return res;
         }
     }

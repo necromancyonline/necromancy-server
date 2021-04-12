@@ -8,11 +8,6 @@ namespace Necromancy.Server.Packet.Area
 {
     public class SendCharabodySelfSalvageNotifyR : ClientHandler
     {
-        private enum MyResponse : int
-        {
-            AcceptCollection = 0,
-            DenyCollection = int.MaxValue
-        }
         public SendCharabodySelfSalvageNotifyR(NecServer server) : base(server)
         {
         }
@@ -71,15 +66,12 @@ namespace Necromancy.Server.Packet.Area
                 res5.WriteByte(necClient.character.movementAnim); //state
                 router.Send(client, (ushort)AreaPacketId.recv_object_point_move_notify, res5, ServerType.Area);
             }
-
-
-
         }
 
-
+        private enum MyResponse
+        {
+            AcceptCollection = 0,
+            DenyCollection = int.MaxValue
+        }
     }
-
-
-
 }
-

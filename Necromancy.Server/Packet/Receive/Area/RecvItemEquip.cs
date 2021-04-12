@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly int _error;
 
         public RecvItemEquip(NecClient necClient, int error)
-            : base((ushort) AreaPacketId.recv_item_equip_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_equip_r, ServerType.Area)
         {
             _error = error;
             clients.Add(necClient);

@@ -1,16 +1,16 @@
-using Arrowgene.Buffers;
-using Necromancy.Server.Common;
-using Necromancy.Server.Common.Instance;
-using Necromancy.Server.Model;
-using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Arrowgene.Buffers;
 using Arrowgene.Logging;
-using Necromancy.Server.Logging;
+using Necromancy.Server.Common;
+using Necromancy.Server.Common.Instance;
 using Necromancy.Server.Data.Setting;
+using Necromancy.Server.Logging;
+using Necromancy.Server.Model;
+using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Packet.Area
@@ -24,7 +24,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_event_select_exec_r;
+        public override ushort id => (ushort)AreaPacketId.send_event_select_exec_r;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -34,7 +34,7 @@ namespace Necromancy.Server.Packet.Area
             {
                 IBuffer res2 = BufferProvider.Provide();
                 res2.WriteByte(0);
-                router.Send(client, (ushort) AreaPacketId.recv_event_end, res2, ServerType.Area);
+                router.Send(client, (ushort)AreaPacketId.recv_event_end, res2, ServerType.Area);
             }
             else
             {
@@ -48,7 +48,7 @@ namespace Necromancy.Server.Packet.Area
                         _Logger.Debug(
                             $"instanceId : {client.character.eventSelectReadyCode} |  npcSpawn.Id: {npcSpawn.id}  |   npcSpawn.NpcId: {npcSpawn.npcId}");
 
-                        var eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
+                        Dictionary<Func<int, bool>, Action> eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
                         {
                             {
                                 x => x == 10000704, () => ChangeMap(client, npcSpawn.npcId)
@@ -56,7 +56,7 @@ namespace Necromancy.Server.Packet.Area
                             {x => x == 10000012, () => DefaultEvent(client, npcSpawn.npcId)},
                             {x => x == 10000019, () => Abdul(client, npcSpawn)},
                             {
-                                x => (x == 74000022) || (x == 74000024) || (x == 74000023),
+                                x => x == 74000022 || x == 74000024 || x == 74000023,
                                 () => RecoverySpring(client, npcSpawn.npcId)
                             },
                             {x => x == 74013071, () => ChangeMap(client, npcSpawn.npcId)},
@@ -65,9 +65,9 @@ namespace Necromancy.Server.Packet.Area
                             {x => x == 10000912, () => ChangeMap(client, npcSpawn.npcId)},
                             {x => x == 10000002, () => RegularInn(client, npcSpawn.npcId, npcSpawn)},
                             {x => x == 10000703, () => CrimInn(client, npcSpawn.npcId, npcSpawn)},
-                            { x => x == 10000004 ,  () => SoulRankNpc(client, npcSpawn.npcId, npcSpawn)},
+                            {x => x == 10000004, () => SoulRankNpc(client, npcSpawn.npcId, npcSpawn)},
                             {
-                                x => (x == 1900002) || (x == 1900003),
+                                x => x == 1900002 || x == 1900003,
                                 () => RandomItemGuy(client, npcSpawn)
                             },
                             {
@@ -110,7 +110,7 @@ namespace Necromancy.Server.Packet.Area
                         _Logger.Debug(
                             $"instanceId : {client.character.eventSelectReadyCode} |  ggateSpawn.Id: {ggateSpawn.id}  |   ggateSpawn.NpcId: {ggateSpawn.serialId}");
 
-                        var eventSwitchPerObjectId2 = new Dictionary<Func<int, bool>, Action>
+                        Dictionary<Func<int, bool>, Action> eventSwitchPerObjectId2 = new Dictionary<Func<int, bool>, Action>
                         {
                             {x => x == 74013071, () => ChangeMap(client, ggateSpawn.serialId)},
                             {x => x == 74013161, () => ChangeMap(client, ggateSpawn.serialId)},
@@ -137,12 +137,12 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             //Router.Send(client, (ushort)AreaPacketId.recv_event_show_board_end, res, ServerType.Area);
-            Task.Delay(TimeSpan.FromMilliseconds((int) (2 * 1000))).ContinueWith
+            Task.Delay(TimeSpan.FromMilliseconds(2 * 1000)).ContinueWith
             (t1 =>
                 {
                     IBuffer res = BufferProvider.Provide();
                     res.WriteByte(0);
-                    router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
                 }
             );
         }
@@ -151,20 +151,20 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
 
         private void RecoverySpring(NecClient client, int objectId)
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                if ((client.character.hp.current == client.character.hp.max) &&
-                    (client.character.mp.current == client.character.mp.max))
+                if (client.character.hp.current == client.character.hp.max &&
+                    client.character.mp.current == client.character.mp.max)
                 {
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString(
                         "You try drinking the water but it doesn't seem to have an effect."); // Length 0xC01
-                    router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                         ServerType.Area); // show system message on middle of the screen.
                 }
                 else
@@ -174,17 +174,17 @@ namespace Necromancy.Server.Packet.Area
 
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("You drink The water and it replenishes you"); // Length 0xC01
-                    router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                         ServerType.Area); // show system message on middle of the screen.
 
                     IBuffer res7 = BufferProvider.Provide();
-                    res7.WriteInt32((client.character.hp.max)); //To-Do : Math for Max gain of 50% MaxHp
-                    router.Send(client, (ushort) AreaPacketId.recv_chara_update_hp, res7, ServerType.Area);
+                    res7.WriteInt32(client.character.hp.max); //To-Do : Math for Max gain of 50% MaxHp
+                    router.Send(client, (ushort)AreaPacketId.recv_chara_update_hp, res7, ServerType.Area);
                     client.character.hp.ToMax();
 
                     IBuffer res9 = BufferProvider.Provide();
                     res9.WriteInt32(client.character.mp.max); //To-Do : Math for Max gain of 50% MaxMp
-                    router.Send(client, (ushort) AreaPacketId.recv_chara_update_mp, res9, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_chara_update_mp, res9, ServerType.Area);
                     client.character.mp.SetCurrent(client.character.mp.max);
                 }
             }
@@ -192,13 +192,13 @@ namespace Necromancy.Server.Packet.Area
             {
                 IBuffer res12 = BufferProvider.Provide();
                 res12.WriteCString("You Say no to random Dungeun water"); // Length 0xC01
-                router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                     ServerType.Area); // show system message on middle of the screen.
             }
 
             IBuffer res13 = BufferProvider.Provide();
             res13.WriteCString("To raise your level, you need 1337 more exp."); // Length 0xC01
-            router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res13,
+            router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13,
                 ServerType.Area); // show system message on middle of the screen.
 
             RecvEventEnd(client); //End The Event
@@ -209,29 +209,29 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                if ((client.character.hp.current == client.character.hp.max) &&
-                    (client.character.mp.current == client.character.mp.max))
+                if (client.character.hp.current == client.character.hp.max &&
+                    client.character.mp.current == client.character.mp.max)
                 {
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("What do you want Adul to say?"); // Length 0xC01
-                    router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                         ServerType.Area); // show system message on middle of the screen.
                 }
                 else
                 {
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("You drink The water and it replenishes you"); // Length 0xC01
-                    router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                         ServerType.Area); // show system message on middle of the screen.
 
                     IBuffer res7 = BufferProvider.Provide();
-                    res7.WriteInt32((client.character.hp.max)); //To-Do : Math for Max gain of 50% MaxHp
-                    router.Send(client, (ushort) AreaPacketId.recv_chara_update_hp, res7, ServerType.Area);
+                    res7.WriteInt32(client.character.hp.max); //To-Do : Math for Max gain of 50% MaxHp
+                    router.Send(client, (ushort)AreaPacketId.recv_chara_update_hp, res7, ServerType.Area);
                     client.character.hp.ToMax();
 
                     IBuffer res9 = BufferProvider.Provide();
                     res9.WriteInt32(client.character.mp.max); //To-Do : Math for Max gain of 50% MaxMp
-                    router.Send(client, (ushort) AreaPacketId.recv_chara_update_mp, res9, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_chara_update_mp, res9, ServerType.Area);
                     client.character.mp.ToMax();
                 }
             }
@@ -239,14 +239,14 @@ namespace Necromancy.Server.Packet.Area
             {
                 IBuffer res12 = BufferProvider.Provide();
                 res12.WriteCString("You hate Abdul,  He's messed up"); // Length 0xC01
-                router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                     ServerType.Area); // show system message on middle of the screen.
             }
             else if (client.character.eventSelectExecCode == 2)
             {
                 IBuffer res12 = BufferProvider.Provide();
                 res12.WriteCString("You Stoll hate Abdul,  He's messed up"); // Length 0xC01
-                router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                     ServerType.Area); // show system message on middle of the screen.
             }
 
@@ -263,37 +263,22 @@ namespace Necromancy.Server.Packet.Area
                 case 74013071:
                     _Logger.Debug($"objectId[{objectId}] selected {client.character.eventSelectExecCode}");
                     if (client.character.eventSelectExecCode == 0)
-                    {
                         map = server.maps.Get(2002105);
-                    }
-                    else if (client.character.eventSelectExecCode == 1)
-                    {
-                        map = server.maps.Get(2002106);
-                    }
+                    else if (client.character.eventSelectExecCode == 1) map = server.maps.Get(2002106);
 
                     break;
                 case 74013161:
                     _Logger.Debug($"objectId[{objectId}] selected {client.character.eventSelectExecCode}");
                     if (client.character.eventSelectExecCode == 0)
-                    {
                         map = server.maps.Get(2002104);
-                    }
-                    else if (client.character.eventSelectExecCode == 1)
-                    {
-                        map = server.maps.Get(2002106);
-                    }
+                    else if (client.character.eventSelectExecCode == 1) map = server.maps.Get(2002106);
 
                     break;
                 case 74013271:
                     _Logger.Debug($"objectId[{objectId}] selected {client.character.eventSelectExecCode}");
                     if (client.character.eventSelectExecCode == 0)
-                    {
                         map = server.maps.Get(2002104);
-                    }
-                    else if (client.character.eventSelectExecCode == 1)
-                    {
-                        map = server.maps.Get(2002105);
-                    }
+                    else if (client.character.eventSelectExecCode == 1) map = server.maps.Get(2002105);
 
                     break;
                 default:
@@ -313,12 +298,9 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                npcSpawn.heading = (byte) (client.character.heading + 90);
-                npcSpawn.heading = (byte) (npcSpawn.heading % 180);
-                if (npcSpawn.heading < 0)
-                {
-                    npcSpawn.heading += 180;
-                }
+                npcSpawn.heading = (byte)(client.character.heading + 90);
+                npcSpawn.heading = (byte)(npcSpawn.heading % 180);
+                if (npcSpawn.heading < 0) npcSpawn.heading += 180;
 
                 npcSpawn.updated = DateTime.Now;
 
@@ -327,14 +309,14 @@ namespace Necromancy.Server.Packet.Area
                 {
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("Could not update the database"); // Length 0xC01
-                    router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res12,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res12,
                         ServerType.Area); // show system message on middle of the screen.
                     return;
                 }
 
                 IBuffer res13 = BufferProvider.Provide();
                 res13.WriteCString("NPC Updated"); // Length 0xC01
-                router.Send(client, (ushort) AreaPacketId.recv_event_system_message, res13,
+                router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res13,
                     ServerType.Area); // show system message on middle of the screen.
 
                 RecvEventEnd(client); //End The Event
@@ -356,16 +338,19 @@ namespace Necromancy.Server.Packet.Area
 
         private void RegularInn(NecClient client, int objectId, NpcSpawn npcSpawn)
         {
-            if (client.character.secondInnAccess == true) ResolveInn(client, npcSpawn.npcId, npcSpawn);
+            if (client.character.secondInnAccess)
+            {
+                ResolveInn(client, npcSpawn.npcId, npcSpawn);
+            }
             else
             {
                 IBuffer res7 = BufferProvider.Provide();
                 res7.WriteCString("Stay"); //Length 0x601 // name of the choice
-                router.Send(client, (ushort) AreaPacketId.recv_event_select_push, res7, ServerType.Area); //
+                router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res7, ServerType.Area); //
 
                 IBuffer res8 = BufferProvider.Provide();
                 res8.WriteCString("Back"); //Length 0x601 // name of the choice
-                router.Send(client, (ushort) AreaPacketId.recv_event_select_push, res8, ServerType.Area); //
+                router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res8, ServerType.Area); //
 
                 client.character.secondInnAccess = true;
                 IBuffer res9 = BufferProvider.Provide();
@@ -375,7 +360,7 @@ namespace Necromancy.Server.Packet.Area
                     case 0:
                         if (client.soul.level > 3)
                         {
-                            res9.WriteCString($"Our sincerest apologies. That's only for new souls."); // Length 0xC01
+                            res9.WriteCString("Our sincerest apologies. That's only for new souls."); // Length 0xC01
                             router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res9, ServerType.Area); // show system message on middle of the screen.
                             SendEventEnd(client);
                             client.character.eventSelectExtraSelectionCode = 0;
@@ -388,38 +373,38 @@ namespace Necromancy.Server.Packet.Area
                         {
                             res9.WriteCString("Effect: Recover all HP, all MP, and 150 Condition"); //
                             res9.WriteUInt32(client.character.instanceId);
-                            router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                            router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                             client.character.eventSelectExtraSelectionCode = 0;
                             break;
                         }
                     case 1:
                         res9.WriteCString("Effect: Recover all HP, all MP, and 50 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 1;
                         break;
                     case 2:
                         res9.WriteCString("Effect: Recover half HP, half MP, and 100 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 2;
                         break;
                     case 3:
                         res9.WriteCString("Effect: Recover all HP, all MP, and 110 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 3;
                         break;
                     case 4:
                         res9.WriteCString("Effect: Recover all HP, all MP, and 120 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 4;
                         break;
                     case 5:
                         res9.WriteCString("Effect: Recover all HP, all MP, and 160 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 5;
                         break;
                     case 6:
@@ -432,17 +417,20 @@ namespace Necromancy.Server.Packet.Area
 
         private void CrimInn(NecClient client, int objectId, NpcSpawn npcSpawn)
         {
-            if (client.character.secondInnAccess == true) ResolveInn(client, npcSpawn.npcId, npcSpawn);
+            if (client.character.secondInnAccess)
+            {
+                ResolveInn(client, npcSpawn.npcId, npcSpawn);
+            }
             else
             {
                 IBuffer res7 = BufferProvider.Provide();
                 res7.WriteCString("Stay"); //Length 0x601 // name of the choice
-                router.Send(client, (ushort) AreaPacketId.recv_event_select_push, res7,
+                router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res7,
                     ServerType.Area); // It's the fifth choice
 
                 IBuffer res8 = BufferProvider.Provide();
                 res8.WriteCString("Back"); //Length 0x601 // name of the choice
-                router.Send(client, (ushort) AreaPacketId.recv_event_select_push, res8,
+                router.Send(client, (ushort)AreaPacketId.recv_event_select_push, res8,
                     ServerType.Area); // It's the sixth choice
 
                 IBuffer res9 = BufferProvider.Provide();
@@ -454,7 +442,7 @@ namespace Necromancy.Server.Packet.Area
                         if (client.soul.level > 3)
                         {
                             res9 = BufferProvider.Provide();
-                            res9.WriteCString($"Sorry big guy. That's only for new souls."); // Length 0xC01
+                            res9.WriteCString("Sorry big guy. That's only for new souls."); // Length 0xC01
                             router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res9, ServerType.Area); // show system message on middle of the screen.
                             SendEventEnd(client);
                             client.character.eventSelectExtraSelectionCode = 0;
@@ -467,7 +455,7 @@ namespace Necromancy.Server.Packet.Area
                         {
                             res9.WriteCString("Effect: Recover full HP, full MP, and 150 Condition"); //
                             res9.WriteUInt32(client.character.instanceId);
-                            router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9,
+                            router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9,
                                 ServerType.Area); //
                             client.character.eventSelectExtraSelectionCode = 6;
                             break;
@@ -475,25 +463,25 @@ namespace Necromancy.Server.Packet.Area
                     case 1:
                         res9.WriteCString("Effect: Recover half HP, half MP, and 50 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 7;
                         break;
                     case 2:
                         res9.WriteCString("Effect: Recover 80% HP, 80% MP, and 80 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 8;
                         break;
                     case 3:
                         res9.WriteCString("Effect: Recover full HP, full MP, and 100 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 9;
                         break;
                     case 4:
                         res9.WriteCString("Effect: Recover full HP, full MP, and 120 Condition"); //
                         res9.WriteUInt32(client.character.instanceId);
-                        router.Send(client, (ushort) AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
+                        router.Send(client, (ushort)AreaPacketId.recv_event_select_exec, res9, ServerType.Area); //
                         client.character.eventSelectExtraSelectionCode = 10;
                         break;
                     case 5:
@@ -508,13 +496,13 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                int[] hPandMPperChoice = new int[] {100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100};
-                byte[] conditionPerChoice = new byte[] {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
-                ulong[] goldCostPerChoice = new ulong[] {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
+                int[] hPandMPperChoice = {100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100};
+                byte[] conditionPerChoice = {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
+                ulong[] goldCostPerChoice = {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
                 _Logger.Debug($"The selection you have made is {client.character.eventSelectExtraSelectionCode}");
 
-                client.character.hp.SetCurrent((sbyte) hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
-                client.character.mp.SetCurrent((sbyte) hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
+                client.character.hp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
+                client.character.mp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
                 client.character.condition.SetCurrent(conditionPerChoice[client.character.eventSelectExtraSelectionCode]);
                 client.character.od.ToMax();
                 client.character.gp.ToMax();
@@ -537,25 +525,24 @@ namespace Necromancy.Server.Packet.Area
                 //Level up stuff after inn cutscene
                 Task.Delay(TimeSpan.FromSeconds(6)).ContinueWith
                 (t1 =>
-                {
-                    if (client.character.experienceCurrent > experience.CalculateLevelUp((uint)client.character.level + 1).cumulativeExperience)
                     {
-                        RecvEventStart recvEventStart = new RecvEventStart(0, 0);
-                        router.Send(recvEventStart, client);
-
-                        LevelUpCheck(client);
-
-                        Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
-                        (t1 =>
+                        if (client.character.experienceCurrent > experience.CalculateLevelUp((uint)client.character.level + 1).cumulativeExperience)
                         {
-                            RecvEventEnd recvEventEnd = new RecvEventEnd(0);
-                            router.Send(recvEventEnd, client);  //Need a better way to end the event at the right time.
-                        }
-                        );
-                    }
-                }
-                );
+                            RecvEventStart recvEventStart = new RecvEventStart(0, 0);
+                            router.Send(recvEventStart, client);
 
+                            LevelUpCheck(client);
+
+                            Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
+                            (t1 =>
+                                {
+                                    RecvEventEnd recvEventEnd = new RecvEventEnd(0);
+                                    router.Send(recvEventEnd, client); //Need a better way to end the event at the right time.
+                                }
+                            );
+                        }
+                    }
+                );
             }
             else
             {
@@ -573,69 +560,68 @@ namespace Necromancy.Server.Packet.Area
             Experience experience = new Experience();
             Task.Delay(TimeSpan.FromSeconds(1)).ContinueWith
             (t1 =>
-            {
-                while (client.character.experienceCurrent > experience.CalculateLevelUp((uint)client.character.level+1).cumulativeExperience)
                 {
-                    client.character.level++;
-                    client.character.hp.SetMax(client.character.hp.max + 10);
-                    client.character.mp.SetMax(client.character.mp.max + 10);
-                    client.character.strength += (ushort)Util.GetRandomNumber(0, 2);
-                    client.character.vitality += (ushort)Util.GetRandomNumber(0, 2);
-                    client.character.dexterity += (ushort)Util.GetRandomNumber(0, 2);
-                    client.character.agility += (ushort)Util.GetRandomNumber(0, 2);
-                    client.character.intelligence += (ushort)Util.GetRandomNumber(0, 2);
-                    client.character.piety += (ushort)Util.GetRandomNumber(0, 2);
-                    client.character.luck += (ushort)Util.GetRandomNumber(0, 2);
-                    int luckyShot = Util.GetRandomNumber(0, client.character.luck);
-                    if (luckyShot > (client.character.luck * .8))
+                    while (client.character.experienceCurrent > experience.CalculateLevelUp((uint)client.character.level + 1).cumulativeExperience)
                     {
+                        client.character.level++;
                         client.character.hp.SetMax(client.character.hp.max + 10);
                         client.character.mp.SetMax(client.character.mp.max + 10);
-                        client.character.strength       = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.strength );
-                        client.character.vitality       = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.vitality);
-                        client.character.dexterity      = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.dexterity );
-                        client.character.agility        = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.agility );
-                        client.character.intelligence   = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.intelligence );
-                        client.character.piety          = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.piety );
-                        client.character.luck           = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.luck );
+                        client.character.strength += (ushort)Util.GetRandomNumber(0, 2);
+                        client.character.vitality += (ushort)Util.GetRandomNumber(0, 2);
+                        client.character.dexterity += (ushort)Util.GetRandomNumber(0, 2);
+                        client.character.agility += (ushort)Util.GetRandomNumber(0, 2);
+                        client.character.intelligence += (ushort)Util.GetRandomNumber(0, 2);
+                        client.character.piety += (ushort)Util.GetRandomNumber(0, 2);
+                        client.character.luck += (ushort)Util.GetRandomNumber(0, 2);
+                        int luckyShot = Util.GetRandomNumber(0, client.character.luck);
+                        if (luckyShot > client.character.luck * .8)
+                        {
+                            client.character.hp.SetMax(client.character.hp.max + 10);
+                            client.character.mp.SetMax(client.character.mp.max + 10);
+                            client.character.strength = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.strength);
+                            client.character.vitality = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.vitality);
+                            client.character.dexterity = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.dexterity);
+                            client.character.agility = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.agility);
+                            client.character.intelligence = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.intelligence);
+                            client.character.piety = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.piety);
+                            client.character.luck = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.luck);
+                        }
+
+                        RecvCharaUpdateLvDetailStart recvCharaUpdateLvDetailStart = new RecvCharaUpdateLvDetailStart();
+                        RecvCharaUpdateLv recvCharaUpdateLv = new RecvCharaUpdateLv(client.character);
+                        RecvCharaUpdateLvDetail recvCharaUpdateLvDetail = new RecvCharaUpdateLvDetail(client.character, experience);
+                        RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.character, experience);
+                        RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
+
+                        RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.character.hp.max);
+                        RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.character.mp.max);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityStr = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Str, client.character.strength, client.character.battleParam.plusStrength);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityVit = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Vit, client.character.vitality, client.character.battleParam.plusVitality);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityDex = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Dex, client.character.dexterity, client.character.battleParam.plusDexterity);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityAgi = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Agi, client.character.agility, client.character.battleParam.plusAgility);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityInt = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Int, client.character.intelligence, client.character.battleParam.plusIntelligence);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityPie = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Pie, client.character.piety, client.character.battleParam.plusPiety);
+                        RecvCharaUpdateAbility recvCharaUpdateAbilityLuk = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Luk, client.character.luck, client.character.battleParam.plusLuck);
+
+                        router.Send(recvCharaUpdateLvDetailStart, client);
+
+
+                        router.Send(recvCharaUpdateMaxHp, client);
+                        router.Send(recvCharaUpdateMaxMp, client);
+                        router.Send(recvCharaUpdateAbilityStr, client);
+                        router.Send(recvCharaUpdateAbilityVit, client);
+                        router.Send(recvCharaUpdateAbilityDex, client);
+                        router.Send(recvCharaUpdateAbilityAgi, client);
+                        router.Send(recvCharaUpdateAbilityInt, client);
+                        router.Send(recvCharaUpdateAbilityPie, client);
+                        router.Send(recvCharaUpdateAbilityLuk, client);
+
+                        router.Send(recvCharaUpdateLv, client);
+                        router.Send(recvCharaUpdateLvDetail, client);
+                        router.Send(recvCharaUpdateLvDetail2, client);
+                        router.Send(recvCharaUpdateLvDetailEnd, client);
                     }
-
-                    RecvCharaUpdateLvDetailStart recvCharaUpdateLvDetailStart = new RecvCharaUpdateLvDetailStart();
-                    RecvCharaUpdateLv recvCharaUpdateLv = new RecvCharaUpdateLv(client.character);
-                    RecvCharaUpdateLvDetail recvCharaUpdateLvDetail = new RecvCharaUpdateLvDetail(client.character, experience);
-                    RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.character, experience);
-                    RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
-
-                    RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.character.hp.max);
-                    RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.character.mp.max);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityStr = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Str, client.character.strength, client.character.battleParam.plusStrength);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityVit = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Vit, client.character.vitality, client.character.battleParam.plusVitality);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityDex = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Dex, client.character.dexterity, client.character.battleParam.plusDexterity);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityAgi = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Agi, client.character.agility, client.character.battleParam.plusAgility);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityInt = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Int, client.character.intelligence, client.character.battleParam.plusIntelligence);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityPie = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Pie, client.character.piety, client.character.battleParam.plusPiety);
-                    RecvCharaUpdateAbility recvCharaUpdateAbilityLuk = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Luk, client.character.luck, client.character.battleParam.plusLuck);
-
-                    router.Send(recvCharaUpdateLvDetailStart, client);
-
-
-                    router.Send(recvCharaUpdateMaxHp, client);
-                    router.Send(recvCharaUpdateMaxMp, client);
-                    router.Send(recvCharaUpdateAbilityStr, client);
-                    router.Send(recvCharaUpdateAbilityVit, client);
-                    router.Send(recvCharaUpdateAbilityDex, client);
-                    router.Send(recvCharaUpdateAbilityAgi, client);
-                    router.Send(recvCharaUpdateAbilityInt, client);
-                    router.Send(recvCharaUpdateAbilityPie, client);
-                    router.Send(recvCharaUpdateAbilityLuk, client);
-
-                    router.Send(recvCharaUpdateLv, client);
-                    router.Send(recvCharaUpdateLvDetail, client);
-                    router.Send(recvCharaUpdateLvDetail2, client);
-                    router.Send(recvCharaUpdateLvDetailEnd, client);
-
                 }
-            }
             );
         }
 
@@ -663,7 +649,6 @@ namespace Necromancy.Server.Packet.Area
                     SendEventEnd(client);
                     break;
             }
-
         }
 
         private void RandomItemGuy(NecClient client, NpcSpawn npcSpawn)
@@ -687,17 +672,12 @@ namespace Necromancy.Server.Packet.Area
             }
             else
             {
-
                 if (client.character.eventSelectExecCode == 0)
                 {
                     List<ItemInfoSetting> weaponlist = new List<ItemInfoSetting>();
                     foreach (ItemInfoSetting weapon in server.settingRepository.itemInfo.Values)
-                    {
-                        if (weapon.id > 10100101 & weapon.id < 15300101)
-                        {
+                        if ((weapon.id > 10100101) & (weapon.id < 15300101))
                             weaponlist.Add(weapon);
-                        }
-                    }
 
                     int baseId = weaponlist[Util.GetRandomNumber(0, weaponlist.Count)].id;
                     itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
@@ -709,12 +689,8 @@ namespace Necromancy.Server.Packet.Area
                 {
                     List<ItemInfoSetting> armorList = new List<ItemInfoSetting>();
                     foreach (ItemInfoSetting armor in server.settingRepository.itemInfo.Values)
-                    {
-                        if (armor.id > 16100101 & armor.id < 30499901)
-                        {
+                        if ((armor.id > 16100101) & (armor.id < 30499901))
                             armorList.Add(armor);
-                        }
-                    }
 
                     int baseId = armorList[Util.GetRandomNumber(0, armorList.Count)].id;
                     itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
@@ -723,7 +699,8 @@ namespace Necromancy.Server.Packet.Area
                     router.Send(client, recvItemInstanceUnidentified.ToPacket());
                 }
                 else if (client.character.eventSelectExecCode == 2)
-                { //50401040,Moist Cudgel
+                {
+                    //50401040,Moist Cudgel
                     int baseId = 50401040; //This can select from a small array of items, and a small array of custom names
                     spawmParam.itemStatuses = ItemStatuses.Identified;
                     itemInstance = itemService.SpawnItemInstance(ItemZoneType.AdventureBag, baseId, spawmParam);
@@ -742,10 +719,12 @@ namespace Necromancy.Server.Packet.Area
                     RecvEventEnd(client); //End The Event
                     return;
                 }
+
                 res = BufferProvider.Provide();
                 res.WriteCString($"Enjoy your new Super {itemInstance.unidentifiedName}"); // Length 0xC01
                 router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
             }
+
             res = BufferProvider.Provide();
             router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
             RecvEventEnd(client); //End The Event
@@ -758,7 +737,7 @@ namespace Necromancy.Server.Packet.Area
             {
                 case 0:
                     res = BufferProvider.Provide();
-                    res.WriteCString($"Seriously?! Walk across the bridge. Why so Lazy?"); // Length 0xC01
+                    res.WriteCString("Seriously?! Walk across the bridge. Why so Lazy?"); // Length 0xC01
                     router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
 
                     break;
@@ -818,15 +797,12 @@ namespace Necromancy.Server.Packet.Area
                     break;
                 case 4:
                     res = BufferProvider.Provide();
-                    res.WriteCString($"Turn around genius"); // Length 0xC01
+                    res.WriteCString("Turn around genius"); // Length 0xC01
                     router.Send(client, (ushort)AreaPacketId.recv_event_system_message, res, ServerType.Area); // show system message on middle of the screen.
                     break;
-
             }
+
             RecvEventEnd(client); //End The Event
-
         }
-
     }
 }
-

@@ -3,6 +3,7 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
+using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
@@ -26,13 +27,13 @@ namespace Necromancy.Server.Packet.Area
             itemService.LoadEquipmentModels();
             client.soul.SetSoulAlignment();
             client.character.LoginCheckDead();
-            client.character.AddStateBit(Model.CharacterModel.CharacterState.InvulnerableForm);
+            client.character.AddStateBit(CharacterState.InvulnerableForm);
             _equippedItems = new ItemInstance[client.character.equippedItems.Count];
             client.character.equippedItems.Values.CopyTo(_equippedItems, 0);
 
             Attribute attribute = new Attribute();
             attribute.DefaultClassAtributes(client.character.raceId);
-            client.character.hp.SetMax(attribute.hp * (client.character.level)); //make better after HP calc exists
+            client.character.hp.SetMax(attribute.hp * client.character.level); //make better after HP calc exists
 
             SendDataGetSelfCharaData(client);
 
@@ -46,7 +47,7 @@ namespace Necromancy.Server.Packet.Area
             int numEntries = _equippedItems.Length; //Max of 25 Equipment Slots for Character Player. must be 0x19 or less
             int numStatusEffects = client.character.statusEffects.Length; /*_character.Statuses.Length*/ //0x80; //Statuses effects. Max 128
             int i = 0;
-            if (client.character.state.HasFlag(Model.CharacterModel.CharacterState.SoulForm)) numEntries = 0; //Dead mean wear no gear
+            if (client.character.state.HasFlag(CharacterState.SoulForm)) numEntries = 0; //Dead mean wear no gear
 
             IBuffer res = BufferProvider.Provide();
             //sub_4953B0 - characteristics
@@ -57,15 +58,15 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(client.character.hairId); //hair
             res.WriteByte(client.character.hairColorId); //color
             res.WriteByte(client.character.faceId); //face
-            res.WriteByte(client.character.faceArrangeId);//FaceArrange
-            res.WriteByte(client.character.voiceId);//Voice
+            res.WriteByte(client.character.faceArrangeId); //FaceArrange
+            res.WriteByte(client.character.voiceId); //Voice
             for (int j = 0; j < 100; j++)
                 res.WriteInt64(0);
 
             //sub_484720 - combat/leveling info
             _Logger.Debug($"Character ID Loading : {client.character.id}");
             res.WriteUInt32(client.character.instanceId); // InstanceId
-            res.WriteInt32(client.character.activeModel);//Model
+            res.WriteInt32(client.character.activeModel); //Model
             res.WriteUInt32(client.character.classId); // class
             res.WriteInt16(client.character.level); // current level
             res.WriteUInt64(client.character.experienceCurrent); // current exp
@@ -144,11 +145,11 @@ namespace Necromancy.Server.Packet.Area
             // characters stats
             res.WriteUInt16(client.character.strength); // str
             res.WriteUInt16(client.character.vitality); // vit
-            res.WriteInt16((short)(client.character.dexterity)); // dex
+            res.WriteInt16((short)client.character.dexterity); // dex
             res.WriteUInt16(client.character.agility); // agi
             res.WriteUInt16(client.character.intelligence); // int
             res.WriteUInt16(client.character.piety); // pie
-            res.WriteInt16((short)(client.character.luck)); // luk
+            res.WriteInt16((short)client.character.luck); // luk
 
             // nothing
             res.WriteInt16(1);
@@ -191,7 +192,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(client.character.mapId); //MapSerialID
             res.WriteInt32(client.character.mapId); //MapID ?floor
             res.WriteInt32(client.character.mapId); //MapID ?
-            res.WriteByte(client.soul.criminalLevel);//new??
+            res.WriteByte(client.soul.criminalLevel); //new??
             res.WriteByte(1); //Beginner Protection (bool) ???
             res.WriteFixedString(settings.dataAreaIpAddress, 65); //IP
             res.WriteUInt16(settings.areaPort); //Port
@@ -205,28 +206,28 @@ namespace Necromancy.Server.Packet.Area
             //sub_read_int32 skill point
             res.WriteUInt32(client.character.skillPoints); // skill point
 
-            res.WriteInt64((long)client.character.state);//Character State
+            res.WriteInt64((long)client.character.state); //Character State
 
             //sub_494AC0
             res.WriteByte(client.soul.level); // soul level
-            res.WriteInt64(client.soul.pointsCurrent);// Current Soul Points
-            res.WriteInt64(120);//new Max level?
-            res.WriteInt64(120);// Max soul points
+            res.WriteInt64(client.soul.pointsCurrent); // Current Soul Points
+            res.WriteInt64(120); //new Max level?
+            res.WriteInt64(120); // Max soul points
             res.WriteByte(client.soul.criminalLevel); // 0 is white,1 yellow 2 red 3+ skull
             res.WriteByte((byte)client.character.beginnerProtection); //Beginner protection (bool)
             res.WriteByte(255); // character Level cap?
             res.WriteByte(1);
             res.WriteByte(2);
             res.WriteByte(3);
-            res.WriteByte(1);//new
+            res.WriteByte(1); //new
 
-            res.WriteInt32(1);//new
-            res.WriteInt32(2);//new
-            res.WriteInt32(3);//new
-            res.WriteInt32(4);//new
-            res.WriteInt32(5);//new
+            res.WriteInt32(1); //new
+            res.WriteInt32(2); //new
+            res.WriteInt32(3); //new
+            res.WriteInt32(4); //new
+            res.WriteInt32(5); //new
 
-            res.WriteInt32(6);//new
+            res.WriteInt32(6); //new
 
             //sub_read_3-int16 unknown
             res.WriteInt16(client.character.hpRecoveryRate); // HP Recovery Rate for heals?
@@ -254,43 +255,40 @@ namespace Necromancy.Server.Packet.Area
             //sub_494890
             res.WriteByte(1); //Bool
 
-            res.WriteInt32(0);//new
-            res.WriteByte(0);//new
+            res.WriteInt32(0); //new
+            res.WriteByte(0); //new
 
 
-            res.WriteInt64(5678);//new
-            res.WriteInt32(1);//new
-            res.WriteFixedString($"unknown 1", 73); //new
+            res.WriteInt64(5678); //new
+            res.WriteInt32(1); //new
+            res.WriteFixedString("unknown 1", 73); //new
 
-            res.WriteInt64(5678);//new
-            res.WriteInt32(1);//new
-            res.WriteFixedString($"unknown 2", 73); //new
+            res.WriteInt64(5678); //new
+            res.WriteInt32(1); //new
+            res.WriteFixedString("unknown 2", 73); //new
 
-            res.WriteInt64(5678);//new
-            res.WriteInt32(1);//new
-            res.WriteFixedString($"unknown 3", 73); //new
+            res.WriteInt64(5678); //new
+            res.WriteInt32(1); //new
+            res.WriteFixedString("unknown 3", 73); //new
 
-            res.WriteInt64(5678);//new
-            res.WriteInt32(1);//new
-            res.WriteFixedString($"unknown 4", 73); //new
+            res.WriteInt64(5678); //new
+            res.WriteInt32(1); //new
+            res.WriteFixedString("unknown 4", 73); //new
 
-            res.WriteInt64(5678);//new
-            res.WriteInt32(1);//new
-            res.WriteFixedString($"unknown 5", 73); //new
+            res.WriteInt64(5678); //new
+            res.WriteInt32(1); //new
+            res.WriteFixedString("unknown 5", 73); //new
 
-            res.WriteInt64(5678);//new
-            res.WriteInt32(1);//new
-            res.WriteFixedString($"unknown 6", 73); //new
+            res.WriteInt64(5678); //new
+            res.WriteInt32(1); //new
+            res.WriteFixedString("unknown 6", 73); //new
 
-            res.WriteInt32(0);//new //swirly effect?
+            res.WriteInt32(0); //new //swirly effect?
 
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots
             //sub_483660
-            for (i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32((int)_equippedItems[i].type);
-            }
+            for (i = 0; i < numEntries; i++) res.WriteInt32((int)_equippedItems[i].type);
 
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots
@@ -308,7 +306,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteByte(0); //face
 
                 res.WriteByte(45); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
-                res.WriteByte((byte)(client.character.faceId * 10));  //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
+                res.WriteByte((byte)(client.character.faceId * 10)); //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
                 res.WriteByte(00); // testing (Theory Torso Tex)
                 res.WriteByte(0); // testing (Theory Pants Tex)
                 res.WriteByte(0); // testing (Theory Hands Tex)
@@ -321,10 +319,7 @@ namespace Necromancy.Server.Packet.Area
 
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots to display
-            for (i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32((int)_equippedItems[i].currentEquipSlot); //bitmask per equipment slot
-            }
+            for (i = 0; i < numEntries; i++) res.WriteInt32((int)_equippedItems[i].currentEquipSlot); //bitmask per equipment slot
 
             //sub_483420
             res.WriteInt32(numStatusEffects); //has to be less than 128
@@ -333,15 +328,14 @@ namespace Necromancy.Server.Packet.Area
             {
                 res.WriteInt32(i); //instanceID or unique ID
                 res.WriteUInt32(client.character.statusEffects[k]); //Buff.SerialId from buff.csv
-                res.WriteInt32(Util.GetRandomNumber(100,6000)); //Time Remaining in seconds
+                res.WriteInt32(Util.GetRandomNumber(100, 6000)); //Time Remaining in seconds
                 res.WriteInt32(1); //new
             }
 
-            res.WriteByte(0);//new
-            res.WriteByte(0);//new bool
+            res.WriteByte(0); //new
+            res.WriteByte(0); //new bool
 
             router.Send(client, (ushort)AreaPacketId.recv_data_get_self_chara_data_r, res, ServerType.Area);
         }
-
     }
 }

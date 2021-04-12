@@ -7,7 +7,6 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
-using Necromancy.Server.Systems.Auction;
 using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Chat.Command.Commands
@@ -15,11 +14,14 @@ namespace Necromancy.Server.Chat.Command.Commands
     //opens auction house
     public class SendAuctionNotifyOpen : ServerChatCommand
     {
-
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendAuctionNotifyOpen));
+
         public SendAuctionNotifyOpen(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "auct";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -39,6 +41,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, lotItem);
                 router.Send(recvItemInstance);
             }
+
             int j = 0;
             res.WriteInt32(lots.Count); //Less than or equal to 15
             foreach (ItemInstance lotItem in lots)
@@ -65,6 +68,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, bidItem);
                 router.Send(recvItemInstance);
             }
+
             j = 0;
             res.WriteInt32(bids.Count); //Less than or equal to 0xE
             foreach (ItemInstance bidItem in bids)
@@ -127,7 +131,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteByte(0);
                 res.WriteInt64(0);
                 res.WriteInt64(0);
-                res.WriteFixedString("fs0xC1V2", 0xC1);//Fixed string of 0xC1 or 0xC1 bytes.
+                res.WriteFixedString("fs0xC1V2", 0xC1); //Fixed string of 0xC1 or 0xC1 bytes.
                 res.WriteByte(0);
                 res.WriteByte(0);
             }
@@ -157,19 +161,13 @@ namespace Necromancy.Server.Chat.Command.Commands
             {
                 RecvAuctionNotifyOpenItem recvAuctionNotifyOpenItem;
                 if (i == divideBy100 - 1)
-                {
                     recvAuctionNotifyOpenItem = new RecvAuctionNotifyOpenItem(client, auctionList.GetRange(i, auctionList.Count % 100));
-                }
                 else
-                {
                     recvAuctionNotifyOpenItem = new RecvAuctionNotifyOpenItem(client, auctionList.GetRange(i, 100));
-                }
                 router.Send(recvAuctionNotifyOpenItem);
             }
+
             router.Send(recvAuctionNotifyOpenItemEnd);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "auct";
     }
 }

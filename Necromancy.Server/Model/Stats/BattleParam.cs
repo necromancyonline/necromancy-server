@@ -1,22 +1,7 @@
-
-
 namespace Necromancy.Server.Model.Stats
 {
     public class BattleParam
     {
-        public short plusPhysicalAttack { get; set; }
-        public short plusPhysicalDefence { get; set; }
-        public short plusMagicalAttack { get; set; }
-        public short plusMagicalDefence { get; set; }
-        public short plusRangedAttack { get; set; }
-        public ushort plusStrength { get; set; }
-        public ushort plusVitality { get; set; }
-        public ushort plusDexterity { get; set; }
-        public ushort plusAgility { get; set; }
-        public ushort plusIntelligence { get; set; }
-        public ushort plusPiety { get; set; }
-        public ushort plusLuck { get; set; }
-
         public BattleParam()
         {
             plusPhysicalAttack = 0;
@@ -32,5 +17,18 @@ namespace Necromancy.Server.Model.Stats
             plusPiety = 5;
             plusLuck = 6;
         }
+
+        public short plusPhysicalAttack { get; set; }
+        public short plusPhysicalDefence { get; set; }
+        public short plusMagicalAttack { get; set; }
+        public short plusMagicalDefence { get; set; }
+        public short plusRangedAttack { get; set; }
+        public ushort plusStrength { get; set; }
+        public ushort plusVitality { get; set; }
+        public ushort plusDexterity { get; set; }
+        public ushort plusAgility { get; set; }
+        public ushort plusIntelligence { get; set; }
+        public ushort plusPiety { get; set; }
+        public ushort plusLuck { get; set; }
     }
 }

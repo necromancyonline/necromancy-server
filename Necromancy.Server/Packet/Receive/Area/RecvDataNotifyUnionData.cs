@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly string _unionName;
 
         public RecvDataNotifyUnionData(Character character, string unionName)
-            : base((ushort) AreaPacketId.recv_chara_notify_union_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_notify_union_data, ServerType.Area)
         {
             _character = character;
             _unionName = unionName;

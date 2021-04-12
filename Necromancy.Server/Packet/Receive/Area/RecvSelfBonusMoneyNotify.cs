@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfBonusMoneyNotify : PacketResponse
     {
         public RecvSelfBonusMoneyNotify()
-            : base((ushort) AreaPacketId.recv_self_bonus_money_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_bonus_money_notify, ServerType.Area)
         {
         }
 

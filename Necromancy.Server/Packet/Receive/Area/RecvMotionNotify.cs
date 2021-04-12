@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMotionNotify : PacketResponse
     {
         public RecvMotionNotify()
-            : base((ushort) AreaPacketId.recv_motion_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_motion_notify, ServerType.Area)
         {
         }
 

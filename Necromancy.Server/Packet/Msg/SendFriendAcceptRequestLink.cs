@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_friend_accept_request_link;
+        public override ushort id => (ushort)MsgPacketId.send_friend_accept_request_link;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(acceptOrDenyResponse); // 0 = Deny, 1 = Accept
             res.WriteUInt32(friendInstanceId); // Object ID
-            router.Send(client, (ushort) MsgPacketId.recv_friend_reply_to_link_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_friend_reply_to_link_r, res, ServerType.Msg);
             SendFriendNotifyAddMember(client);
             SendFriendNotifyAddMember(client, friendInstanceId);
         }
@@ -44,7 +44,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
-            router.Send(client, (ushort) MsgPacketId.recv_friend_notify_add_member_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_friend_notify_add_member_r, res, ServerType.Msg);
         }
 
         private void SendFriendNotifyAddMember(NecClient client, uint targetInstanceId)
@@ -67,7 +67,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
             res.WriteInt32(0);
             router.Send(server.clients.GetByCharacterInstanceId(targetInstanceId),
-                (ushort) MsgPacketId.recv_friend_notify_add_member_r, res, ServerType.Msg);
+                (ushort)MsgPacketId.recv_friend_notify_add_member_r, res, ServerType.Msg);
         }
     }
 }

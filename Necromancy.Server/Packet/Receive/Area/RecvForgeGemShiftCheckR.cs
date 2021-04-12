@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvForgeGemShiftCheckR : PacketResponse
     {
         public RecvForgeGemShiftCheckR()
-            : base((ushort) AreaPacketId.recv_forge_gem_shift_check_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_forge_gem_shift_check_r, ServerType.Area)
         {
         }
 

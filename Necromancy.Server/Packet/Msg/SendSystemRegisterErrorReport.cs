@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_system_register_error_report;
+        public override ushort id => (ushort)MsgPacketId.send_system_register_error_report;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0);
-            router.Send(client, (ushort) MsgPacketId.recv_system_register_error_report_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_system_register_error_report_r, res, ServerType.Msg);
         }
     }
 }

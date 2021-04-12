@@ -14,7 +14,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_trade_remove_item;
+        public override ushort id => (ushort)AreaPacketId.send_trade_remove_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

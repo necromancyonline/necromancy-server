@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGemNotifyClose : PacketResponse
     {
         public RecvGemNotifyClose()
-            : base((ushort) AreaPacketId.recv_gem_notify_close, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gem_notify_close, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_change_role;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_change_role;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -25,10 +25,7 @@ namespace Necromancy.Server.Packet.Msg
             // TODO why not retrieve via GetInstance??
             NecClient targetClient = server.clients.GetByCharacterInstanceId(targetInstanceId);
             Character targetCharacter = targetClient.character;
-            if (targetCharacter == null)
-            {
-                return;
-            }
+            if (targetCharacter == null) return;
 
             UnionMember unionMember = server.database.SelectUnionMemberByCharacterId(targetCharacter.id);
             uint previousRank = unionMember.rank;
@@ -37,7 +34,7 @@ namespace Necromancy.Server.Packet.Msg
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //error check
-            router.Send(client, (ushort) MsgPacketId.recv_union_request_change_role_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_request_change_role_r, res, ServerType.Msg);
 
 
             IBuffer res2 = BufferProvider.Provide();
@@ -45,18 +42,14 @@ namespace Necromancy.Server.Packet.Msg
             res2.WriteUInt32(previousLeaderCharacterInstanceId);
             res2.WriteUInt32(targetRole);
             if (targetClient != null)
-                router.Send(targetClient, (ushort) MsgPacketId.recv_union_notify_changed_role, res2, ServerType.Msg);
+                router.Send(targetClient, (ushort)MsgPacketId.recv_union_notify_changed_role, res2, ServerType.Msg);
 
             if (previousLeaderCharacterInstanceId > 0)
             {
                 // TODO why not retrieve via GetInstance??
                 NecClient oldLeaderClient = server.clients.GetByCharacterInstanceId(previousLeaderCharacterInstanceId);
                 Character oldLeaderCharacter = targetClient.character;
-                if (oldLeaderCharacter == null)
-                {
-                    return;
-                }
-
+                if (oldLeaderCharacter == null) return;
 
 
                 UnionMember oldLeaderMember = server.database.SelectUnionMemberByCharacterId(oldLeaderCharacter.id);
@@ -67,7 +60,7 @@ namespace Necromancy.Server.Packet.Msg
                 res3.WriteUInt32(previousLeaderCharacterInstanceId);
                 res3.WriteUInt32(targetRole);
                 if (oldLeaderClient != null)
-                    router.Send(oldLeaderClient, (ushort) MsgPacketId.recv_union_notify_changed_role, res3,
+                    router.Send(oldLeaderClient, (ushort)MsgPacketId.recv_union_notify_changed_role, res3,
                         ServerType.Msg);
             }
         }

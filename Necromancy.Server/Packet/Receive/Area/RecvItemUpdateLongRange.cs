@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateLongRange : PacketResponse
     {
         public RecvItemUpdateLongRange()
-            : base((ushort) AreaPacketId.recv_item_update_long_range, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_long_range, ServerType.Area)
         {
         }
 

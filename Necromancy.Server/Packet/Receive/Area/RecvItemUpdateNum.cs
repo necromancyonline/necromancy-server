@@ -9,12 +9,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateNum : PacketResponse
     {
         private readonly ItemInstance _item;
+
         public RecvItemUpdateNum(NecClient client, ItemInstance item)
-            : base((ushort) AreaPacketId.recv_item_update_num, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_num, ServerType.Area)
         {
             _item = item;
             clients.Add(client);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

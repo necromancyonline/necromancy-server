@@ -7,14 +7,16 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemCharaPostNotify : PacketResponse
     {
+        private readonly byte _count;
+
         /// <summary>
-        /// Notifies you that an item was mailed to you because your inventory was full.
-        /// "Leather Armor was sent to the reward receiver due to inventory limit"
+        ///     Notifies you that an item was mailed to you because your inventory was full.
+        ///     "Leather Armor was sent to the reward receiver due to inventory limit"
         /// </summary>
-        private int _serialId;
-        private byte _count;
+        private readonly int _serialId;
+
         public RecvItemCharaPostNotify(int serialId, byte count)
-            : base((ushort) AreaPacketId.recv_item_chara_post_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_chara_post_notify, ServerType.Area)
         {
             _serialId = serialId;
             _count = count;

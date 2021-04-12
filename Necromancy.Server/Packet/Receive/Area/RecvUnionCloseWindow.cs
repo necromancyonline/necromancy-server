@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionCloseWindow : PacketResponse
     {
         public RecvUnionCloseWindow()
-            : base((ushort) AreaPacketId.recv_union_close_window_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_close_window_r, ServerType.Area)
         {
         }
 

@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_quest_get_mission_quest_works;
+        public override ushort id => (ushort)AreaPacketId.send_quest_get_mission_quest_works;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,27 +20,27 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(0);
 
             int numEntries = 0x1; //0x1E
-            res.WriteInt32(numEntries);//less than or equal to 0x1E   Character.MissionQuests.Count;
+            res.WriteInt32(numEntries); //less than or equal to 0x1E   Character.MissionQuests.Count;
 
-            for(int i = 0; i < numEntries; i++)
+            for (int i = 0; i < numEntries; i++)
             {
-                res.WriteInt32(1);//Needs to be 1 or you get a DC
+                res.WriteInt32(1); //Needs to be 1 or you get a DC
                 res.WriteByte(0);
-                res.WriteByte(0);//new
-                res.WriteFixedString("Quest of dying", 97);//Quest name
+                res.WriteByte(0); //new
+                res.WriteFixedString("Quest of dying", 97); //Quest name
                 res.WriteInt32(25); //Level requirement
                 res.WriteInt32(1);
-                res.WriteFixedString("Death", 97);//Client name
+                res.WriteFixedString("Death", 97); //Client name
                 res.WriteByte(0); //bool
                 res.WriteByte(1); //Bool for if the mission can be abandoned or not.
                 res.WriteInt32(1);
                 res.WriteInt32(50); //EXP
                 res.WriteInt32(75); //Gold Pieces
                 res.WriteInt32(100); //Skill Points
-                res.WriteInt32(1);//new
-                res.WriteInt32(2);//new
-                res.WriteInt32(3);//new
-                res.WriteInt32(4);//new
+                res.WriteInt32(1); //new
+                res.WriteInt32(2); //new
+                res.WriteInt32(3); //new
+                res.WriteInt32(4); //new
 
                 //loop x 10
                 //Some  sort of ITEM info
@@ -52,11 +52,12 @@ namespace Necromancy.Server.Packet.Area
                     res.WriteFixedString("quest1", 16); //Item name?
                     res.WriteInt16(1); //Quantity
                     res.WriteUInt32(odd); //Status
-                    res.WriteByte(1);//new
-                    res.WriteInt16(11);//new
+                    res.WriteByte(1); //new
+                    res.WriteInt16(11); //new
                     bitShift = bitShift << 1;
                     odd += 2;
                 }
+
                 res.WriteByte(10); //# for reward
 
                 //loop x 12
@@ -67,13 +68,14 @@ namespace Necromancy.Server.Packet.Area
                     res.WriteFixedString("quest1", 16); //Item name?
                     res.WriteInt16(0); //Quantity
                     res.WriteUInt32(odd); //Status
-                    res.WriteByte(0);//new
-                    res.WriteInt16(0);//new
+                    res.WriteByte(0); //new
+                    res.WriteInt16(0); //new
                     bitShift = bitShift << 1;
                     odd += 2;
                 }
-                res.WriteByte(12);//# of "selected prize"
-                res.WriteInt32(0);//new
+
+                res.WriteByte(12); //# of "selected prize"
+                res.WriteInt32(0); //new
 
 
                 res.WriteFixedString("Get some mobs to kill you.", 385); //Quest description
@@ -91,7 +93,6 @@ namespace Necromancy.Server.Packet.Area
                     res.WriteInt32(1);
 
                     res.WriteInt32(1);
-
                 }
 
                 res.WriteByte(1);
@@ -100,15 +101,15 @@ namespace Necromancy.Server.Packet.Area
 
                 res.WriteFloat(1);
 
-                res.WriteByte(0);//new
-                res.WriteByte(0);//new
-                res.WriteInt16(0);//new
-                res.WriteInt16(0);//new
-                res.WriteInt32(0);//new
+                res.WriteByte(0); //new
+                res.WriteByte(0); //new
+                res.WriteInt16(0); //new
+                res.WriteInt16(0); //new
+                res.WriteInt32(0); //new
             }
 
             //Commented out until further testing. this is called at login
-            router.Send(client, (ushort) AreaPacketId.recv_quest_get_mission_quest_works_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_quest_get_mission_quest_works_r, res, ServerType.Area);
         }
     }
 }

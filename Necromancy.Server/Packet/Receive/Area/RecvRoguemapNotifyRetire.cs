@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapNotifyRetire : PacketResponse
     {
         public RecvRoguemapNotifyRetire()
-            : base((ushort) AreaPacketId.recv_roguemap_notify_retire, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_notify_retire, ServerType.Area)
         {
         }
 
@@ -20,14 +20,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
             res.WriteInt32(0);
 
-            for (int i = 0; i < 0x4; i++)
-            {
-                res.WriteInt32(0);
-            }
-            for (int i = 0; i < 0x4; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < 0x4; i++) res.WriteInt32(0);
+            for (int i = 0; i < 0x4; i++) res.WriteInt32(0);
             res.WriteByte(0);
             res.WriteByte(0);
             res.WriteByte(0);

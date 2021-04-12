@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_battle_attack_exec_direct;
+        public override ushort id => (ushort)AreaPacketId.send_battle_attack_exec_direct;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -22,7 +22,7 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(targetId);
 
-            router.Send(client.map, (ushort) AreaPacketId.recv_battle_attack_exec_direct_r, res, ServerType.Area,
+            router.Send(client.map, (ushort)AreaPacketId.recv_battle_attack_exec_direct_r, res, ServerType.Area,
                 client);
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGamepotCasinoOpen : PacketResponse
     {
         public RecvGamepotCasinoOpen()
-            : base((ushort) AreaPacketId.recv_gamepot_casino_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gamepot_casino_open, ServerType.Area)
         {
         }
 

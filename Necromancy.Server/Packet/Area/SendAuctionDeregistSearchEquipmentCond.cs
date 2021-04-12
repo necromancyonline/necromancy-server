@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_deregist_search_equipment_cond;
+        public override ushort id => (ushort)AreaPacketId.send_auction_deregist_search_equipment_cond;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_auction_deregist_search_equipment_cond_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_auction_deregist_search_equipment_cond_r, res, ServerType.Area);
         }
     }
 }

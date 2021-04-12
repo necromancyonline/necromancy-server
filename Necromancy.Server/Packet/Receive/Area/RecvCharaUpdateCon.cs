@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateCon : PacketResponse
     {
-        private byte _con;
+        private readonly byte _con;
+
         public RecvCharaUpdateCon(byte con)
-            : base((ushort) AreaPacketId.recv_chara_update_con, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_con, ServerType.Area)
         {
             _con = con;
         }

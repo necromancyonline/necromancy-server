@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventSyncSlot : PacketResponse
     {
         public RecvEventSyncSlot()
-            : base((ushort) AreaPacketId.recv_event_sync_slot, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_sync_slot, ServerType.Area)
         {
         }
 

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
@@ -13,6 +12,7 @@ namespace Necromancy.Server.Packet.Msg
     public class SendCharaGetList : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaGetList));
+
         public SendCharaGetList(NecServer server) : base(server)
         {
         }
@@ -72,8 +72,8 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteByte(character.hairId); //hair
                 res.WriteByte(character.hairColorId); //color
                 res.WriteByte(character.faceId); //face
-                res.WriteByte(character.faceArrangeId);//Voice?
-                res.WriteByte(character.voiceId);//skinTone?
+                res.WriteByte(character.faceArrangeId); //Voice?
+                res.WriteByte(character.voiceId); //skinTone?
 
 
                 // cb eax 19.  Has to be 25 values.
@@ -86,6 +86,7 @@ namespace Necromancy.Server.Packet.Msg
                     //Logger.Debug($"Loading {i}:{itemInstance.Type} | {itemInstance.UnidentifiedName}");
                     i++;
                 }
+
                 while (i < numEntries)
                 {
                     //sub_483660
@@ -109,7 +110,7 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteByte(0); //face
 
                     res.WriteByte(45); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
-                    res.WriteByte((byte)(character.faceId*10));  //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
+                    res.WriteByte((byte)(character.faceId * 10)); //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
                     res.WriteByte(00); // testing (Theory Torso Tex)
                     res.WriteByte(0); // testing (Theory Pants Tex)
                     res.WriteByte(0); // testing (Theory Hands Tex)
@@ -120,7 +121,8 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteByte(0); // separate in assembly
                     i++;
                 }
-                while (i < numEntries)//Must have 25 on recv_chara_notify_data
+
+                while (i < numEntries) //Must have 25 on recv_chara_notify_data
                 {
                     res.WriteInt32(0); //Sets your Item ID per Iteration
                     res.WriteByte(0); //
@@ -152,6 +154,7 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteInt32((int)itemInstance.currentEquipSlot); //bitmask per equipment slot
                     i++;
                 }
+
                 while (i < numEntries)
                 {
                     //sub_483420
@@ -165,6 +168,7 @@ namespace Necromancy.Server.Packet.Msg
                     res.WriteInt32(itemInstance.enhancementLevel); ///item quality(+#) or aura? 10 = +7, 19 = +6,(maybe just wep aura)
                     i++;
                 }
+
                 while (i < numEntries)
                 {
                     //sub_483420
@@ -180,7 +184,7 @@ namespace Necromancy.Server.Packet.Msg
                 res.WriteByte((byte)character.equippedItems.Count); //count your equipment here
 
                 res.WriteInt32(character.mapId); //Map your character is on
-                res.WriteInt32(Util.GetRandomNumber(0,3));//??? probably map area related
+                res.WriteInt32(Util.GetRandomNumber(0, 3)); //??? probably map area related
 
                 res.WriteByte(0);
                 res.WriteByte(0); //Character Name change in Progress.  (0 no : 1 Yes ).  Red indicator on top right

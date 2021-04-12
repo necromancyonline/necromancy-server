@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using Arrowgene.Buffers;
-using Necromancy.Server.Common;
 using Necromancy.Server.Model;
-using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -11,27 +7,6 @@ namespace Necromancy.Server.Chat.Command.Commands
     {
         public SendRandomBoxNotifyOpen(NecServer server) : base(server)
         {
-        }
-
-        public override void Execute(string[] command, NecClient client, ChatMessage message,
-            List<ChatResponse> responses)
-        {
-            ////recv_random_box_notify_open = 0xC374,
-            //IBuffer res = BufferProvider.Provide();
-
-            //int numEntries = 10; // Slots
-            //res.WriteInt32(numEntries); //less than or equal to 10
-
-            //// Weapon
-            //int itemId = 90031008;
-
-            //for (int i = 0; i < numEntries; i++)
-            //{
-            //    res.WriteInt64(ItemGenerator(itemId,client,i)); // item instance ID per slot
-            //}
-            //res.WriteInt32(itemId); // Show item name as RBox title. grabs string from itemInfo.csv
-            //Router.Send(client, (ushort) AreaPacketId.recv_random_box_notify_open, res, ServerType.Area); // Trying to spawn item in this boxe, maybe i need the item instance ?
-
         }
 
         //public long ItemGenerator (int itemId, NecClient client,int i)
@@ -58,5 +33,25 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         public override AccountStateType accountState => AccountStateType.Admin;
         public override string key => "rbox";
+
+        public override void Execute(string[] command, NecClient client, ChatMessage message,
+            List<ChatResponse> responses)
+        {
+            ////recv_random_box_notify_open = 0xC374,
+            //IBuffer res = BufferProvider.Provide();
+
+            //int numEntries = 10; // Slots
+            //res.WriteInt32(numEntries); //less than or equal to 10
+
+            //// Weapon
+            //int itemId = 90031008;
+
+            //for (int i = 0; i < numEntries; i++)
+            //{
+            //    res.WriteInt64(ItemGenerator(itemId,client,i)); // item instance ID per slot
+            //}
+            //res.WriteInt32(itemId); // Show item name as RBox title. grabs string from itemInfo.csv
+            //Router.Send(client, (ushort) AreaPacketId.recv_random_box_notify_open, res, ServerType.Area); // Trying to spawn item in this boxe, maybe i need the item instance ?
+        }
     }
 }

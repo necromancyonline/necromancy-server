@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly byte _level;
 
         public RecvItemUpdateLevel(ulong instanceId, byte level)
-            : base((ushort) AreaPacketId.recv_item_update_level, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_level, ServerType.Area)
         {
             _instanceId = instanceId;
             _level = level;

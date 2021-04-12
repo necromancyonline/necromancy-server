@@ -1,13 +1,11 @@
-using Arrowgene.Buffers;
+using System;
+using System.Threading.Tasks;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System;
-using System.Threading.Tasks;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -20,7 +18,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_trade_fix;
+        public override ushort id => (ushort)AreaPacketId.send_trade_fix;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -40,16 +38,17 @@ namespace Necromancy.Server.Packet.Area
                 if (client.character.tradeWindowSlot[i] > 0) clientItemCount++;
                 if (targetClient.character.tradeWindowSlot[i] > 0) targetClientItemcount++;
             }
+
             _Logger.Debug($"Transferred items {clientItemCount}:{targetClientItemcount}");
             _Logger.Debug($"Free Space{client.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}:{targetClient.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag)}");
 
             //ToDo:  improve this logic when GetTotalFreeSpace can check all bags
-            if (client.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag) < (targetClientItemcount-clientItemCount)) notifyProblemSysMsg = 1; //doesnt work. GetTotalFreeSpace is not accurate. problem with itemService.PutLootedItem updating count.
-            if (targetClient.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag) < (clientItemCount-targetClientItemcount)) notifyProblemSysMsg = 1;
+            if (client.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag) < targetClientItemcount - clientItemCount) notifyProblemSysMsg = 1; //doesnt work. GetTotalFreeSpace is not accurate. problem with itemService.PutLootedItem updating count.
+            if (targetClient.character.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.AdventureBag) < clientItemCount - targetClientItemcount) notifyProblemSysMsg = 1;
             //ToDo:  add other trade preventing scenarios here
 
 
-            RecvTradeNotifyProblem recvTradeNotifyProblem = new RecvTradeNotifyProblem(objectId:0, notifyProblemSysMsg);
+            RecvTradeNotifyProblem recvTradeNotifyProblem = new RecvTradeNotifyProblem(0, notifyProblemSysMsg);
             router.Send(client, recvTradeNotifyProblem.ToPacket());
             if (targetClient != null) router.Send(targetClient, recvTradeNotifyProblem.ToPacket());
 
@@ -84,10 +83,11 @@ namespace Necromancy.Server.Packet.Area
                         RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
                         router.Send(client, recvItemInstance.ToPacket());
                     }
-                //}
-                //give stuff to targetClient
-                //for (int i = 0; i < 20; i++)
-                //{
+
+                    //}
+                    //give stuff to targetClient
+                    //for (int i = 0; i < 20; i++)
+                    //{
                     ItemInstance itemInstance2 = client.character.itemLocationVerifier.GetItemByInstanceId(client.character.tradeWindowSlot[i]);
                     if (itemInstance2 != null)
                     {
@@ -113,11 +113,9 @@ namespace Necromancy.Server.Packet.Area
                         RecvEventEnd eventEnd = new RecvEventEnd(0);
                         if (targetClient != null) router.Send(targetClient, eventEnd.ToPacket());
                         router.Send(client, eventEnd.ToPacket());
-
                     }
                 );
             }
         }
-
     }
 }

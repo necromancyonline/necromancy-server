@@ -2,22 +2,19 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
-
     public class SendStorageDrawMoney : ClientHandler
     {
         public SendStorageDrawMoney(NecServer server) : base(server)
         {
-
         }
+
         public override ushort id => (ushort)AreaPacketId.send_storage_draw_money;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-
             ulong withdrawGold = packet.data.ReadUInt64();
 
             IBuffer res = BufferProvider.Provide();
@@ -30,8 +27,6 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteUInt64(client.character.adventureBagGold); // Sets your Adventure Bag Gold
             router.Send(client, (ushort)AreaPacketId.recv_self_money_notify, res2, ServerType.Area);
-
         }
-
     }
 }

@@ -10,7 +10,7 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// GGateSpawn related commands.
+    ///     GGateSpawn related commands.
     /// </summary>
     public class GGateCommand : ServerChatCommand
     {
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
         public GGateCommand(NecServer server) : base(server)
         {
-            int[] gGateModelIds = new int[]
+            int[] gGateModelIds =
             {
                 1800000, /*	Stone slab of guardian statue	*/
                 1801000, /*	Bulletin board	*/
@@ -42,9 +42,15 @@ namespace Necromancy.Server.Chat.Command.Commands
                 1819000, /*	Abandoned tree	*/
                 1820000, /*	Pedestal with fire	*/
                 1900000, /*	For transparency	*/
-                1900001, /*	For transparency	*/
+                1900001 /*	For transparency	*/
             };
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "ggate";
+
+        public override string helpText =>
+            "usage: `/GGateSpawn [argument] [number] [parameter]` - does something GGateSpawn related";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -57,14 +63,11 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (!int.TryParse(command[1], out int x))
             {
-                responses.Add(ChatResponse.CommandError(client, $"Please provide a value.  model Id or instance Id"));
+                responses.Add(ChatResponse.CommandError(client, "Please provide a value.  model Id or instance Id"));
                 return;
             }
 
-            if (!int.TryParse(command[2], out int y))
-            {
-                responses.Add(ChatResponse.CommandError(client, $"Good Job!"));
-            }
+            if (!int.TryParse(command[2], out int y)) responses.Add(ChatResponse.CommandError(client, "Good Job!"));
 
             GGateSpawn myGGateSpawn = new GGateSpawn();
             IBuffer res = BufferProvider.Provide();
@@ -108,7 +111,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                         .active); // 0 = collision, 1 = no collision  (active/Inactive?) //rename this to state...... >.>
                     res.WriteInt32(myGGateSpawn
                         .glow); //0= no effect color appear, //Red = 0bxx1x   | Gold = obxxx1   |blue = 0bx1xx
-                    router.Send(client.map, (ushort) AreaPacketId.recv_data_notify_ggate_stone_data, res,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_ggate_stone_data, res,
                         ServerType.Area);
 
                     //Jump over your GGateSpawn
@@ -119,7 +122,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(client.character.z + 500);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(client.character.movementAnim);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
 
                     responses.Add(ChatResponse.CommandError(client, $"Spawned GGateSpawn {myGGateSpawn.modelId} with instance id {myGGateSpawn.instanceId}"));
 
@@ -127,21 +130,16 @@ namespace Necromancy.Server.Chat.Command.Commands
                     ) //if you want to send your GGateSpawn straight to the DB.  type Add at the end of the spawn command.
                     {
                         if (!server.database.InsertGGateSpawn(myGGateSpawn))
-                        {
                             responses.Add(ChatResponse.CommandError(client,
                                 "myGGateSpawn could not be saved to database"));
-                            return;
-                        }
                         else
-                        {
                             responses.Add(ChatResponse.CommandError(client,
                                 $"Added GGateSpawn {myGGateSpawn.id} to the database"));
-                        }
                     }
 
                     break;
                 case "move": //move a GGateSpawn to your current position and heading
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     myGGateSpawn.x = client.character.x;
                     myGGateSpawn.y = client.character.y;
                     myGGateSpawn.z = client.character.z;
@@ -152,7 +150,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(client.character.z);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
 
                     //Jump away from GGateSpawn
                     res = BufferProvider.Provide();
@@ -162,10 +160,10 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(client.character.z + 50);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(client.character.movementAnim);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     break;
                 case "heading": //only update the heading to your current heading
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     myGGateSpawn.heading = client.character.heading;
                     res.WriteUInt32(myGGateSpawn.instanceId);
                     res.WriteFloat(myGGateSpawn.x);
@@ -173,24 +171,24 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(myGGateSpawn.z);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     break;
                 case "rotate": //rotates a GGateSpawn to a specified heading
                     int newHeading = y;
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
-                    myGGateSpawn.heading = (byte) newHeading;
-                    myGGateSpawn.heading = (byte) y;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
+                    myGGateSpawn.heading = (byte)newHeading;
+                    myGGateSpawn.heading = (byte)y;
                     res.WriteUInt32(myGGateSpawn.instanceId);
                     res.WriteFloat(myGGateSpawn.x);
                     res.WriteFloat(myGGateSpawn.y);
                     res.WriteFloat(myGGateSpawn.z);
-                    res.WriteByte((byte) y);
+                    res.WriteByte((byte)y);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     _Logger.Debug($"GGateSpawn {myGGateSpawn.instanceId} has been rotated to {y}*2 degrees.");
                     break;
                 case "height": //adjusts the height of GGateSpawn by current value +- Y
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     myGGateSpawn.z = myGGateSpawn.z + y;
                     res.WriteUInt32(myGGateSpawn.instanceId);
                     res.WriteFloat(myGGateSpawn.x);
@@ -198,31 +196,25 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(myGGateSpawn.z);
                     res.WriteByte(myGGateSpawn.heading);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     _Logger.Debug($"GGateSpawn {myGGateSpawn.instanceId} has been adjusted by a height of {y}.");
                     break;
                 case "add": //Adds a new entry to the database
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     myGGateSpawn.updated = DateTime.Now;
                     if (!server.database.InsertGGateSpawn(myGGateSpawn))
-                    {
                         responses.Add(ChatResponse.CommandError(client, "myGGateSpawn could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Added GGateSpawn {myGGateSpawn.id} to the database"));
-                    }
 
                     break;
                 case "update": //Updates an existing entry in the database
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     myGGateSpawn.updated = DateTime.Now;
                     if (!server.database.UpdateGGateSpawn(myGGateSpawn))
                     {
                         responses.Add(ChatResponse.CommandError(client, "myGGateSpawn could not be saved to database"));
-                        return;
                     }
                     else
                     {
@@ -232,7 +224,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     break;
                 case "remove": //removes a GGateSpawn from the database
-                    myGGateSpawn = server.instances.GetInstance((uint) x) as GGateSpawn;
+                    myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     if (!server.database.DeleteGGateSpawn(myGGateSpawn.id))
                     {
                         responses.Add(ChatResponse.CommandError(client,
@@ -246,12 +238,12 @@ namespace Necromancy.Server.Chat.Command.Commands
                     }
 
                     res.WriteUInt32(myGGateSpawn.instanceId);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
                     break;
                 case "state": //updates GGate State.
                     res.WriteUInt32(myGGateSpawn.instanceId);
                     res.WriteInt32(y);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_npc_ggate_state_update_notify, res,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_npc_ggate_state_update_notify, res,
                         ServerType.Area);
                     break;
                 default: //you don't know what you're doing do you?
@@ -263,11 +255,5 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
             }
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "ggate";
-
-        public override string helpText =>
-            "usage: `/GGateSpawn [argument] [number] [parameter]` - does something GGateSpawn related";
     }
 }

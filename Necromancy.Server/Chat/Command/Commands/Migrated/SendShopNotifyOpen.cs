@@ -13,6 +13,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "shop";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -36,7 +39,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res0.WriteInt32(1); // item number
             res0.WriteInt32(10200101); // don't know too
             res0.WriteByte(0); // 0 = shop open, 1 = shop not open ?
-            router.Send(client, (ushort) AreaPacketId.recv_shop_notify_open, res0, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_shop_notify_open, res0, ServerType.Area);
 
             IBuffer res1 = BufferProvider.Provide();
             res1.WriteByte(1); //idx
@@ -55,18 +58,16 @@ namespace Necromancy.Server.Chat.Command.Commands
             res3.WriteUInt32(client.character.instanceId);
 
             int numEntries = 0xA;
-            res3.WriteInt32(0xA);//<a
+            res3.WriteInt32(0xA); //<a
             for (int i = 0; i < numEntries; i++)
             {
                 res3.WriteInt16((short)i);
                 int numEntries2 = 0xC1;
                 res3.WriteInt64(numEntries2);
-                for (int j = 0; j < numEntries2; j++)
-                {
-                    res3.WriteByte(1);
-                }
+                for (int j = 0; j < numEntries2; j++) res3.WriteByte(1);
             }
-            router.Send(client, (ushort)0x4978, res3, ServerType.Area);
+
+            router.Send(client, 0x4978, res3, ServerType.Area);
 
             IBuffer res4 = BufferProvider.Provide();
 
@@ -79,22 +80,19 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res4.WriteFixedString("UNKNOWN", 0xC1);
             }
 
-            router.Send(client, (ushort)0xBA61, res4, ServerType.Area);
+            router.Send(client, 0xBA61, res4, ServerType.Area);
 
             IBuffer res5 = BufferProvider.Provide();
 
-            int numEntries4 = 0xA;// <=0xA
+            int numEntries4 = 0xA; // <=0xA
             res5.WriteInt32(numEntries4); //// <=0xA
             for (int i = 0; i < numEntries4; i++)
             {
                 res5.WriteInt16((short)i);
                 res5.WriteInt32(10500501);
             }
-            router.Send(client, (ushort)0x8D62, res5, ServerType.Area);
 
+            router.Send(client, 0x8D62, res5, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "shop";
     }
 }

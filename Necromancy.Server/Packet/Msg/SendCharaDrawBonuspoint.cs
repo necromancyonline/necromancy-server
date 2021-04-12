@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_chara_draw_bonuspoint;
+        public override ushort id => (ushort)MsgPacketId.send_chara_draw_bonuspoint;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,27 +29,19 @@ namespace Necromancy.Server.Packet.Msg
             // ^^ generate a number between 0 and 10000 to determinate the bonus points range
 
             if (rangeDetermination >= 9980)
-            {
-                bonusPoints = (byte) Util.GetRandomNumber(21, 30);
-            }
+                bonusPoints = (byte)Util.GetRandomNumber(21, 30);
             else if (rangeDetermination >= 9880)
-            {
-                bonusPoints = (byte) Util.GetRandomNumber(16, 20);
-            }
+                bonusPoints = (byte)Util.GetRandomNumber(16, 20);
             else if (rangeDetermination >= 9680)
-            {
-                bonusPoints = (byte) Util.GetRandomNumber(10, 15);
-            }
+                bonusPoints = (byte)Util.GetRandomNumber(10, 15);
             else
-            {
-                bonusPoints = (byte) Util.GetRandomNumber(1, 10);
-            }
+                bonusPoints = (byte)Util.GetRandomNumber(1, 10);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteByte(bonusPoints); // Number of points
 
-            router.Send(client, (ushort) MsgPacketId.recv_chara_draw_bonuspoint_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_chara_draw_bonuspoint_r, res, ServerType.Msg);
         }
     }
 }

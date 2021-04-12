@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_receive_gold;
+        public override ushort id => (ushort)AreaPacketId.send_auction_receive_gold;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
             1 The item may be listed
 
             */
-            router.Send(client.map, (ushort) AreaPacketId.recv_auction_receive_gold_r, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_auction_receive_gold_r, res, ServerType.Area);
         }
     }
 }

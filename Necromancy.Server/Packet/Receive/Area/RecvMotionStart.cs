@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMotionStart : PacketResponse
     {
         public RecvMotionStart()
-            : base((ushort) AreaPacketId.recv_motion_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_motion_start, ServerType.Area)
         {
         }
 

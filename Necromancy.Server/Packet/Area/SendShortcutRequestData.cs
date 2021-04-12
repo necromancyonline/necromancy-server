@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_shortcut_request_data;
+        public override ushort id => (ushort)AreaPacketId.send_shortcut_request_data;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,10 +29,10 @@ namespace Necromancy.Server.Packet.Area
                 {
                     if (shortcutBar.item[j] is null) continue;
                     IBuffer res0 = BufferProvider.Provide();
-                    res0.WriteByte((byte) i);
-                    res0.WriteByte((byte) j);
-                    res0.WriteInt32((int) shortcutBar.item[j].type);
-                    res0.WriteInt64(shortcutBar.item[j].id);       // SkillId from skill_tree.csv for class skills
+                    res0.WriteByte((byte)i);
+                    res0.WriteByte((byte)j);
+                    res0.WriteInt32((int)shortcutBar.item[j].type);
+                    res0.WriteInt64(shortcutBar.item[j].id); // SkillId from skill_tree.csv for class skills
                     res0.WriteFixedString("SkillName", 16); //size is 0x10
                     router.Send(client, (ushort)AreaPacketId.recv_shortcut_notify_regist, res0, ServerType.Area);
                 }

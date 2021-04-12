@@ -9,10 +9,6 @@ namespace Necromancy.Server.Packet.Area.SendChatPostMessage
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendChatPostMessageDeserializer));
 
-        public SendChatPostMessageDeserializer()
-        {
-        }
-
         public ChatMessage Deserialize(NecPacket packet)
         {
             int messageTypeValue = packet.data.ReadInt32();
@@ -22,7 +18,7 @@ namespace Necromancy.Server.Packet.Area.SendChatPostMessage
                 return null;
             }
 
-            ChatMessageType messageType = (ChatMessageType) messageTypeValue;
+            ChatMessageType messageType = (ChatMessageType)messageTypeValue;
             string recipient = packet.data.ReadCString();
             int unknown = packet.data.ReadInt32(); //Not sure what this is, it is new from JP client. Might be talk ring related.
             string message = packet.data.ReadCString();

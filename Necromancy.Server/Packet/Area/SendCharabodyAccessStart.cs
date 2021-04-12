@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -7,19 +8,19 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
     public class SendCharabodyAccessStart : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharabodyAccessStart));
+
         public SendCharabodyAccessStart(NecServer server) : base(server)
         {
             //ToDo :   If TargetId = Self.InstanceID,  warp to res statue.   if TargetId = Party member, Collect body.   else,  Loot
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_charabody_access_start;
+        public override ushort id => (ushort)AreaPacketId.send_charabody_access_start;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -32,20 +33,20 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //Insert logic gate here. should not always succeed
             router.Send(client.map, (ushort)AreaPacketId.recv_charabody_access_start_r, res, ServerType.Area);
-        //SALVAGE_DEADBODY,-510,It is protected by a mysterious power., SYSTEM_IMPORTANCE,
-        //SALVAGE_DEADBODY,-513, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
-        // SALVAGE_DEADBODY,-514, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
-        //  SALVAGE_DEADBODY,-528, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
-        //   SALVAGE_DEADBODY,-526, It cannot be stolen from party members., SYSTEM_IMPORTANCE,
-        //   SALVAGE_DEADBODY,-519, The soul is about to revive..., SYSTEM_NOTIFY,
-        //   SALVAGE_DEADBODY,-507, No more corpses can be recovered., SYSTEM_NOTIFY,
+            //SALVAGE_DEADBODY,-510,It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+            //SALVAGE_DEADBODY,-513, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+            // SALVAGE_DEADBODY,-514, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+            //  SALVAGE_DEADBODY,-528, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
+            //   SALVAGE_DEADBODY,-526, It cannot be stolen from party members., SYSTEM_IMPORTANCE,
+            //   SALVAGE_DEADBODY,-519, The soul is about to revive..., SYSTEM_NOTIFY,
+            //   SALVAGE_DEADBODY,-507, No more corpses can be recovered., SYSTEM_NOTIFY,
 
 
             if (instanceId == 0)
                 return;
             if (instanceId == client.character.deadBodyInstanceId)
             {
-                _Logger.Debug($"You've met with a terrible fate haven't you!");
+                _Logger.Debug("You've met with a terrible fate haven't you!");
                 /////////
                 //////  Insert Warp to Ressurection statue logic here.
                 ///////
@@ -66,6 +67,7 @@ namespace Necromancy.Server.Packet.Area
                         RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                         router.Send(client, recvItemInstanceUnidentified.ToPacket());
                     }
+
                     break;
                 case MonsterSpawn monsterSpawn:
                     client.map.monsterSpawns.TryGetValue(monsterSpawn.instanceId, out monsterSpawn);
@@ -80,13 +82,12 @@ namespace Necromancy.Server.Packet.Area
                     break;
                 case NpcSpawn npcSpawn:
                     client.map.npcSpawns.TryGetValue(npcSpawn.instanceId, out npcSpawn);
-                    _Logger.Error($"how are you looting an NPC?");
+                    _Logger.Error("how are you looting an NPC?");
                     break;
                 default:
                     _Logger.Error($"Instance with InstanceId: {instance.instanceId} does not exist");
                     break;
             }
-
         }
     }
 }

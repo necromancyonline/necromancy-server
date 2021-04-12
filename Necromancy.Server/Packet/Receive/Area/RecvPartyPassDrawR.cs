@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartyPassDrawR : PacketResponse
     {
         public RecvPartyPassDrawR()
-            : base((ushort) AreaPacketId.recv_party_pass_draw_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_pass_draw_r, ServerType.Area)
         {
         }
 

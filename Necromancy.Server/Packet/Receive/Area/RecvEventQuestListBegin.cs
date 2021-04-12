@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventQuestListBegin : PacketResponse
     {
         public RecvEventQuestListBegin()
-            : base((ushort) AreaPacketId.recv_event_quest_list_begin, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_quest_list_begin, ServerType.Area)
         {
         }
 
@@ -88,15 +88,18 @@ namespace Necromancy.Server.Packet.Receive.Area
                         res.WriteInt32(0);
                         res.WriteInt32(0);
                     }
+
                     res.WriteByte(0);
                     res.WriteByte(0);
                     res.WriteInt16(0);
                     res.WriteInt16(0);
                     res.WriteInt32(0);
                 }
+
                 //Ret
                 res.WriteInt32(0);
             }
+
             return res;
         }
     }

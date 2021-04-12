@@ -12,11 +12,10 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_raisescale_request_revive_event;
+        public override ushort id => (ushort)AreaPacketId.send_raisescale_request_revive_event;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-
             IBuffer res22 = BufferProvider.Provide();
             res22.WriteInt32(1); // 0 = normal 1 = cinematic
             res22.WriteByte(0);

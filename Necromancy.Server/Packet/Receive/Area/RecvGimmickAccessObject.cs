@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGimmickAccessObject : PacketResponse
     {
         public RecvGimmickAccessObject()
-            : base((ushort) AreaPacketId.recv_gimmick_access_object_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gimmick_access_object_r, ServerType.Area)
         {
         }
 

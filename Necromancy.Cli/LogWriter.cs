@@ -16,13 +16,13 @@ namespace Necromancy.Cli
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(LogWriter));
 
         private readonly object _consoleLock;
+        private readonly Queue<Log> _logQueue;
+        private readonly HashSet<ushort> _packetIdBlacklist;
+        private readonly HashSet<ushort> _packetIdWhitelist;
         private readonly Dictionary<ServerType, HashSet<ushort>> _serverTypeBlacklist;
         private readonly Dictionary<ServerType, HashSet<ushort>> _serverTypeWhitelist;
-        private readonly HashSet<ushort> _packetIdWhitelist;
-        private readonly HashSet<ushort> _packetIdBlacklist;
-        private readonly Queue<Log> _logQueue;
-        private bool _paused;
         private bool _continue;
+        private bool _paused;
 
         public LogWriter()
         {
@@ -40,28 +40,28 @@ namespace Necromancy.Cli
             LogProvider.OnLogWrite += LogProviderOnGlobalLogWrite;
         }
 
-        public List<ISwitchProperty> switches { get; }
-
         /// <summary>
-        /// --max-packet-size=64
+        ///     --max-packet-size=64
         /// </summary>
         public int maxPacketSize { get; set; }
 
         /// <summary>
-        /// --no-data=true
+        ///     --no-data=true
         /// </summary>
         public bool noData { get; set; }
 
         /// <summary>
-        /// --log-level=2
+        ///     --log-level=2
         /// </summary>
         public int minLogLevel { get; set; }
+
+        public List<ISwitchProperty> switches { get; }
 
         public void Reset()
         {
             maxPacketSize = -1;
             noData = false;
-            minLogLevel = (int) LogLevel.Debug;
+            minLogLevel = (int)LogLevel.Debug;
             _serverTypeBlacklist.Clear();
             _serverTypeWhitelist.Clear();
             _packetIdWhitelist.Clear();
@@ -92,18 +92,12 @@ namespace Necromancy.Cli
 
         public void WhitelistPacket(ServerType serverType, ushort packetId)
         {
-            if (!AddToServerTypeList(_serverTypeWhitelist, serverType, packetId))
-            {
-                _Logger.Error($"WhitelistPacket: ServerType:{serverType} PacketId:{packetId} is already added");
-            }
+            if (!AddToServerTypeList(_serverTypeWhitelist, serverType, packetId)) _Logger.Error($"WhitelistPacket: ServerType:{serverType} PacketId:{packetId} is already added");
         }
 
         public void BlacklistPacket(ServerType serverType, ushort packetId)
         {
-            if (!AddToServerTypeList(_serverTypeBlacklist, serverType, packetId))
-            {
-                _Logger.Error($"BlacklistPacket: ServerType:{serverType} PacketId:{packetId} is already added");
-            }
+            if (!AddToServerTypeList(_serverTypeBlacklist, serverType, packetId)) _Logger.Error($"BlacklistPacket: ServerType:{serverType} PacketId:{packetId} is already added");
         }
 
         public void Pause()
@@ -114,10 +108,7 @@ namespace Necromancy.Cli
         public void Continue()
         {
             _continue = true;
-            while (_logQueue.TryDequeue(out Log log))
-            {
-                WriteLog(log);
-            }
+            while (_logQueue.TryDequeue(out Log log)) WriteLog(log);
 
             _paused = false;
             _continue = false;
@@ -131,7 +122,7 @@ namespace Necromancy.Cli
                     "--no-data=true (true|false)",
                     "Don't display packet data",
                     bool.TryParse,
-                    (result => noData = result)
+                    result => noData = result
                 )
             );
             switches.Add(
@@ -140,7 +131,7 @@ namespace Necromancy.Cli
                     "--max-packet-size=64 (integer)",
                     "Don't display packet data",
                     int.TryParse,
-                    (result => maxPacketSize = result)
+                    result => maxPacketSize = result
                 )
             );
             switches.Add(
@@ -149,7 +140,7 @@ namespace Necromancy.Cli
                     "--log-level=20 (integer) [Debug=10, Info=20, Error=30]",
                     "Only display logs of the same level or above",
                     int.TryParse,
-                    (result => minLogLevel = result)
+                    result => minLogLevel = result
                 )
             );
             switches.Add(
@@ -182,7 +173,7 @@ namespace Necromancy.Cli
         }
 
         /// <summary>
-        /// parses strings like "1:1000,2000,3:4000" into ServerType and PacketId
+        ///     parses strings like "1:1000,2000,3:4000" into ServerType and PacketId
         /// </summary>
         private bool TryParsePacketIdList(string value, out List<Tuple<ServerType?, ushort>> result)
         {
@@ -196,26 +187,16 @@ namespace Necromancy.Cli
 
             result = new List<Tuple<ServerType?, ushort>>();
             foreach (string entry in values)
-            {
                 if (entry.Contains(":"))
                 {
                     string[] keyValue = entry.Split(":");
-                    if (keyValue.Length != 2)
-                    {
-                        return false;
-                    }
+                    if (keyValue.Length != 2) return false;
 
-                    if (!byte.TryParse(keyValue[0], out byte serverTypeValue))
-                    {
-                        return false;
-                    }
+                    if (!byte.TryParse(keyValue[0], out byte serverTypeValue)) return false;
 
-                    if (!Enum.IsDefined(typeof(ServerType), serverTypeValue))
-                    {
-                        return false;
-                    }
+                    if (!Enum.IsDefined(typeof(ServerType), serverTypeValue)) return false;
 
-                    ServerType serverType = (ServerType) serverTypeValue;
+                    ServerType serverType = (ServerType)serverTypeValue;
 
                     NumberStyles numberStyles;
                     if (keyValue[1].StartsWith("0x"))
@@ -228,17 +209,14 @@ namespace Necromancy.Cli
                         numberStyles = NumberStyles.Integer;
                     }
 
-                    if (!ushort.TryParse(keyValue[1], numberStyles, null, out ushort val))
-                    {
-                        return false;
-                    }
+                    if (!ushort.TryParse(keyValue[1], numberStyles, null, out ushort val)) return false;
 
                     result.Add(new Tuple<ServerType?, ushort>(serverType, val));
                 }
                 else
                 {
                     NumberStyles numberStyles;
-                    String entryStr;
+                    string entryStr;
                     if (entry.StartsWith("0x"))
                     {
                         entryStr = entry.Substring(2);
@@ -251,14 +229,10 @@ namespace Necromancy.Cli
                     }
 
 
-                    if (!ushort.TryParse(entryStr, numberStyles, null, out ushort val))
-                    {
-                        return false;
-                    }
+                    if (!ushort.TryParse(entryStr, numberStyles, null, out ushort val)) return false;
 
                     result.Add(new Tuple<ServerType?, ushort>(null, val));
                 }
-            }
 
             return true;
         }
@@ -268,16 +242,10 @@ namespace Necromancy.Cli
             Action<ushort> addToPacketList)
         {
             foreach (Tuple<ServerType?, ushort> entry in results)
-            {
                 if (entry.Item1.HasValue)
-                {
                     addToServerTypeList(entry.Item1.Value, entry.Item2);
-                }
                 else
-                {
                     addToPacketList(entry.Item2);
-                }
-            }
         }
 
         private bool AddToServerTypeList(Dictionary<ServerType, HashSet<ushort>> dictionary, ServerType serverType,
@@ -294,20 +262,14 @@ namespace Necromancy.Cli
                 dictionary.Add(serverType, hashSet);
             }
 
-            if (hashSet.Contains(packetId))
-            {
-                return false;
-            }
+            if (hashSet.Contains(packetId)) return false;
 
             return hashSet.Add(packetId);
         }
 
         private void LogProviderOnGlobalLogWrite(object sender, LogWriteEventArgs logWriteEventArgs)
         {
-            while (_continue)
-            {
-                Thread.Sleep(10000);
-            }
+            while (_continue) Thread.Sleep(10000);
 
             if (_paused)
             {
@@ -347,10 +309,7 @@ namespace Necromancy.Cli
             else
             {
                 LogLevel logLevel = log.LogLevel;
-                if ((int) logLevel < minLogLevel)
-                {
-                    return;
-                }
+                if ((int)logLevel < minLogLevel) return;
 
                 switch (logLevel)
                 {
@@ -371,10 +330,7 @@ namespace Necromancy.Cli
                 text = log.ToString();
             }
 
-            if (text == null)
-            {
-                return;
-            }
+            if (text == null) return;
 
             lock (_consoleLock)
             {
@@ -388,27 +344,18 @@ namespace Necromancy.Cli
         {
             bool useWhitelist = _serverTypeWhitelist.Count > 0 || _packetIdWhitelist.Count > 0;
 
-            bool whitelisted = (_serverTypeWhitelist.ContainsKey(serverType)
-                                && _serverTypeWhitelist[serverType].Contains(packetId))
+            bool whitelisted = _serverTypeWhitelist.ContainsKey(serverType)
+                               && _serverTypeWhitelist[serverType].Contains(packetId)
                                || _packetIdWhitelist.Contains(packetId);
-            bool blacklisted = (_serverTypeBlacklist.ContainsKey(serverType)
-                                && _serverTypeBlacklist[serverType].Contains(packetId))
+            bool blacklisted = _serverTypeBlacklist.ContainsKey(serverType)
+                               && _serverTypeBlacklist[serverType].Contains(packetId)
                                || _packetIdBlacklist.Contains(packetId);
 
-            if (useWhitelist && whitelisted)
-            {
-                return false;
-            }
+            if (useWhitelist && whitelisted) return false;
 
-            if (useWhitelist)
-            {
-                return true;
-            }
+            if (useWhitelist) return true;
 
-            if (blacklisted)
-            {
-                return true;
-            }
+            if (blacklisted) return true;
 
             return false;
         }
@@ -418,10 +365,7 @@ namespace Necromancy.Cli
             ServerType serverType = logPacket.serverType;
             ushort packetId = logPacket.id;
 
-            if (ExcludeLog(serverType, packetId))
-            {
-                return null;
-            }
+            if (ExcludeLog(serverType, packetId)) return null;
 
             int dataSize = logPacket.data.Size;
 

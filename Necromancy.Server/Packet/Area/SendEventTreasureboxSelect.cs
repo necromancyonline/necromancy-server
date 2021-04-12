@@ -10,12 +10,13 @@ namespace Necromancy.Server.Packet.Area
     public class SendEventTreasureboxSelect : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemMove));
+
         public SendEventTreasureboxSelect(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_event_treasurebox_select;
+        public override ushort id => (ushort)AreaPacketId.send_event_treasurebox_select;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -28,7 +29,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client.map, (ushort) AreaPacketId.recv_event_treasurebox_select_r, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_event_treasurebox_select_r, res, ServerType.Area);
 
             //insert logic to grab Item from Inventory based on above data.Read  here
             long itemId = 0;
@@ -50,7 +51,6 @@ namespace Necromancy.Server.Packet.Area
 
             res = BufferProvider.Provide();
             router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
-
         }
     }
 }

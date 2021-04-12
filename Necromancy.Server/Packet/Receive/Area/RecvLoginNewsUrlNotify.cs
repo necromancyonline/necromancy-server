@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvLoginNewsUrlNotify : PacketResponse
     {
         public RecvLoginNewsUrlNotify()
-            : base((ushort) AreaPacketId.recv_login_news_url_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_login_news_url_notify, ServerType.Area)
         {
         }
 

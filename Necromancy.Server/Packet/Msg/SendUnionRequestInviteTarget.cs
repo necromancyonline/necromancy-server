@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_invite_target;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_invite_target;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -23,7 +23,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(client.character.unionId); //union instance id?
             res.WriteUInt32(targetInstanceId); //TargetInstanceId
 
-            router.Send(client, (ushort) MsgPacketId.recv_union_request_invite_target_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_request_invite_target_r, res, ServerType.Msg);
 
 
             IBuffer res2 = BufferProvider.Provide();
@@ -35,7 +35,7 @@ namespace Necromancy.Server.Packet.Msg
             res2.WriteByte(99); //Unknown
             res2.WriteCString(client.union.name); //max size 0x31
 
-            router.Send(targetClient, (ushort) MsgPacketId.recv_union_notify_invite, res2, ServerType.Msg);
+            router.Send(targetClient, (ushort)MsgPacketId.recv_union_notify_invite, res2, ServerType.Msg);
         }
     }
 }

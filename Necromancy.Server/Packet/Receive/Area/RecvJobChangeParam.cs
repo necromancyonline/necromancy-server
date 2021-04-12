@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvJobChangeParam : PacketResponse
     {
         public RecvJobChangeParam()
-            : base((ushort) AreaPacketId.recv_job_change_param, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_job_change_param, ServerType.Area)
         {
         }
 
@@ -18,22 +18,10 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
-            for (int i = 0; i < 7; i++)
-            {
-                res.WriteInt16(0);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                res.WriteInt16(0);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                res.WriteInt16(0);
-            }
-            for (int i = 0; i < 0xB; i++)
-            {
-                res.WriteInt16(0);
-            }
+            for (int i = 0; i < 7; i++) res.WriteInt16(0);
+            for (int i = 0; i < 9; i++) res.WriteInt16(0);
+            for (int i = 0; i < 9; i++) res.WriteInt16(0);
+            for (int i = 0; i < 0xB; i++) res.WriteInt16(0);
 
             res.WriteInt32(0);
             res.WriteInt32(0);
@@ -54,22 +42,10 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
             res.WriteByte(0);
 
-            for (int i = 0; i < 7; i++)
-            {
-                res.WriteInt16(0);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                res.WriteInt16(0);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                res.WriteInt16(0);
-            }
-            for (int i = 0; i < 0xB; i++)
-            {
-                res.WriteInt16(0);
-            }
+            for (int i = 0; i < 7; i++) res.WriteInt16(0);
+            for (int i = 0; i < 9; i++) res.WriteInt16(0);
+            for (int i = 0; i < 9; i++) res.WriteInt16(0);
+            for (int i = 0; i < 0xB; i++) res.WriteInt16(0);
             res.WriteInt64(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
@@ -79,24 +55,15 @@ namespace Necromancy.Server.Packet.Receive.Area
 
             int numEntries = 0x100;
             res.WriteInt32(numEntries);
-            for (int i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < numEntries; i++) res.WriteInt32(0);
 
             numEntries = 0x100;
             res.WriteInt32(numEntries);
-            for (int i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < numEntries; i++) res.WriteInt32(0);
 
             numEntries = 0x13;
             res.WriteInt32(numEntries);
-            for (int i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < numEntries; i++) res.WriteInt32(0);
 
             numEntries = 0x13;
             res.WriteInt32(numEntries);
@@ -114,7 +81,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
                 res.WriteByte(0);
                 res.WriteByte(0);
-                res.WriteByte(0);//bool
+                res.WriteByte(0); //bool
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -124,10 +91,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
             numEntries = 0x13;
             res.WriteInt32(numEntries);
-            for (int i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < numEntries; i++) res.WriteInt32(0);
             return res;
         }
     }

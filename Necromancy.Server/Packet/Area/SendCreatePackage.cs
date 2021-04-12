@@ -2,7 +2,6 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -12,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_create_package;
+        public override ushort id => (ushort)AreaPacketId.send_create_package;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -24,54 +23,55 @@ namespace Necromancy.Server.Packet.Area
             long money = packet.data.ReadInt64();
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);//Failed to send message error if not 0
-            router.Send(client, (ushort) AreaPacketId.recv_create_package_r, res, ServerType.Area);
+            res.WriteInt32(0); //Failed to send message error if not 0
+            router.Send(client, (ushort)AreaPacketId.recv_create_package_r, res, ServerType.Area);
 
-            SendPackageNotifyAdd(client, recipient, title, content, unknownInt, itemCount,  money);
+            SendPackageNotifyAdd(client, recipient, title, content, unknownInt, itemCount, money);
         }
+
         private void SendPackageNotifyAdd(NecClient client, string recipient, string title, string content,
-                                         int unknownInt, byte itemCount,  long money)
+            int unknownInt, byte itemCount, long money)
         {
             NecClient recipientClient = server.clients.GetBySoulName(recipient);
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteInt32(0);//Failed to send message error if not 0
-            res.WriteInt32(Util.GetRandomNumber(900,921));//Object ID of mail package item
-            res.WriteFixedString(client.soul.name, 0x31);//Soul name of sender
-            res.WriteFixedString(client.character.name, 0x5B);//Character name but of what?
-            res.WriteFixedString($"{title}", 0x5B);//Title
-            res.WriteFixedString($"{content}", 0x259);//Content
-            res.WriteInt32(Util.GetRandomNumber(0,10));
-            res.WriteInt16(1);//Mail package state. 1=un-read 3 = received //This number needs to be odd otherwise it causes a "colored" mail and causes inf loop of send_select_package_update
+            res.WriteInt32(0); //Failed to send message error if not 0
+            res.WriteInt32(Util.GetRandomNumber(900, 921)); //Object ID of mail package item
+            res.WriteFixedString(client.soul.name, 0x31); //Soul name of sender
+            res.WriteFixedString(client.character.name, 0x5B); //Character name but of what?
+            res.WriteFixedString($"{title}", 0x5B); //Title
+            res.WriteFixedString($"{content}", 0x259); //Content
+            res.WriteInt32(Util.GetRandomNumber(0, 10));
+            res.WriteInt16(1); //Mail package state. 1=un-read 3 = received //This number needs to be odd otherwise it causes a "colored" mail and causes inf loop of send_select_package_update
             res.WriteInt64(10200101); //item instance id
-            res.WriteInt32(10200101);//Responsible for icon
-            res.WriteFixedString("help", 0x49);//
-            res.WriteFixedString($"me ", 0x49);//Item Title
-            res.WriteInt32(1);//Odd numbers here make the item have the title and correct icon, 1/3 = not broken, -1/5 = broken
+            res.WriteInt32(10200101); //Responsible for icon
+            res.WriteFixedString("help", 0x49); //
+            res.WriteFixedString("me ", 0x49); //Item Title
+            res.WriteInt32(1); //Odd numbers here make the item have the title and correct icon, 1/3 = not broken, -1/5 = broken
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteFixedString("pls", 0x10);
-            res.WriteByte(itemCount);//Number of items
+            res.WriteByte(itemCount); //Number of items
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
 
-            res.WriteByte(1);//bool
+            res.WriteByte(1); //bool
             res.WriteInt32(1);
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
 
-            res.WriteByte(1);//bool
+            res.WriteByte(1); //bool
             res.WriteInt32(2);
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
 
-            res.WriteByte(1);//bool
+            res.WriteByte(1); //bool
             res.WriteInt32(3);
             res.WriteInt32(Util.GetRandomNumber(0, 10));
             res.WriteInt32(Util.GetRandomNumber(0, 10));
 
-            res.WriteInt64(money);//Transfered money
+            res.WriteInt64(money); //Transfered money
 
 
             router.Send(recipientClient, (ushort)AreaPacketId.recv_package_notify_add, res, ServerType.Area);

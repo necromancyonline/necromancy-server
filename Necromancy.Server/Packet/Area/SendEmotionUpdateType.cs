@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_emotion_update_type;
+        public override ushort id => (ushort)AreaPacketId.send_emotion_update_type;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -22,7 +22,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(0);
 
-            router.Send(client, (ushort) AreaPacketId.recv_emotion_update_type_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_emotion_update_type_r, res, ServerType.Area);
 
             SendEmotionNotifyType(client, emote);
         }
@@ -34,7 +34,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteUInt32(client.character.instanceId); //Character ID
             res.WriteInt32(emote); //Emote ID
 
-            router.Send(client.map, (ushort) AreaPacketId.recv_emotion_notify_type, res, ServerType.Area, client);
+            router.Send(client.map, (ushort)AreaPacketId.recv_emotion_notify_type, res, ServerType.Area, client);
         }
     }
 }

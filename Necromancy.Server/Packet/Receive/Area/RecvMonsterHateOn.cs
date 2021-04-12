@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMonsterHateOn : PacketResponse
     {
         public RecvMonsterHateOn()
-            : base((ushort) AreaPacketId.recv_monster_hate_on, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_monster_hate_on, ServerType.Area)
         {
         }
 

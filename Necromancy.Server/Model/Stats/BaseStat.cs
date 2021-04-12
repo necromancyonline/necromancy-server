@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Necromancy.Server.Model.Stats
 {
     public class BaseStat
     {
         protected readonly object currentLock = new object();
         protected readonly object maxLock = new object();
-        protected int statMax;
-        protected int statCurrent;
         protected uint instanceId;
         protected bool isDepleted;
+        protected int statCurrent;
+        protected int statMax;
+
         public BaseStat(int currVal, int statMaxVal)
         {
             statCurrent = currVal;
@@ -22,9 +19,30 @@ namespace Necromancy.Server.Model.Stats
         public bool depleted
         {
             get => isDepleted;
-            set
+            set => isDepleted = value;
+        }
+
+        public int current
+        {
+            get => statCurrent;
+            protected set
             {
-                isDepleted = value;
+                lock (currentLock)
+                {
+                    statCurrent = value;
+                }
+            }
+        }
+
+        public int max
+        {
+            get => statMax;
+            private set
+            {
+                lock (maxLock)
+                {
+                    statCurrent = value;
+                }
             }
         }
 
@@ -42,47 +60,30 @@ namespace Necromancy.Server.Model.Stats
             lock (currentLock)
             {
                 if (useMax)
-                    statCurrent += (statMax * (value / 100));
+                    statCurrent += statMax * (value / 100);
                 else
-                    statCurrent += (statCurrent * (value / 100));
+                    statCurrent += statCurrent * (value / 100);
             }
+
             return statCurrent;
         }
+
         public int SetMax(int value)
         {
             lock (maxLock)
             {
                 statMax = value;
             }
+
             return statMax;
         }
+
         public void ToMax()
         {
             statCurrent = statMax;
             isDepleted = false;
         }
-        public int current
-        {
-            get => statCurrent;
-            protected set
-            {
-                lock (currentLock)
-                {
-                    statCurrent = value;
-                }
-            }
-        }
-        public int max
-        {
-            get => statMax;
-            private set
-            {
-                lock (maxLock)
-                {
-                    statCurrent = value;
-                }
-            }
-        }
+
         public int Modify(int amount, uint instanceId = 0)
         {
             lock (currentLock)
@@ -96,6 +97,7 @@ namespace Necromancy.Server.Model.Stats
                     this.instanceId = instanceId;
                 }
             }
+
             return statCurrent;
         }
     }

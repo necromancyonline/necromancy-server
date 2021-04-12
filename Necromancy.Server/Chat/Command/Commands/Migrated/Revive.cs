@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.CharacterModel;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
@@ -15,6 +11,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         public Revive(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "revi";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -31,10 +30,6 @@ namespace Necromancy.Server.Chat.Command.Commands
             res15.WriteInt16(2); //Offered item % (this probably changes with recv_raisescale_update_success_per)
             res15.WriteInt16(0); //Dimento medal addition %
             router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_open, res15, ServerType.Area);
-
         }
-
-        public override AccountStateType accountState => AccountStateType.User;
-        public override string key => "revi";
     }
 }

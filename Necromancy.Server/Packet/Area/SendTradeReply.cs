@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_trade_reply;
+        public override ushort id => (ushort)AreaPacketId.send_trade_reply;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -24,12 +24,12 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(error);
-            router.Send(client, (ushort) AreaPacketId.recv_trade_reply_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_trade_reply_r, res, ServerType.Area);
 
             RecvTradeNotifyReplied notifyReplied = new RecvTradeNotifyReplied(error);
             router.Send(notifyReplied, targetClient);
 
-            if(error == 0)//Success condition
+            if (error == 0) //Success condition
             {
                 RecvEventStart eventStart = new RecvEventStart(0, 0);
                 router.Send(eventStart, client, targetClient);

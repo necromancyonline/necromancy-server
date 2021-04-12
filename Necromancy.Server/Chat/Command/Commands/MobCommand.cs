@@ -10,7 +10,7 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Quick mob test commands.
+    ///     Quick mob test commands.
     /// </summary>
     public class MobCommand : ServerChatCommand
     {
@@ -19,6 +19,12 @@ namespace Necromancy.Server.Chat.Command.Commands
         public MobCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "mob";
+
+        public override string helpText =>
+            "usage: `/mob [argument] [number]` - Fires a recv to the game of argument type with [x] number as an argument, must have swung/cast at a mob beforehand.";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -31,7 +37,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (!int.TryParse(command[1], out int x))
             {
-                responses.Add(ChatResponse.CommandError(client, $"Please provide a value to test"));
+                responses.Add(ChatResponse.CommandError(client, "Please provide a value to test"));
                 return;
             }
 
@@ -54,7 +60,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteUInt32(monsterSpawn.instanceId);
                     //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing).
                     res.WriteInt32(x);
-                    router.Send(client, (ushort) AreaPacketId.recv_monster_state_update_notify, res, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_monster_state_update_notify, res, ServerType.Area);
                     break;
 
                 case "dead":
@@ -64,7 +70,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res2.WriteInt32(x);
                     res2.WriteInt32(x);
                     res2.WriteInt32(x);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_noact_notify_dead, res2,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_noact_notify_dead, res2,
                         ServerType.Area);
                     break;
 
@@ -72,7 +78,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer res3 = BufferProvider.Provide();
                     //recv_battle_attack_pose_start_notify = 0x7CB2,
                     res3.WriteInt32(x);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_battle_attack_pose_start_notify, res3,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_battle_attack_pose_start_notify, res3,
                         ServerType.Area);
                     break;
 
@@ -80,7 +86,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer resT = BufferProvider.Provide();
                     resT.WriteUInt32(client.character.instanceId); //Character ID
                     resT.WriteInt32(x); //Character pose
-                    router.Send(client.map, (ushort) AreaPacketId.recv_chara_pose_notify, resT, ServerType.Area,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_chara_pose_notify, resT, ServerType.Area,
                         client);
 
                     break;
@@ -92,7 +98,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res4.WriteUInt32(monsterSpawn
                         .instanceId); //Unique instance of this monsters "Hate" attribute. not to be confused with the Monsters InstanceID
                     res4.WriteInt32(x);
-                    router.Send(client, (ushort) AreaPacketId.recv_monster_hate_on, res4, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_monster_hate_on, res4, ServerType.Area);
                     break;
 
                 case "jump":
@@ -104,7 +110,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res5.WriteFloat(monsterSpawn.z);
                     res5.WriteByte(monsterSpawn.heading);
                     res5.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res5, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res5, ServerType.Area);
                     break;
 
                 case "emotion":
@@ -112,7 +118,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer res6 = BufferProvider.Provide();
                     res6.WriteUInt32(monsterSpawn.instanceId);
                     res6.WriteInt32(x);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_emotion_notify_type, res6, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_emotion_notify_type, res6, ServerType.Area);
                     break;
 
                 case "deadstate":
@@ -122,7 +128,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res7.WriteInt32(
                         x); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
                     res7.WriteInt32(x);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_charabody_notify_deadstate, res7,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_charabody_notify_deadstate, res7,
                         ServerType.Area);
                     break;
 
@@ -133,7 +139,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     //resA.WriteInt64(x);
                     resA.WriteUInt32(client.character.instanceId);
                     resA.WriteUInt32(client.character.instanceId);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_sub_target_update_notify, resA,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_sub_target_update_notify, resA,
                         ServerType.Area);
                     break;
 
@@ -141,8 +147,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     //recv_object_hp_per_update_notify = 0xFF00,
                     IBuffer resB = BufferProvider.Provide();
                     resB.WriteUInt32(monsterSpawn.instanceId);
-                    resB.WriteByte((byte) x);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_hp_per_update_notify, resB,
+                    resB.WriteByte((byte)x);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_hp_per_update_notify, resB,
                         ServerType.Area);
                     break;
 
@@ -152,7 +158,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     resC.WriteUInt32(client.character.instanceId);
                     resC.WriteInt32(13010101);
                     resC.WriteFloat(3);
-                    router.Send(client, (ushort) AreaPacketId.recv_battle_report_action_monster_skill_start_cast, resC,
+                    router.Send(client, (ushort)AreaPacketId.recv_battle_report_action_monster_skill_start_cast, resC,
                         ServerType.Area);
                     break;
 
@@ -160,14 +166,14 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer resE = BufferProvider.Provide();
                     //recv_battle_report_action_monster_skill_exec = 0x2A82,
                     resE.WriteInt32(x);
-                    router.Send(client, (ushort) AreaPacketId.recv_battle_report_action_monster_skill_exec, resE,
+                    router.Send(client, (ushort)AreaPacketId.recv_battle_report_action_monster_skill_exec, resE,
                         ServerType.Area);
                     break;
 
                 case "start":
                     IBuffer resO = BufferProvider.Provide();
                     resO.WriteUInt32(instance.instanceId);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_start_notify, resO,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_start_notify, resO,
                         ServerType.Area);
                     break;
 
@@ -201,7 +207,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     //Router.Send(client.Map, (ushort)AreaPacketId.recv_battle_report_noact_notify_buff_effect, resM, ServerType.Area);
 
                     IBuffer resH = BufferProvider.Provide();
-                    router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_end_notify, resH, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_end_notify, resH, ServerType.Area);
                     break;
 
                 case "gimmick":
@@ -214,7 +220,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     resI.WriteByte(client.character.heading);
                     resI.WriteInt32(x); //Gimmick number (from gimmick.csv)
                     resI.WriteInt32(0);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_data_notify_gimmick_data, resI, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_gimmick_data, resI, ServerType.Area);
                     break;
 
                 default:
@@ -223,23 +229,17 @@ namespace Necromancy.Server.Chat.Command.Commands
             }
         }
 
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "mob";
-
-        public override string helpText =>
-            "usage: `/mob [argument] [number]` - Fires a recv to the game of argument type with [x] number as an argument, must have swung/cast at a mob beforehand.";
-
         private void SendBattleReportStartNotify(NecClient client, IInstance instance)
         {
             IBuffer res4 = BufferProvider.Provide();
             res4.WriteUInt32(instance.instanceId);
-            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
         }
 
         private void SendBattleReportEndNotify(NecClient client, IInstance instance)
         {
             IBuffer res4 = BufferProvider.Provide();
-            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_end_notify, res4, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_end_notify, res4, ServerType.Area);
         }
     }
 }

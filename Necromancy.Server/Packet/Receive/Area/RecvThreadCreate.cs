@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvThreadCreate : PacketResponse
     {
         public RecvThreadCreate()
-            : base((ushort) AreaPacketId.recv_thread_create_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_thread_create_r, ServerType.Area)
         {
         }
 

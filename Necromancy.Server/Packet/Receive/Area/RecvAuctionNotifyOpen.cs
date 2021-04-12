@@ -8,13 +8,13 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvAuctionNotifyOpen : PacketResponse
     {
         public RecvAuctionNotifyOpen()
-            : base((ushort) AreaPacketId.recv_auction_notify_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_auction_notify_open, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
-             IBuffer res = BufferProvider.Provide();
+            IBuffer res = BufferProvider.Provide();
             int numEntries = 0xF;
             res.WriteInt32(numEntries); //Less than or equal to 0xF
 
@@ -73,13 +73,13 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0);
                 res.WriteByte(0); //Bool
 
-                res.WriteByte(0);//These are 3 separate bytes or a fixed string of 3 characters.
-                res.WriteByte(0);//
-                res.WriteByte(0);//
+                res.WriteByte(0); //These are 3 separate bytes or a fixed string of 3 characters.
+                res.WriteByte(0); //
+                res.WriteByte(0); //
 
                 res.WriteInt64(0);
                 res.WriteInt64(0);
-                res.WriteFixedString("fs0xC1", 0xC1);//Fixed string of 0xC1 or 0xC1 bytes.
+                res.WriteFixedString("fs0xC1", 0xC1); //Fixed string of 0xC1 or 0xC1 bytes.
                 res.WriteByte(0);
                 res.WriteByte(0);
             }
@@ -98,7 +98,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0);
                 res.WriteInt64(0);
                 res.WriteInt64(0);
-                res.WriteFixedString("fs0xC1V2", 0xC1);//Fixed string of 0xC1 or 0xC1 bytes.
+                res.WriteFixedString("fs0xC1V2", 0xC1); //Fixed string of 0xC1 or 0xC1 bytes.
                 res.WriteByte(0);
             }
 

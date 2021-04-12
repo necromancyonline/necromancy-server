@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEscapeExec : PacketResponse
     {
         public RecvEscapeExec()
-            : base((ushort) AreaPacketId.recv_escape_exec, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_escape_exec, ServerType.Area)
         {
         }
 

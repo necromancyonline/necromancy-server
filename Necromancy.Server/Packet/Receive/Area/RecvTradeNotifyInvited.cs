@@ -8,8 +8,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTradeNotifyInvited : PacketResponse
     {
         private readonly uint _instanceId;
+
         public RecvTradeNotifyInvited(uint instanceId)
-            : base((ushort) AreaPacketId.recv_trade_notify_invited, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_notify_invited, ServerType.Area)
         {
             _instanceId = instanceId;
         }

@@ -14,13 +14,11 @@ namespace Necromancy.Server.Model.Skills
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(Spell));
 
-        public uint instanceId { get; set; }
-
         private readonly NecClient _client;
         private readonly NecServer _server;
         private readonly int _skillId;
-        private uint _targetInstanceId;
         private Vector3 _srcCoord;
+        private uint _targetInstanceId;
 
         public Spell(NecServer server, NecClient client, int skillId, uint targetInstanceId, Vector3 srcCoord)
         {
@@ -31,10 +29,12 @@ namespace Necromancy.Server.Model.Skills
             _srcCoord = srcCoord;
         }
 
+        public uint instanceId { get; set; }
+
         public void StartCast()
         {
             if (_targetInstanceId == 0) _targetInstanceId = _client.character.instanceId;
-            IInstance target = _server.instances.GetInstance((uint) _targetInstanceId);
+            IInstance target = _server.instances.GetInstance(_targetInstanceId);
             switch (target) // ToDO     Do a hositilty check to make sure this is allowed
             {
                 case NpcSpawn npcSpawn:
@@ -80,7 +80,7 @@ namespace Necromancy.Server.Model.Skills
             Character character = null;
             float perHp = 0;
             int damage = Util.GetRandomNumber(70, 90);
-            IInstance target = _server.instances.GetInstance((uint) _targetInstanceId);
+            IInstance target = _server.instances.GetInstance(_targetInstanceId);
             switch (target)
             {
                 case NpcSpawn npc:
@@ -99,15 +99,11 @@ namespace Necromancy.Server.Model.Skills
                     trgCoord.Y = monsterSpawn.y;
                     trgCoord.Z = monsterSpawn.z;
                     int monsterHp = monsterSpawn.hp.current;
-                    perHp = monsterHp > 0 ? (((float) monsterHp / (float) monsterSpawn.hp.max) * 100) : 0;
+                    perHp = monsterHp > 0 ? monsterHp / (float)monsterSpawn.hp.max * 100 : 0;
                     if (monsterSpawn.GetAgroCharacter(_client.character.instanceId))
-                    {
                         monsterSpawn.UpdateHp(-damage);
-                    }
                     else
-                    {
                         monsterSpawn.UpdateHp(-damage, _server, true, _client.character.instanceId);
-                    }
 
                     break;
                 case Character chara:
@@ -139,10 +135,7 @@ namespace Necromancy.Server.Model.Skills
             brList.Add(brExec);
             brList.Add(brEnd);
             _server.router.Send(_client.map, brList);
-            if (!int.TryParse($"{_skillId}".Substring(1, 6) + 1, out int effectId))
-            {
-                _Logger.Error($"Creating effectId from skillid [{_skillId}]");
-            }
+            if (!int.TryParse($"{_skillId}".Substring(1, 6) + 1, out int effectId)) _Logger.Error($"Creating effectId from skillid [{_skillId}]");
 
             trgCoord.Z += 10;
             _Logger.Debug($"skillid [{_skillId}] effectId [{effectId}]");

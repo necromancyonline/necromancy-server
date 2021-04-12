@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionRequestNews : PacketResponse
     {
         public RecvUnionRequestNews()
-            : base((ushort) MsgPacketId.recv_union_request_news_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_request_news_r, ServerType.Msg)
         {
         }
 
@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             int numEntries = 0x3E8;
-            res.WriteInt32(numEntries);//Less than or equal to 0x3E8
+            res.WriteInt32(numEntries); //Less than or equal to 0x3E8
             for (int i = 0; i < numEntries; i++)
             {
                 res.WriteInt32(0);
@@ -28,6 +28,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
                 res.WriteFixedString("", 0x49); //Fixed string of size 0x49
                 res.WriteInt32(0);
             }
+
             return res;
         }
     }

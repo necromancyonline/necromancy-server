@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_equip_honor;
+        public override ushort id => (ushort)AreaPacketId.send_equip_honor;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Msg
             HONOR,  2,  You may not change your equipped title while your character is lost,SYSTEM_WARNING,
              */
 
-            router.Send(client, (ushort) AreaPacketId.recv_equip_honor_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_equip_honor_r, res, ServerType.Area);
 
             res = BufferProvider.Provide();
             res.WriteUInt32(client.character.instanceId);

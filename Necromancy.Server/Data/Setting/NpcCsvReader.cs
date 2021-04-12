@@ -6,15 +6,9 @@ namespace Necromancy.Server.Data.Setting
 
         protected override NpcSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
-            if (!int.TryParse(properties[20], out int level))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[20], out int level)) return null;
 
             return new NpcSetting
             {

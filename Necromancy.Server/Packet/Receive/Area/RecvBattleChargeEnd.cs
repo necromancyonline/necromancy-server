@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleChargeEnd : PacketResponse
     {
         public RecvBattleChargeEnd()
-            : base((ushort) AreaPacketId.recv_battle_charge_end_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_charge_end_r, ServerType.Area)
         {
         }
 

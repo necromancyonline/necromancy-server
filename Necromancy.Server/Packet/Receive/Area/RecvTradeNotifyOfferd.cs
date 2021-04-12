@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTradeNotifyOfferd : PacketResponse
     {
         public RecvTradeNotifyOfferd()
-            : base((ushort) AreaPacketId.recv_trade_notify_offerd, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_notify_offerd, ServerType.Area)
         {
         }
 

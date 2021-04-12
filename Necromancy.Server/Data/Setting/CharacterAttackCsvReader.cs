@@ -6,18 +6,13 @@ namespace Necromancy.Server.Data.Setting
     {
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(CharacterAttackCsvReader));
 
-        public CharacterAttackCsvReader()
-        {
-
-        }
-
         protected override int numExpectedItems => 40;
 
         protected override CharacterAttackSetting CreateInstance(string[] properties)
         {
             if (!int.TryParse(properties[0], out int id))
             {
-                _Logger.Debug($"First entry empty!!");
+                _Logger.Debug("First entry empty!!");
                 return null;
             }
 

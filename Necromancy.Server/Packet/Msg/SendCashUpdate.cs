@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_cash_update;
+        public override ushort id => (ushort)MsgPacketId.send_cash_update;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
 
 
-            router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_base_login_r, res, ServerType.Msg);
         }
     }
 }

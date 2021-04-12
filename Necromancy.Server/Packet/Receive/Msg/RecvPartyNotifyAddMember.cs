@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Msg
 {
     public class RecvPartyNotifyAddMember : PacketResponse
     {
-        private NecClient _client;
+        private readonly NecClient _client;
+
         public RecvPartyNotifyAddMember(NecClient client)
-            : base((ushort) MsgPacketId.recv_party_notify_add_member, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_add_member, ServerType.Msg)
         {
             _client = client;
         }
@@ -24,7 +25,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             I participated in the party of PARTY_ADD	10	%s.
             */
 
-            res.WriteUInt32(_client.character.deadBodyInstanceId);//DeadBodyId?
+            res.WriteUInt32(_client.character.deadBodyInstanceId); //DeadBodyId?
             res.WriteUInt32(_client.character.instanceId); //Chara Instance Id
             res.WriteFixedString($"{_client.soul.name}", 0x31); //Soul name
             res.WriteFixedString($"{_client.character.name}", 0x5B); //Character name
@@ -41,14 +42,14 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteInt32(_client.character.mapId); //One half of location? 1001902 = Illfalo Port but is actually Deep Sea Port
             res.WriteInt32(500); // current guard points?
             res.WriteInt32(600); // max guard points?
-            res.WriteFixedString($"Channel {_client.character.channel}",0x61); //Location of player if not in same zone
-            res.WriteInt32(3/*_client.Character.Ac*/); //AC? which is  like, chance to dodge
+            res.WriteFixedString($"Channel {_client.character.channel}", 0x61); //Location of player if not in same zone
+            res.WriteInt32(3 /*_client.Character.Ac*/); //AC? which is  like, chance to dodge
             res.WriteByte(3); // condition?
             res.WriteFloat(_client.character.x);
             res.WriteFloat(_client.character.y);
             res.WriteFloat(_client.character.z);
             res.WriteByte(_client.character.heading);
-            res.WriteByte((byte)(_client.character.criminalState+5)); //?
+            res.WriteByte((byte)(_client.character.criminalState + 5)); //?
             res.WriteByte(1); //Beginner Protection (bool) ??? Dragon (in boss fight) ??
             res.WriteByte(3); //Membership Status???
 

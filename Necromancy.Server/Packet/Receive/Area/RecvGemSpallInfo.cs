@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGemSpallInfo : PacketResponse
     {
         public RecvGemSpallInfo()
-            : base((ushort) AreaPacketId.recv_gem_spall_info, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gem_spall_info, ServerType.Area)
         {
         }
 
@@ -23,8 +23,10 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteInt32(0);
                     res.WriteFixedString("Xeno", 0x10);
                 }
+
                 res.WriteInt16(0);
             }
+
             res.WriteInt16(0);
             res.WriteInt64(0);
             //end sub

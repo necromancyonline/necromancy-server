@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_event_select_map_and_channel_r;
+        public override ushort id => (ushort)AreaPacketId.send_event_select_map_and_channel_r;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
     }
 }

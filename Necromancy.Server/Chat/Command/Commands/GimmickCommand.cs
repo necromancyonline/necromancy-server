@@ -10,7 +10,7 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Gimmick related commands.
+    ///     Gimmick related commands.
     /// </summary>
     public class GimmickCommand : ServerChatCommand
     {
@@ -19,6 +19,12 @@ namespace Necromancy.Server.Chat.Command.Commands
         public GimmickCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "gimmick";
+
+        public override string helpText =>
+            "usage: `/gimmick [argument] [number] [parameter]` - does something gimmick related";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -31,14 +37,11 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (!int.TryParse(command[1], out int x))
             {
-                responses.Add(ChatResponse.CommandError(client, $"Please provide a value.  model Id or instance Id"));
+                responses.Add(ChatResponse.CommandError(client, "Please provide a value.  model Id or instance Id"));
                 return;
             }
 
-            if (!int.TryParse(command[2], out int y))
-            {
-                responses.Add(ChatResponse.CommandError(client, $"Good Job!"));
-            }
+            if (!int.TryParse(command[2], out int y)) responses.Add(ChatResponse.CommandError(client, "Good Job!"));
 
             Gimmick myGimmick = new Gimmick();
             IBuffer res = BufferProvider.Provide();
@@ -63,7 +66,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteByte(client.character.heading);
                     res.WriteInt32(x); //Gimmick number (from gimmick.csv)
                     res.WriteInt32(0); //Gimmick State
-                    router.Send(client.map, (ushort) AreaPacketId.recv_data_notify_gimmick_data, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_gimmick_data, res, ServerType.Area);
                     _Logger.Debug($"You just created a gimmick with instance ID {myGimmick.instanceId}");
 
                     //Add a sign above them so you know their ID.
@@ -86,7 +89,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteInt32(gGateSpawn.active); // 0 = collision, 1 = no collision  (active/Inactive?)
                     res.WriteInt32(gGateSpawn
                         .glow); //0= no effect color appear, //Red = 0bxx1x   | Gold = obxxx1   |blue = 0bx1xx
-                    router.Send(client.map, (ushort) AreaPacketId.recv_data_notify_ggate_stone_data, res,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_ggate_stone_data, res,
                         ServerType.Area);
 
                     //Jump over your gimmick
@@ -97,7 +100,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(client.character.z + 500);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(client.character.movementAnim);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
 
                     responses.Add(ChatResponse.CommandError(client, $"Spawned gimmick {myGimmick.modelId}"));
 
@@ -105,21 +108,16 @@ namespace Necromancy.Server.Chat.Command.Commands
                     ) //if you want to send your gimmick straight to the DB.  type Add at the end of the spawn command.
                     {
                         if (!server.database.InsertGimmick(myGimmick))
-                        {
                             responses.Add(ChatResponse.CommandError(client,
                                 "myGimmick could not be saved to database"));
-                            return;
-                        }
                         else
-                        {
                             responses.Add(ChatResponse.CommandError(client,
                                 $"Added gimmick {myGimmick.id} to the database"));
-                        }
                     }
 
                     break;
                 case "move": //move a gimmick to your current position and heading
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     myGimmick.x = client.character.x;
                     myGimmick.y = client.character.y;
                     myGimmick.z = client.character.z;
@@ -130,7 +128,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(client.character.z);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
 
                     //Jump away from gimmick
                     res = BufferProvider.Provide();
@@ -140,10 +138,10 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(client.character.z + 50);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(client.character.movementAnim);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     break;
                 case "heading": //only update the heading to your current heading
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     myGimmick.heading = client.character.heading;
                     res.WriteUInt32(myGimmick.instanceId);
                     res.WriteFloat(myGimmick.x);
@@ -151,24 +149,24 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(myGimmick.z);
                     res.WriteByte(client.character.heading);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     break;
                 case "rotate": //rotates a gimmick to a specified heading
                     int newHeading = y;
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
-                    myGimmick.heading = (byte) newHeading;
-                    myGimmick.heading = (byte) y;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
+                    myGimmick.heading = (byte)newHeading;
+                    myGimmick.heading = (byte)y;
                     res.WriteUInt32(myGimmick.instanceId);
                     res.WriteFloat(myGimmick.x);
                     res.WriteFloat(myGimmick.y);
                     res.WriteFloat(myGimmick.z);
-                    res.WriteByte((byte) y);
+                    res.WriteByte((byte)y);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     _Logger.Debug($"Gimmick {myGimmick.instanceId} has been rotated to {y}*2 degrees.");
                     break;
                 case "height": //adjusts the height of gimmick by current value +- Y
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     myGimmick.z = myGimmick.z + y;
                     res.WriteUInt32(myGimmick.instanceId);
                     res.WriteFloat(myGimmick.x);
@@ -176,16 +174,15 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteFloat(myGimmick.z);
                     res.WriteByte(myGimmick.heading);
                     res.WriteByte(0xA);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
                     _Logger.Debug($"Gimmick {myGimmick.instanceId} has been adjusted by a height of {y}.");
                     break;
                 case "add": //Adds a new entry to the database
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     myGimmick.updated = DateTime.Now;
                     if (!server.database.InsertGimmick(myGimmick))
                     {
                         responses.Add(ChatResponse.CommandError(client, "myGimmick could not be saved to database"));
-                        return;
                     }
                     else
                     {
@@ -195,22 +192,17 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     break;
                 case "update": //Updates an existing entry in the database
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     myGimmick.updated = DateTime.Now;
                     if (!server.database.UpdateGimmick(myGimmick))
-                    {
                         responses.Add(ChatResponse.CommandError(client, "myGimmick could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Updated gimmick {myGimmick.id} in the database"));
-                    }
 
                     break;
                 case "remove": //removes a gimmick from the database
-                    myGimmick = server.instances.GetInstance((uint) x) as Gimmick;
+                    myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     if (!server.database.DeleteGimmick(myGimmick.id))
                     {
                         responses.Add(ChatResponse.CommandError(client,
@@ -224,7 +216,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     }
 
                     res.WriteUInt32(myGimmick.instanceId);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
                     break;
                 default: //you don't know what you're doing do you?
                     _Logger.Error($"There is no recv of type : {command[0]} ");
@@ -234,11 +226,5 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
             }
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "gimmick";
-
-        public override string helpText =>
-            "usage: `/gimmick [argument] [number] [parameter]` - does something gimmick related";
     }
 }

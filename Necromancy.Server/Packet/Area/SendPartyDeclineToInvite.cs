@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_decline_to_invite;
+        public override ushort id => (ushort)AreaPacketId.send_party_decline_to_invite;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(0);
 
-            router.Send(client, (ushort) AreaPacketId.recv_party_decline_to_invite_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_decline_to_invite_r, res, ServerType.Area);
         }
     }
 }

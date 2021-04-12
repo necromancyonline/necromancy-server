@@ -9,8 +9,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateEqMask : PacketResponse
     {
         private readonly ItemInstance _itemInstance;
+
         public RecvItemUpdateEqMask(NecClient client, ItemInstance itemInstance)
-            : base((ushort) AreaPacketId.recv_item_update_eqmask, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_eqmask, ServerType.Area)
         {
             _itemInstance = itemInstance;
             clients.Add(client);

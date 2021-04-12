@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyUpdateMp : PacketResponse
     {
         public RecvPartyNotifyUpdateMp()
-            : base((ushort) MsgPacketId.recv_party_notify_update_mp, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_update_mp, ServerType.Msg)
         {
         }
 

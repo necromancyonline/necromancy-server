@@ -1,12 +1,10 @@
-using Arrowgene.Buffers;
+using System.Collections.Generic;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
@@ -14,14 +12,19 @@ namespace Necromancy.Server.Packet.Area
     public class SendStorageDepositItem : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendStorageDepositItem));
-        public SendStorageDepositItem(NecServer server) : base(server) { }
+
+        public SendStorageDepositItem(NecServer server) : base(server)
+        {
+        }
+
         public override ushort id => (ushort)AreaPacketId.send_storage_deposit_item;
+
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType fromZone = (ItemZoneType) packet.data.ReadByte();
+            ItemZoneType fromZone = (ItemZoneType)packet.data.ReadByte();
             byte fromBag = packet.data.ReadByte();
             short fromSlot = packet.data.ReadInt16();
-            ItemZoneType toZone = (ItemZoneType) packet.data.ReadByte();
+            ItemZoneType toZone = (ItemZoneType)packet.data.ReadByte();
             byte toBag = packet.data.ReadByte();
             short toSlot = packet.data.ReadInt16();
             byte quantity = packet.data.ReadByte();
@@ -42,7 +45,10 @@ namespace Necromancy.Server.Packet.Area
                 List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
                 router.Send(client, responses);
             }
-            catch (ItemException e) { error = (int) e.type; }
+            catch (ItemException e)
+            {
+                error = (int)e.type;
+            }
 
             RecvStorageDepositItem2 recvStorageDepositItem2 = new RecvStorageDepositItem2(client, error);
             router.Send(recvStorageDepositItem2);

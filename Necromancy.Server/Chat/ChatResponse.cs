@@ -5,35 +5,6 @@ namespace Necromancy.Server.Chat
 {
     public class ChatResponse
     {
-        public static ChatResponse CommandError(NecClient client, string message)
-        {
-            return new ChatResponse()
-            {
-                deliver = true,
-                soulName = "System",
-                characterName = "",
-                errorType = ChatErrorType.GenericUnknownStatement,
-                message = message,
-                messageType = ChatMessageType.TextCommandLog,
-                recipients = {client}
-            };
-        }
-
-        public static ChatResponse CommandInfo(NecClient client, string message)
-        {
-            return new ChatResponse()
-            {
-                deliver = true,
-                soulName = "System",
-                characterName = "",
-                errorType = ChatErrorType.Success,
-                message = message,
-                messageType = ChatMessageType.TextCommandLog,
-                recipients = {client}
-            };
-        }
-
-
         public ChatResponse()
         {
             recipients = new List<NecClient>();
@@ -66,5 +37,33 @@ namespace Necromancy.Server.Chat
         public int characterId { get; set; }
         public uint characterInstanceId { get; set; }
         public string recipientSoulName { get; set; }
+
+        public static ChatResponse CommandError(NecClient client, string message)
+        {
+            return new ChatResponse
+            {
+                deliver = true,
+                soulName = "System",
+                characterName = "",
+                errorType = ChatErrorType.GenericUnknownStatement,
+                message = message,
+                messageType = ChatMessageType.TextCommandLog,
+                recipients = {client}
+            };
+        }
+
+        public static ChatResponse CommandInfo(NecClient client, string message)
+        {
+            return new ChatResponse
+            {
+                deliver = true,
+                soulName = "System",
+                characterName = "",
+                errorType = ChatErrorType.Success,
+                message = message,
+                messageType = ChatMessageType.TextCommandLog,
+                recipients = {client}
+            };
+        }
     }
 }

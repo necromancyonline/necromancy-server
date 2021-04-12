@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEoUpdateState : PacketResponse
     {
         public RecvEoUpdateState()
-            : base((ushort) AreaPacketId.recv_eo_update_state, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_eo_update_state, ServerType.Area)
         {
         }
 

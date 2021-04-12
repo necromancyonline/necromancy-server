@@ -2,7 +2,6 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -21,7 +20,6 @@ namespace Necromancy.Server.Packet.Area
             int prizeSlot = packet.data.ReadInt32();
 
 
-
             IBuffer res = BufferProvider.Provide();
 
             //remove quest
@@ -31,9 +29,6 @@ namespace Necromancy.Server.Packet.Area
             //increase soul points
             //next quest hint
             //etc.....
-
-
         }
-
     }
 }

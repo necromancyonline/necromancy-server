@@ -14,7 +14,7 @@ using Necromancy.Server.Packet.Receive.Msg;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Does Battle Report stuff
+    ///     Does Battle Report stuff
     /// </summary>
     public class BattleCommand : ServerChatCommand
     {
@@ -23,6 +23,10 @@ namespace Necromancy.Server.Chat.Command.Commands
         public BattleCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "battle";
+        public override string helpText => "usage: `/battle [command]` - Does something battle related.";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -41,23 +45,22 @@ namespace Necromancy.Server.Chat.Command.Commands
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
 
 
-
             IBuffer res36 = BufferProvider.Provide();
 
             switch (command[0])
             {
                 case "itemuse":
-                    RecvBattleReportActionItemUse itemUse = new RecvBattleReportActionItemUse(50100302/*camp*/);
+                    RecvBattleReportActionItemUse itemUse = new RecvBattleReportActionItemUse(50100302 /*camp*/);
                     brList.Add(itemUse);
                     break;
 
                 case "stealunidentified":
-                    RecvBattleReportActionStealUnidentified stealUnidentified = new RecvBattleReportActionStealUnidentified(50100302/*camp*/);
+                    RecvBattleReportActionStealUnidentified stealUnidentified = new RecvBattleReportActionStealUnidentified(50100302 /*camp*/);
                     brList.Add(stealUnidentified);
                     break;
 
                 case "stealmoney":
-                    RecvBattleReportActionStealMoney stealMoney = new RecvBattleReportActionStealMoney(50100302/*camp*/);
+                    RecvBattleReportActionStealMoney stealMoney = new RecvBattleReportActionStealMoney(50100302 /*camp*/);
                     brList.Add(stealMoney);
                     break;
 
@@ -82,29 +85,22 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "ac":
-                    RecvBattleReportNotifyDamageAc recvBattleReportNotifyDamageAc = new RecvBattleReportNotifyDamageAc(client.character.instanceId, Util.GetRandomNumber(0,250));
+                    RecvBattleReportNotifyDamageAc recvBattleReportNotifyDamageAc = new RecvBattleReportNotifyDamageAc(client.character.instanceId, Util.GetRandomNumber(0, 250));
                     brList.Add(recvBattleReportNotifyDamageAc);
                     break;
 
 
-
                 default:
                     _Logger.Error($"There is no recv of type : {command[0]} ");
-                    Task.Delay(TimeSpan.FromMilliseconds((int) (10 * 1000))).ContinueWith
-                    (t1 =>
-                        {
-
-                        }
+                    Task.Delay(TimeSpan.FromMilliseconds(10 * 1000)).ContinueWith
+                    (t1 => { }
                     );
                     break;
             }
+
             //always end your battle reports
             //brList.Add(brEnd);
             router.Send(client, brList);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "battle";
-        public override string helpText => "usage: `/battle [command]` - Does something battle related.";
     }
 }

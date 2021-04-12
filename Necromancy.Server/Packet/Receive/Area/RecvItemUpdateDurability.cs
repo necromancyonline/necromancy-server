@@ -9,12 +9,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateDurability : PacketResponse
     {
         private readonly ItemInstance _durabilityChangedItem;
+
         public RecvItemUpdateDurability(NecClient client, ItemInstance durabilityChangedItem)
-            : base((ushort) AreaPacketId.recv_item_update_durability, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_durability, ServerType.Area)
         {
             _durabilityChangedItem = durabilityChangedItem;
             clients.Add(client);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

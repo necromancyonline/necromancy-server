@@ -17,33 +17,12 @@ namespace Necromancy.Server.Model
     public class Map
 
     {
+        public const int NewCharacterMapId = 1001002; //2006000
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(Map));
 
-        private readonly object _trapLock = new object();
-
-        public const int NewCharacterMapId = 1001002; //2006000
-
         private readonly NecServer _server;
-        public int id { get; set; }
-        public float x { get; }
-        public float y { get; }
-        public float z { get; }
-        public string country { get; set; }
-        public string area { get; set; }
-        public string place { get; set; }
-        public byte orientation { get; }
-        public string fullName => $"{country}/{area}/{place}";
-        public ClientLookup clientLookup { get; }
 
-        public Dictionary<uint, NpcSpawn> npcSpawns { get; }
-
-        // public Dictionary<int, TrapTransition> Trap { get; }
-        public Dictionary<uint, MonsterSpawn> monsterSpawns { get; }
-        public Dictionary<uint, Gimmick> gimmickSpawns { get; }
-        public Dictionary<uint, MapTransition> mapTransitions { get; }
-        public Dictionary<uint, TrapStack> traps { get; }
-        public Dictionary<uint, DeadBody> deadBodies { get; }
-        public Dictionary<uint, GGateSpawn> gGateSpawns { get; }
+        private readonly object _trapLock = new object();
 
 
         public Map(MapData mapData, NecServer server)
@@ -65,39 +44,38 @@ namespace Necromancy.Server.Model
             country = mapData.country;
             area = mapData.area;
             place = mapData.place;
-            orientation = (byte) (mapData.orientation / 2); // Client uses 180 degree orientation
+            orientation = (byte)(mapData.orientation / 2); // Client uses 180 degree orientation
             traps = new Dictionary<uint, TrapStack>();
 
             List<MapTransition> mapTransitions = server.database.SelectMapTransitionsByMapId(mapData.id);
             foreach (MapTransition mapTran in mapTransitions)
             {
-
-                if(mapTran.id == 0) //Only one special transition
+                if (mapTran.id == 0) //Only one special transition
                 {
                     double angle = mapTran.maplinkHeading / 255.0;
                     mapTran.leftPos.X = (float)((mapTran.referencePos.X + mapTran.maplinkWidth / 2) * Math.Cos(angle));
-                    mapTran.leftPos.Y = (float)((mapTran.referencePos.Y) * Math.Cos(angle));
+                    mapTran.leftPos.Y = (float)(mapTran.referencePos.Y * Math.Cos(angle));
                     mapTran.rightPos.X = (float)((mapTran.referencePos.X - mapTran.maplinkWidth / 2) * Math.Cos(angle));
-                    mapTran.rightPos.Y = (float)(mapTran.referencePos.Y + mapTran.maplinkWidth / 2);
+                    mapTran.rightPos.Y = mapTran.referencePos.Y + mapTran.maplinkWidth / 2;
                 }
                 else if (mapTran.invertedTransition != true) //map is x dominant
                 {
-                    mapTran.leftPos.X = (float)(mapTran.referencePos.X + mapTran.maplinkWidth / 2);
-                    mapTran.leftPos.Y = (float)(mapTran.referencePos.Y);
-                    mapTran.rightPos.X = (float)(mapTran.referencePos.X - mapTran.maplinkWidth / 2);
-                    mapTran.rightPos.Y = (float)(mapTran.referencePos.Y);
+                    mapTran.leftPos.X = mapTran.referencePos.X + mapTran.maplinkWidth / 2;
+                    mapTran.leftPos.Y = mapTran.referencePos.Y;
+                    mapTran.rightPos.X = mapTran.referencePos.X - mapTran.maplinkWidth / 2;
+                    mapTran.rightPos.Y = mapTran.referencePos.Y;
                 }
-                else if(mapTran.invertedTransition != false) //map is y dominant
+                else if (mapTran.invertedTransition) //map is y dominant
                 {
-                    mapTran.leftPos.X = (float)(mapTran.referencePos.X);
-                    mapTran.leftPos.Y = (float)(mapTran.referencePos.Y + mapTran.maplinkWidth / 2);
-                    mapTran.rightPos.X = (float)(mapTran.referencePos.X);
-                    mapTran.rightPos.Y = (float)(mapTran.referencePos.Y - mapTran.maplinkWidth / 2);
+                    mapTran.leftPos.X = mapTran.referencePos.X;
+                    mapTran.leftPos.Y = mapTran.referencePos.Y + mapTran.maplinkWidth / 2;
+                    mapTran.rightPos.X = mapTran.referencePos.X;
+                    mapTran.rightPos.Y = mapTran.referencePos.Y - mapTran.maplinkWidth / 2;
                 }
 
                 server.instances.AssignInstance(mapTran);
                 this.mapTransitions.Add(mapTran.instanceId, mapTran);
-                _Logger.Debug($"Loaded Map transition {mapTran.id} on map {this.fullName}");
+                _Logger.Debug($"Loaded Map transition {mapTran.id} on map {fullName}");
             }
 
             //Assign Unique Instance ID to each NPC per map. Add to dictionary stored with the Map object
@@ -162,10 +140,8 @@ namespace Necromancy.Server.Model
                     monsterSpawn.defaultCoords = false;
                     monsterSpawn.monsterCoords.Clear();
                     foreach (MonsterCoord monsterCoord in coords)
-                    {
                         //Console.WriteLine($"added coord {monsterCoord} to monster {monsterSpawn.InstanceId}");
                         monsterSpawn.monsterCoords.Add(monsterCoord);
-                    }
                 }
                 else
                 {
@@ -206,6 +182,27 @@ namespace Necromancy.Server.Model
             }
         }
 
+        public int id { get; set; }
+        public float x { get; }
+        public float y { get; }
+        public float z { get; }
+        public string country { get; set; }
+        public string area { get; set; }
+        public string place { get; set; }
+        public byte orientation { get; }
+        public string fullName => $"{country}/{area}/{place}";
+        public ClientLookup clientLookup { get; }
+
+        public Dictionary<uint, NpcSpawn> npcSpawns { get; }
+
+        // public Dictionary<int, TrapTransition> Trap { get; }
+        public Dictionary<uint, MonsterSpawn> monsterSpawns { get; }
+        public Dictionary<uint, Gimmick> gimmickSpawns { get; }
+        public Dictionary<uint, MapTransition> mapTransitions { get; }
+        public Dictionary<uint, TrapStack> traps { get; }
+        public Dictionary<uint, DeadBody> deadBodies { get; }
+        public Dictionary<uint, GGateSpawn> gGateSpawns { get; }
+
         public void EnterForce(NecClient client, MapPosition mapPosition = null)
         {
             client.character.mapChange = true;
@@ -218,10 +215,7 @@ namespace Necromancy.Server.Model
 
         public void Enter(NecClient client, MapPosition mapPosition = null)
         {
-            if (client.map != null)
-            {
-                client.map.Leave(client);
-            }
+            if (client.map != null) client.map.Leave(client);
             client.map = this;
 
             _Logger.Info(client, $"Entering Map: {id}:{fullName}");
@@ -237,28 +231,22 @@ namespace Necromancy.Server.Model
             //set character coords to default map entry coords If arriving form another map.
             else if (client.character.mapId != id)
             {
-                client.character.x = this.x;
-                client.character.y = this.y;
-                client.character.z = this.z;
-                client.character.heading = this.orientation;
+                client.character.x = x;
+                client.character.y = y;
+                client.character.z = z;
+                client.character.heading = orientation;
             }
 
             client.character.mapId = id;
             client.character.mapChange = false;
             clientLookup.Add(client);
-            _Logger.Debug($"Client Lookup count is now : {clientLookup.GetAll().Count}  for map  {this.id} ");
+            _Logger.Debug($"Client Lookup count is now : {clientLookup.GetAll().Count}  for map  {id} ");
             _Logger.Debug($"Character State for character {client.character.name} is {client.character.state}");
             //Send your character data to the other living or dead players on the map.
 
             //on successful map entry, update the client database position
-            if (!_server.database.UpdateCharacter(client.character))
-            {
-                _Logger.Error("Could not update the database with current known player position");
-            }
-            if (!_server.database.UpdateSoul(client.soul))
-            {
-                _Logger.Error("Could not update the database with soul details ");
-            }
+            if (!_server.database.UpdateCharacter(client.character)) _Logger.Error("Could not update the database with current known player position");
+            if (!_server.database.UpdateSoul(client.soul)) _Logger.Error("Could not update the database with soul details ");
 
             //ToDo  move all this rendering logic to Send_Map_Entry.   We dont need a copy of this logic on every map instance.
             RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.character, client.soul.name);
@@ -266,40 +254,30 @@ namespace Necromancy.Server.Model
             //dead
             //you are dead here.  only getting soul form characters. sorry bro.
             if (client.character.state.HasFlag(CharacterState.SoulForm))
-            {
-                foreach (NecClient otherClient in this.clientLookup.GetAll())
+                foreach (NecClient otherClient in clientLookup.GetAll())
                 {
                     if (otherClient == client) continue;
-                    if (otherClient.character.state.HasFlag(CharacterState.SoulForm))
-                    {
-                        _server.router.Send(myCharacterData, otherClient);
-                    }
+                    if (otherClient.character.state.HasFlag(CharacterState.SoulForm)) _server.router.Send(myCharacterData, otherClient);
                 }
-            }
             else //Bro, you alive! You gon see living characters!
-            {
-                foreach (NecClient otherClient in this.clientLookup.GetAll())
+                foreach (NecClient otherClient in clientLookup.GetAll())
                 {
                     if (otherClient == client) continue;
-                    if (otherClient.character.state.HasFlag(CharacterState.SoulForm))
-                    {
-                        continue;
-                    }
+                    if (otherClient.character.state.HasFlag(CharacterState.SoulForm)) continue;
                     _server.router.Send(myCharacterData, otherClient);
                 }
-            }
 
             if (client.union != null)
             {
                 RecvDataNotifyUnionData myUnionData = new RecvDataNotifyUnionData(client.character, client.union.name);
                 _server.router.Send(this, myUnionData, client);
             }
+
             Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
             (t1 =>
                 {
-                    foreach (MonsterSpawn monsterSpawn in this.monsterSpawns.Values)
-                    {
-                        if (monsterSpawn.active == true)
+                    foreach (MonsterSpawn monsterSpawn in monsterSpawns.Values)
+                        if (monsterSpawn.active)
                         {
                             monsterSpawn.spawnActive = true;
                             if (!monsterSpawn.taskActive)
@@ -319,31 +297,21 @@ namespace Necromancy.Server.Model
                                     RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
                                     _server.router.Send(monsterData, client);
                                     if (!monsterSpawn.GetAgro())
-                                    {
-                                        monsterSpawn.MonsterMove(_server, client, monsterSpawn.monsterWalkVelocity, (byte) 2,
-                                            (byte) 0);
-                                    }
+                                        monsterSpawn.MonsterMove(_server, client, monsterSpawn.monsterWalkVelocity, 2,
+                                            0);
                                 }
                             }
                         }
-                    }
                 }
             );
-
         }
 
         public void Leave(NecClient client)
         {
             _Logger.Info(client, $"Leaving Map: {id}:{fullName}");
             clientLookup.Remove(client);
-            if (!_server.database.UpdateCharacter(client.character))
-            {
-                _Logger.Error("Could not update the database with last known player position");
-            }
-            if (!_server.database.UpdateSoul(client.soul))
-            {
-                _Logger.Error("Could not update the database with soul details ");
-            }
+            if (!_server.database.UpdateCharacter(client.character)) _Logger.Error("Could not update the database with last known player position");
+            if (!_server.database.UpdateSoul(client.soul)) _Logger.Error("Could not update the database with soul details ");
 
 
             client.map = null;
@@ -351,14 +319,10 @@ namespace Necromancy.Server.Model
             RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(client.character.instanceId);
             _server.router.Send(this, objectDisappearData, client);
             if (clientLookup.GetAll().Count == 0)
-            {
-                foreach (MonsterSpawn monsterSpawn in this.monsterSpawns.Values)
-                {
+                foreach (MonsterSpawn monsterSpawn in monsterSpawns.Values)
                     monsterSpawn.spawnActive = false;
-                }
-            }
 
-            _Logger.Debug($"Client Lookup count is now : {clientLookup.GetAll().Count}  for map  {this.id} ");
+            _Logger.Debug($"Client Lookup count is now : {clientLookup.GetAll().Count}  for map  {id} ");
         }
 
         public bool MonsterInRange(Vector3 position, int range)
@@ -366,10 +330,7 @@ namespace Necromancy.Server.Model
             foreach (MonsterSpawn monster in monsterSpawns.Values)
             {
                 Vector3 monsterPos = new Vector3(monster.x, monster.y, monster.z);
-                if (Vector3.Distance(position, monsterPos) <= range)
-                {
-                    return true;
-                }
+                if (Vector3.Distance(position, monsterPos) <= range) return true;
             }
 
             return false;
@@ -378,12 +339,8 @@ namespace Necromancy.Server.Model
         public MonsterSpawn GetMonsterByInstanceId(uint instanceId)
         {
             foreach (MonsterSpawn monster in monsterSpawns.Values)
-            {
                 if (monster.instanceId == instanceId)
-                {
                     return monster;
-                }
-            }
 
             return null;
         }
@@ -395,10 +352,7 @@ namespace Necromancy.Server.Model
             foreach (MonsterSpawn monster in monsterSpawns.Values)
             {
                 Vector3 monsterPos = new Vector3(monster.x, monster.y, monster.z);
-                if (Vector3.Distance(position, monsterPos) <= range)
-                {
-                    monsters.Add(monster);
-                }
+                if (Vector3.Distance(position, monsterPos) <= range) monsters.Add(monster);
             }
 
             return monsters;
@@ -412,10 +366,7 @@ namespace Necromancy.Server.Model
             {
                 Character character = client.character;
                 Vector3 characterPos = new Vector3(character.x, character.y, character.z);
-                if (Vector3.Distance(position, characterPos) <= range)
-                {
-                    characters.Add(character);
-                }
+                if (Vector3.Distance(position, characterPos) <= range) characters.Add(character);
             }
 
             return characters;
@@ -426,10 +377,7 @@ namespace Necromancy.Server.Model
             List<TrapStack> traps = new List<TrapStack>();
             lock (_trapLock)
             {
-                foreach (TrapStack trap in this.traps.Values)
-                {
-                    traps.Add(trap);
-                }
+                foreach (TrapStack trap in this.traps.Values) traps.Add(trap);
             }
 
             return traps;
@@ -441,12 +389,8 @@ namespace Necromancy.Server.Model
             lock (_trapLock)
             {
                 foreach (TrapStack trap in this.traps.Values)
-                {
                     if (trap.trapTask.ownerInstanceId == characterInstanceId)
-                    {
                         traps.Add(trap);
-                    }
-                }
             }
 
             return traps;
@@ -458,14 +402,12 @@ namespace Necromancy.Server.Model
             lock (_trapLock)
             {
                 foreach (TrapStack trap in traps.Values)
-                {
                     if (trap.trapTask.ownerInstanceId == characterInstanceId)
                     {
                         double distance = Vector3.Distance(trap.trapTask.trapPos, position);
                         if (distance < range)
                             return true;
                     }
-                }
             }
 
             return inRange;
@@ -476,14 +418,12 @@ namespace Necromancy.Server.Model
             lock (_trapLock)
             {
                 foreach (TrapStack trap in traps.Values)
-                {
                     if (trap.trapTask.ownerInstanceId == characterInstanceId)
                     {
                         double distance = Vector3.Distance(trap.trapTask.trapPos, position);
                         if (distance < range)
                             return trap;
                     }
-                }
             }
 
             return null;
@@ -508,12 +448,8 @@ namespace Necromancy.Server.Model
         public MonsterSpawn MonsterInRange(uint instanceId)
         {
             foreach (MonsterSpawn monster in monsterSpawns.Values)
-            {
                 if (monster.instanceId == instanceId)
-                {
                     return monster;
-                }
-            }
 
             return null;
         }

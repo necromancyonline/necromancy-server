@@ -9,7 +9,7 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Does ScriptCommand stuff
+    ///     Does ScriptCommand stuff
     /// </summary>
     public class ScriptCommand : ServerChatCommand
     {
@@ -18,6 +18,12 @@ namespace Necromancy.Server.Chat.Command.Commands
         public ScriptCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "script";
+
+        public override string helpText =>
+            "usage: `/script start tutorial\tutorial_soul` - executes the script at the given path";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -36,13 +42,13 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer res21 = BufferProvider.Provide();
                     res21.WriteInt32(1); // 0 = normal 1 = cinematic
                     res21.WriteByte(0);
-                    router.Send(client, (ushort) AreaPacketId.recv_event_start, res21, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_start, res21, ServerType.Area);
 
                     IBuffer res22 = BufferProvider.Provide();
 
                     res22.WriteCString(command[1]); // lable
                     res22.WriteUInt32(client.character.instanceId); //newjp  ObjectId
-                    router.Send(client, (ushort) AreaPacketId.recv_event_script_play, res22, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_script_play, res22, ServerType.Area);
 
                     break;
 
@@ -52,11 +58,5 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
             }
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "script";
-
-        public override string helpText =>
-            "usage: `/script start tutorial\tutorial_soul` - executes the script at the given path";
     }
 }

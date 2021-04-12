@@ -1,21 +1,10 @@
-using Necromancy.Server.Common.Instance;
 using System;
-
+using Necromancy.Server.Common.Instance;
 
 namespace Necromancy.Server.Model.Union
 {
     public class UnionMember : IInstance
     {
-        public uint instanceId { get; set; }
-        public int id { get; set; }
-        public int unionId { get; set; }
-        public int characterDatabaseId { get; set; }
-       // public uint CharacterInstanceId { get; set; }
-        public uint memberPriviledgeBitMask { get; set; }
-        public uint rank { get; set; }
-
-        public DateTime joined { get; set; }
-
         public UnionMember()
         {
             instanceId = 0;
@@ -26,9 +15,18 @@ namespace Necromancy.Server.Model.Union
             memberPriviledgeBitMask = 0b01100111;
             rank = 3;
             joined = DateTime.Now;
-
         }
 
-    }
+        public int id { get; set; }
+        public int unionId { get; set; }
 
+        public int characterDatabaseId { get; set; }
+
+        // public uint CharacterInstanceId { get; set; }
+        public uint memberPriviledgeBitMask { get; set; }
+        public uint rank { get; set; }
+
+        public DateTime joined { get; set; }
+        public uint instanceId { get; set; }
+    }
 }

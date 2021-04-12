@@ -1,23 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
-using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Model.CharacterModel;
+using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
-using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
     public class SendRaisescaleRequestRevive : ClientHandler
     {
         private List<NecClient> _necClients;
+
         public SendRaisescaleRequestRevive(NecServer server) : base(server)
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_raisescale_request_revive;
+        public override ushort id => (ushort)AreaPacketId.send_raisescale_request_revive;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -56,11 +57,13 @@ namespace Necromancy.Server.Packet.Area
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.instanceId);
                     router.Send(client, recvObjectDisappearNotify.ToPacket());
                 }
+
                 foreach (MonsterSpawn monsterSpawn in client.map.monsterSpawns.Values)
                 {
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.instanceId);
                     router.Send(client, recvObjectDisappearNotify.ToPacket());
                 }
+
                 foreach (NecClient client2 in _necClients)
                 {
                     if (client2 == client) continue; //Don't dissapear yourself ! that'd be bad news bears.
@@ -80,65 +83,60 @@ namespace Necromancy.Server.Packet.Area
 
                 Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                 (t1 =>
-                {
-                    RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.character.hp.max);
-                    router.Send(client, cHpUpdate.ToPacket());
-
-                    //if you are not dead, do normal stuff.  else...  do dead person stuff
-                    if (client.character.state != CharacterState.SoulForm)
                     {
-                        foreach (NecClient otherClient in _necClients)
-                        {
-                            if (otherClient == client)
-                            {
-                                // skip myself
-                                continue;
-                            }
-                            if (otherClient.character.state != CharacterState.SoulForm)
-                            {
-                                RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.character, otherClient.soul.name);
-                                router.Send(otherCharacterData, client);
-                            }
-                            if (otherClient.union != null)
-                            {
-                                RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.character, otherClient.union.name);
-                                router.Send(otherUnionData, client);
-                            }
-                        }
+                        RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.character.hp.max);
+                        router.Send(client, cHpUpdate.ToPacket());
 
-                        foreach (MonsterSpawn monsterSpawn in client.map.monsterSpawns.Values)
+                        //if you are not dead, do normal stuff.  else...  do dead person stuff
+                        if (client.character.state != CharacterState.SoulForm)
                         {
-                            RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
-                            router.Send(monsterData, client);
-                        }
-
-                        foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
-                        {
-                            if (npcSpawn.visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
+                            foreach (NecClient otherClient in _necClients)
                             {
-                                RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
-                                router.Send(npcData, client);
-                            }
-                        }
+                                if (otherClient == client)
+                                    // skip myself
+                                    continue;
+                                if (otherClient.character.state != CharacterState.SoulForm)
+                                {
+                                    RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.character, otherClient.soul.name);
+                                    router.Send(otherCharacterData, client);
+                                }
 
-                        foreach (DeadBody deadBody in client.map.deadBodies.Values)
-                        {
-                            if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                            {
-                                RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                                router.Send(deadBodyData, client);
+                                if (otherClient.union != null)
+                                {
+                                    RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.character, otherClient.union.name);
+                                    router.Send(otherUnionData, client);
+                                }
                             }
+
+                            foreach (MonsterSpawn monsterSpawn in client.map.monsterSpawns.Values)
+                            {
+                                RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monsterSpawn);
+                                router.Send(monsterData, client);
+                            }
+
+                            foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
+                                if (npcSpawn.visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
+                                {
+                                    RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
+                                    router.Send(npcData, client);
+                                }
+
+                            foreach (DeadBody deadBody in client.map.deadBodies.Values)
+                                if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                                {
+                                    RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
+                                    router.Send(deadBodyData, client);
+                                }
                         }
                     }
-                }
                 );
                 Task.Delay(TimeSpan.FromSeconds(10)).ContinueWith
                 (t1 =>
-                {
-                    client.character.ClearStateBit(CharacterState.InvulnerableForm);
-                    RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.character.instanceId, (ulong)client.character.state);
-                    router.Send(client.map, recvCharaNotifyStateflag.ToPacket());
-                }
+                    {
+                        client.character.ClearStateBit(CharacterState.InvulnerableForm);
+                        RecvCharaNotifyStateflag recvCharaNotifyStateflag = new RecvCharaNotifyStateflag(client.character.instanceId, (ulong)client.character.state);
+                        router.Send(client.map, recvCharaNotifyStateflag.ToPacket());
+                    }
                 );
             }
 
@@ -157,10 +155,7 @@ namespace Necromancy.Server.Packet.Area
                 Router.Send(client, (ushort) AreaPacketId.recv_self_lost_notify, res5, ServerType.Area);
             }*/
 
-            if (client.map.deadBodies.ContainsKey(client.character.deadBodyInstanceId))
-            {
-                client.map.deadBodies.Remove(client.character.deadBodyInstanceId);
-            }
+            if (client.map.deadBodies.ContainsKey(client.character.deadBodyInstanceId)) client.map.deadBodies.Remove(client.character.deadBodyInstanceId);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // 0 = sucess to revive, 1 = failed to revive

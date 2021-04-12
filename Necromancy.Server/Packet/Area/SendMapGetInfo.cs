@@ -23,21 +23,19 @@ namespace Necromancy.Server.Packet.Area
             _server = server;
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_map_get_info;
+        public override ushort id => (ushort)AreaPacketId.send_map_get_info;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             //you are dead here.  only getting soul form characters and NPCs.  sorry bro.
             if (client.character.state.HasFlag(CharacterState.SoulForm))
             {
-                _Logger.Debug($"Rendering Dead stuff");
+                _Logger.Debug("Rendering Dead stuff");
                 foreach (NecClient otherClient in client.map.clientLookup.GetAll())
                 {
                     if (otherClient == client)
-                    {
                         // skip myself
                         continue;
-                    }
                     //Render all the souls if you are in soul form yourself
                     if (otherClient.character.state.HasFlag(CharacterState.SoulForm))
                     {
@@ -51,14 +49,13 @@ namespace Necromancy.Server.Packet.Area
                         router.Send(otherUnionData, client);
                     }
                 }
+
                 foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
-                {
                     if (npcSpawn.visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
                     {
                         RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
                         router.Send(npcData, client);
                     }
-                }
             }
             else //if you are not dead, do normal stuff.  else...  do dead person stuff
             {
@@ -71,6 +68,7 @@ namespace Necromancy.Server.Packet.Area
                         RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.character, otherClient.soul.name);
                         router.Send(otherCharacterData, client);
                     }
+
                     if (otherClient.union != null)
                     {
                         RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.character, otherClient.union.name);
@@ -86,25 +84,20 @@ namespace Necromancy.Server.Packet.Area
                 }
 
                 foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
-                {
                     if (npcSpawn.visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
                     {
                         RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
                         router.Send(npcData, client);
                     }
-                }
-
-
             }
+
             //Allways render the stuff below this line.
             if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-            {
                 foreach (DeadBody deadBody in client.map.deadBodies.Values)
                 {
                     RecvDataNotifyCharaBodyData deadBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                     router.Send(deadBodyData, client);
                 }
-            }
 
             foreach (Gimmick gimmickSpawn in client.map.gimmickSpawns.Values)
             {
@@ -166,7 +159,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_map_get_info_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_map_get_info_r, res, ServerType.Area);
         }
     }
 }

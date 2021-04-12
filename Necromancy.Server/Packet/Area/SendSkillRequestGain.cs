@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_skill_request_gain;
+        public override ushort id => (ushort)AreaPacketId.send_skill_request_gain;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,10 +29,7 @@ namespace Necromancy.Server.Packet.Area
                 // Should already an entry for this skill
                 skillTreeItem = database.SelectSkillTreeItemByCharSkillId(client.character.id, skillId);
                 skillTreeItem.level = skillLevel;
-                if (database.UpdateSkillTreeItem(skillTreeItem) == false)
-                {
-                    _Logger.Error($"Updating SkillTreeItem for Character ID [{client.character.id}]");
-                }
+                if (database.UpdateSkillTreeItem(skillTreeItem) == false) _Logger.Error($"Updating SkillTreeItem for Character ID [{client.character.id}]");
             }
             else
             {
@@ -40,17 +37,14 @@ namespace Necromancy.Server.Packet.Area
                 skillTreeItem.skillId = skillId;
                 skillTreeItem.level = skillLevel;
                 skillTreeItem.charId = client.character.id;
-                if (database.InsertSkillTreeItem(skillTreeItem) == false)
-                {
-                    _Logger.Error($"Adding SkillTreeItem for Character ID [{client.character.id}]");
-                }
+                if (database.InsertSkillTreeItem(skillTreeItem) == false) _Logger.Error($"Adding SkillTreeItem for Character ID [{client.character.id}]");
             }
 
             SendSkillTreeGain(client, skillId, skillLevel);
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //1 = failed to aquire skill, 0 = success? but no skill aquired
-            router.Send(client, (ushort) AreaPacketId.recv_skill_request_gain_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_skill_request_gain_r, res, ServerType.Area);
         }
 
         private void SendSkillTreeGain(NecClient client, int skillId, int skillLevel)

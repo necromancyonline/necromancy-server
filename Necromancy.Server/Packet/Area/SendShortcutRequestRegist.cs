@@ -11,13 +11,13 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_shortcut_request_regist;
+        public override ushort id => (ushort)AreaPacketId.send_shortcut_request_regist;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             byte shortcutBarIdx = packet.data.ReadByte(),
-                 slot = packet.data.ReadByte();
+                slot = packet.data.ReadByte();
             int actionType = packet.data.ReadInt32();
             long skillId = packet.data.ReadInt64();
 
@@ -28,7 +28,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteByte(slot);
             res.WriteInt32(actionType);
             res.WriteInt64(skillId);
-            res.WriteFixedString("SkillName", 16);//size is 0x10
+            res.WriteFixedString("SkillName", 16); //size is 0x10
 
             router.Send(client, (ushort)AreaPacketId.recv_shortcut_notify_regist, res, ServerType.Area);
         }

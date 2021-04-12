@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaArrangeCloseR : PacketResponse
     {
         public RecvCharaArrangeCloseR()
-            : base((ushort) AreaPacketId.recv_chara_arrange_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_arrange_close_r, ServerType.Area)
         {
         }
 

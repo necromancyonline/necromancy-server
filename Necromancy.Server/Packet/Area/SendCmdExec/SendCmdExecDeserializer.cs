@@ -2,10 +2,6 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
 {
     public class SendCmdExecDeserializer : IPacketDeserializer<SendCmdExecRequest>
     {
-        public SendCmdExecDeserializer()
-        {
-        }
-
         public SendCmdExecRequest Deserialize(NecPacket packet)
         {
             string command = packet.data.ReadCString();

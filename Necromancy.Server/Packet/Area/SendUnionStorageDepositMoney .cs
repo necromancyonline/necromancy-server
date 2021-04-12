@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_union_storage_deposit_money;
+        public override ushort id => (ushort)AreaPacketId.send_union_storage_deposit_money;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Area
             ulong depositeGold = packet.data.ReadUInt64();
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);  // 0 to work
+            res.WriteInt32(0); // 0 to work
             router.Send(client, (ushort)AreaPacketId.recv_union_storage_deposit_money_r, res, ServerType.Area);
 
             //To-Do,  make a variable to track union gold
@@ -33,9 +33,8 @@ namespace Necromancy.Server.Packet.Area
 
             res = BufferProvider.Provide();
             res.WriteByte(unknown);
-            res.WriteUInt64(client.soul.warehouseGold/*client.Union.GeneralSafeGold*/);
+            res.WriteUInt64(client.soul.warehouseGold /*client.Union.GeneralSafeGold*/);
             router.Send(client.union.unionMembers, (ushort)AreaPacketId.recv_event_union_storage_update_money, res, ServerType.Area);
-
         }
     }
 }

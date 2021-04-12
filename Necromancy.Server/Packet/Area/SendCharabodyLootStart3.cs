@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_charabody_loot_start3;
+        public override ushort id => (ushort)AreaPacketId.send_charabody_loot_start3;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

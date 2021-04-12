@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_wanted_entry;
+        public override ushort id => (ushort)AreaPacketId.send_wanted_entry;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //Error Check
-            router.Send(client, (ushort) AreaPacketId.recv_wanted_entry_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_wanted_entry_r, res, ServerType.Area);
 
             NecClient bountyTargetclient =
                 server.clients.GetBySoulName(server.database.SelectSoulById(targetSoulId).name);
@@ -52,9 +52,7 @@ namespace Necromancy.Server.Packet.Area
             res4.WriteInt64(targetBountyPoints);
             res4.WriteInt64(targetBountyPoints);
             router.Send(client /*BountyKillerClient*/,
-                (ushort) AreaPacketId.recv_wanted_update_reward_point, res4, ServerType.Area);
-
-
+                (ushort)AreaPacketId.recv_wanted_update_reward_point, res4, ServerType.Area);
         }
     }
 }

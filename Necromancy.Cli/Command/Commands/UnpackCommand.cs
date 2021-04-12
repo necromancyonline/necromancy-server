@@ -7,6 +7,11 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class UnpackCommand : ConsoleCommand
     {
+        public override string key => "unpack";
+
+        public override string description =>
+            $"Unpacks Data. Ex.:{Environment.NewLine}unpack \"C:/Games/Wizardry Online/data/settings.hed\" \"C:/output\"";
+
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
             if (parameter.arguments.Count == 2)
@@ -55,22 +60,13 @@ namespace Necromancy.Cli.Command.Commands
                 }
 
                 for (int i = 0; i < hedFiles.Length; i++)
-                {
                     if (parameter.arguments[0] == "header")
-                    {
                         archiveIo.Header(hedFiles[i], parameter.arguments[2]);
-                    }
-                }
 
                 return CommandResultType.Completed;
             }
 
             return CommandResultType.Continue;
         }
-
-        public override string key => "unpack";
-
-        public override string description =>
-            $"Unpacks Data. Ex.:{Environment.NewLine}unpack \"C:/Games/Wizardry Online/data/settings.hed\" \"C:/output\"";
     }
 }

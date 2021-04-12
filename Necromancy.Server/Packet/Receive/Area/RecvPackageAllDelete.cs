@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPackageAllDelete : PacketResponse
     {
         public RecvPackageAllDelete()
-            : base((ushort) AreaPacketId.recv_package_all_delete_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_package_all_delete_r, ServerType.Area)
         {
         }
 
@@ -19,10 +19,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             int numEntries = 0x64;
             res.WriteInt32(numEntries); // cmp to 0x64 = 100
 
-            for (int i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < numEntries; i++) res.WriteInt32(0);
             return res;
         }
     }

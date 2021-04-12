@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_raisescale_add_item;
+        public override ushort id => (ushort)AreaPacketId.send_raisescale_add_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -22,7 +22,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(bagSlot);
-            router.Send(client, (ushort) AreaPacketId.recv_raisescale_add_item_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_raisescale_add_item_r, res, ServerType.Area);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventTreasureboxBegin : PacketResponse
     {
         public RecvEventTreasureboxBegin()
-            : base((ushort) AreaPacketId.recv_event_treasurebox_begin, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_treasurebox_begin, ServerType.Area)
         {
         }
 
@@ -17,10 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             IBuffer res = BufferProvider.Provide();
             int numEntries = 0x10;
             res.WriteInt32(numEntries); //less than 0x10
-            for (int j = 0; j < numEntries; j++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int j = 0; j < numEntries; j++) res.WriteInt32(0);
             return res;
         }
     }

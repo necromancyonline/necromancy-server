@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class Recv0X8066 : PacketResponse
     {
         public Recv0X8066()
-            : base((ushort) AreaPacketId.recv_0x8066, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0x8066, ServerType.Area)
         {
         }
 

@@ -1,12 +1,7 @@
-using Arrowgene.Buffers;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
-using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -14,15 +9,15 @@ namespace Necromancy.Server.Packet.Area
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendAuctionSearch));
 
-        public SendAuctionSearch(NecServer server) : base(server)        {
+        public SendAuctionSearch(NecServer server) : base(server)
+        {
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_search;
+        public override ushort id => (ushort)AreaPacketId.send_auction_search;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-
             //AuctionItemSearchConditions searchCriteria = new AuctionItemSearchConditions();
             //searchCriteria.SoulRankMin = packet.Data.ReadByte();
             //searchCriteria.SoulRankMax = packet.Data.ReadByte();

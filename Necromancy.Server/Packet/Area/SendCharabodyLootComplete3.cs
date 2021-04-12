@@ -1,5 +1,3 @@
-using Arrowgene.Buffers;
-using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -9,14 +7,15 @@ namespace Necromancy.Server.Packet.Area
 {
     public class SendCharabodyLootComplete3 : ClientHandler
     {
-        private NecServer _server;
+        private readonly NecServer _server;
+
         public SendCharabodyLootComplete3(NecServer server) : base(server)
         {
             _server = server;
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_charabody_loot_complete3;
+        public override ushort id => (ushort)AreaPacketId.send_charabody_loot_complete3;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

@@ -1,5 +1,3 @@
-using Necromancy.Server.Model;
-
 namespace Necromancy.Server.Data.Setting
 {
     public class ItemInfoCsvReader : CsvReader<ItemInfoSetting>
@@ -8,10 +6,7 @@ namespace Necromancy.Server.Data.Setting
 
         protected override ItemInfoSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
             return new ItemInfoSetting
             {

@@ -11,11 +11,13 @@ using Necromancy.Server.Packet.Receive.Area;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Spawns a monster
+    ///     Spawns a monster
     /// </summary>
     public class MonsterCommand : ServerChatCommand
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MonsterCommand));
+
+        private int _i;
 
         //protected NecServer server { get; }
         public MonsterCommand(NecServer server) : base(server)
@@ -23,7 +25,10 @@ namespace Necromancy.Server.Chat.Command.Commands
             //this.server = server;
         }
 
-        int _i = 0;
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "mon";
+        public override string helpText => "usage: `/mon [monsterId] [modelId]` - Spawns a Monster";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -59,11 +64,11 @@ namespace Necromancy.Server.Chat.Command.Commands
             monsterSpawn.monsterId = monsterSetting.id;
             monsterSpawn.name = monsterSetting.name;
             monsterSpawn.title = monsterSetting.title;
-            monsterSpawn.level = (byte) monsterSetting.level;
+            monsterSpawn.level = (byte)monsterSetting.level;
 
             monsterSpawn.modelId = modelSetting.id;
-            monsterSpawn.size = (short) (modelSetting.height / 2);
-            monsterSpawn.radius = (short) modelSetting.radius;
+            monsterSpawn.size = (short)(modelSetting.height / 2);
+            monsterSpawn.radius = (short)modelSetting.radius;
 
             monsterSpawn.mapId = client.character.mapId;
 
@@ -93,10 +98,5 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             router.Send(client, (ushort)AreaPacketId.recv_monster_state_update_notify, res, ServerType.Area);
         }
-
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "mon";
-        public override string helpText => "usage: `/mon [monsterId] [modelId]` - Spawns a Monster";
     }
 }

@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateLvDetail2 : PacketResponse
     {
-        Character _character;
-        Experience _experience;
+        private readonly Character _character;
+        private readonly Experience _experience;
+
         public RecvCharaUpdateLvDetail2(Character character, Experience experience)
-            : base((ushort) AreaPacketId.recv_chara_update_lv_detail2, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_lv_detail2, ServerType.Area)
         {
             _character = character;
             _experience = experience;

@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_set_mantle;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_set_mantle;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -20,13 +20,13 @@ namespace Necromancy.Server.Packet.Msg
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) MsgPacketId.recv_union_request_set_mantle_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_request_set_mantle_r, res, ServerType.Msg);
 
             IBuffer res2 = BufferProvider.Provide();
 
             res2.WriteUInt16(mantleDesign); //design
 
-            router.Send(client.map /*myUnion.UnionMembers*/, (ushort) MsgPacketId.recv_union_notify_mantle, res2,
+            router.Send(client.map /*myUnion.UnionMembers*/, (ushort)MsgPacketId.recv_union_notify_mantle, res2,
                 ServerType.Msg);
         }
     }

@@ -1,5 +1,3 @@
-using Arrowgene.Buffers;
-using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
@@ -9,13 +7,14 @@ namespace Necromancy.Server.Packet.Area
 {
     public class SendCharabodyLootStart2Cancel : ClientHandler
     {
-        private NecServer _server;
+        private readonly NecServer _server;
+
         public SendCharabodyLootStart2Cancel(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_charabody_loot_start2_cancel;
+        public override ushort id => (ushort)AreaPacketId.send_charabody_loot_start2_cancel;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -28,7 +27,6 @@ namespace Necromancy.Server.Packet.Area
             if (necClient != null) router.Send(necClient, recvCharaBodyNotifyLootStartCancel.ToPacket());
             RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.character.instanceId);
             if (necClient != null) router.Send(necClient, recvObjectDisappearNotify.ToPacket());
-
         }
     }
 }

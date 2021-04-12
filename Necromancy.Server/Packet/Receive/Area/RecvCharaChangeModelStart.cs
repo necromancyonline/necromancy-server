@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaChangeModelStart : PacketResponse
     {
         public RecvCharaChangeModelStart()
-            : base((ushort) AreaPacketId.recv_chara_change_model_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_change_model_start, ServerType.Area)
         {
         }
 

@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_quest_get_soul_mission_quest_works;
+        public override ushort id => (ushort)AreaPacketId.send_quest_get_soul_mission_quest_works;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -41,6 +41,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt16(1);
                 res.WriteInt32(1);
             }
+
             res.WriteByte(1);
 
             //loop x 12
@@ -52,6 +53,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt16(1);
                 res.WriteInt32(1);
             }
+
             res.WriteByte(1);
 
             res.WriteFixedString("helppls", 385);
@@ -84,8 +86,6 @@ namespace Necromancy.Server.Packet.Area
             res2.WriteInt32(0);
 
             router.Send(client, (ushort)AreaPacketId.recv_quest_display_r, res2, ServerType.Area);
-
-
         }
     }
 }

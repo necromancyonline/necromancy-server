@@ -7,11 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSkillExec : PacketResponse
     {
-        private readonly int _skillId;
         private readonly float _castingTime;
+        private readonly int _skillId;
 
         public RecvSkillExec(int skillId, float castingTime)
-            : base((ushort) AreaPacketId.send_skill_start_cast, ServerType.Area)
+            : base((ushort)AreaPacketId.send_skill_start_cast, ServerType.Area)
         {
             _skillId = skillId;
             _castingTime = castingTime;

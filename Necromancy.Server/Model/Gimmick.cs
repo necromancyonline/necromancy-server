@@ -5,7 +5,12 @@ namespace Necromancy.Server.Model
 {
     public class Gimmick : IInstance
     {
-        public uint instanceId { get; set; }
+        public Gimmick()
+        {
+            created = DateTime.Now;
+            updated = DateTime.Now;
+        }
+
         public int id { get; set; }
         public int mapId { get; set; }
         public float x { get; set; }
@@ -16,11 +21,6 @@ namespace Necromancy.Server.Model
         public int state { get; set; }
         public DateTime created { get; set; }
         public DateTime updated { get; set; }
-
-        public Gimmick()
-        {
-            created = DateTime.Now;
-            updated = DateTime.Now;
-        }
+        public uint instanceId { get; set; }
     }
 }

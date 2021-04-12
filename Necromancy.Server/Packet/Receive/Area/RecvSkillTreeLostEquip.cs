@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillTreeLostEquip : PacketResponse
     {
         public RecvSkillTreeLostEquip()
-            : base((ushort) AreaPacketId.recv_skill_tree_lost_equip, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_tree_lost_equip, ServerType.Area)
         {
         }
 

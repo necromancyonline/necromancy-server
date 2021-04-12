@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvEventScriptPlay : PacketResponse
     {
-        private string _scriptPath;
-        private uint _objectId;
+        private readonly uint _objectId;
+        private readonly string _scriptPath;
+
         public RecvEventScriptPlay(string scriptPath, uint objectId)
-            : base((ushort) AreaPacketId.recv_event_script_play, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_script_play, ServerType.Area)
         {
             _scriptPath = scriptPath;
             _objectId = objectId;

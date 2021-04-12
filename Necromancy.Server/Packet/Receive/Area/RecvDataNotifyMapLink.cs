@@ -1,23 +1,23 @@
+using System.Numerics;
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System.Numerics;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvDataNotifyMapLink : PacketResponse
     {
+        private readonly int _color;
+        private readonly byte _heading;
         private readonly uint _instanceId;
         private readonly Vector3 _mapPos;
         private readonly int _offset;
         private readonly int _width;
-        private readonly int _color;
-        private readonly byte _heading;
 
         public RecvDataNotifyMapLink(uint instanceId, Vector3 mapPos, int offset, int width,
             int color, byte heading)
-            : base((ushort) AreaPacketId.recv_data_notify_maplink, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_maplink, ServerType.Area)
         {
             _instanceId = instanceId;
             _mapPos = mapPos;

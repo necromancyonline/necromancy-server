@@ -7,10 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvDataNotifyGimmickData : PacketResponse
     {
-        private Gimmick _gimmickSpawn;
+        private readonly Gimmick _gimmickSpawn;
 
         public RecvDataNotifyGimmickData(Gimmick gimmickSpawn)
-            : base((ushort) AreaPacketId.recv_data_notify_gimmick_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_gimmick_data, ServerType.Area)
         {
             _gimmickSpawn = gimmickSpawn;
         }

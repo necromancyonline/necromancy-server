@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-
 namespace Necromancy.Server.Data.Setting
 {
     public class SkillBaseSetting : ISettingRepositoryItem
     {
-        public int id { get; set; }
         public string name { get; set; }
 
         public int logId { get; set; }
@@ -50,5 +47,6 @@ namespace Necromancy.Server.Data.Setting
         public int unknown4 { get; set; }
         public string displayName { get; set; }
         public int effectTime { get; set; }
+        public int id { get; set; }
     }
 }

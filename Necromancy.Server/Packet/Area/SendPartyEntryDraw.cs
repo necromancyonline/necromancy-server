@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_entry_draw;
+        public override ushort id => (ushort)AreaPacketId.send_party_entry_draw;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteUInt32(client.character.instanceId);
 
-            router.Send(client, (ushort) AreaPacketId.recv_party_entry_draw_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_entry_draw_r, res, ServerType.Area);
 
             //TODO TEST REMOVE
             res = BufferProvider.Provide();

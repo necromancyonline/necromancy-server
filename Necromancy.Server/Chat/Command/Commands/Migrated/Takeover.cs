@@ -16,22 +16,20 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "takeover";
+
+        public override string helpText =>
+            "usage: `/takeover ` - Takes over the last object targeted \n `/takeover cancel` - cancels the takeover \n `/takeover save` - saves the takeover to database ";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            if (client.character.takeover == true)
-            {
+            if (client.character.takeover)
                 client.character.takeover = false;
-            }
-            else if (client.character.takeover == false)
-            {
-                client.character.takeover = true;
-            }
+            else if (client.character.takeover == false) client.character.takeover = true;
 
-            if (command[0] == "cancel" || command[0] == "c")
-            {
-                client.character.takeover = false;
-            }
+            if (command[0] == "cancel" || command[0] == "c") client.character.takeover = false;
 
             IInstance instance = server.instances.GetInstance(client.character.eventSelectReadyCode);
 
@@ -43,59 +41,46 @@ namespace Necromancy.Server.Chat.Command.Commands
                 {
                     case NpcSpawn npcSpawn:
                         _Logger.Debug($"NPCId: {npcSpawn.id} is being updated in the database");
-                        npcSpawn.heading = (byte) (client.character.heading);
-                        npcSpawn.x = (client.character.x);
-                        npcSpawn.y = (client.character.y);
-                        npcSpawn.z = (client.character.z);
+                        npcSpawn.heading = client.character.heading;
+                        npcSpawn.x = client.character.x;
+                        npcSpawn.y = client.character.y;
+                        npcSpawn.z = client.character.z;
                         npcSpawn.updated = DateTime.Now;
                         if (!server.database.UpdateNpcSpawn(npcSpawn))
                         {
                             _Logger.Error("Could not update the database");
-                            return;
                         }
 
                         break;
                     case MonsterSpawn monsterSpawn:
                         _Logger.Debug($"MonsterId: {monsterSpawn.id} is being updated in the database");
-                        monsterSpawn.heading = (byte) (client.character.heading);
-                        monsterSpawn.x = (client.character.x);
-                        monsterSpawn.y = (client.character.y);
-                        monsterSpawn.z = (client.character.z);
+                        monsterSpawn.heading = client.character.heading;
+                        monsterSpawn.x = client.character.x;
+                        monsterSpawn.y = client.character.y;
+                        monsterSpawn.z = client.character.z;
                         monsterSpawn.updated = DateTime.Now;
-                        if (!server.database.UpdateMonsterSpawn(monsterSpawn))
-                        {
-                            _Logger.Error("Could not update the database");
-                            return;
-                        }
+                        if (!server.database.UpdateMonsterSpawn(monsterSpawn)) _Logger.Error("Could not update the database");
 
                         break;
                     case Character character:
                         _Logger.Debug($"CharacterId: {character.id} is being updated in the database");
-                        character.heading = (byte) (client.character.heading);
-                        character.x = (client.character.x);
-                        character.y = (client.character.y);
-                        character.z = (client.character.z);
+                        character.heading = client.character.heading;
+                        character.x = client.character.x;
+                        character.y = client.character.y;
+                        character.z = client.character.z;
                         character.mapId = client.character.mapId;
                         //character.Updated = DateTime.Now;
-                        if (!server.database.UpdateCharacter(character))
-                        {
-                            _Logger.Error("Could not update the database");
-                            return;
-                        }
+                        if (!server.database.UpdateCharacter(character)) _Logger.Error("Could not update the database");
 
                         break;
                     case Gimmick gimmick:
                         _Logger.Debug($"MonsterId: {gimmick.id} is being updated in the database");
-                        gimmick.heading = (byte) (client.character.heading);
-                        gimmick.x = (client.character.x);
-                        gimmick.y = (client.character.y);
-                        gimmick.z = (client.character.z);
+                        gimmick.heading = client.character.heading;
+                        gimmick.x = client.character.x;
+                        gimmick.y = client.character.y;
+                        gimmick.z = client.character.z;
                         gimmick.updated = DateTime.Now;
-                        if (!server.database.UpdateGimmick(gimmick))
-                        {
-                            _Logger.Error("Could not update the database");
-                            return;
-                        }
+                        if (!server.database.UpdateGimmick(gimmick)) _Logger.Error("Could not update the database");
 
                         break;
                     default:
@@ -172,11 +157,5 @@ namespace Necromancy.Server.Chat.Command.Commands
                 }
             }
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "takeover";
-
-        public override string helpText =>
-            "usage: `/takeover ` - Takes over the last object targeted \n `/takeover cancel` - cancels the takeover \n `/takeover save` - saves the takeover to database ";
     }
 }

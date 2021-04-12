@@ -1,15 +1,15 @@
-using Necromancy.Server.Common;
-using Necromancy.Server.Model;
-using Necromancy.Server.Packet;
-using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
+using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
+using Necromancy.Server.Model;
+using Necromancy.Server.Packet;
+using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Tasks.Core;
 
 namespace Necromancy.Server.Tasks
@@ -23,42 +23,34 @@ namespace Necromancy.Server.Tasks
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MonsterTask));
 
-        protected NecServer server { get; }
-        public MonsterSpawn monster { get; set; }
-        public bool monsterFreeze { get; set; }
-        public bool monsterActive { get; set; }
-        public bool monsterMoving { get; set; }
+        private static readonly int[] _skillList = {200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417};
+
+        private static int[] _effectList = {301411, 301412, 301413, 301414, 301415, 301416, 301417};
+        private int _agroCheckTime;
+        private readonly float _agroDetectAngle;
+        private readonly float _agroMoveAngle;
+        private int _agroMoveTime;
+
+        private readonly int _agroTick;
+        private readonly MonsterTick _agroTickMove;
         private bool _casting;
+        private int _castState;
+        private Vector3 _currentDest;
+        private int _currentSkill;
+        private int _currentWait;
+        private readonly Map _map;
         private bool _monsterWaiting;
-        private bool _spawnMonster;
-        public int agroRange { get; set; }
 
         //private int currentDest;
         private int _moveTime;
-        private int _updateTime;
-        private int _waitTime;
-        private int _pathingTick;
-
-        private int _agroTick;
+        private readonly int _pathingTick;
 
         //private int monsterVelocity;
         private int _respawnTime;
-        private int _agroCheckTime;
-        private int _agroMoveTime;
-        private int _currentWait;
-        private float _agroDetectAngle;
-        private float _agroMoveAngle;
-        private Map _map;
-        private int _castState;
-
-        private static int[] _skillList = new[]
-            {200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417};
-
-        private static int[] _effectList = new[] {301411, 301412, 301413, 301414, 301415, 301416, 301417};
-        private int _currentSkill;
-        private uint _skillInstanceId;
-        private Vector3 _currentDest;
-        private MonsterTick _agroTickMove;
+        private readonly uint _skillInstanceId;
+        private bool _spawnMonster;
+        private int _updateTime;
+        private int _waitTime;
         public MonsterCoord monsterHome;
 
         public MonsterTask(NecServer server, MonsterSpawn monster)
@@ -83,8 +75,8 @@ namespace Necromancy.Server.Tasks
             _monsterWaiting = true;
             agroRange = 1000;
             _agroCheckTime = -1;
-            _agroDetectAngle = (float) Math.Cos(Math.PI / 1.9);
-            _agroMoveAngle = (float) Math.Cos(Math.PI / 4);
+            _agroDetectAngle = (float)Math.Cos(Math.PI / 1.9);
+            _agroMoveAngle = (float)Math.Cos(Math.PI / 4);
             _castState = 0;
             _respawnTime = 10000;
             _currentSkill = 0;
@@ -92,6 +84,13 @@ namespace Necromancy.Server.Tasks
             _map = this.server.maps.Get(this.monster.mapId);
             _currentDest = new Vector3();
         }
+
+        protected NecServer server { get; }
+        public MonsterSpawn monster { get; set; }
+        public bool monsterFreeze { get; set; }
+        public bool monsterActive { get; set; }
+        public bool monsterMoving { get; set; }
+        public int agroRange { get; set; }
 
         public override string taskName => $"MonsterTask : {monster.instanceId} - {monster.name}";
         public override TimeSpan taskTimeSpan { get; }
@@ -139,7 +138,7 @@ namespace Necromancy.Server.Tasks
                 }
             }
 
-            this.Stop();
+            Stop();
             monster.taskActive = false;
         }
 
@@ -167,14 +166,14 @@ namespace Necromancy.Server.Tasks
                     else
                         this.monster.currentCoordIndex = 0;
 
-                    this.monster.heading = (byte) GetHeading(this.monster.monsterCoords
+                    this.monster.heading = (byte)GetHeading(this.monster.monsterCoords
                         .Find(x => x.coordIdx == this.monster.currentCoordIndex).destination);
                 }
             }
 
             if (MonsterCheck())
             {
-                _Logger.Debug($"MonsterCheck returned true");
+                _Logger.Debug("MonsterCheck returned true");
                 return;
             }
 
@@ -206,28 +205,25 @@ namespace Necromancy.Server.Tasks
             Character currentTarget = this.monster.GetCurrentTarget();
             if (currentTarget == null)
             {
-                _Logger.Error($"No character target set for agroed monster");
+                _Logger.Error("No character target set for agroed monster");
                 return true;
             }
 
             if (MonsterCheck())
             {
-                _Logger.Debug($"MonsterCheck returned true");
+                _Logger.Debug("MonsterCheck returned true");
                 return true;
             }
 
             float homeDistance = GetDistance(monsterHome.destination, monster);
-            if (homeDistance >= (agroRange * 4))
+            if (homeDistance >= agroRange * 4)
             {
-                foreach (uint instanceId in this.monster.GetAgroInstanceList())
-                {
-                    this.monster.MonsterHate(server, false, instanceId);
-                }
+                foreach (uint instanceId in this.monster.GetAgroInstanceList()) this.monster.MonsterHate(server, false, instanceId);
 
                 RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(this.monster.instanceId);
                 server.router.Send(_map, objectDisappearData);
                 _spawnMonster = true;
-                _Logger.Debug($"Too far from home");
+                _Logger.Debug("Too far from home");
                 return true;
             }
 
@@ -245,7 +241,6 @@ namespace Necromancy.Server.Tasks
                 }
 
                 if (!_monsterWaiting)
-                {
                     switch (_castState)
                     {
                         case 0:
@@ -253,18 +248,18 @@ namespace Necromancy.Server.Tasks
                             //Casters
                             if (this.monster.monsterId == 100201)
                             {
-                             //  skillInstanceId = _server.Instances.CreateInstance<Skill>().InstanceId;
-                             //  Logger.Debug($"attackId [200301411]");
-                             //  //_monster.MonsterStop(Server,8, 231, 2.0F);
-                             //  StartMonsterCastQueue(200301411, skillInstanceId);
-                             //  PlayerDamage();
-                             //  waitTime = 2000;
-                             //  CastState = 1;
+                                //  skillInstanceId = _server.Instances.CreateInstance<Skill>().InstanceId;
+                                //  Logger.Debug($"attackId [200301411]");
+                                //  //_monster.MonsterStop(Server,8, 231, 2.0F);
+                                //  StartMonsterCastQueue(200301411, skillInstanceId);
+                                //  PlayerDamage();
+                                //  waitTime = 2000;
+                                //  CastState = 1;
                             }
                             //Melee Attackers
                             else
                             {
-                                int attackId = (this.monster.attackSkillId * 100) + Util.GetRandomNumber(1, 4);
+                                int attackId = this.monster.attackSkillId * 100 + Util.GetRandomNumber(1, 4);
                                 //Logger.Debug($"_monster.AttackSkillId [{_monster.AttackSkillId}]  attackId[{attackId}]");
                                 MonsterAttackQueue(attackId);
                                 PlayerDamage();
@@ -309,10 +304,7 @@ namespace Necromancy.Server.Tasks
                             _currentWait = 0;
                             _castState = 0;
                             break;
-                        default:
-                            break;
                     }
-                }
             }
             else
             {
@@ -352,7 +344,7 @@ namespace Necromancy.Server.Tasks
 
         private void PlayerDamage()
         {
-            int damage = (int) Util.GetRandomNumber(8, 43);
+            int damage = Util.GetRandomNumber(8, 43);
             Character currentTarget = monster.GetCurrentTarget();
             currentTarget.hp.Modify(-damage, monster.instanceId);
 
@@ -419,7 +411,7 @@ namespace Necromancy.Server.Tasks
                 .instanceId); //must be set to int32 contents. int myTargetID = packet.Data.ReadInt32();
             res2.WriteInt32(1); //unknown
             res2.WriteInt32(1);
-            server.router.Send(_map, (ushort) AreaPacketId.recv_data_notify_eo_data, res2, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_data_notify_eo_data, res2, ServerType.Area);
         }
 
         private void SendDataNotifyEoData2(uint instanceId, int effectId)
@@ -446,7 +438,7 @@ namespace Necromancy.Server.Tasks
             res2.WriteInt32(0);
             res2.WriteInt32(0);
             res2.WriteInt32(0);
-            server.router.Send(_map, (ushort) AreaPacketId.recv_data_notify_eo_data2, res2, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_data_notify_eo_data2, res2, ServerType.Area);
         }
 
         public void MonsterCastMove(uint instanceId, int castVelocity, byte pose, byte animation)
@@ -467,12 +459,12 @@ namespace Necromancy.Server.Tasks
             res.WriteFloat(moveTo.Y); //Y Per tick
             res.WriteFloat(moveTo.Z); //verticalMovementSpeedMultiplier
 
-            res.WriteFloat((float) 1 / travelTime); //movementMultiplier
-            res.WriteFloat((float) travelTime); //Seconds to move
+            res.WriteFloat(1 / travelTime); //movementMultiplier
+            res.WriteFloat(travelTime); //Seconds to move
 
             res.WriteByte(pose); //MOVEMENT ANIM
             res.WriteByte(animation); //JUMP & FALLING ANIM
-            server.router.Send(_map, (ushort) AreaPacketId.recv_0x8D92, res,
+            server.router.Send(_map, (ushort)AreaPacketId.recv_0x8D92, res,
                 ServerType.Area); //recv_0xE8B9  recv_0x1FC1
         }
 
@@ -483,7 +475,7 @@ namespace Necromancy.Server.Tasks
 
             res.WriteUInt32(instanceId);
             res.WriteFloat(3.0F);
-            server.router.Send(_map, (ushort) AreaPacketId.recv_eo_notify_disappear_schedule, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_eo_notify_disappear_schedule, res, ServerType.Area);
         }
 
         private void SendBattleAttackPose()
@@ -491,7 +483,7 @@ namespace Necromancy.Server.Tasks
             IBuffer res = BufferProvider.Provide();
             res = BufferProvider.Provide();
             res.WriteInt32(1410101);
-            server.router.Send(_map, (ushort) AreaPacketId.recv_battle_attack_pose_r, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_attack_pose_r, res, ServerType.Area);
         }
 
         private void SendBattleAttackStart()
@@ -500,7 +492,7 @@ namespace Necromancy.Server.Tasks
             IBuffer res = BufferProvider.Provide();
             res = BufferProvider.Provide();
             res.WriteUInt32(currentTarget.instanceId);
-            server.router.Send(_map, (ushort) AreaPacketId.recv_battle_attack_start_r, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_attack_start_r, res, ServerType.Area);
         }
 
         public void MonsterSpawn()
@@ -516,17 +508,13 @@ namespace Necromancy.Server.Tasks
             monster.x = spawnCoords.destination.X;
             monster.y = spawnCoords.destination.Y;
             monster.z = spawnCoords.destination.Z;
-            monster.heading = (byte) GetHeading(monster.monsterCoords.Find(x => x.coordIdx == 1).destination);
+            monster.heading = (byte)GetHeading(monster.monsterCoords.Find(x => x.coordIdx == 1).destination);
             monster.hp.ToMax();
             _respawnTime = monster.respawnTime;
             RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monster);
             foreach (NecClient client in _map.clientLookup.GetAll())
-            {
                 if (client.character.hasDied == false)
-                {
                     server.router.Send(client, monsterData.ToPacket());
-                }
-            }
             _spawnMonster = false;
             monster.monsterVisible = true;
             monster.ClearAgroList();
@@ -547,7 +535,7 @@ namespace Necromancy.Server.Tasks
 
                     IBuffer res = BufferProvider.Provide();
                     res.WriteUInt64(client.character.experienceCurrent);
-                    res.WriteByte(0);//bool
+                    res.WriteByte(0); //bool
                     server.router.Send(client, (ushort)AreaPacketId.recv_self_exp_notify, res, ServerType.Area); //This should go to the party of whomever did the most damage.  TODO
 
                     //To-Do,  make a variable to track union gold
@@ -573,16 +561,16 @@ namespace Necromancy.Server.Tasks
                 IBuffer res10 = BufferProvider.Provide();
                 res10.WriteUInt32(monster.instanceId);
                 res10.WriteInt32(2); //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing).
-                server.router.Send(_map, (ushort) AreaPacketId.recv_monster_state_update_notify, res10,
+                server.router.Send(_map, (ushort)AreaPacketId.recv_monster_state_update_notify, res10,
                     ServerType.Area);
 
                 Thread.Sleep(monster.respawnTime);
                 //decompose the body
                 IBuffer res7 = BufferProvider.Provide();
                 res7.WriteUInt32(monster.instanceId);
-                res7.WriteInt32(Util.GetRandomNumber(1,5)); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
+                res7.WriteInt32(Util.GetRandomNumber(1, 5)); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
                 res7.WriteInt32(1);
-                server.router.Send(_map, (ushort) AreaPacketId.recv_charabody_notify_deadstate, res7, ServerType.Area);
+                server.router.Send(_map, (ushort)AreaPacketId.recv_charabody_notify_deadstate, res7, ServerType.Area);
                 Thread.Sleep(2000);
                 RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(monster.instanceId);
                 server.router.Send(_map, objectDisappearData);
@@ -603,7 +591,7 @@ namespace Necromancy.Server.Tasks
             {
                 monsterMoving = true;
                 OrientMonster();
-                monster.MonsterMove(server, monster.monsterWalkVelocity, (byte) 2, (byte) 0);
+                monster.MonsterMove(server, monster.monsterWalkVelocity, 2, 0);
             }
             else
             {
@@ -617,8 +605,8 @@ namespace Necromancy.Server.Tasks
 
                 if (distance >= monster.monsterWalkVelocity / tickDivisor)
                 {
-                    monster.x = monster.x + (moveTo.X / travelTime) / tickDivisor;
-                    monster.y = monster.y + (moveTo.Y / travelTime) / tickDivisor;
+                    monster.x = monster.x + moveTo.X / travelTime / tickDivisor;
+                    monster.y = monster.y + moveTo.Y / travelTime / tickDivisor;
                     //_monster.Z = _monster.Z + (moveTo.Z / travelTime) / tickDivisor;
                 }
                 else
@@ -645,7 +633,7 @@ namespace Necromancy.Server.Tasks
             distance = GetDistance(monsterPos, _currentDest);
             Character currentTarget = monster.GetCurrentTarget();
             Vector3 targetPos = new Vector3(currentTarget.x, currentTarget.y, currentTarget.z);
-            if (distance < (monster.monsterRunVelocity / tickDivisor) || _agroMoveTime >= 1000 || !monsterMoving)
+            if (distance < monster.monsterRunVelocity / tickDivisor || _agroMoveTime >= 1000 || !monsterMoving)
             {
                 _agroMoveTime = _agroTick;
                 monsterMoving = true;
@@ -657,12 +645,12 @@ namespace Necromancy.Server.Tasks
                 Vector3 moveTo = Vector3.Subtract(targetPos, monsterPos);
                 distance = GetDistance(monsterPos, targetPos);
                 //Logger.Debug($"Target distance [{distance}] targetPos.X [{targetPos.X}] targetPos.Y [{targetPos.Y}] targetPos.Z [{targetPos.Z}]");
-                float factor = (float) Math.Sqrt(((monsterPos.X - targetPos.X) * (monsterPos.X - targetPos.X)) +
-                                                 ((monsterPos.Y - targetPos.Y) * (monsterPos.Y - targetPos.Y))) /
+                float factor = (float)Math.Sqrt((monsterPos.X - targetPos.X) * (monsterPos.X - targetPos.X) +
+                                                (monsterPos.Y - targetPos.Y) * (monsterPos.Y - targetPos.Y)) /
                                monsterGoto;
                 _currentDest.Z = targetPos.Z;
-                _currentDest.X = targetPos.X - (moveTo.X / factor);
-                _currentDest.Y = targetPos.Y - (moveTo.Y / factor);
+                _currentDest.X = targetPos.X - moveTo.X / factor;
+                _currentDest.Y = targetPos.Y - moveTo.Y / factor;
                 moveTo = Vector3.Subtract(_currentDest, monsterPos);
 
                 // Now do the move
@@ -675,11 +663,11 @@ namespace Necromancy.Server.Tasks
                 tick.xTick = moveTo.X;
                 tick.yTick = moveTo.Y;
                 tick.zTick = moveTo.Z;
-                _agroTickMove.xTick = (moveTo.X / travelTime) / tickDivisor;
-                _agroTickMove.yTick = (moveTo.Y / travelTime) / tickDivisor;
+                _agroTickMove.xTick = moveTo.X / travelTime / tickDivisor;
+                _agroTickMove.yTick = moveTo.Y / travelTime / tickDivisor;
                 _agroTickMove.zTick = 0;
                 //Logger.Debug($"Moving distance [{distance}] monsterVelocity [{_monster.MonsterRunVelocity}]  travelTime[{travelTime}] xTick [{tick.xTick}] yTick [{tick.yTick}] moveTo.X [{moveTo.X}] moveTo.Y [{moveTo.Y}] moveTo.Z [{moveTo.Z}]");
-                monster.MonsterMove(server, (byte) 3, (byte) 0, tick, travelTime);
+                monster.MonsterMove(server, 3, 0, tick, travelTime);
             }
             else
             {
@@ -719,12 +707,11 @@ namespace Necromancy.Server.Tasks
 
             Vector3 monster = new Vector3(this.monster.x, this.monster.y, this.monster.z);
             foreach (NecClient client in mapsClients)
-            {
                 if (client.character.hp.depleted == false)
                 {
                     Vector3 character = new Vector3(client.character.x, client.character.y, client.character.z);
                     float distanceChar = GetDistance(character, monster);
-                    if ((distanceChar <= agroRange) && !StealthCheck(client))
+                    if (distanceChar <= agroRange && !StealthCheck(client))
                     {
                         Vector3 characterPos = new Vector3(character.X, character.Y, character.Z);
                         if (CheckFov(characterPos, _agroDetectAngle))
@@ -736,11 +723,6 @@ namespace Necromancy.Server.Tasks
                         }
                     }
                 }
-                else
-                {
-                    //Logger.Debug($"character {client.Soul.Name} is dead. Looking for Living Targets.");
-                }
-            }
 
             return this.monster.GetAgro();
         }
@@ -748,10 +730,7 @@ namespace Necromancy.Server.Tasks
         private bool StealthCheck(NecClient client)
         {
             // Needs to be expanded to consider skill, distance and orientation
-            if (((uint)client.character.state & 0x100) > 0)
-            {
-                return true;
-            }
+            if (((uint)client.character.state & 0x100) > 0) return true;
 
             return false;
         }
@@ -766,10 +745,7 @@ namespace Necromancy.Server.Tasks
             }
 
             uint currentInstance = monster.GetAgroHigh();
-            if (currentTarget.instanceId != currentInstance)
-            {
-                currentTarget = _map.clientLookup.GetByCharacterInstanceId((uint) currentInstance).character;
-            }
+            if (currentTarget.instanceId != currentInstance) currentTarget = _map.clientLookup.GetByCharacterInstanceId(currentInstance).character;
 
             _agroCheckTime = 0;
         }
@@ -780,7 +756,7 @@ namespace Necromancy.Server.Tasks
             Vector3 source = new Vector3(monster.x, monster.y, monster.z);
             Vector3 targetVector = Vector3.Normalize(source - target);
             double sourceRadian = ConvertToRadians(monster.heading, true);
-            Vector3 sourceVector = new Vector3((float) Math.Cos(sourceRadian), (float) Math.Sin(sourceRadian), 0);
+            Vector3 sourceVector = new Vector3((float)Math.Cos(sourceRadian), (float)Math.Sin(sourceRadian), 0);
             sourceVector = Vector3.Normalize(sourceVector);
             float dotProduct = Vector3.Dot(sourceVector, targetVector);
             //Logger.Debug($"sourceVector.X[{sourceVector.X}] sourceVector.Y[{sourceVector.Y}]");
@@ -796,9 +772,9 @@ namespace Necromancy.Server.Tasks
         {
             angle = angle * 2;
             if (adjust)
-                angle = (angle <= 90 ? angle + 270 : angle - 90);
+                angle = angle <= 90 ? angle + 270 : angle - 90;
             //direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
-            return (Math.PI / 180) * angle;
+            return Math.PI / 180 * angle;
         }
 
         private void OrientMonster()
@@ -817,8 +793,8 @@ namespace Necromancy.Server.Tasks
         private void ShowVectorInfo(double targetX, double targetY, double targetZ, double objectX, double objectY,
             double objectZ)
         {
-            Vector3 target = new Vector3((float) targetX, (float) targetY, (float) targetZ);
-            Vector3 source = new Vector3((float) objectX, (float) objectY, (float) objectZ);
+            Vector3 target = new Vector3((float)targetX, (float)targetY, (float)targetZ);
+            Vector3 source = new Vector3((float)objectX, (float)objectY, (float)objectZ);
             Vector3 moveTo = Vector3.Subtract(target, source);
             float distance = Vector3.Distance(target, source);
             double dx = objectX - targetX;
@@ -838,7 +814,7 @@ namespace Necromancy.Server.Tasks
         {
             double dx = monster.x - destination.X;
             double dy = monster.y - destination.Y;
-            double direction = (Math.Atan2(dy, dx) / System.Math.PI) * 180f;
+            double direction = Math.Atan2(dy, dx) / Math.PI * 180f;
             ;
             if (direction < 0) direction += 360f;
             direction = direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
@@ -850,12 +826,12 @@ namespace Necromancy.Server.Tasks
             Character currentTarget = monster.GetCurrentTarget();
             double dx = monster.x - currentTarget.x;
             double dy = monster.y - currentTarget.y;
-            double direction = (Math.Atan2(dy, dx) / System.Math.PI) * 180f;
+            double direction = Math.Atan2(dy, dx) / Math.PI * 180f;
             ;
             if (direction < 0) direction += 360f;
             direction = direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
             //Logger.Debug($"New direction [{direction}]");
-            monster.heading = (byte) direction;
+            monster.heading = (byte)direction;
         }
 
         private bool CheckHeading() // Will return heading for x2/y2 object to look at x1/y1 object
@@ -863,25 +839,25 @@ namespace Necromancy.Server.Tasks
             Character currentTarget = monster.GetCurrentTarget();
             double dx = monster.x - currentTarget.x;
             double dy = monster.y - currentTarget.y;
-            double direction = (Math.Atan2(dy, dx) / System.Math.PI) * 180f;
+            double direction = Math.Atan2(dy, dx) / Math.PI * 180f;
             ;
             if (direction < 0) direction += 360f;
             direction = direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
             //Logger.Debug($"direction after [{direction}]");
-            return monster.heading == (byte) direction;
+            return monster.heading == (byte)direction;
         }
 
         private void SendBattleReportStartNotify()
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(monster.instanceId);
-            server.router.Send(_map, (ushort) AreaPacketId.recv_battle_report_start_notify, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_report_start_notify, res, ServerType.Area);
         }
 
         private void SendBattleReportEndNotify()
         {
             IBuffer res = BufferProvider.Provide();
-            server.router.Send(_map, (ushort) AreaPacketId.recv_battle_report_end_notify, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_report_end_notify, res, ServerType.Area);
         }
     }
 }

@@ -20,12 +20,12 @@ namespace Necromancy.Server.Packet.Area
             int errcode = 0;
 
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(errcode);//Error message Call. 0 for success. see additional options in Sys_msg.csv
+            res.WriteInt32(errcode); //Error message Call. 0 for success. see additional options in Sys_msg.csv
             router.Send(client, (ushort)AreaPacketId.recv_select_package_update_r, res, ServerType.Area);
 
 
-            if (operation == 0x01 || operation == 0x0)//receive message
-            {; }
+            if (operation == 0x01 || operation == 0x0) //receive message
+                ;
 
 
             /*
@@ -42,11 +42,6 @@ namespace Necromancy.Server.Packet.Area
 
             router.Send(client, (ushort)AreaPacketId.recv_loot_access_object_r, res, ServerType.Area);
         }
-
-
-
-
-
 
 
         /*
@@ -79,6 +74,5 @@ namespace Necromancy.Server.Packet.Area
             MAIL	GENERIC	Failed to send mail
 
         */
-
     }
 }

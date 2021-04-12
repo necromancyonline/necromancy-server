@@ -1,10 +1,7 @@
-
-using Necromancy.Server.Model;
-using Necromancy.Server.Systems.Item;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Text;
+using Necromancy.Server.Model;
+using Necromancy.Server.Systems.Item;
 using Xunit;
 using static Necromancy.Server.Systems.Item.ItemService;
 
@@ -12,8 +9,6 @@ namespace Necromancy.Test.Systems
 {
     public class ItemTest
     {
-
-
         private class DummyItemDao : IItemDao
         {
             public void DeleteItemInstance(ulong instanceIds)
@@ -44,6 +39,7 @@ namespace Necromancy.Test.Systems
                     //itemInstance.PlusReservoirEff  = spawnParams[i].plus_reservoir_eff;
                     dummyItems.Add(itemInstance);
                 }
+
                 return dummyItems;
             }
 
@@ -71,18 +67,22 @@ namespace Necromancy.Test.Systems
             {
                 //ignore
             }
+
             public void UpdateItemEnhancementLevel(ulong instanceId, int level)
             {
                 //ignore
             }
+
             public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
             {
                 //ignore
             }
+
             public void UpdateItemLocation(ulong instanceId, ItemLocation itemLocation)
             {
                 //ignore
             }
+
             public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses)
             {
                 //curse you DummyItemDAO!!! muahaha
@@ -144,10 +144,11 @@ namespace Necromancy.Test.Systems
             }
         }
 
-            public class TestMove
+        public class TestMove
         {
             private readonly Character _dummyCharacter;
             private readonly ItemService _itemService;
+
             public TestMove()
             {
                 _dummyCharacter = new Character();
@@ -403,7 +404,7 @@ namespace Necromancy.Test.Systems
 
                 MoveResult moveResult = _itemService.Move(bagLoc, toLoc, Quantity);
 
-                Assert.Equal(ItemService.MoveType.Place, moveResult.type);
+                Assert.Equal(MoveType.Place, moveResult.type);
                 Assert.Equal(BagId, moveResult.destItem.instanceId);
 
                 Assert.Null(_dummyCharacter.itemLocationVerifier.GetItem(bagLoc));
@@ -435,15 +436,18 @@ namespace Necromancy.Test.Systems
                 Assert.Equal(ItemExceptionType.BagLocation, e.type);
             }
         }
+
         public class TestRemove
         {
             private readonly Character _dummyCharacter;
             private readonly ItemService _itemService;
+
             public TestRemove()
             {
                 _dummyCharacter = new Character();
                 _itemService = new ItemService(_dummyCharacter, new DummyItemDao());
             }
+
             [Fact]
             public void TestItemRemoveAll()
             {
@@ -495,6 +499,5 @@ namespace Necromancy.Test.Systems
                 Assert.Equal(ItemExceptionType.Amount, e.type);
             }
         }
-
     }
 }

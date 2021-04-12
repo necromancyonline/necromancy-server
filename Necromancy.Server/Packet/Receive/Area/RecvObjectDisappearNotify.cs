@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly uint _instanceId;
 
         public RecvObjectDisappearNotify(uint instanceId)
-            : base((ushort) AreaPacketId.recv_object_disappear_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_object_disappear_notify, ServerType.Area)
         {
             _instanceId = instanceId;
         }

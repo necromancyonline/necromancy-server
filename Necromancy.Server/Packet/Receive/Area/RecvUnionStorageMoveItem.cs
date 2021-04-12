@@ -8,12 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionStorageMoveItem : PacketResponse
     {
         private readonly int _error;
+
         public RecvUnionStorageMoveItem(NecClient client, int error)
-            : base((ushort) AreaPacketId.send_union_storage_move_item, ServerType.Area)
+            : base((ushort)AreaPacketId.send_union_storage_move_item, ServerType.Area)
         {
             _error = error;
             clients.Add(client);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

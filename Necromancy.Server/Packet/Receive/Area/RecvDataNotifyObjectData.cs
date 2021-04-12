@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly Object _objectData;
 
         public RecvDataNotifyObjectData(Object objectData)
-            : base((ushort) AreaPacketId.recv_data_notify_itemobject_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_itemobject_data, ServerType.Area)
         {
             _objectData = objectData;
         }

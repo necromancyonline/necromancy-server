@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGamepotWebNotifyOpen : PacketResponse
     {
         public RecvGamepotWebNotifyOpen()
-            : base((ushort) AreaPacketId.recv_gamepot_web_notify_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gamepot_web_notify_open, ServerType.Area)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteCString("");//find max size
+            res.WriteCString(""); //find max size
             return res;
         }
     }

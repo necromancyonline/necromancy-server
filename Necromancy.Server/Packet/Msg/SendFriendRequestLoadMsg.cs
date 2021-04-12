@@ -11,13 +11,13 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_friend_request_load_msg;
+        public override ushort id => (ushort)MsgPacketId.send_friend_request_load_msg;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) MsgPacketId.recv_friend_request_load_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_friend_request_load_r, res, ServerType.Msg);
         }
     }
 }

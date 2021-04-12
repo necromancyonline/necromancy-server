@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemScrollCloseR : PacketResponse
     {
         public RecvItemScrollCloseR()
-            : base((ushort) AreaPacketId.recv_item_scroll_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_scroll_close_r, ServerType.Area)
         {
         }
 

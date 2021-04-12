@@ -6,13 +6,24 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Msg
 {
     public class SendCharaCreate : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaCreate));
+        private readonly int[] _fighterItems = {10300199, 15000199, 100101, 200109, 310101, 410101, 510101};
+        private readonly int[] _fighterSkills = {11101, 11201};
+        private readonly int[] _mageItems = {11300199, 120110, 220101, 320101, 420101, 520101};
+        private readonly int[] _mageSkills = {13101, 13404};
+        private readonly int[] _priestItems = {11000199, 15000199, 120111, 220101, 320101, 420101, 520101};
+        private readonly int[] _priestSkills = {12501, 12601};
+
+        // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
+        private readonly int[] _thiefItems = {10200199, 15000199, 110101, 200101, 300101, 400101, 500101};
+
+        // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
+        private readonly int[] _thiefSkills = {14101, 14302, 14803};
 
         public SendCharaCreate(NecServer server) : base(server)
         {
@@ -36,12 +47,12 @@ namespace Necromancy.Server.Packet.Msg
             uint alignmentId = packet.data.ReadUInt32();
 
             ushort strength = packet.data.ReadUInt16(); //bonus stat, not base
-            ushort vitality = packet.data.ReadUInt16();//bonus stat, not base
-            ushort dexterity = packet.data.ReadUInt16();//bonus stat, not base
-            ushort agility = packet.data.ReadUInt16();//bonus stat, not base
-            ushort intelligence = packet.data.ReadUInt16();//bonus stat, not base
-            ushort piety = packet.data.ReadUInt16();//bonus stat, not base
-            ushort luck = packet.data.ReadUInt16();//bonus stat, not base
+            ushort vitality = packet.data.ReadUInt16(); //bonus stat, not base
+            ushort dexterity = packet.data.ReadUInt16(); //bonus stat, not base
+            ushort agility = packet.data.ReadUInt16(); //bonus stat, not base
+            ushort intelligence = packet.data.ReadUInt16(); //bonus stat, not base
+            ushort piety = packet.data.ReadUInt16(); //bonus stat, not base
+            ushort luck = packet.data.ReadUInt16(); //bonus stat, not base
 
             uint classId = packet.data.ReadUInt32();
             int errorCheck = packet.data.ReadInt32();
@@ -65,7 +76,7 @@ namespace Necromancy.Server.Packet.Msg
             character.x = map.x;
             character.y = map.y;
             character.z = map.z;
-            character.heading = (byte)map.orientation;
+            character.heading = map.orientation;
 
             character.accountId = client.account.id;
             character.soulId = client.soul.id;
@@ -102,6 +113,7 @@ namespace Necromancy.Server.Packet.Msg
                 client.Close();
                 return;
             }
+
             //after the DB instert, so Character has a valid ID.
             server.instances.AssignInstance(character);
             client.character = character;
@@ -138,7 +150,6 @@ namespace Necromancy.Server.Packet.Msg
         private void CreateSkillTreeItems(NecClient client, Character character, uint classId)
         {
             if (classId == 0) // Fighter
-            {
                 for (int i = 0; i < _fighterSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
@@ -147,14 +158,12 @@ namespace Necromancy.Server.Packet.Msg
                     skillTreeItem.charId = character.id;
                     if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        _Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, "Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
-            }
             else if (classId == 1) // Thief
-            {
                 for (int i = 0; i < _thiefSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
@@ -163,14 +172,12 @@ namespace Necromancy.Server.Packet.Msg
                     skillTreeItem.charId = character.id;
                     if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        _Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, "Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
-            }
             else if (classId == 2) // Mage
-            {
                 for (int i = 0; i < _mageSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
@@ -179,14 +186,12 @@ namespace Necromancy.Server.Packet.Msg
                     skillTreeItem.charId = character.id;
                     if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        _Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, "Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
-            }
             else if (classId == 3) // Priest
-            {
                 for (int i = 0; i < _priestSkills.Length; i++)
                 {
                     SkillTreeItem skillTreeItem = new SkillTreeItem();
@@ -195,19 +200,12 @@ namespace Necromancy.Server.Packet.Msg
                     skillTreeItem.charId = character.id;
                     if (!database.InsertSkillTreeItem(skillTreeItem))
                     {
-                        _Logger.Error(client, $"Failed to create SkillTreeItem");
+                        _Logger.Error(client, "Failed to create SkillTreeItem");
                         client.Close();
                         return;
                     }
                 }
-            }
         }
-
-        // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
-        int[] _thiefSkills = new int[] { 14101, 14302, 14803 };
-        int[] _fighterSkills = new int[] { 11101, 11201 };
-        int[] _mageSkills = new int[] { 13101, 13404 };
-        int[] _priestSkills = new int[] { 12501, 12601 };
 
         private void CreateShortcutBars(NecClient client, Character character, uint classId)
         {
@@ -256,28 +254,14 @@ namespace Necromancy.Server.Packet.Msg
         private void CreateEquipmentItems(NecClient client, Character character, uint classId)
         {
             if (classId == 0) // Fighter
-            {
                 SendItems(client, _fighterItems);
-            }
             else if (classId == 1) // Thief
-            {
                 SendItems(client, _thiefItems);
-            }
             else if (classId == 2) // Mage
-            {
                 SendItems(client, _mageItems);
-            }
             else if (classId == 3) // Priest
-            {
                 SendItems(client, _priestItems);
-            }
         }
-
-        // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
-        int[] _thiefItems = new int[]    { 10200199, 15000199, 110101, 200101, 300101, 400101, 500101};
-        int[] _fighterItems = new int[]  { 10300199, 15000199, 100101, 200109, 310101, 410101, 510101};
-        int[] _mageItems = new int[]     { 11300199,           120110, 220101, 320101, 420101, 520101};
-        int[] _priestItems = new int[]   { 11000199, 15000199, 120111, 220101, 320101, 420101, 520101};
 
 
         public void SendItems(NecClient client, int[] itemIds)
@@ -288,9 +272,9 @@ namespace Necromancy.Server.Packet.Msg
                 spawmParams[i] = new ItemSpawnParams();
                 spawmParams[i].itemStatuses = ItemStatuses.Identified;
             }
+
             ItemService itemService = new ItemService(client.character);
             itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
         }
-
     }
 }

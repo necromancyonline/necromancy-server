@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly ChatResponse _response;
 
         public RecvChatNotifyMessage(ChatResponse response)
-            : base((ushort) AreaPacketId.recv_chat_notify_message, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chat_notify_message, ServerType.Area)
         {
             _response = response;
         }
@@ -19,13 +19,13 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32((int) _response.messageType);
+            res.WriteInt32((int)_response.messageType);
             res.WriteUInt32(_response.characterInstanceId);
             res.WriteFixedString(_response.soulName, 49);
             res.WriteFixedString(_response.characterName, 37);
-            res.WriteInt32(1);//new
-            res.WriteInt32(2);//new
-            res.WriteInt32(3);//new
+            res.WriteInt32(1); //new
+            res.WriteInt32(2); //new
+            res.WriteInt32(3); //new
             res.WriteFixedString(_response.message, 769);
             return res;
         }

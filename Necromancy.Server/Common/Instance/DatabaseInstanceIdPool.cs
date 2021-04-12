@@ -19,7 +19,7 @@ namespace Necromancy.Server.Common.Instance
             upperBound = this.lowerBound + this.size;
         }
 
-        public uint used => (uint) _idPool.Count;
+        public uint used => (uint)_idPool.Count;
         public uint lowerBound { get; }
         public uint upperBound { get; }
         public uint size { get; }
@@ -38,7 +38,7 @@ namespace Necromancy.Server.Common.Instance
                 return IDatabase.InvalidDatabaseId;
             }
 
-            return (int) (instanceId - lowerBound);
+            return (int)(instanceId - lowerBound);
         }
 
         public bool TryAssign(uint dbId, out uint instanceId)
@@ -52,10 +52,8 @@ namespace Necromancy.Server.Common.Instance
 
             instanceId = GetInstanceId(dbId);
             if (_idPool.ContainsKey(instanceId))
-            {
                 // Instance already recorded
                 return false;
-            }
 
             if (!_idPool.TryAdd(instanceId, dbId))
             {

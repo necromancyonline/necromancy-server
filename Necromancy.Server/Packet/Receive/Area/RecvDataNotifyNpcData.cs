@@ -8,11 +8,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvDataNotifyNpcData : PacketResponse
     {
-        private NpcSpawn _npcSpawn;
-        private Character _character = new Character();
+        private readonly Character _character = new Character();
+        private readonly NpcSpawn _npcSpawn;
 
         public RecvDataNotifyNpcData(NpcSpawn npcSpawn)
-            : base((ushort) AreaPacketId.recv_data_notify_npc_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_npc_data, ServerType.Area)
         {
             _npcSpawn = npcSpawn;
             _character.name = npcSpawn.title;
@@ -39,10 +39,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots
             //sub_483660
-            for (i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32((int)equippedItems[i].type);
-            }
+            for (i = 0; i < numEntries; i++) res.WriteInt32((int)equippedItems[i].type);
 
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots
@@ -60,7 +57,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0); //face
 
                 res.WriteByte(45); // Hair style from  chara\00\041\000\model  45 = this file C:\WO\Chara\chara\00\041\000\model\CM_00_041_11_045.nif
-                res.WriteByte((byte)(_character.faceId * 10));  //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
+                res.WriteByte((byte)(_character.faceId * 10)); //Face Style calls C:\Program Files (x86)\Steam\steamapps\common\Wizardry Online\data\chara\00\041\000\model\CM_00_041_10_010.nif.  must be 00 10, 20, 30, or 40 to work.
                 res.WriteByte(00); // testing (Theory Torso Tex)
                 res.WriteByte(0); // testing (Theory Pants Tex)
                 res.WriteByte(0); // testing (Theory Hands Tex)
@@ -73,13 +70,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 
             //sub_483420
             res.WriteInt32(numEntries); // Number of equipment Slots to display
-            for (i = 0; i < numEntries; i++)
-            {
-                res.WriteInt32((int)equippedItems[i].currentEquipSlot); //bitmask per equipment slot
-            }
+            for (i = 0; i < numEntries; i++) res.WriteInt32((int)equippedItems[i].currentEquipSlot); //bitmask per equipment slot
 
             res.WriteInt32(_npcSpawn.modelId); //NPC Model from file "model_common.csv"
-            res.WriteInt16(100/*_npcSpawn.Size*/); //NPC Model Size  //Hardcoded to 100
+            res.WriteInt16(100 /*_npcSpawn.Size*/); //NPC Model Size  //Hardcoded to 100
             res.WriteByte(4); //Hair ID for Character models
             res.WriteByte(5); //Hair Color ID for Character models
             res.WriteByte(3); //Face ID for Character models
@@ -104,7 +98,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
-                res.WriteInt32(0);//new
+                res.WriteInt32(0); //new
             }
 
             return res;

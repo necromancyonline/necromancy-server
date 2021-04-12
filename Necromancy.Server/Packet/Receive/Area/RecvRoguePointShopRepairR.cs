@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguePointShopRepairR : PacketResponse
     {
         public RecvRoguePointShopRepairR()
-            : base((ushort) AreaPacketId.recv_rogue_point_shop_repair_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_rogue_point_shop_repair_r, ServerType.Area)
         {
         }
 

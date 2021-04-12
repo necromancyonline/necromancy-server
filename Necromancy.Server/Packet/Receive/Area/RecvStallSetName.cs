@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallSetName : PacketResponse
     {
         public RecvStallSetName()
-            : base((ushort) AreaPacketId.recv_stall_set_name_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_set_name_r, ServerType.Area)
         {
         }
 

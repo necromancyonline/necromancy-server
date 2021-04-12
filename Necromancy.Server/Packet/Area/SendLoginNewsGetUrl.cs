@@ -12,14 +12,14 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_login_news_get_url;
+        public override ushort id => (ushort)AreaPacketId.send_login_news_get_url;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0); //Bool
             res.WriteCString("");
-            router.Send(client, (ushort) AreaPacketId.recv_login_news_url_notify, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_login_news_url_notify, res, ServerType.Area);
         }
     }
 }

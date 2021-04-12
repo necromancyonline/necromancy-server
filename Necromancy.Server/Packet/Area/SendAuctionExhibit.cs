@@ -1,17 +1,21 @@
+using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
 {
     public class SendAuctionExhibit : ClientHandler
     {
-        public SendAuctionExhibit(NecServer server) : base(server)  { }
-        public override ushort id => (ushort) AreaPacketId.send_auction_exhibit;
+        public SendAuctionExhibit(NecServer server) : base(server)
+        {
+        }
+
+        public override ushort id => (ushort)AreaPacketId.send_auction_exhibit;
+
         public override void Handle(NecClient client, NecPacket packet)
         {
             byte exhibitSlot = packet.data.ReadByte();
@@ -35,11 +39,14 @@ namespace Necromancy.Server.Packet.Area
                 List<PacketResponse> responses = itemService.GetMoveResponses(client, moveResult);
                 router.Send(client, responses);
             }
-            catch (AuctionException e) { auctionError = (int)e.type; }
+            catch (AuctionException e)
+            {
+                auctionError = (int)e.type;
+            }
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(auctionError); //error check.
-            res.WriteInt32((int) buyoutPrice); //unknown
+            res.WriteInt32((int)buyoutPrice); //unknown
             res.WriteUInt64(instanceId); //unknown
             router.Send(client.map, (ushort)AreaPacketId.recv_auction_exhibit_r, res, ServerType.Area);
         }

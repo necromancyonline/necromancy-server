@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapEntryOpen : PacketResponse
     {
         public RecvRoguemapEntryOpen()
-            : base((ushort) AreaPacketId.recv_roguemap_entry_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_entry_open, ServerType.Area)
         {
         }
 
@@ -30,9 +30,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 for (int j = 0; j < 0xA; j++) //must be 0xA
-                {
                     res.WriteInt32(0);
-                }
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
@@ -45,6 +43,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 //End Sub 496800
             }
+
             for (int k = 0; k < 0x2; k++)
             {
                 //sub 496AB0
@@ -54,10 +53,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteFixedString("Xeno", 0x5B);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
-                for (int j = 0; j < 0xA; j++)
-                {
-                    res.WriteInt32(0);
-                }
+                for (int j = 0; j < 0xA; j++) res.WriteInt32(0);
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
@@ -66,9 +62,9 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
 
-                res.WriteInt32(0);//suspect
-
+                res.WriteInt32(0); //suspect
             }
+
             return res;
         }
     }

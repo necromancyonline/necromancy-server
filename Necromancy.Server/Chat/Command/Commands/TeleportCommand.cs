@@ -7,13 +7,17 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Moves character location to x, y, z.
+    ///     Moves character location to x, y, z.
     /// </summary>
     public class TeleportCommand : ServerChatCommand
     {
         public TeleportCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "tp";
+        public override string helpText => "usage: `/tp x, y, z` - Moves character to location x, y, z.";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -45,11 +49,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteByte(client.character.heading);
             res.WriteByte(client.character.movementAnim);
 
-            router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "tp";
-        public override string helpText => "usage: `/tp x, y, z` - Moves character to location x, y, z.";
     }
 }

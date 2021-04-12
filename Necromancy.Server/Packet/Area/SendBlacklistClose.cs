@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_blacklist_close;
+        public override ushort id => (ushort)AreaPacketId.send_blacklist_close;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

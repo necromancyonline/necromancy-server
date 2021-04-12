@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Necromancy.Server.Model
 {
     public class ShortcutItem
@@ -15,8 +11,6 @@ namespace Necromancy.Server.Model
             System,
             Emote
         }
-        public long id { get; }
-        public ShortcutType type { get; }
 
         public ShortcutItem(long id, ShortcutType shortcutType)
         {
@@ -24,8 +18,7 @@ namespace Necromancy.Server.Model
             type = shortcutType;
         }
 
+        public long id { get; }
+        public ShortcutType type { get; }
     }
-
-
-
 }

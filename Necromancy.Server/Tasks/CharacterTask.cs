@@ -21,14 +21,14 @@ namespace Necromancy.Server.Tasks
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(CharacterTask));
 
         private readonly object _logoutLock = new object();
-        private NecServer _server;
-        private NecClient _client;
-        private int _tickTime;
+        private readonly NecClient _client;
+        private List<NecClient> _clients;
         private DateTime _logoutTime;
         private byte _logoutType;
         private bool _playerDied;
+        private readonly NecServer _server;
         private int _tickCounter;
-        private List<NecClient> _clients;
+        private readonly int _tickTime;
 
         public CharacterTask(NecServer server, NecClient client)
         {
@@ -47,16 +47,12 @@ namespace Necromancy.Server.Tasks
         protected override void Execute()
         {
             Thread.Sleep(5000); //fix null ref on chara select.
-            if(_client == null) this.Stop(); //crash/disconnect handling
+            if (_client == null) Stop(); //crash/disconnect handling
             while (_client.character.characterActive)
             {
                 if (_logoutTime != DateTime.MinValue)
-                {
                     if (DateTime.Now >= _logoutTime)
-                    {
                         LogOutRequest();
-                    }
-                }
 
                 if (_client.character.hp.depleted && !_playerDied)
                     PlayerDead();
@@ -76,7 +72,7 @@ namespace Necromancy.Server.Tasks
                 Thread.Sleep(_tickTime);
             }
 
-            this.Stop();
+            Stop();
         }
 
         private void CriminalRepent()
@@ -85,8 +81,8 @@ namespace Necromancy.Server.Tasks
             if (_client.soul.criminalLevel <= 0) _client.soul.criminalLevel = 0;
 
             _client.character.criminalState = _client.soul.criminalLevel;
-
         }
+
         private void SoulMaterialIncrease()
         {
             _client.soul.materialChaos += 10;
@@ -95,24 +91,25 @@ namespace Necromancy.Server.Tasks
             _client.soul.materialReincarnation += 10;
             _client.soul.pointsChaos += 10; //temporary. testing
         }
+
         private void StatRegen()
         {
             if (_client.character.gp.current < _client.character.gp.max)
             {
-                _client.character.gp.SetCurrent(_client.character.gp.current + 5/*_client.Character.GPRecoveryRate*/);
+                _client.character.gp.SetCurrent(_client.character.gp.current + 5 /*_client.Character.GPRecoveryRate*/);
                 RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(_client.character.gp.current);
                 _server.router.Send(recvCharaUpdateAc, _client);
             }
 
-            if(_client.character.movementPose == 4/*running byte*/)
+            if (_client.character.movementPose == 4 /*running byte*/)
             {
-                _client.character.od.SetCurrent(_client.character.od.current - 5/*_client.Character.APCostDiff*/);
+                _client.character.od.SetCurrent(_client.character.od.current - 5 /*_client.Character.APCostDiff*/);
                 RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.od.current);
                 _server.router.Send(recvCharaUpdateAp, _client);
             }
             else if (_client.character.od.current < _client.character.od.max)
             {
-                _client.character.od.SetCurrent(_client.character.od.current + _client.character.odRecoveryRate/2);
+                _client.character.od.SetCurrent(_client.character.od.current + _client.character.odRecoveryRate / 2);
                 RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.od.current);
                 _server.router.Send(recvCharaUpdateAp, _client);
             }
@@ -136,7 +133,7 @@ namespace Necromancy.Server.Tasks
             brList.Add(brEnd);
             _server.router.Send(_client.map, brList); // send death animation to all players
 
-            DeadBody deadBody = _server.instances.GetInstance((uint)_client.character.deadBodyInstanceId) as DeadBody;
+            DeadBody deadBody = _server.instances.GetInstance(_client.character.deadBodyInstanceId) as DeadBody;
             deadBody.x = _client.character.x;
             deadBody.y = _client.character.y;
             deadBody.z = _client.character.z;
@@ -167,11 +164,13 @@ namespace Necromancy.Server.Tasks
                 RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.instanceId);
                 _server.router.Send(_client, recvObjectDisappearNotify.ToPacket());
             }
+
             foreach (MonsterSpawn monsterSpawn in _client.map.monsterSpawns.Values)
             {
                 RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.instanceId);
                 _server.router.Send(_client, recvObjectDisappearNotify.ToPacket());
             }
+
             foreach (NecClient client in _clients)
             {
                 if (client == _client) continue; //Don't dissapear yourself ! that'd be bad news bears.
@@ -185,15 +184,14 @@ namespace Necromancy.Server.Tasks
                 {
                     RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                     if (_client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                    { _server.router.Send(_client.map, cBodyData.ToPacket(), _client); }
+                        _server.router.Send(_client.map, cBodyData.ToPacket(), _client);
                     _server.router.Send(_client, cBodyData.ToPacket());
                     RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.character.instanceId);
-                    _server.router.Send(_client.map, recvObjectDisappearNotify.ToPacket(),_client);
+                    _server.router.Send(_client.map, recvObjectDisappearNotify.ToPacket(), _client);
                     //send your soul to all the other souls runnin around
                     foreach (NecClient client in _clients)
-                    {
-                        if (client.character.state == CharacterState.SoulForm) { soulStateClients.Add(client); }
-                    }
+                        if (client.character.state == CharacterState.SoulForm)
+                            soulStateClients.Add(client);
                     //re-render your soulstate character to your client with out gear on it, and any other soul state clients on map.
                     RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.character, _client.soul.name);
                     _server.router.Send(soulStateClients, cData.ToPacket());
@@ -206,10 +204,8 @@ namespace Necromancy.Server.Tasks
                     foreach (NecClient otherClient in _clients)
                     {
                         if (otherClient == _client)
-                        {
                             // skip myself
                             continue;
-                        }
                         //Render all the souls if you are in soul form yourself
                         if (otherClient.character.state == CharacterState.SoulForm)
                         {
@@ -223,17 +219,15 @@ namespace Necromancy.Server.Tasks
                             _server.router.Send(otherUnionData, _client);
                         }
                     }
+
                     foreach (NpcSpawn npcSpawn in _client.map.npcSpawns.Values)
-                    {
                         if (npcSpawn.visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
                         {
                             RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
                             _server.router.Send(npcData, _client);
                         }
-                    }
                 }
             );
-
         }
 
         public void Logout(DateTime logoutTime, byte logoutType)
@@ -258,7 +252,7 @@ namespace Necromancy.Server.Tasks
                 res = BufferProvider.Provide();
                 //res.WriteInt64(1);
                 //res.WriteInt16(1);
-                _server.router.Send(_client, (ushort) AreaPacketId.recv_escape_start, res, ServerType.Area);
+                _server.router.Send(_client, (ushort)AreaPacketId.recv_escape_start, res, ServerType.Area);
 
 
                 //IBuffer buffer = BufferProvider.Provide();
@@ -271,7 +265,7 @@ namespace Necromancy.Server.Tasks
             if (_logoutType == 0x01) // Return to Character Select
             {
                 res.WriteInt32(0);
-                _server.router.Send(_client, (ushort) MsgPacketId.recv_chara_select_back_soul_select_r, res,
+                _server.router.Send(_client, (ushort)MsgPacketId.recv_chara_select_back_soul_select_r, res,
                     ServerType.Msg);
 
                 Thread.Sleep(4100);
@@ -280,13 +274,13 @@ namespace Necromancy.Server.Tasks
                 res = BufferProvider.Provide();
                 res.WriteInt32(0);
                 res.WriteByte(0);
-                _server.router.Send(_client, (ushort) MsgPacketId.recv_soul_authenticate_passwd_r, res, ServerType.Msg);
+                _server.router.Send(_client, (ushort)MsgPacketId.recv_soul_authenticate_passwd_r, res, ServerType.Msg);
             }
 
             if (_logoutType == 0x02)
             {
                 res.WriteInt32(0);
-                _server.router.Send(_client, (ushort) MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);
+                _server.router.Send(_client, (ushort)MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);
             }
         }
     }

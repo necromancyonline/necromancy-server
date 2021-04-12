@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGemBreakCost : PacketResponse
     {
         public RecvGemBreakCost()
-            : base((ushort) AreaPacketId.recv_gem_break_cost_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gem_break_cost_r, ServerType.Area)
         {
         }
 

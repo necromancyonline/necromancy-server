@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_disband;
+        public override ushort id => (ushort)AreaPacketId.send_party_disband;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,8 +19,9 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort)AreaPacketId.recv_party_disband_r, res, ServerType.Area); ;
-            router.Send(myParty.partyMembers, (ushort) AreaPacketId.recv_party_disband_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_disband_r, res, ServerType.Area);
+            ;
+            router.Send(myParty.partyMembers, (ushort)AreaPacketId.recv_party_disband_r, res, ServerType.Area);
 
 
             IBuffer res2 = BufferProvider.Provide();

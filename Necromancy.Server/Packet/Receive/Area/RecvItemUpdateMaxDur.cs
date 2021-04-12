@@ -9,8 +9,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly ulong _instanceId;
         private readonly int _level;
+
         public RecvItemUpdateMaxDur(ulong instanceId, int level)
-            : base((ushort) AreaPacketId.recv_item_update_maxdur, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_maxdur, ServerType.Area)
         {
             _instanceId = instanceId;
             _level = level;

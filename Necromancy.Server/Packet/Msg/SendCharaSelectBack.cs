@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_chara_select_back;
+        public override ushort id => (ushort)MsgPacketId.send_chara_select_back;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
 
 
-            router.Send(client, (ushort) MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);
         }
     }
 }

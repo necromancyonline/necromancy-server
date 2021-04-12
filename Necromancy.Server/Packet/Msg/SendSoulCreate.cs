@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_soul_create;
+        public override ushort id => (ushort)MsgPacketId.send_soul_create;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -37,7 +37,7 @@ namespace Necromancy.Server.Packet.Msg
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) MsgPacketId.recv_soul_create_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_soul_create_r, res, ServerType.Msg);
         }
     }
 }

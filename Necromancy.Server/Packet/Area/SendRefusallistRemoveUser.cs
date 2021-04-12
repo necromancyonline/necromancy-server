@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_refusallist_remove_user;
+        public override ushort id => (ushort)AreaPacketId.send_refusallist_remove_user;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -38,7 +38,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(1); //Result
             res.WriteInt32(targetSoulId); //ref)soulId
 
-            router.Send(client, (ushort) AreaPacketId.recv_refusallist_remove_user_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_refusallist_remove_user_r, res, ServerType.Area);
         }
     }
 }

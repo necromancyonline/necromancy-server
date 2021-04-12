@@ -5,7 +5,18 @@ namespace Necromancy.Server.Model
 {
     public class GGateSpawn : IInstance
     {
-        public uint instanceId { get; set; }
+        public GGateSpawn()
+        {
+            created = DateTime.Now;
+            updated = DateTime.Now;
+            interaction = 0;
+            size = 100;
+            glow = 0b0001;
+            modelId = 1900001;
+            active = 0;
+            serialId = 1900001;
+        }
+
         public int id { get; set; }
         public int serialId { get; set; }
         public byte interaction { get; set; }
@@ -22,18 +33,6 @@ namespace Necromancy.Server.Model
         public int glow { get; set; }
         public DateTime created { get; set; }
         public DateTime updated { get; set; }
-
-        public GGateSpawn()
-        {
-            created = DateTime.Now;
-            updated = DateTime.Now;
-            interaction = 0;
-            size = 100;
-            glow = 0b0001;
-            modelId = 1900001;
-            active = 0;
-            serialId = 1900001;
-
-        }
+        public uint instanceId { get; set; }
     }
 }

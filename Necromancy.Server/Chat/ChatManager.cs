@@ -46,10 +46,7 @@ namespace Necromancy.Server.Chat
             ChatResponse response =
                 new ChatResponse(client, message.message, message.messageType, message.recipientSoulName);
             List<ChatResponse> responses = new List<ChatResponse>();
-            foreach (IChatHandler handler in _handler)
-            {
-                handler.Handle(client, message, response, responses);
-            }
+            foreach (IChatHandler handler in _handler) handler.Handle(client, message, response, responses);
 
             if (!response.deliver)
             {
@@ -61,10 +58,7 @@ namespace Necromancy.Server.Chat
             RespondPostMessage(client, ChatErrorType.Success);
 
 
-            foreach (ChatResponse chatResponse in responses)
-            {
-                Deliver(client, chatResponse);
-            }
+            foreach (ChatResponse chatResponse in responses) Deliver(client, chatResponse);
         }
 
         private void Deliver(NecClient sender, ChatResponse chatResponse)

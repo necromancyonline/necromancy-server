@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventBlockMessageEnd : PacketResponse
     {
         public RecvEventBlockMessageEnd()
-            : base((ushort) AreaPacketId.recv_event_block_message_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_block_message_end, ServerType.Area)
         {
         }
 

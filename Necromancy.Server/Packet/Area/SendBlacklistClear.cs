@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_blacklist_clear;
+        public override ushort id => (ushort)AreaPacketId.send_blacklist_clear;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteUInt32(client.character.instanceId);
 
 
-            router.Send(client, (ushort) AreaPacketId.recv_blacklist_clear_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_blacklist_clear_r, res, ServerType.Area);
         }
     }
 }

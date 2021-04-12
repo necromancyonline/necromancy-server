@@ -1,23 +1,28 @@
 using System.Collections.Generic;
 using Arrowgene.Buffers;
+using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Common.Instance;
+using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using Arrowgene.Logging;
-using Necromancy.Server.Logging;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Moves character location to another instance ID's location.
+    ///     Moves character location to another instance ID's location.
     /// </summary>
     public class TeleportToCommand : ServerChatCommand
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(TeleportToCommand));
+
         public TeleportToCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "tpto";
+        public override string helpText => "usage: `/tpto [instance id]` - Moves character to [instance id]'s location";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -53,7 +58,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 else
                 {
                     responses.Add(ChatResponse.CommandError(client,
-                        $"Please provide a character/npc/gimmick/map transition instance id"));
+                        "Please provide a character/npc/gimmick/map transition instance id"));
                     return;
                 }
             }
@@ -105,11 +110,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteByte(client.character.movementAnim);
             }
 
-            router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "tpto";
-        public override string helpText => "usage: `/tpto [instance id]` - Moves character to [instance id]'s location";
     }
 }

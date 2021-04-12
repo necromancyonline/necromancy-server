@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRecordNotifyParam : PacketResponse
     {
         public RecvRecordNotifyParam()
-            : base((ushort) AreaPacketId.recv_record_notify_param, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_record_notify_param, ServerType.Area)
         {
         }
 
@@ -31,6 +31,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteFixedString("----", 0x5B);
             }
+
             return res;
         }
     }

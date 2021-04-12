@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_expel_member;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_expel_member;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -23,9 +23,9 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0);
-            router.Send(client, (ushort) MsgPacketId.recv_union_request_expel_member_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_request_expel_member_r, res, ServerType.Msg);
 
-            router.Send(explelledclient, (ushort) MsgPacketId.recv_union_notify_expelled_member,
+            router.Send(explelledclient, (ushort)MsgPacketId.recv_union_notify_expelled_member,
                 BufferProvider.Provide(), ServerType.Msg);
         }
     }

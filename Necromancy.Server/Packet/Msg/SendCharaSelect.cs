@@ -3,7 +3,6 @@ using Arrowgene.Logging;
 using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
-using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Msg
@@ -16,7 +15,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_chara_select;
+        public override ushort id => (ushort)MsgPacketId.send_chara_select;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,6 +28,7 @@ namespace Necromancy.Server.Packet.Msg
                 client.Close();
                 return;
             }
+
             server.instances.AssignInstance(character);
 
             client.character = character;
@@ -55,7 +55,7 @@ namespace Necromancy.Server.Packet.Msg
             res3.WriteFloat(client.character.y);
             res3.WriteFloat(client.character.z);
             res3.WriteByte(client.character.heading);
-            router.Send(client, (ushort) MsgPacketId.recv_chara_select_r, res3, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_chara_select_r, res3, ServerType.Msg);
 
             /*
              ERR_CHARSELECT	GENERIC	Failed to select a character (CODE:<errcode>)
@@ -71,7 +71,6 @@ namespace Necromancy.Server.Packet.Msg
             character.deadBodyInstanceId = deadBody.instanceId;
             deadBody.characterInstanceId = character.instanceId;
             _Logger.Debug($"Dead Body Instance ID {deadBody.instanceId}   |  Character Instance ID {character.instanceId}");
-
         }
     }
 }

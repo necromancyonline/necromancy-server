@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvFriendNotifyComment : PacketResponse
     {
         public RecvFriendNotifyComment()
-            : base((ushort) MsgPacketId.recv_friend_notify_comment, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_friend_notify_comment, ServerType.Msg)
         {
         }
 

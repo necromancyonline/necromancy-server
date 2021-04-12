@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_get_refusallist;
+        public override ushort id => (ushort)AreaPacketId.send_get_refusallist;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteInt32(1);
 
             int numEntries = 1 /*client.RefusalList.Count()*/;
-            res.WriteInt32(numEntries);//less than or equal to 0xC8
+            res.WriteInt32(numEntries); //less than or equal to 0xC8
 
             for (int i = 0; i < numEntries; i++)
             {

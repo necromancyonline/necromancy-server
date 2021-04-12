@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_trade_abort;
+        public override ushort id => (ushort)AreaPacketId.send_trade_abort;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_trade_abort_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_trade_abort_r, res, ServerType.Area);
 
             RecvEventEnd eventEnd = new RecvEventEnd(0);
             if (targetClient != null)

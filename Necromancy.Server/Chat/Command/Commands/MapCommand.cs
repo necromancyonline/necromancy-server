@@ -6,7 +6,7 @@ using Necromancy.Server.Model;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Changes the map
+    ///     Changes the map
     /// </summary>
     public class SendMapChangeForce : ServerChatCommand
     {
@@ -15,6 +15,10 @@ namespace Necromancy.Server.Chat.Command.Commands
         public SendMapChangeForce(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "map";
+        public override string helpText => "usage: `/map [mapId]` - Changes the map";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -39,9 +43,5 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             map.EnterForce(client);
         }
-
-        public override AccountStateType accountState => AccountStateType.User;
-        public override string key => "map";
-        public override string helpText => "usage: `/map [mapId]` - Changes the map";
     }
 }

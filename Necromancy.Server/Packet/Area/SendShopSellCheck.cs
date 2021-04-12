@@ -1,10 +1,8 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -15,7 +13,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_shop_sell_check;
+        public override ushort id => (ushort)AreaPacketId.send_shop_sell_check;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -32,17 +30,16 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_shop_sell_check_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_shop_sell_check_r, res, ServerType.Area);
 
 
             res = BufferProvider.Provide();
             res.WriteUInt64(itemInstance.instanceId); // id?
-            res.WriteInt64(Util.GetRandomNumber(1000,25000)); // price?
+            res.WriteInt64(Util.GetRandomNumber(1000, 25000)); // price?
             res.WriteInt64(Util.GetRandomNumber(100, 2500)); // identify?
             res.WriteInt64(Util.GetRandomNumber(100, 2500)); // curse?
             res.WriteInt64(Util.GetRandomNumber(1000, 2500)); // repair?
             router.Send(client, (ushort)AreaPacketId.recv_shop_notify_item_sell_price, res, ServerType.Area);
         }
-
     }
 }

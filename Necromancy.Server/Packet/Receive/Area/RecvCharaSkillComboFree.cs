@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaSkillComboFree : PacketResponse
     {
         public RecvCharaSkillComboFree()
-            : base((ushort) AreaPacketId.recv_chara_skill_combo_free, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_skill_combo_free, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvReturnHomeRequestExec : PacketResponse
     {
         public RecvReturnHomeRequestExec()
-            : base((ushort) AreaPacketId.recv_return_home_request_exec_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_return_home_request_exec_r, ServerType.Area)
         {
         }
 

@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_gimmick_access_object;
+        public override ushort id => (ushort)AreaPacketId.send_gimmick_access_object;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -27,7 +27,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide(); // this is the buffer we create
             res.WriteInt32(0); //Error Check?
-            router.Send(client, (ushort) AreaPacketId.recv_gimmick_access_object_r, res,
+            router.Send(client, (ushort)AreaPacketId.recv_gimmick_access_object_r, res,
                 ServerType.Area); //this sends out our packet to the first operand
 
             IBuffer res2 = BufferProvider.Provide();
@@ -35,12 +35,12 @@ namespace Necromancy.Server.Packet.Area
                 .instanceId); //this is probably for letting others know who accessed it (Instance Id)
             res2.WriteInt32(targetInstanceId);
             res2.WriteInt32(unknown);
-            router.Send(client.map, (ushort) AreaPacketId.recv_gimmick_access_object_notify, res2, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_gimmick_access_object_notify, res2, ServerType.Area);
 
             IBuffer res3 = BufferProvider.Provide();
             res3.WriteInt32(targetInstanceId); //Gimmick Object ID.
             res3.WriteInt32(unknown); //Gimmick State
-            router.Send(client.map, (ushort) AreaPacketId.recv_gimmick_state_update, res3, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_gimmick_state_update, res3, ServerType.Area);
         }
     }
 }

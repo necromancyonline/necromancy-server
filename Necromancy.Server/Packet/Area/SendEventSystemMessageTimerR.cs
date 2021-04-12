@@ -2,7 +2,6 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -21,6 +20,5 @@ namespace Necromancy.Server.Packet.Area
             res.WriteCString("ToBeFound");
             router.Send(client.map, (ushort)AreaPacketId.recv_event_system_message_timer, res, ServerType.Area);
         }
-
     }
 }

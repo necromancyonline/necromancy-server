@@ -4,8 +4,8 @@ namespace Necromancy.Server.Data.Setting
 {
     public class ModelCommonCsvReader : CsvReader<ModelCommonSetting>
     {
+        private readonly Dictionary<int, ModelAtrSetting> _modelAtrSettings;
         private Dictionary<int, MonsterSetting> _monsterSetting;
-        private Dictionary<int, ModelAtrSetting> _modelAtrSettings;
 
         public ModelCommonCsvReader(Dictionary<int, MonsterSetting> monsterSetting,
             Dictionary<int, ModelAtrSetting> modelAtrSettings)
@@ -18,52 +18,27 @@ namespace Necromancy.Server.Data.Setting
 
         protected override ModelCommonSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
-            if (!int.TryParse(properties[1], out int radius))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[1], out int radius)) return null;
 
-            if (!int.TryParse(properties[2], out int height))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[2], out int height)) return null;
 
-            if (!int.TryParse(properties[3], out int crouchHeight))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[3], out int crouchHeight)) return null;
 
-            if (!int.TryParse(properties[4], out int nameHeight))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[4], out int nameHeight)) return null;
 
-            if (!int.TryParse(properties[5], out int modelAtrId))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[5], out int modelAtrId)) return null;
 
-            if (!int.TryParse(properties[6], out int zRadiusOffset))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[6], out int zRadiusOffset)) return null;
 
             if (!int.TryParse(properties[7], out int effectScaling))
-            {
                 //return null;
                 effectScaling = 0;
-            }
 
             if (!int.TryParse(properties[8], out int active))
-            {
                 //return null;
                 active = 0;
-            }
 
             //10 = damage sprite height
             //11 = bow firing position z offset
@@ -82,10 +57,7 @@ namespace Necromancy.Server.Data.Setting
             //}
 
             ModelAtrSetting atr = null;
-            if (_modelAtrSettings.ContainsKey(modelAtrId))
-            {
-                atr = _modelAtrSettings[modelAtrId];
-            }
+            if (_modelAtrSettings.ContainsKey(modelAtrId)) atr = _modelAtrSettings[modelAtrId];
 
             return new ModelCommonSetting
             {

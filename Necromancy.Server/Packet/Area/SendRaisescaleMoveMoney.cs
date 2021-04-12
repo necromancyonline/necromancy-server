@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_raisescale_move_money;
+        public override ushort id => (ushort)AreaPacketId.send_raisescale_move_money;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -19,8 +19,7 @@ namespace Necromancy.Server.Packet.Area
             int errorCheck = packet.data.ReadInt32();
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(errorCheck); //Error check
-            router.Send(client, (ushort) AreaPacketId.recv_raisescale_move_money_r, res, ServerType.Area);
-
+            router.Send(client, (ushort)AreaPacketId.recv_raisescale_move_money_r, res, ServerType.Area);
         }
     }
 }

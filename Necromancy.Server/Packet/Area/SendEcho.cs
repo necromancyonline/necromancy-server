@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_echo;
+        public override ushort id => (ushort)AreaPacketId.send_echo;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -25,15 +25,12 @@ namespace Necromancy.Server.Packet.Area
             res2.WriteInt32(unknown);
             res2.WriteInt32(unknown2);
             int numEntries = size;
-            res2.WriteInt32(numEntries);//Less than or equal to 0x4E20
-            for(int i = 0; i < numEntries; i++)
-            {
-                res2.WriteByte(message[i]);
-            }
+            res2.WriteInt32(numEntries); //Less than or equal to 0x4E20
+            for (int i = 0; i < numEntries; i++) res2.WriteByte(message[i]);
             router.Send(client.map, (ushort)AreaPacketId.recv_echo_notify, res2, ServerType.Area);
 
             IBuffer res = BufferProvider.Provide();
-            router.Send(client, (ushort) AreaPacketId.recv_echo_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_echo_r, res, ServerType.Area);
         }
     }
 }

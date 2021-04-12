@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_soul_set_passwd;
+        public override ushort id => (ushort)MsgPacketId.send_soul_set_passwd;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -33,7 +33,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
             res.WriteByte(0); // bool in JP client TODO what is it in US???
             res.WriteCString("");
-            router.Send(client, (ushort) MsgPacketId.recv_soul_set_passwd_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_soul_set_passwd_r, res, ServerType.Msg);
         }
     }
 }

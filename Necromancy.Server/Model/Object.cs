@@ -5,7 +5,6 @@ namespace Necromancy.Server.Model
 {
     public class Object : IInstance
     {
-        public uint instanceId { get; set; }
         public int id { get; set; }
         public string name { get; set; }
         public Vector3 objectCoord { get; set; }
@@ -16,9 +15,6 @@ namespace Necromancy.Server.Model
         public int unknown1 { get; set; }
         public int unknown2 { get; set; }
         public int unknown3 { get; set; }
-        public Object()
-        {
-        }
-
+        public uint instanceId { get; set; }
     }
 }

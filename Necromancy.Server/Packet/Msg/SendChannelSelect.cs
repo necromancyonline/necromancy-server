@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_channel_select;
+        public override ushort id => (ushort)MsgPacketId.send_channel_select;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -45,7 +45,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteByte(client.character.heading); //View offset
             //
 
-            router.Send(client, (ushort) MsgPacketId.recv_channel_select_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_channel_select_r, res, ServerType.Msg);
 
             map.EnterForce(client);
             SendEventEnd(client);
@@ -53,14 +53,14 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteUInt32(client.character.instanceId);
             res2.WriteCString("IsThisMyChannel?????"); //Length to be Found
-            router.Send(server.clients.GetAll(), (ushort) AreaPacketId.recv_channel_notify, res2, ServerType.Area);
+            router.Send(server.clients.GetAll(), (ushort)AreaPacketId.recv_channel_notify, res2, ServerType.Area);
         }
 
         private void SendEventEnd(NecClient client)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
     }
 }

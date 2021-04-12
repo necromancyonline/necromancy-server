@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSituationStart : PacketResponse
     {
-        private int _type;
+        private readonly int _type;
+
         public RecvSituationStart(int type)
-            : base((ushort) AreaPacketId.recv_situation_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_situation_start, ServerType.Area)
         {
             _type = type;
         }

@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class Recv0XE983 : PacketResponse
     {
         public Recv0XE983()
-            : base((ushort) AreaPacketId.recv_0xE983, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0xE983, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteCString("");//find max size
+            res.WriteCString(""); //find max size
             return res;
         }
     }

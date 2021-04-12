@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStorageRenameR : PacketResponse
     {
         public RecvStorageRenameR()
-            : base((ushort) AreaPacketId.recv_storage_rename_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_storage_rename_r, ServerType.Area)
         {
         }
 

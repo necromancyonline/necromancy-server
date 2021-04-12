@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class Recv0XBa61 : PacketResponse
     {
         public Recv0XBa61()
-            : base((ushort) AreaPacketId.recv_0xBA61, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0xBA61, ServerType.Area)
         {
         }
 
@@ -23,6 +23,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt64(0);
                 res.WriteFixedString("", 0xC1);
             }
+
             return res;
         }
     }

@@ -27,7 +27,6 @@ namespace Necromancy.Server.Packet.Area
             router.Send(myParty.partyMembers, (ushort)MsgPacketId.recv_party_notify_change_mode, res2, ServerType.Msg);
 
             myParty.partyType = partyMode;
-
         }
     }
 }

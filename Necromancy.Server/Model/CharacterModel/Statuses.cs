@@ -15,7 +15,7 @@ namespace Necromancy.Server.Model.CharacterModel
         ___404 = 76404,
         ___405 = 76405,
         PieceFriedChicken1 = 11109,
-        PieceFriedChicken2= 11110,
+        PieceFriedChicken2 = 11110,
         PieceFriedChicken3 = 11111,
         AbsorbDark = 76951,
         AbsorbEarth = 76931,
@@ -970,7 +970,9 @@ namespace Necromancy.Server.Model.CharacterModel
         IncreaseSilenceResistanceForBishopsLv1 = 20604,
         IncreaseSilenceResistanceForBishopsLv2 = 20605,
         IncreaseSilenceResistanceForBishopsLv3 = 20606,
-        IncreaseSmallAmountOfHp, IncreaseTinyAmountOfMp, RecoverCondition = 80208,
+        IncreaseSmallAmountOfHp,
+        IncreaseTinyAmountOfMp,
+        RecoverCondition = 80208,
         IncreaseStealthTimeForNinjasLv1 = 60031,
         IncreaseStealthTimeForNinjasLv2 = 60032,
         IncreaseStealthTimeForNinjasLv3 = 60033,
@@ -1297,7 +1299,8 @@ namespace Necromancy.Server.Model.CharacterModel
         MaximumHpIncrease = 10152,
         MaximumHpIncreaseWhenGuardIsSuccessful = 10151,
         MaximumHpReduction = 10181,
-        MaximumMpIncrease, MaximumHpDecrease = 10171,
+        MaximumMpIncrease,
+        MaximumHpDecrease = 10171,
         MedisPotion = 50171,
         Meltdown = 5501,
         MentorRestrictions = 52,
@@ -2452,6 +2455,6 @@ namespace Necromancy.Server.Model.CharacterModel
         BlankStatusEntry82244 = 82244,
         BlankStatusEntry82245 = 82245,
         BlankStatusEntry82246 = 82246,
-        BlankStatusEntry82247 = 82247,
+        BlankStatusEntry82247 = 82247
     }
 }

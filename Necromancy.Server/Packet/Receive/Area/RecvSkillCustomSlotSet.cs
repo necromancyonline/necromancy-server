@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillCustomSlotSet : PacketResponse
     {
         public RecvSkillCustomSlotSet()
-            : base((ushort) AreaPacketId.recv_skill_custom_slot_set_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_custom_slot_set_r, ServerType.Area)
         {
         }
 

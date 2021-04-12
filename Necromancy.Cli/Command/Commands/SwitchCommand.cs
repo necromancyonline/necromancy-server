@@ -17,6 +17,9 @@ namespace Necromancy.Cli.Command.Commands
             _parameterConsumers = parameterConsumers;
         }
 
+        public override string key => "switch";
+        public override string description => $"Changes configuration switches{Environment.NewLine}{ShowSwitches()}";
+
         public override CommandResultType Handle(ConsoleParameter parameter)
         {
             foreach (string key in parameter.switchMap.Keys)
@@ -30,13 +33,9 @@ namespace Necromancy.Cli.Command.Commands
 
                 string value = parameter.switchMap[key];
                 if (!property.Assign(value))
-                {
                     _Logger.Error($"Switch '{key}' failed, value: '{value}' is invalid");
-                }
                 else
-                {
                     _Logger.Info($"Applied {key}={value}");
-                }
             }
 
             foreach (string booleanSwitch in parameter.switches)
@@ -49,13 +48,9 @@ namespace Necromancy.Cli.Command.Commands
                 }
 
                 if (!property.Assign(bool.TrueString))
-                {
                     _Logger.Error($"Switch '{booleanSwitch}' failed, value: '{bool.TrueString}' is invalid");
-                }
                 else
-                {
                     _Logger.Info($"Applied {booleanSwitch}={bool.TrueString}");
-                }
             }
 
             return CommandResultType.Completed;
@@ -64,15 +59,9 @@ namespace Necromancy.Cli.Command.Commands
         private ISwitchProperty FindSwitch(string key)
         {
             foreach (ISwitchConsumer consumer in _parameterConsumers)
-            {
-                foreach (ISwitchProperty property in consumer.switches)
-                {
-                    if (property.key == key)
-                    {
-                        return property;
-                    }
-                }
-            }
+            foreach (ISwitchProperty property in consumer.switches)
+                if (property.key == key)
+                    return property;
 
             return null;
         }
@@ -83,25 +72,20 @@ namespace Necromancy.Cli.Command.Commands
             sb.Append("Available Switches:");
             sb.Append(Environment.NewLine);
             foreach (ISwitchConsumer consumer in _parameterConsumers)
+            foreach (ISwitchProperty property in consumer.switches)
             {
-                foreach (ISwitchProperty property in consumer.switches)
-                {
-                    sb.Append(Environment.NewLine);
-                    sb.Append(property.key);
-                    sb.Append(Environment.NewLine);
-                    sb.Append("> Ex.: ");
-                    sb.Append(property.valueDescription);
-                    sb.Append(Environment.NewLine);
-                    sb.Append("> ");
-                    sb.Append(property.description);
-                    sb.Append(Environment.NewLine);
-                }
+                sb.Append(Environment.NewLine);
+                sb.Append(property.key);
+                sb.Append(Environment.NewLine);
+                sb.Append("> Ex.: ");
+                sb.Append(property.valueDescription);
+                sb.Append(Environment.NewLine);
+                sb.Append("> ");
+                sb.Append(property.description);
+                sb.Append(Environment.NewLine);
             }
 
             return sb.ToString();
         }
-
-        public override string key => "switch";
-        public override string description => $"Changes configuration switches{Environment.NewLine}{ShowSwitches()}";
     }
 }

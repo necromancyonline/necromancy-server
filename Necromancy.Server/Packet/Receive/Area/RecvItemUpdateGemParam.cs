@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateGemParam : PacketResponse
     {
         public RecvItemUpdateGemParam()
-            : base((ushort) AreaPacketId.recv_item_update_gem_param, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_gem_param, ServerType.Area)
         {
         }
 
@@ -23,11 +23,9 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 int numEntries5 = 0x2; //must be 0x2
-                for (int k = 0; k < numEntries5; k++)
-                {
-                    res.WriteInt32(0);
-                }
+                for (int k = 0; k < numEntries5; k++) res.WriteInt32(0);
             }
+
             return res;
         }
     }

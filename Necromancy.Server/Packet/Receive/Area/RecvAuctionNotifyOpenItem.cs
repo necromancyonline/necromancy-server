@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -5,20 +6,20 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvAuctionNotifyOpenItem : PacketResponse
     {
-
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(RecvAuctionNotifyOpenItem));
-        List<ItemInstance> _auctionList;
-        public RecvAuctionNotifyOpenItem(NecClient necClient, List<ItemInstance> auctionList) : base((ushort) AreaPacketId.recv_auction_notify_open_item, ServerType.Area)
+        private readonly List<ItemInstance> _auctionList;
+
+        public RecvAuctionNotifyOpenItem(NecClient necClient, List<ItemInstance> auctionList) : base((ushort)AreaPacketId.recv_auction_notify_open_item, ServerType.Area)
         {
             clients.Add(necClient);
             _auctionList = auctionList;
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
@@ -37,6 +38,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(auctionItem.secondsUntilExpiryTime);
                 i++;
             }
+
             return res;
         }
     }

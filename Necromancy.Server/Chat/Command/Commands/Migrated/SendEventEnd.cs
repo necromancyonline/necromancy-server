@@ -13,15 +13,15 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "EndEvent";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.User;
-        public override string key => "EndEvent";
     }
 }

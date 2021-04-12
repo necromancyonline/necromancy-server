@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartyLeave : PacketResponse
     {
         public RecvPartyLeave()
-            : base((ushort) AreaPacketId.recv_party_leave_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_leave_r, ServerType.Area)
         {
         }
 

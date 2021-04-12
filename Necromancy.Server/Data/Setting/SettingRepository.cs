@@ -86,10 +86,7 @@ namespace Necromancy.Server.Data.Setting
         {
             string path = Path.Combine(_directory.FullName, fileName);
             FileInfo file = new FileInfo(path);
-            if (!file.Exists)
-            {
-                _Logger.Error($"Could not load '{fileName}', file does not exist");
-            }
+            if (!file.Exists) _Logger.Error($"Could not load '{fileName}', file does not exist");
 
             list.AddRange(reader.Read(file.FullName));
         }
@@ -99,7 +96,6 @@ namespace Necromancy.Server.Data.Setting
             List<T> items = new List<T>();
             Load(items, fileName, reader);
             foreach (T item in items)
-            {
                 if (item is ISettingRepositoryItem repositoryItem)
                 {
                     if (dictionary.ContainsKey(repositoryItem.id))
@@ -107,19 +103,16 @@ namespace Necromancy.Server.Data.Setting
                         _Logger.Error($"Key: '{repositoryItem.id}' already exists, skipping");
                         continue;
                     }
+
                     dictionary.Add(repositoryItem.id, item);
                 }
-            }
         }
 
         private void Load(StrTableSettingLookup lookup, string fileName, CsvReader<StrTableSetting> reader)
         {
             List<StrTableSetting> items = new List<StrTableSetting>();
             Load(items, fileName, reader);
-            foreach (StrTableSetting item in items)
-            {
-                lookup.Add(item);
-            }
+            foreach (StrTableSetting item in items) lookup.Add(item);
         }
     }
 }

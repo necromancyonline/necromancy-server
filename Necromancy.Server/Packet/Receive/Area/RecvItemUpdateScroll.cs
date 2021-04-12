@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateScroll : PacketResponse
     {
         public RecvItemUpdateScroll()
-            : base((ushort) AreaPacketId.recv_item_update_scroll, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_scroll, ServerType.Area)
         {
         }
 
@@ -24,11 +24,9 @@ namespace Necromancy.Server.Packet.Receive.Area
             {
                 res.WriteInt32(0);
                 res.WriteInt32(0);
-                for (int j = 0; j < 0x2; j++)
-                {
-                    res.WriteInt16(0);
-                }
+                for (int j = 0; j < 0x2; j++) res.WriteInt16(0);
             }
+
             for (int k = 0; k < 0x5; k++)
             {
                 res.WriteInt16(0);
@@ -36,12 +34,9 @@ namespace Necromancy.Server.Packet.Receive.Area
 
                 res.WriteInt32(0);
                 res.WriteInt32(0);
-                for (int j = 0; j < 0x2; j++)
-                {
-                    res.WriteInt16(0);
-                }
+                for (int j = 0; j < 0x2; j++) res.WriteInt16(0);
+            } //end_4929F0
 
-            }//end_4929F0
             return res;
         }
     }

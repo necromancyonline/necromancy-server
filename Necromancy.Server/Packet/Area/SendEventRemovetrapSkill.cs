@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_event_removetrap_skill;
+        public override ushort id => (ushort)AreaPacketId.send_event_removetrap_skill;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteFloat(
                 22); //Re-cast time in seconds.  To-Do.  Database lookup Skill_Base.CSV   Select where Column A = disarmingSkill, return Column J (cooldown time).
             //Router.Send(client.Map, (ushort)AreaPacketId.recv_event_removetrap_skill_r2, res, ServerType.Area);
-            router.Send(client, (ushort) AreaPacketId.recv_event_removetrap_skill_r2, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_removetrap_skill_r2, res, ServerType.Area);
         }
     }
 }

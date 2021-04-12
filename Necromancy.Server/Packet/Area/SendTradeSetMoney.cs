@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_trade_set_money;
+        public override ushort id => (ushort)AreaPacketId.send_trade_set_money;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -24,7 +24,7 @@ namespace Necromancy.Server.Packet.Area
             ulong myGoldOffer = packet.data.ReadUInt64();
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check.  must be 0 to succeed
-            router.Send(client, (ushort) AreaPacketId.recv_trade_set_money_r, res, ServerType.Area);//ToDo add money to a place where we can exchange it if added to a trade
+            router.Send(client, (ushort)AreaPacketId.recv_trade_set_money_r, res, ServerType.Area); //ToDo add money to a place where we can exchange it if added to a trade
 
             if (targetClient != null)
             {
@@ -32,6 +32,5 @@ namespace Necromancy.Server.Packet.Area
                 router.Send(notifyMoney, targetClient);
             }
         }
-
     }
 }

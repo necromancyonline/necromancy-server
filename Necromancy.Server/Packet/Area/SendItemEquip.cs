@@ -1,6 +1,4 @@
-using Arrowgene.Buffers;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
@@ -12,14 +10,19 @@ namespace Necromancy.Server.Packet.Area
     public class SendItemEquip : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemEquip));
-        public SendItemEquip(NecServer server) : base(server) { }
-        public override ushort id => (ushort) AreaPacketId.send_item_equip;
+
+        public SendItemEquip(NecServer server) : base(server)
+        {
+        }
+
+        public override ushort id => (ushort)AreaPacketId.send_item_equip;
+
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemZoneType zone = (ItemZoneType) packet.data.ReadByte();
+            ItemZoneType zone = (ItemZoneType)packet.data.ReadByte();
             byte bag = packet.data.ReadByte();
             short slot = packet.data.ReadInt16();
-            ItemEquipSlots equipSlot = (ItemEquipSlots) packet.data.ReadInt32();
+            ItemEquipSlots equipSlot = (ItemEquipSlots)packet.data.ReadInt32();
 
             _Logger.Debug($"storageType:{zone} bagId:{bag} bagSlotIndex:{slot} equipBit:{equipSlot}");
 
@@ -39,6 +42,7 @@ namespace Necromancy.Server.Packet.Area
                         RecvItemUpdateEqMask recvItemUpdateEqMaskCurr = new RecvItemUpdateEqMask(client, itemRight);
                         router.Send(recvItemUpdateEqMaskCurr, client);
                     }
+
                     ItemInstance itemLeft = itemService.CheckAlreadyEquipped(ItemEquipSlots.LeftHand);
                     if (itemLeft != null)
                     {
@@ -72,7 +76,10 @@ namespace Necromancy.Server.Packet.Area
                 RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.character, client.soul.name);
                 router.Send(client.map, myCharacterData, client);
             }
-            catch (ItemException e) { error = (int) e.type; }
+            catch (ItemException e)
+            {
+                error = (int)e.type;
+            }
 
             //tell the send if everything went well or not.  notify the client chat of any errors
             RecvItemEquip recvItemEquip = new RecvItemEquip(client, error);

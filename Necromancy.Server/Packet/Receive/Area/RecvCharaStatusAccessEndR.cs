@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaStatusAccessEndR : PacketResponse
     {
         public RecvCharaStatusAccessEndR()
-            : base((ushort) AreaPacketId.recv_chara_status_access_end_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_status_access_end_r, ServerType.Area)
         {
         }
 

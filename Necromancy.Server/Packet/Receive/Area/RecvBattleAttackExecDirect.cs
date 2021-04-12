@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleAttackExecDirect : PacketResponse
     {
         public RecvBattleAttackExecDirect()
-            : base((ushort) AreaPacketId.recv_battle_attack_exec_direct_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_attack_exec_direct_r, ServerType.Area)
         {
         }
 

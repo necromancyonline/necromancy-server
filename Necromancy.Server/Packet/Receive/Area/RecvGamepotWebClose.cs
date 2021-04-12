@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGamepotWebClose : PacketResponse
     {
         public RecvGamepotWebClose()
-            : base((ushort) AreaPacketId.recv_gamepot_web_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gamepot_web_close_r, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestSelectError : PacketResponse
     {
         public RecvQuestSelectError()
-            : base((ushort) AreaPacketId.recv_quest_select_error, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_select_error, ServerType.Area)
         {
         }
 

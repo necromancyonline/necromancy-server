@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventRemoveTrapBegin : PacketResponse
     {
         public RecvEventRemoveTrapBegin()
-            : base((ushort) AreaPacketId.recv_event_removetrap_begin, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_removetrap_begin, ServerType.Area)
         {
         }
 

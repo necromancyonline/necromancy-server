@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class Recv0XC078 : PacketResponse
     {
         public Recv0XC078()
-            : base((ushort) AreaPacketId.recv_0xC078, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0xC078, ServerType.Area)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
             res.WriteInt16(0);
             res.WriteInt16(0);
-            res.WriteFloat(0);//Seems to be a float in the asm
+            res.WriteFloat(0); //Seems to be a float in the asm
 
             res.WriteByte(0);
             res.WriteByte(0);

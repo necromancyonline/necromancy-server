@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaDrawBonusPoint : PacketResponse
     {
         public RecvCharaDrawBonusPoint()
-            : base((ushort) MsgPacketId.recv_chara_draw_bonuspoint_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_draw_bonuspoint_r, ServerType.Msg)
         {
         }
 

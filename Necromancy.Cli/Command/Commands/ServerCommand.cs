@@ -11,10 +11,9 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class ServerCommand : ConsoleCommand, ISwitchConsumer
     {
-        public static readonly ILogger Logger = LogProvider.Logger(typeof(ServerCommand));
-
         private const string _SettingFile = "server_setting.json";
         private const string _SecretFile = "server_secret.json";
+        public static readonly ILogger Logger = LogProvider.Logger(typeof(ServerCommand));
         private NecServer _server;
         private bool _service;
 
@@ -28,19 +27,22 @@ namespace Necromancy.Cli.Command.Commands
                     "--service=true (true|false)",
                     "Run the server as a dedicated service",
                     bool.TryParse,
-                    (result => _service = result)
+                    result => _service = result
                 )
             );
         }
+
+        public override string key => "server";
+
+
+        public override string description =>
+            $"Wizardry Online Server. Ex.:{Environment.NewLine}server start{Environment.NewLine}server stop";
 
         public List<ISwitchProperty> switches { get; }
 
         public override void Shutdown()
         {
-            if (_server != null)
-            {
-                _server.Stop();
-            }
+            if (_server != null) _server.Stop();
         }
 
         public override CommandResultType Handle(ConsoleParameter parameter)
@@ -85,10 +87,7 @@ namespace Necromancy.Cli.Command.Commands
                 _server.Start();
                 if (_service)
                 {
-                    while (_server.running)
-                    {
-                        Thread.Sleep(TimeSpan.FromMinutes(5));
-                    }
+                    while (_server.running) Thread.Sleep(TimeSpan.FromMinutes(5));
 
                     return CommandResultType.Exit;
                 }
@@ -104,11 +103,5 @@ namespace Necromancy.Cli.Command.Commands
 
             return CommandResultType.Continue;
         }
-
-        public override string key => "server";
-
-
-        public override string description =>
-            $"Wizardry Online Server. Ex.:{Environment.NewLine}server start{Environment.NewLine}server stop";
     }
 }

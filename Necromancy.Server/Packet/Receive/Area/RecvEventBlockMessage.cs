@@ -7,11 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvEventBlockMessage : PacketResponse
     {
-        private readonly int _unknown;
         private readonly string _message;
+        private readonly int _unknown;
 
         public RecvEventBlockMessage(int unknown, string message)
-            : base((ushort) AreaPacketId.recv_event_block_message, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_block_message, ServerType.Area)
         {
             _unknown = unknown;
             _message = message;

@@ -1,3 +1,5 @@
+using System;
+using System.Numerics;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -5,8 +7,6 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
-using System;
-using System.Numerics;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -18,16 +18,13 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_movement_info;
+        public override ushort id => (ushort)AreaPacketId.send_movement_info;
 
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             // If changing maps don't update position
-            if (client.character.mapChange)
-            {
-                return;
-            }
+            if (client.character.mapChange) return;
 
             client.character.x = packet.data.ReadFloat();
             client.character.y = packet.data.ReadFloat();
@@ -82,7 +79,7 @@ namespace Necromancy.Server.Packet.Area
             res2.WriteByte(client.character.movementPose);
             res2.WriteByte(client.character.movementAnim);
 
-            router.Send(client.map, (ushort) AreaPacketId.recv_0x8D92, res2, ServerType.Area, client);
+            router.Send(client.map, (ushort)AreaPacketId.recv_0x8D92, res2, ServerType.Area, client);
 
             client.character.battleAnim = 0; //re-setting the byte to 0 at the end of every iteration to allow for normal movements.
 
@@ -136,7 +133,7 @@ namespace Necromancy.Server.Packet.Area
 
 
             //Support for /takeover command to enable moving objects administratively
-            if (client.character.takeover == true)
+            if (client.character.takeover)
             {
                 _Logger.Debug($"Moving object ID {client.character.eventSelectReadyCode}.");
                 IBuffer res = BufferProvider.Provide();
@@ -146,47 +143,34 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteFloat(client.character.z);
                 res.WriteByte(client.character.heading); //Heading
                 res.WriteByte(client.character.movementAnim); //state
-                router.Send(client.map, (ushort) AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
+                router.Send(client.map, (ushort)AreaPacketId.recv_object_point_move_notify, res, ServerType.Area);
             }
 
             //Logic to see if you are in range of a map transition
             client.character.stepCount++;
-            if (client.character.stepCount % 4 == 0)
-            {
-                CheckMapChange(client);
-            }
-
+            if (client.character.stepCount % 4 == 0) CheckMapChange(client);
         }
 
         private void CheckMapChange(NecClient client)
         {
             Vector3 characterPos = new Vector3(client.character.x, client.character.y, client.character.z);
-            if (client.character == null)
-            {
-                return;
-            }
+            if (client.character == null) return;
 
             foreach (MapTransition mapTransition in client.map.mapTransitions.Values)
             {
                 float lineProximity = PDistance(characterPos, mapTransition.leftPos, mapTransition.rightPos);
-               // Logger.Debug($"{_character.Name} checking map {mapTransition.MapId} [transition] id {mapTransition.Id} to destination {mapTransition.TransitionMapId}");
-               // Logger.Debug($"Distance to transition : {lineProximity}");
+                // Logger.Debug($"{_character.Name} checking map {mapTransition.MapId} [transition] id {mapTransition.Id} to destination {mapTransition.TransitionMapId}");
+                // Logger.Debug($"Distance to transition : {lineProximity}");
                 if (lineProximity < 155)
                 {
-                    if (!server.maps.TryGet(mapTransition.transitionMapId, out Map transitionMap))
-                    {
-                        return;
-                    }
+                    if (!server.maps.TryGet(mapTransition.transitionMapId, out Map transitionMap)) return;
                     transitionMap.EnterForce(client, mapTransition.toPos);
                 }
-
-
             }
-
         }
-        static float PDistance(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC)
-        {
 
+        private static float PDistance(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC)
+        {
             float distanceA = vectorA.X - vectorB.X;
             float distanceB = vectorA.Y - vectorB.Y;
             float distanceC = vectorC.X - vectorB.X;
@@ -220,7 +204,5 @@ namespace Necromancy.Server.Packet.Area
             float dy = vectorA.Y - yy;
             return (float)Math.Abs(Math.Sqrt(dx * dx + dy * dy));
         }
-
-
     }
 }

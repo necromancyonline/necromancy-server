@@ -6,20 +6,11 @@ namespace Necromancy.Server.Data.Setting
 
         protected override StrTableSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
-            if (!int.TryParse(properties[1], out int subId))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[1], out int subId)) return null;
 
-            if (!int.TryParse(properties[2], out int stringId))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[2], out int stringId)) return null;
 
             return new StrTableSetting
             {

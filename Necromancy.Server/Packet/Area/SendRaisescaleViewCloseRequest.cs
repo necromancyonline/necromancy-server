@@ -11,13 +11,13 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_raisescale_view_close_request;
+        public override ushort id => (ushort)AreaPacketId.send_raisescale_view_close_request;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             IBuffer res = BufferProvider.Provide();
 
-            router.Send(client, (ushort) AreaPacketId.recv_raisescale_view_close, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_raisescale_view_close, res, ServerType.Area);
 
             IBuffer res7 = BufferProvider.Provide();
             res7.WriteByte(0);

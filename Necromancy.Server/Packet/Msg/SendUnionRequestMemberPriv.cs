@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_member_priv;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_member_priv;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -23,7 +23,7 @@ namespace Necromancy.Server.Packet.Msg
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(newPermissionBitmask);
-            router.Send(targetClient, (ushort) MsgPacketId.recv_union_request_member_priv_r, res, ServerType.Msg);
+            router.Send(targetClient, (ushort)MsgPacketId.recv_union_request_member_priv_r, res, ServerType.Msg);
         }
     }
 }

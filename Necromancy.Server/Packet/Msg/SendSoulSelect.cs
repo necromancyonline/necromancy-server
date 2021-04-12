@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_soul_select;
+        public override ushort id => (ushort)MsgPacketId.send_soul_select;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

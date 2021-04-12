@@ -13,13 +13,11 @@ namespace Necromancy.Server.Model.Skills
     public class ThiefSkill : IInstance
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ThiefSkill));
-
-        public uint instanceId { get; set; }
-
-        private NecClient _client;
         private readonly NecServer _server;
-        private int _skillId;
-        private uint _targetInstanceId;
+
+        private readonly NecClient _client;
+        private readonly int _skillId;
+        private readonly uint _targetInstanceId;
 
         public ThiefSkill(NecServer server, NecClient client, int skillId, uint targetInstanceId)
         {
@@ -28,6 +26,8 @@ namespace Necromancy.Server.Model.Skills
             _skillId = skillId;
             _targetInstanceId = targetInstanceId;
         }
+
+        public uint instanceId { get; set; }
 
         public void StartCast()
         {
@@ -116,10 +116,7 @@ namespace Necromancy.Server.Model.Skills
                 return;
             }
 
-            if (!int.TryParse($"{_skillId}".Substring(1, 6) + 1, out int effectId))
-            {
-                _Logger.Error($"Creating effectId from skillid [{_skillId}]");
-            }
+            if (!int.TryParse($"{_skillId}".Substring(1, 6) + 1, out int effectId)) _Logger.Error($"Creating effectId from skillid [{_skillId}]");
 
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
@@ -151,7 +148,7 @@ namespace Necromancy.Server.Model.Skills
             //_server.Router.Send(_client.Map, eoTriggerData);
             int monsterHp = monsterSpawn.hp.current;
             List<PacketResponse> brList2 = new List<PacketResponse>();
-            float perHp = monsterHp > 0 ? (((float) monsterHp / (float) monsterSpawn.hp.max) * 100) : 0;
+            float perHp = monsterHp > 0 ? monsterHp / (float)monsterSpawn.hp.max * 100 : 0;
             RecvBattleReportStartNotify brStart1 = new RecvBattleReportStartNotify(_client.character.instanceId);
             RecvBattleReportEndNotify brEnd1 = new RecvBattleReportEndNotify();
             //RecvBattleReportDamageHp brHp = new RecvBattleReportDamageHp(monsterSpawn.InstanceId, damage);

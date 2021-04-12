@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvForgeParameterCheckR : PacketResponse
     {
         public RecvForgeParameterCheckR()
-            : base((ushort) AreaPacketId.recv_forge_parameter_check_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_forge_parameter_check_r, ServerType.Area)
         {
         }
 
@@ -39,15 +39,9 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(0);
 
                 int numEntries3 = 0x5; //must be 0x5
-                for (int k = 0; k < numEntries3; k++)
-                {
-                    res.WriteInt32(0);
-                }
+                for (int k = 0; k < numEntries3; k++) res.WriteInt32(0);
                 int numEntries4 = 0x5; //must be 0x5
-                for (int k = 0; k < numEntries4; k++)
-                {
-                    res.WriteInt32(0);
-                }
+                for (int k = 0; k < numEntries4; k++) res.WriteInt32(0);
                 int numEntries5 = 0x5; //must be 0x5
                 for (int k = 0; k < numEntries5; k++)
                 {
@@ -57,6 +51,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteInt16(0);
                 }
             }
+
             return res;
         }
     }

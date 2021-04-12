@@ -43,42 +43,33 @@ namespace Necromancy.Server.Common
  *
  */
 
-    /// <summary>
-    /// A random number generator based on the RNGCryptoServiceProvider.
-    /// Adapted from the "Tales from the CryptoRandom" article in MSDN Magazine (September 2007)
-    /// but with explicit guarantee to be thread safe. Note that this implementation also includes
-    /// an optional (enabled by default) random buffer which provides a significant speed boost as
-    /// it greatly reduces the amount of calls into unmanaged land.
-    /// </summary>
-    public class CryptoRandom : Random
+/// <summary>
+///     A random number generator based on the RNGCryptoServiceProvider.
+///     Adapted from the "Tales from the CryptoRandom" article in MSDN Magazine (September 2007)
+///     but with explicit guarantee to be thread safe. Note that this implementation also includes
+///     an optional (enabled by default) random buffer which provides a significant speed boost as
+///     it greatly reduces the amount of calls into unmanaged land.
+/// </summary>
+public class CryptoRandom : Random
     {
-        private RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
-
         private byte[] _buffer;
 
         private int _bufferPosition;
+        private readonly RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
 
         /// <summary>
-        /// Gets a value indicating whether this instance has random pool enabled.
-        /// </summary>
-        /// <value>
-        ///     <c>true</c> if this instance has random pool enabled; otherwise, <c>false</c>.
-        /// </value>
-        public bool isRandomPoolEnabled { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CryptoRandom"/> class with.
-        /// Using this overload will enable the random buffer pool.
+        ///     Initializes a new instance of the <see cref="CryptoRandom" /> class with.
+        ///     Using this overload will enable the random buffer pool.
         /// </summary>
         public CryptoRandom() : this(true)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CryptoRandom"/> class.
-        /// This method will disregard whatever value is passed as seed and it's only implemented
-        /// in order to be fully backwards compatible with <see cref="System.Random"/>.
-        /// Using this overload will enable the random buffer pool.
+        ///     Initializes a new instance of the <see cref="CryptoRandom" /> class.
+        ///     This method will disregard whatever value is passed as seed and it's only implemented
+        ///     in order to be fully backwards compatible with <see cref="System.Random" />.
+        ///     Using this overload will enable the random buffer pool.
         /// </summary>
         /// <param name="ignoredSeed">The ignored seed.</param>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "ignoredSeed",
@@ -88,14 +79,22 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CryptoRandom"/> class with
-        /// optional random buffer.
+        ///     Initializes a new instance of the <see cref="CryptoRandom" /> class with
+        ///     optional random buffer.
         /// </summary>
         /// <param name="enableRandomPool">set to <c>true</c> to enable the random pool buffer for increased performance.</param>
         public CryptoRandom(bool enableRandomPool)
         {
             isRandomPoolEnabled = enableRandomPool;
         }
+
+        /// <summary>
+        ///     Gets a value indicating whether this instance has random pool enabled.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if this instance has random pool enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool isRandomPoolEnabled { get; }
 
         private void InitBuffer()
         {
@@ -115,26 +114,31 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Returns a nonnegative random number.
+        ///     Returns a nonnegative random number.
         /// </summary>
         /// <returns>
-        /// A 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue"/>.
+        ///     A 32-bit signed integer greater than or equal to zero and less than <see cref="F:System.Int32.MaxValue" />.
         /// </returns>
         public override int Next()
         {
             // Mask away the sign bit so that we always return nonnegative integers
-            return (int) GetRandomUInt32() & 0x7FFFFFFF;
+            return (int)GetRandomUInt32() & 0x7FFFFFFF;
         }
 
         /// <summary>
-        /// Returns a nonnegative random number less than the specified maximum.
+        ///     Returns a nonnegative random number less than the specified maximum.
         /// </summary>
-        /// <param name="maxValue">The exclusive upper bound of the random number to be generated. <paramref name="maxValue"/> must be greater than or equal to zero.</param>
+        /// <param name="maxValue">
+        ///     The exclusive upper bound of the random number to be generated. <paramref name="maxValue" />
+        ///     must be greater than or equal to zero.
+        /// </param>
         /// <returns>
-        /// A 32-bit signed integer greater than or equal to zero, and less than <paramref name="maxValue"/>; that is, the range of return values ordinarily includes zero but not <paramref name="maxValue"/>. However, if <paramref name="maxValue"/> equals zero, <paramref name="maxValue"/> is returned.
+        ///     A 32-bit signed integer greater than or equal to zero, and less than <paramref name="maxValue" />; that is, the
+        ///     range of return values ordinarily includes zero but not <paramref name="maxValue" />. However, if
+        ///     <paramref name="maxValue" /> equals zero, <paramref name="maxValue" /> is returned.
         /// </returns>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="maxValue"/> is less than zero.
+        ///     <paramref name="maxValue" /> is less than zero.
         /// </exception>
         public override int Next(int maxValue)
         {
@@ -145,15 +149,21 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Returns a random number within a specified range.
+        ///     Returns a random number within a specified range.
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
-        /// <param name="maxValue">The exclusive upper bound of the random number returned. <paramref name="maxValue"/> must be greater than or equal to <paramref name="minValue"/>.</param>
+        /// <param name="maxValue">
+        ///     The exclusive upper bound of the random number returned. <paramref name="maxValue" /> must be
+        ///     greater than or equal to <paramref name="minValue" />.
+        /// </param>
         /// <returns>
-        /// A 32-bit signed integer greater than or equal to <paramref name="minValue"/> and less than <paramref name="maxValue"/>; that is, the range of return values includes <paramref name="minValue"/> but not <paramref name="maxValue"/>. If <paramref name="minValue"/> equals <paramref name="maxValue"/>, <paramref name="minValue"/> is returned.
+        ///     A 32-bit signed integer greater than or equal to <paramref name="minValue" /> and less than
+        ///     <paramref name="maxValue" />; that is, the range of return values includes <paramref name="minValue" /> but not
+        ///     <paramref name="maxValue" />. If <paramref name="minValue" /> equals <paramref name="maxValue" />,
+        ///     <paramref name="minValue" /> is returned.
         /// </returns>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="minValue"/> is greater than <paramref name="maxValue"/>.
+        ///     <paramref name="minValue" /> is greater than <paramref name="maxValue" />.
         /// </exception>
         public override int Next(int minValue, int maxValue)
         {
@@ -169,19 +179,19 @@ namespace Necromancy.Server.Common
             {
                 uint rand = GetRandomUInt32();
 
-                long max = 1 + (long) uint.MaxValue;
+                long max = 1 + (long)uint.MaxValue;
                 long remainder = max % diff;
 
                 if (rand < max - remainder)
-                    return (int) (minValue + (rand % diff));
+                    return (int)(minValue + rand % diff);
             }
         }
 
         /// <summary>
-        /// Returns a random number between 0.0 and 1.0.
+        ///     Returns a random number between 0.0 and 1.0.
         /// </summary>
         /// <returns>
-        /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0.
+        ///     A double-precision floating point number greater than or equal to 0.0, and less than 1.0.
         /// </returns>
         public override double NextDouble()
         {
@@ -189,11 +199,11 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Fills the elements of a specified array of bytes with random numbers.
+        ///     Fills the elements of a specified array of bytes with random numbers.
         /// </summary>
         /// <param name="buffer">An array of bytes to contain random numbers.</param>
         /// <exception cref="T:System.ArgumentNullException">
-        ///     <paramref name="buffer"/> is null.
+        ///     <paramref name="buffer" /> is null.
         /// </exception>
         public override void NextBytes(byte[] buffer)
         {
@@ -225,7 +235,7 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Gets one random unsigned 32bit integer in a thread safe manner.
+        ///     Gets one random unsigned 32bit integer in a thread safe manner.
         /// </summary>
         private uint GetRandomUInt32()
         {
@@ -242,7 +252,7 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Ensures that we have enough bytes in the random buffer.
+        ///     Ensures that we have enough bytes in the random buffer.
         /// </summary>
         /// <param name="requiredBytes">The number of required bytes.</param>
         private void EnsureRandomBuffer(int requiredBytes)
@@ -253,7 +263,7 @@ namespace Necromancy.Server.Common
             if (requiredBytes > _buffer.Length)
                 throw new ArgumentOutOfRangeException("requiredBytes", "cannot be greater than random buffer");
 
-            if ((_buffer.Length - _bufferPosition) < requiredBytes)
+            if (_buffer.Length - _bufferPosition < requiredBytes)
                 InitBuffer();
         }
     }

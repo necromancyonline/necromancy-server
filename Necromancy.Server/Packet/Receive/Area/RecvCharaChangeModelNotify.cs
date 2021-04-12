@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaChangeModelNotify : PacketResponse
     {
         public RecvCharaChangeModelNotify()
-            : base((ushort) AreaPacketId.recv_chara_change_model_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_change_model_notify, ServerType.Area)
         {
         }
 

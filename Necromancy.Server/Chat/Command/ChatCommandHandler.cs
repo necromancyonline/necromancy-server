@@ -34,37 +34,22 @@ namespace Necromancy.Server.Chat.Command
 
         public void HandleCommand(NecClient client, string command)
         {
-            if (client == null)
-            {
-                return;
-            }
+            if (client == null) return;
 
             ChatMessage message = new ChatMessage(ChatMessageType.ChatCommand, client.character.name, command);
             List<ChatResponse> responses = new List<ChatResponse>();
             Handle(client, message, new ChatResponse(), responses);
-            foreach (ChatResponse response in responses)
-            {
-                _server.router.Send(response);
-            }
+            foreach (ChatResponse response in responses) _server.router.Send(response);
         }
 
         public override void Handle(NecClient client, ChatMessage message, ChatResponse response,
             List<ChatResponse> responses)
         {
-            if (client == null)
-            {
-                return;
-            }
+            if (client == null) return;
 
-            if (message.message == null || message.message.Length <= 1)
-            {
-                return;
-            }
+            if (message.message == null || message.message.Length <= 1) return;
 
-            if (!message.message.StartsWith(ChatCommandStart))
-            {
-                return;
-            }
+            if (!message.message.StartsWith(ChatCommandStart)) return;
 
             string commandMessage = message.message.Substring(1);
             string[] command = commandMessage.Split(ChatCommandSeparator);

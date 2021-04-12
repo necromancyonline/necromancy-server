@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionMantleClose : PacketResponse
     {
         public RecvUnionMantleClose()
-            : base((ushort) AreaPacketId.recv_union_mantle_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_mantle_close_r, ServerType.Area)
         {
         }
 

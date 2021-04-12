@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventSelectChannel : PacketResponse
     {
         public RecvEventSelectChannel()
-            : base((ushort) AreaPacketId.recv_event_select_channel, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_select_channel, ServerType.Area)
         {
         }
 
@@ -33,6 +33,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteByte(0);
                 res.WriteByte(0);
             }
+
             res.WriteByte(0);
             return res;
         }

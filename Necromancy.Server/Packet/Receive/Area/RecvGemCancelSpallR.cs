@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGemCancelSpallR : PacketResponse
     {
         public RecvGemCancelSpallR()
-            : base((ushort) AreaPacketId.recv_gem_cancel_spall_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gem_cancel_spall_r, ServerType.Area)
         {
         }
 

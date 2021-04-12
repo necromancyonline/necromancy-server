@@ -15,6 +15,6 @@ namespace Necromancy.Server.Chat
         TargetRefusedToAcceptYourWhisper = -2201,
         UnableToWhisperAsYouAreOnTheRecipientsBlockList = -2202,
         YouMayNotChatInAllChatDuringTrades = -3000,
-        YouMayNotChatInAllChatWhileYouHaveShopOpen = -3001,
+        YouMayNotChatInAllChatWhileYouHaveShopOpen = -3001
     }
 }

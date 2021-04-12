@@ -7,9 +7,9 @@ namespace Necromancy.Server.Model
     {
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(MapLookup));
 
-        private readonly Dictionary<int, Map> _maps;
-
         private readonly object _lock = new object();
+
+        private readonly Dictionary<int, Map> _maps;
 
 
         public MapLookup()
@@ -18,7 +18,7 @@ namespace Necromancy.Server.Model
         }
 
         /// <summary>
-        /// Returns all maps from the lookup.
+        ///     Returns all maps from the lookup.
         /// </summary>
         public List<Map> GetAll()
         {
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Model
         }
 
         /// <summary>
-        /// Returns a map by its id.
+        ///     Returns a map by its id.
         /// </summary>
         public Map Get(int mapId)
         {
@@ -46,7 +46,7 @@ namespace Necromancy.Server.Model
         }
 
         /// <summary>
-        /// Returns a map by its id.
+        ///     Returns a map by its id.
         /// </summary>
         public bool TryGet(int mapId, out Map map)
         {
@@ -65,37 +65,28 @@ namespace Necromancy.Server.Model
         }
 
         /// <summary>
-        /// Adds a new map to the lookup.
-        /// If the mapId already exists no insert will happen.
+        ///     Adds a new map to the lookup.
+        ///     If the mapId already exists no insert will happen.
         /// </summary>
         public void Add(Map map)
         {
-            if (map == null)
-            {
-                return;
-            }
+            if (map == null) return;
 
             lock (_lock)
             {
-                if (_maps.ContainsKey(map.id))
-                {
-                    return;
-                }
+                if (_maps.ContainsKey(map.id)) return;
 
                 _maps.Add(map.id, map);
             }
         }
 
         /// <summary>
-        /// Adds a new map to the lookup.
-        /// If the mapId already exists it will be overwritten.
+        ///     Adds a new map to the lookup.
+        ///     If the mapId already exists it will be overwritten.
         /// </summary>
         public void AddOverride(Map map)
         {
-            if (map == null)
-            {
-                return;
-            }
+            if (map == null) return;
 
             lock (_lock)
             {
@@ -104,7 +95,7 @@ namespace Necromancy.Server.Model
         }
 
         /// <summary>
-        /// Removes a map from the lookup
+        ///     Removes a map from the lookup
         /// </summary>
         public bool Remove(Map map)
         {

@@ -23,7 +23,7 @@ namespace Necromancy.Server.Common
 
         public static long GetUnixTime(DateTime dateTime)
         {
-            return ((DateTimeOffset) dateTime).ToUnixTimeSeconds();
+            return ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
         }
 
         public static string PathDifferenceEnd(string directoryInfo1, string directoryInfo2, bool unRoot)
@@ -36,28 +36,17 @@ namespace Necromancy.Server.Common
         {
             string result;
             if (directoryInfo1.FullName == directoryInfo2.FullName)
-            {
                 result = directoryInfo1.FullName;
-            }
             else if (directoryInfo1.FullName.EndsWith(directoryInfo2.FullName))
-            {
                 result = directoryInfo1.FullName.Split(new[] {directoryInfo2.FullName},
                     StringSplitOptions.RemoveEmptyEntries)[0];
-            }
             else if (directoryInfo2.FullName.EndsWith(directoryInfo1.FullName))
-            {
                 result = directoryInfo2.FullName.Split(new[] {directoryInfo1.FullName},
                     StringSplitOptions.RemoveEmptyEntries)[0];
-            }
             else
-            {
                 result = "";
-            }
 
-            if (unRoot)
-            {
-                result = UnrootPath(result);
-            }
+            if (unRoot) result = UnrootPath(result);
 
             return result;
         }
@@ -72,28 +61,17 @@ namespace Necromancy.Server.Common
         {
             string result;
             if (directoryInfo1.FullName == directoryInfo2.FullName)
-            {
                 result = "";
-            }
             else if (directoryInfo1.FullName.StartsWith(directoryInfo2.FullName))
-            {
                 result = directoryInfo1.FullName.Split(new[] {directoryInfo2.FullName},
                     StringSplitOptions.RemoveEmptyEntries)[0];
-            }
             else if (directoryInfo2.FullName.StartsWith(directoryInfo1.FullName))
-            {
                 result = directoryInfo2.FullName.Split(new[] {directoryInfo1.FullName},
                     StringSplitOptions.RemoveEmptyEntries)[0];
-            }
             else
-            {
                 result = "";
-            }
 
-            if (unRoot)
-            {
-                result = UnrootPath(result);
-            }
+            if (unRoot) result = UnrootPath(result);
 
             return result;
         }
@@ -113,13 +91,10 @@ namespace Necromancy.Server.Common
         public static AssemblyName GetAssemblyName(string name)
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
+            foreach (Assembly assembly in assemblies)
             {
                 AssemblyName assemblyName = assembly.GetName();
-                if (assemblyName.Name == name)
-                {
-                    return assemblyName;
-                }
+                if (assemblyName.Name == name) return assemblyName;
             }
 
             return null;
@@ -128,10 +103,7 @@ namespace Necromancy.Server.Common
         public static Version GetAssemblyVersion(string name)
         {
             AssemblyName assemblyName = GetAssemblyName(name);
-            if (assemblyName != null)
-            {
-                return assemblyName.Version;
-            }
+            if (assemblyName != null) return assemblyName.Version;
 
             return null;
         }
@@ -139,30 +111,21 @@ namespace Necromancy.Server.Common
         public static string GetAssemblyVersionString(string name)
         {
             Version version = GetAssemblyVersion(name);
-            if (version != null)
-            {
-                return version.ToString();
-            }
+            if (version != null) return version.ToString();
 
             return null;
         }
 
         public static byte[] ReadFile(string source)
         {
-            if (!File.Exists(source))
-            {
-                throw new Exception(string.Format("'{0}' does not exist or is not a file", source));
-            }
+            if (!File.Exists(source)) throw new Exception(string.Format("'{0}' does not exist or is not a file", source));
 
             return File.ReadAllBytes(source);
         }
 
         public static string ReadFileText(string source)
         {
-            if (!File.Exists(source))
-            {
-                throw new Exception(string.Format("'{0}' does not exist or is not a file", source));
-            }
+            if (!File.Exists(source)) throw new Exception(string.Format("'{0}' does not exist or is not a file", source));
 
             return File.ReadAllText(source);
         }
@@ -170,13 +133,9 @@ namespace Necromancy.Server.Common
         public static void WriteFile(byte[] content, string destination)
         {
             if (content != null)
-            {
                 File.WriteAllBytes(destination, content);
-            }
             else
-            {
                 throw new Exception(string.Format("Content of '{0}' is null", destination));
-            }
         }
 
         public static List<FileInfo> GetFiles(DirectoryInfo directoryInfo, string[] extensions, bool recursive)
@@ -202,23 +161,19 @@ namespace Necromancy.Server.Common
             List<FileInfo> filteredFiles = new List<FileInfo>();
             FileInfo[] files = directoryInfo.GetFiles("*.*", SearchOption.TopDirectoryOnly);
             foreach (FileInfo file in files)
-            {
                 if (extensions != null)
                 {
                     foreach (string extension in extensions)
-                    {
                         if (file.Extension.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
                         {
                             filteredFiles.Add(file);
                             break;
                         }
-                    }
                 }
                 else
                 {
                     filteredFiles.Add(file);
                 }
-            }
 
             return filteredFiles;
         }
@@ -247,23 +202,19 @@ namespace Necromancy.Server.Common
             List<DirectoryInfo> filteredDirectories = new List<DirectoryInfo>();
             DirectoryInfo[] directories = directoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly);
             foreach (DirectoryInfo directory in directories)
-            {
                 if (extensions != null)
                 {
                     foreach (string extension in extensions)
-                    {
                         if (directory.Name.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
                         {
                             filteredDirectories.Add(directory);
                             break;
                         }
-                    }
                 }
                 else
                 {
                     filteredDirectories.Add(directory);
                 }
-            }
 
             return filteredDirectories;
         }
@@ -275,8 +226,8 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// The directory of the executing assembly.
-        /// This might not be the location where the .dll files are located.
+        ///     The directory of the executing assembly.
+        ///     This might not be the location where the .dll files are located.
         /// </summary>
         /// <returns></returns>
         public static string ExecutingDirectory()
@@ -288,8 +239,8 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// The relative directory of the executing assembly.
-        /// This might not be the location where the .dll files are located.
+        ///     The relative directory of the executing assembly.
+        ///     This might not be the location where the .dll files are located.
         /// </summary>
         public static string RelativeExecutingDirectory()
         {
@@ -297,8 +248,8 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Directory of Common.dll
-        /// This is expected to contain ressource files.
+        ///     Directory of Common.dll
+        ///     This is expected to contain ressource files.
         /// </summary>
         public static string CommonDirectory()
         {
@@ -309,8 +260,8 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Relative Directory of Common.dll.
-        /// This is expected to contain ressource files.
+        ///     Relative Directory of Common.dll.
+        ///     This is expected to contain ressource files.
         /// </summary>
         public static string RelativeCommonDirectory()
         {
@@ -324,10 +275,7 @@ namespace Necromancy.Server.Common
             byte[] hashBytes = md5.ComputeHash(inputBytes);
 
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < hashBytes.Length; i++)
-            {
-                sb.Append(hashBytes[i].ToString("X2"));
-            }
+            for (int i = 0; i < hashBytes.Length; i++) sb.Append(hashBytes[i].ToString("X2"));
 
             return sb.ToString().ToLower();
         }
@@ -343,7 +291,7 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Returns a directory that is relative.
+        ///     Returns a directory that is relative.
         /// </summary>
         /// <param name="fromDirectory">The directory to navigate from.</param>
         /// <param name="toDirectory">The directory to reach.</param>
@@ -355,50 +303,29 @@ namespace Necromancy.Server.Common
         {
             string result;
 
-            if (fromDirectory.EndsWith("\\") || fromDirectory.EndsWith("/"))
-            {
-                fromDirectory = fromDirectory.Remove(fromDirectory.Length - 1);
-            }
+            if (fromDirectory.EndsWith("\\") || fromDirectory.EndsWith("/")) fromDirectory = fromDirectory.Remove(fromDirectory.Length - 1);
 
-            if (toDirectory.EndsWith("\\") || toDirectory.EndsWith("/"))
-            {
-                toDirectory = toDirectory.Remove(toDirectory.Length - 1);
-            }
+            if (toDirectory.EndsWith("\\") || toDirectory.EndsWith("/")) toDirectory = toDirectory.Remove(toDirectory.Length - 1);
 
             if (toDirectory.StartsWith(fromDirectory))
             {
                 result = toDirectory.Substring(fromDirectory.Length);
-                if (result.StartsWith("\\") || result.StartsWith("/"))
-                {
-                    result = result.Substring(1, result.Length - 1);
-                }
+                if (result.StartsWith("\\") || result.StartsWith("/")) result = result.Substring(1, result.Length - 1);
 
-                if (result != "")
-                {
-                    result += directorySeparator;
-                }
+                if (result != "") result += directorySeparator;
             }
             else
             {
                 string[] fromDirs = fromDirectory.Split(':', '\\', '/');
                 string[] toDirs = toDirectory.Split(':', '\\', '/');
-                if (fromDirs.Length <= 0 || toDirs.Length <= 0 || fromDirs[0] != toDirs[0])
-                {
-                    return defaultDirectory;
-                }
+                if (fromDirs.Length <= 0 || toDirs.Length <= 0 || fromDirs[0] != toDirs[0]) return defaultDirectory;
 
                 int offset = 1;
                 for (; offset < fromDirs.Length; offset++)
                 {
-                    if (toDirs.Length <= offset)
-                    {
-                        break;
-                    }
+                    if (toDirs.Length <= offset) break;
 
-                    if (fromDirs[offset] != toDirs[offset])
-                    {
-                        break;
-                    }
+                    if (fromDirs[offset] != toDirs[offset]) break;
                 }
 
                 StringBuilder relativeBuilder = new StringBuilder();
@@ -428,15 +355,9 @@ namespace Necromancy.Server.Common
 
         public static string DirectorySeparator(string path, char directorySeparator)
         {
-            if (directorySeparator != '\\')
-            {
-                path = path.Replace('\\', directorySeparator);
-            }
+            if (directorySeparator != '\\') path = path.Replace('\\', directorySeparator);
 
-            if (directorySeparator != '/')
-            {
-                path = path.Replace('/', directorySeparator);
-            }
+            if (directorySeparator != '/') path = path.Replace('/', directorySeparator);
 
             return path;
         }
@@ -451,8 +372,8 @@ namespace Necromancy.Server.Common
                 while (length < desiredLength)
                 {
                     cryptoProvider.GetBytes(random);
-                    char c = (char) random[0];
-                    if ((Char.IsDigit(c) || Char.IsLetter(c)) && random[0] < 127)
+                    char c = (char)random[0];
+                    if ((char.IsDigit(c) || char.IsLetter(c)) && random[0] < 127)
                     {
                         length++;
                         sessionKey.Append(c);
@@ -475,22 +396,16 @@ namespace Necromancy.Server.Common
         }
 
         /// <summary>
-        /// Removes entries from a collection.
-        /// The input lists are not modified, instead a new collection is returned.
+        ///     Removes entries from a collection.
+        ///     The input lists are not modified, instead a new collection is returned.
         /// </summary>
         public static TList SubtractList<TList, TItem>(TList entries, params TItem[] excepts)
             where TList : ICollection<TItem>, new()
         {
             TList result = new TList();
-            foreach (TItem entry in entries)
-            {
-                result.Add(entry);
-            }
+            foreach (TItem entry in entries) result.Add(entry);
 
-            foreach (TItem except in excepts)
-            {
-                result.Remove(except);
-            }
+            foreach (TItem except in excepts) result.Remove(except);
 
             return result;
         }
@@ -502,10 +417,7 @@ namespace Necromancy.Server.Common
             for (int i = 0; i < len; i++)
             {
                 sb.Append(data[i].ToString("X2"));
-                if (seperator != null && i < len - 1)
-                {
-                    sb.Append(seperator);
-                }
+                if (seperator != null && i < len - 1) sb.Append(seperator);
             }
 
             return sb.ToString();
@@ -517,13 +429,10 @@ namespace Necromancy.Server.Common
             for (int i = 0; i < data.Length; i++)
             {
                 char c = '.';
-                if (data[i] >= 'A' && data[i] <= 'Z') c = (char) data[i];
-                if (data[i] >= 'a' && data[i] <= 'z') c = (char) data[i];
-                if (data[i] >= '0' && data[i] <= '9') c = (char) data[i];
-                if (spaced && i != 0)
-                {
-                    sb.Append("  ");
-                }
+                if (data[i] >= 'A' && data[i] <= 'Z') c = (char)data[i];
+                if (data[i] >= 'a' && data[i] <= 'z') c = (char)data[i];
+                if (data[i] >= '0' && data[i] <= '9') c = (char)data[i];
+                if (spaced && i != 0) sb.Append("  ");
 
                 sb.Append(c);
             }
@@ -536,10 +445,7 @@ namespace Necromancy.Server.Common
             IList<string> list = ParseTextList(line, delimiter, textQualifier);
             int count = list.Count;
             string[] arguments = new string[count];
-            for (int i = 0; i < count; i++)
-            {
-                arguments[i] = list[i];
-            }
+            for (int i = 0; i < count; i++) arguments[i] = list[i];
 
             return arguments;
         }

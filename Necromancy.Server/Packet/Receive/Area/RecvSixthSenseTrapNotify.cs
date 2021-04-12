@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSixthSenseTrapNotify : PacketResponse
     {
         public RecvSixthSenseTrapNotify()
-            : base((ushort) AreaPacketId.recv_sixthsense_trap_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_sixthsense_trap_notify, ServerType.Area)
         {
         }
 

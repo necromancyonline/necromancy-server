@@ -11,14 +11,14 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_kick;
+        public override ushort id => (ushort)AreaPacketId.send_party_kick;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             uint kickTargetInstanceId = packet.data.ReadUInt32();
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //Kick Reason?  error check?  probably error check
-            router.Send(client, (ushort) AreaPacketId.recv_party_kick_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_kick_r, res, ServerType.Area);
 
 
             NecClient targetClient = server.clients.GetByCharacterInstanceId(kickTargetInstanceId);
@@ -44,7 +44,6 @@ namespace Necromancy.Server.Packet.Area
              */
 
             myParty.partyMembers.Remove(targetClient);
-
         }
     }
 }

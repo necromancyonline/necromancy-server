@@ -4,6 +4,11 @@ namespace Necromancy.Server.Model
 {
     public class Account
     {
+        public Account()
+        {
+            id = -1;
+        }
+
         public int id { get; set; }
         public string name { get; set; }
         public string normalName { get; set; }
@@ -16,10 +21,5 @@ namespace Necromancy.Server.Model
         public AccountStateType state { get; set; }
         public DateTime? lastLogin { get; set; }
         public DateTime created { get; set; }
-
-        public Account()
-        {
-            id = -1;
-        }
     }
 }

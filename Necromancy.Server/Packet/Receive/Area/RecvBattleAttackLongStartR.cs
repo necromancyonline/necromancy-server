@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleAttackLongStartR : PacketResponse
     {
         public RecvBattleAttackLongStartR()
-            : base((ushort) AreaPacketId.recv_battle_attack_long_start_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_attack_long_start_r, ServerType.Area)
         {
         }
 
@@ -18,10 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             int numEntries = 0x2;
             res.WriteInt32(0);
             res.WriteInt32(numEntries); //less than 0x4
-            for (int i = 0; i < numEntries; i++)
-            {
-                res.WriteFloat(0);
-            }
+            for (int i = 0; i < numEntries; i++) res.WriteFloat(0);
             return res;
         }
     }

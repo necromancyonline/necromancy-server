@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_skill_onhit;
+        public override ushort id => (ushort)AreaPacketId.send_skill_onhit;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

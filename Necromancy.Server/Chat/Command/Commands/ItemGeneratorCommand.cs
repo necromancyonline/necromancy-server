@@ -1,18 +1,13 @@
-using Arrowgene.Buffers;
+using System.Collections.Generic;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
-using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
-    class ItemGeneratorCommand : ServerChatCommand
+    internal class ItemGeneratorCommand : ServerChatCommand
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ItemCommand));
 
@@ -48,7 +43,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                     responses.Add(ChatResponse.CommandError(client, $"Invalid Package: {command[0]}"));
                     return;
             }
-
         }
 
         private void SpawnCharmedGear(NecClient client)
@@ -105,6 +99,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 spawmParams[i] = new ItemSpawnParams();
                 spawmParams[i].itemStatuses = ItemStatuses.Identified;
             }
+
             ItemService itemService = new ItemService(client.character);
             List<ItemInstance> items = itemService.SpawnItemInstances(ItemZoneType.AdventureBag, itemIds, spawmParams);
 
@@ -123,4 +118,3 @@ namespace Necromancy.Server.Chat.Command.Commands
         }
     }
 }
-

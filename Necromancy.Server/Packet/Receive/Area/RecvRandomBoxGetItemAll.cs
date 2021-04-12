@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRandomBoxGetItemAll : PacketResponse
     {
         public RecvRandomBoxGetItemAll()
-            : base((ushort) AreaPacketId.recv_random_box_get_item_all_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_random_box_get_item_all_r, ServerType.Area)
         {
         }
 

@@ -45,7 +45,7 @@ namespace Necromancy.Server.Packet.Area
             router.Send(recvPartyNotifyEstablish, client); // Only establish the party for the acceptee. everyone else is already established.
 
             RecvCharaBodyNotifyPartyJoin recvCharaBodyNotifyPartyJoin = new RecvCharaBodyNotifyPartyJoin(client.character.instanceId, myFirstParty.instanceId, myFirstParty.partyType);
-            router.Send(client.map, recvCharaBodyNotifyPartyJoin);//Only send the Join Notify of the Accepting Client to the Map.  Existing members already did that when they joined.
+            router.Send(client.map, recvCharaBodyNotifyPartyJoin); //Only send the Join Notify of the Accepting Client to the Map.  Existing members already did that when they joined.
 
             RecvCharaNotifyPartyJoin recvCharaNotifyPartyJoin = new RecvCharaNotifyPartyJoin(client.character.instanceId, myFirstParty.instanceId, myFirstParty.partyType);
             router.Send(recvCharaNotifyPartyJoin, client); //Only send the Join of the Accepting Client to the Accepting Client.
@@ -60,10 +60,6 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             router.Send(client, (ushort)AreaPacketId.recv_party_establish_r, res, ServerType.Area);
-
-
-
         }
-
     }
 }

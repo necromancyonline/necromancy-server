@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-
 namespace Necromancy.Server.Data.Setting
 {
     public class CharacterAttackSetting : ISettingRepositoryItem
     {
-        public int id { get; set; }
         public int motionId { get; set; }
         public string weapon { get; set; }
         public bool firstShot { get; set; }
@@ -32,6 +29,6 @@ namespace Necromancy.Server.Data.Setting
         public float delay { get; set; }
         public float rigidity { get; set; }
         public bool reuse { get; set; }
-
+        public int id { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_union_request_establish;
+        public override ushort id => (ushort)AreaPacketId.send_union_request_establish;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -26,21 +26,12 @@ namespace Necromancy.Server.Packet.Area
             int sysMsg = 0;
 
             if (unionName.Length >= 16)
-            {
                 sysMsg = -1;
-            }
             else if (client.character.adventureBagGold < 30000)
-            {
                 sysMsg = -2;
-            }
             else if (client.soul.level < 3)
-            {
                 sysMsg = -3;
-            }
-            else if (client.character.unionId != 0)
-            {
-                sysMsg = -4;
-            }
+            else if (client.character.unionId != 0) sysMsg = -4;
             /*
             else if (client.Soul.Level < 3) { sys_msg = -1711; }
             else if (unionNameRegExpressionCheck(unionName)== fail) { sys_msg = -1701; }
@@ -52,7 +43,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res2 = BufferProvider.Provide();
             res2.WriteInt32(sysMsg);
-            router.Send(client, (ushort) AreaPacketId.recv_union_request_establish_r, res2, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_union_request_establish_r, res2, ServerType.Area);
 
             /*
             UNION_CREATE	0	Union created
@@ -68,14 +59,11 @@ namespace Necromancy.Server.Packet.Area
             UNION_CREATE	-1719	You may not create a Union for 24 hours after leaving your last Union.
              */
 
-            if (sysMsg != 0)
-            {
-                return;
-            }
+            if (sysMsg != 0) return;
 
             Union myFirstUnion = new Union();
             server.instances.AssignInstance(myFirstUnion);
-            client.character.unionId = (int) myFirstUnion.instanceId;
+            client.character.unionId = (int)myFirstUnion.instanceId;
             myFirstUnion.name = unionName;
             myFirstUnion.leaderId = client.character.id;
             client.union = myFirstUnion;
@@ -92,14 +80,14 @@ namespace Necromancy.Server.Packet.Area
 
             UnionMember myFirstUnionMember = new UnionMember();
             server.instances.AssignInstance(myFirstUnionMember);
-            myFirstUnionMember.unionId = (int) myFirstUnion.id;
+            myFirstUnionMember.unionId = myFirstUnion.id;
             myFirstUnionMember.characterDatabaseId = client.character.id;
             myFirstUnionMember.memberPriviledgeBitMask = 0b11111111;
             myFirstUnionMember.rank = 0;
 
             if (!server.database.InsertUnionMember(myFirstUnionMember))
             {
-                _Logger.Error($"union member could not be saved to database table nec_union_member");
+                _Logger.Error("union member could not be saved to database table nec_union_member");
                 return;
             }
 
@@ -107,7 +95,7 @@ namespace Necromancy.Server.Packet.Area
 
             myFirstUnion.Join(client); //to-do,  add to unionMembers table.
             TimeSpan differenceCreated = DateTime.Now - DateTime.UnixEpoch;
-            int unionCreatedCalculation = (int) Math.Floor(differenceCreated.TotalSeconds);
+            int unionCreatedCalculation = (int)Math.Floor(differenceCreated.TotalSeconds);
 
 
             IBuffer res3 = BufferProvider.Provide();
@@ -127,7 +115,7 @@ namespace Necromancy.Server.Packet.Area
             res3.WriteInt32(unionCreatedCalculation); //
             res3.WriteInt32(0); //
             res3.WriteInt32(0); //
-            router.Send(client, (ushort) MsgPacketId.recv_union_notify_detail_member, res3, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_notify_detail_member, res3, ServerType.Msg);
 
             //Notify client if msg server found Union settings in database(memory) for client character Unique Persistant ID.
             IBuffer res = BufferProvider.Provide();
@@ -153,13 +141,13 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt32(i);
             res.WriteByte(0);
 
-            router.Send(client, (ushort) MsgPacketId.recv_union_notify_detail, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_notify_detail, res, ServerType.Msg);
 
             IBuffer res36 = BufferProvider.Provide();
             res36.WriteUInt32(client.character.instanceId);
             res36.WriteInt32(client.character.unionId);
             res36.WriteCString(unionName);
-            router.Send(client.map, (ushort) AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerUpdateCost : PacketResponse
     {
         public RecvSoulPartnerUpdateCost()
-            : base((ushort) AreaPacketId.recv_soul_partner_update_cost, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_update_cost, ServerType.Area)
         {
         }
 

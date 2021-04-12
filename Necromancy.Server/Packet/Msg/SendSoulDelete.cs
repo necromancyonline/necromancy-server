@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_soul_delete;
+        public override ushort id => (ushort)MsgPacketId.send_soul_delete;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Msg
             res.WriteInt32(0);
 
 
-            router.Send(client, (ushort) MsgPacketId.recv_soul_delete_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_soul_delete_r, res, ServerType.Msg);
 
             //TODO
             //L"network::proto_msg_implement_client::recv_refusallist_notify_remove_user_souldelete()

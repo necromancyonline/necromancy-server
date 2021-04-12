@@ -2,7 +2,6 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -13,7 +12,7 @@ namespace Necromancy.Server.Packet.Area
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_quest_abort;
+        public override ushort id => (ushort)AreaPacketId.send_quest_abort;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -21,8 +20,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(abortQuestNumber);
-            router.Send(client, (ushort) AreaPacketId.recv_quest_abort_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_quest_abort_r, res, ServerType.Area);
         }
-
     }
 }

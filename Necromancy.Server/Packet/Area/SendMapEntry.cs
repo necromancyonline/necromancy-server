@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_map_entry;
+        public override ushort id => (ushort)AreaPacketId.send_map_entry;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -28,10 +28,11 @@ namespace Necromancy.Server.Packet.Area
                 client.Close();
                 return;
             }
+
             map.Enter(client);
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_map_entry_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_map_entry_r, res, ServerType.Area);
         }
     }
 }

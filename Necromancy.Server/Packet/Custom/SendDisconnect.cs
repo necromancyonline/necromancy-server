@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Custom
         {
         }
 
-        public override ushort id => (ushort) CustomPacketId.SendDisconnect;
+        public override ushort id => (ushort)CustomPacketId.SendDisconnect;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -27,7 +27,7 @@ namespace Necromancy.Server.Packet.Custom
             buffer.WriteInt32(data);
 
             NecPacket response = new NecPacket(
-                (ushort) CustomPacketId.RecvDisconnect,
+                (ushort)CustomPacketId.RecvDisconnect,
                 buffer,
                 packet.serverType,
                 PacketType.Disconnect

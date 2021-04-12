@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvForgeCheck : PacketResponse
     {
         public RecvForgeCheck()
-            : base((ushort) AreaPacketId.recv_forge_check_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_forge_check_r, ServerType.Area)
         {
         }
 

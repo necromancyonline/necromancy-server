@@ -16,27 +16,25 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_soul_select_C44F;
+        public override ushort id => (ushort)MsgPacketId.send_soul_select_C44F;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             string soulName = packet.data.ReadCString();
             List<Soul> souls = database.SelectSoulsByAccountId(client.account.id);
             foreach (Soul soul in souls)
-            {
                 if (soul.name == soulName)
                 {
                     client.soul = soul;
                     break;
                 }
-            }
 
             IBuffer res = BufferProvider.Provide();
             if (client.soul == null)
             {
                 _Logger.Error(client, $"Soul with name: '{soulName}' not found");
                 res.WriteInt32(1); // 0 = OK | 1 = Failed to return to soul selection
-                router.Send(client, (ushort) MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
+                router.Send(client, (ushort)MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
                 client.Close();
                 return;
             }
@@ -53,7 +51,7 @@ namespace Necromancy.Server.Packet.Msg
             }
 
 
-            router.Send(client, (ushort) MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_soul_select_r, res, ServerType.Msg);
         }
     }
 }

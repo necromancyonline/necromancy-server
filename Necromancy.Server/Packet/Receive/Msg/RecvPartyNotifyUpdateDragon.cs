@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Msg
 {
     public class RecvPartyNotifyUpdateDragon : PacketResponse
     {
-        private uint _id;
+        private readonly uint _id;
+
         public RecvPartyNotifyUpdateDragon(uint id)
-            : base((ushort) MsgPacketId.recv_party_notify_update_dragon, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_update_dragon, ServerType.Msg)
         {
             _id = id;
         }

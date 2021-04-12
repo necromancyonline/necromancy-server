@@ -1,21 +1,17 @@
-using System;
 using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
-using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
 
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Quick item test commands.
+    ///     Quick item test commands.
     /// </summary>
     public class ItemCommand : ServerChatCommand
     {
@@ -70,7 +66,10 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (command.Length > 1 && command[1] == "u")
             {
-                if (command.Length > 2 && command[2] != "") { itemZoneOverride = byte.Parse(command[2]); } else { itemZoneOverride = (byte)itemInstance.location.zoneType; }
+                if (command.Length > 2 && command[2] != "")
+                    itemZoneOverride = byte.Parse(command[2]);
+                else
+                    itemZoneOverride = (byte)itemInstance.location.zoneType;
                 _Logger.Debug(itemInstance.type.ToString());
                 RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                 router.Send(client, recvItemInstanceUnidentified.ToPacket());
@@ -81,6 +80,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 RecvItemInstance recvItemInstance = new RecvItemInstance(client, itemInstance);
                 router.Send(client, recvItemInstance.ToPacket());
             }
+
             res = BufferProvider.Provide();
             router.Send(client, (ushort)AreaPacketId.recv_situation_end, res, ServerType.Area);
         }

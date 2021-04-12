@@ -7,12 +7,12 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSkillExecR : PacketResponse
     {
-        private readonly int _errorCode;
         private readonly float _coolTime;
+        private readonly int _errorCode;
         private readonly float _rigidityTime;
 
         public RecvSkillExecR(int errorCode, float coolTime, float rigidityTime)
-            : base((ushort) AreaPacketId.recv_skill_exec_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_exec_r, ServerType.Area)
         {
             _errorCode = errorCode;
             _coolTime = coolTime;

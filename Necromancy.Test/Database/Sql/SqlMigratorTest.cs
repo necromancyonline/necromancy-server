@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Xunit;
-using Xunit.Abstractions;
-
 using Necromancy.Server.Database;
 using Necromancy.Server.Database.Sql;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Necromancy.Test.Database.Sql
 {
@@ -14,13 +13,18 @@ namespace Necromancy.Test.Database.Sql
         private const string _SqliteFile = "TestMigrations/db.sqlite";
         private const string _MigrationDir = "TestMigrations/Script/Migrations/";
         private const string _First = _MigrationDir + "1-first.sql";
+
         private const string _Second = _MigrationDir + "2.sql";
+
         /* 0 is a sample and will be silently ignored. */
         private const string _IgnoreZero = _MigrationDir + "0.sql";
+
         /* Non-sql files should be ignored. */
         private const string _IgnoreText = _MigrationDir + "notsql.txt";
+
         /* Same version, will throw ArgumentException. */
         private const string _FailDuplicate = _MigrationDir + "1-dup.sql";
+
         /* No version, will throw FormatException. */
         private const string _FailNoversion = _MigrationDir + "noversion.sql";
 
@@ -88,9 +92,7 @@ namespace Necromancy.Test.Database.Sql
                 current = kvp.Key;
             }
 
-            _output.WriteLine(String.Format(
-                "SortedList iterates successfully in sorted order for {0} integers, and a total of {1} inserted values.",
-                length, list.Count));
+            _output.WriteLine("SortedList iterates successfully in sorted order for {0} integers, and a total of {1} inserted values.", length, list.Count);
         }
 
         private void TestValid(IDatabase db)
@@ -109,18 +111,12 @@ namespace Necromancy.Test.Database.Sql
 
             /* FAIL_DUPLICATE migration file is a version duplicate. */
             Create(_FailDuplicate);
-            Assert.Throws<ArgumentException>(() =>
-            {
-                migrator.Migrate(_MigrationDir);
-            });
+            Assert.Throws<ArgumentException>(() => { migrator.Migrate(_MigrationDir); });
             File.Delete(_FailDuplicate);
 
             /* FAIL_NOVERSION migration file has an invalid name, with no version. */
             Create(_FailNoversion);
-            Assert.Throws<FormatException>(() =>
-            {
-                migrator.Migrate(_MigrationDir);
-            });
+            Assert.Throws<FormatException>(() => { migrator.Migrate(_MigrationDir); });
             File.Delete(_FailNoversion);
         }
 

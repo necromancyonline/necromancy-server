@@ -1,17 +1,19 @@
-using Arrowgene.Buffers;
-using Necromancy.Server.Common;
+using System.Collections.Generic;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Systems.Item;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
     public class SendShopRepair : ClientHandler
     {
-        public SendShopRepair(NecServer server) : base(server) { }
-        public override ushort id => (ushort) AreaPacketId.send_shop_repair;
+        public SendShopRepair(NecServer server) : base(server)
+        {
+        }
+
+        public override ushort id => (ushort)AreaPacketId.send_shop_repair;
+
         public override void Handle(NecClient client, NecPacket packet)
         {
             List<ItemLocation> itemLocations = new List<ItemLocation>();
@@ -25,6 +27,7 @@ namespace Necromancy.Server.Packet.Area
                 ItemLocation location = new ItemLocation(zone, bag, slot);
                 itemLocations.Add(location);
             }
+
             ulong repairFee = packet.data.ReadUInt64();
 
             ItemService itemService = new ItemService(client.character);
@@ -42,7 +45,11 @@ namespace Necromancy.Server.Packet.Area
                     RecvItemUpdateDurability recvItemUpdateDurability = new RecvItemUpdateDurability(client, repairedItem);
                     router.Send(recvItemUpdateDurability);
                 }
-            } catch (ItemException e) { error = (int) e.type; }
+            }
+            catch (ItemException e)
+            {
+                error = (int)e.type;
+            }
 
             RecvShopRepair recvShopRepair = new RecvShopRepair(client, error);
             router.Send(recvShopRepair);

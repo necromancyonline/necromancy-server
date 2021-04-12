@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvShopNotifyItem : PacketResponse
     {
         public RecvShopNotifyItem()
-            : base((ushort) AreaPacketId.recv_shop_notify_item, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_shop_notify_item, ServerType.Area)
         {
         }
 
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt64(69); // new
             res.WriteInt64(692); // new
             res.WriteByte(1); //Bool new
-            res.WriteFixedString($"Item Name", 0x10); // ?
+            res.WriteFixedString("Item Name", 0x10); // ?
             res.WriteInt32(6969); //new
             res.WriteInt16(15); //new
             return res;

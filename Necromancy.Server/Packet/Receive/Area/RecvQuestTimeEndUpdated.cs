@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestTimeEndUpdated : PacketResponse
     {
         public RecvQuestTimeEndUpdated()
-            : base((ushort) AreaPacketId.recv_quest_time_end_updated, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_time_end_updated, ServerType.Area)
         {
         }
 

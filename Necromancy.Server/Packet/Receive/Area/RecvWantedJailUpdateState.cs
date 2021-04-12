@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedJailUpdateState : PacketResponse
     {
         public RecvWantedJailUpdateState()
-            : base((ushort) AreaPacketId.recv_wanted_jail_update_state, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_jail_update_state, ServerType.Area)
         {
         }
 

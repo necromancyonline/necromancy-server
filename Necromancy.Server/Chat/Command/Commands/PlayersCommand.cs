@@ -7,7 +7,7 @@ using Necromancy.Server.Model;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Commands to find out who's on a map.
+    ///     Commands to find out who's on a map.
     /// </summary>
     public class PlayersCommand : ServerChatCommand
     {
@@ -35,21 +35,17 @@ namespace Necromancy.Server.Chat.Command.Commands
                 case "map":
                 {
                     foreach (NecClient theirClient in client.map.clientLookup.GetAll())
-                    {
                         responses.Add(ChatResponse.CommandInfo(client,
                             $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
-                    }
 
                     break;
                 }
                 case "world":
                 {
                     foreach (NecClient theirClient in server.clients.GetAll())
-                    {
                         if (theirClient.map != null)
                             responses.Add(ChatResponse.CommandInfo(client,
                                 $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
-                    }
 
                     break;
                 }
@@ -58,19 +54,13 @@ namespace Necromancy.Server.Chat.Command.Commands
                     foreach (NecClient otherClient in server.clients.GetAll())
                     {
                         Character character = otherClient.character;
-                        if (character == null)
-                        {
-                            continue;
-                        }
+                        if (character == null) continue;
 
                         if (character.name.Equals(command[0], StringComparison.InvariantCultureIgnoreCase))
                         {
                             string mapName = "None";
                             Map map = client.map;
-                            if (map != null)
-                            {
-                                mapName = $"{map.id} ({map.place})";
-                            }
+                            if (map != null) mapName = $"{map.id} ({map.place})";
 
                             responses.Add(ChatResponse.CommandInfo(client,
                                 $"CharacterName: {character.name} SoulId:{character.soulId} Map:{mapName} InstanceId: {character.instanceId}"));

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapAreaCloseR : PacketResponse
     {
         public RecvChallengemapAreaCloseR()
-            : base((ushort) AreaPacketId.recv_challengemap_area_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_area_close_r, ServerType.Area)
         {
         }
 

@@ -22,16 +22,13 @@ namespace Necromancy.Server.Packet.Area
         {
             /*int32, unknown. probably party mode.
               int32, target client(character) id[i think this is the sends structure]*/
-            int unknown = packet.data.ReadInt32();//party mode
+            int unknown = packet.data.ReadInt32(); //party mode
             uint targetInstanceId = packet.data.ReadUInt32();
             NecClient targetClient = server.clients.GetByCharacterInstanceId(targetInstanceId);
             Party party = server.instances.GetInstance(client.character.partyId) as Party;
             targetClient.character.partyRequest = client.character.instanceId;
 
-            if (targetInstanceId == 0)
-            {
-                targetInstanceId = client.character.instanceId;
-            } //band-aid for null reference errors while testing. to-do Delete this line.
+            if (targetInstanceId == 0) targetInstanceId = client.character.instanceId;
 
             _Logger.Debug($"ID {client.character.instanceId} {client.character.name} sent a party: ${party.instanceId} invite to {targetClient.character.name} with instance ID {targetInstanceId}");
 
@@ -43,6 +40,5 @@ namespace Necromancy.Server.Packet.Area
             RecvPartyNotifyInvite recvPartyNotifyInvite = new RecvPartyNotifyInvite(client, party);
             router.Send(recvPartyNotifyInvite, targetClient);
         }
-
     }
 }

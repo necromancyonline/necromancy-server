@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_shop_buy;
+        public override ushort id => (ushort)AreaPacketId.send_shop_buy;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Area
             ulong price = packet.data.ReadUInt64();
             byte count = packet.data.ReadByte();
 
-            client.character.adventureBagGold -= (ulong)(count * price);
+            client.character.adventureBagGold -= count * price;
 
             RecvSelfMoneyNotify recvSelfMoneyNotify = new RecvSelfMoneyNotify(client, client.character.adventureBagGold);
             router.Send(recvSelfMoneyNotify, client);
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_shop_buy_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_shop_buy_r, res, ServerType.Area);
         }
     }
 }

@@ -2,7 +2,6 @@ using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -17,9 +16,6 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-
-
-
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(0);
@@ -42,6 +38,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt16(1); // Numbers of items
                 res.WriteInt32(8); // ItemInfo type (Cursed, Blessed, Ect...)
             }
+
             res.WriteByte(1);
             int numEntries5 = 0xC;
             for (int k = 0; k < numEntries5; k++)
@@ -51,6 +48,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt16(1); // Selected Prize Numbers of ItemInfo
                 res.WriteInt32(8); // Selected Prize Item Type (Cursed, Blessed, Ect...)
             }
+
             res.WriteByte(1);
             //??res.WriteByte(1);
             res.WriteFixedString("Please Help me, The sexy dwarf dissapear !, I love him plz, search him, and bring it back to me", 0x181); // Story of the quest
@@ -63,19 +61,19 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
             }
+
             res.WriteByte(1); // Add more completion requirement, Collect, Mob kill, ect.., 2 = 2 requirement !! 1 = 1requirement !! 0 = 0requirement.
             //no_JP Router.Send(client.Map, (ushort)AreaPacketId.recv_event_quest_order, res, ServerType.Area);
 
 
             SendEventEnd(client);
         }
+
         private void SendEventEnd(NecClient client)
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
             router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
-
         }
-
     }
 }

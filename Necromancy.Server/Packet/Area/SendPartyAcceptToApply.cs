@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -6,7 +7,6 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Packet.Receive.Msg;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -18,16 +18,16 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_accept_to_apply;
+        public override ushort id => (ushort)AreaPacketId.send_party_accept_to_apply;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint applicantInstanceId =packet.data.ReadUInt32(); //Could be a Party ID value hidden as character-who-made-it's value
+            uint applicantInstanceId = packet.data.ReadUInt32(); //Could be a Party ID value hidden as character-who-made-it's value
             _Logger.Debug($"character {client.character.name} accepted Application to party from character Instance ID {applicantInstanceId}");
 
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(0);
-            router.Send(client, (ushort) AreaPacketId.recv_party_accept_to_apply_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_accept_to_apply_r, res, ServerType.Area);
 
             Party myParty = server.instances.GetInstance(client.character.partyId) as Party;
             NecClient applicantClient = server.clients.GetByCharacterInstanceId(applicantInstanceId);
@@ -58,8 +58,7 @@ namespace Necromancy.Server.Packet.Area
             }
 
             RecvCharaBodyNotifyPartyJoin recvCharaBodyNotifyPartyJoin = new RecvCharaBodyNotifyPartyJoin(client.character.instanceId, myParty.instanceId, myParty.partyType);
-            router.Send(client.map, recvCharaBodyNotifyPartyJoin);//Only send the Join Notify of the Accepting Client to the Map.  Existing members already did that when they joined.
+            router.Send(client.map, recvCharaBodyNotifyPartyJoin); //Only send the Join Notify of the Accepting Client to the Map.  Existing members already did that when they joined.
         }
-
     }
 }

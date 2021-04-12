@@ -14,9 +14,9 @@ namespace Necromancy.Server.Tasks.Core
 
         public abstract string taskName { get; }
         public abstract TimeSpan taskTimeSpan { get; }
+        protected abstract bool taskRunAtStart { get; }
 
         protected abstract void Execute();
-        protected abstract bool taskRunAtStart { get; }
 
         public void Start()
         {

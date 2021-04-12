@@ -1,18 +1,18 @@
-using Arrowgene.Buffers;
-using Necromancy.Server.Common;
-using Necromancy.Server.Data.Setting;
-using Necromancy.Server.Model;
-using Necromancy.Server.Model.Skills;
-using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
-using Necromancy.Server.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Arrowgene.Buffers;
 using Arrowgene.Logging;
+using Necromancy.Server.Common;
+using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
+using Necromancy.Server.Model;
 using Necromancy.Server.Model.CharacterModel;
+using Necromancy.Server.Model.Skills;
+using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
+using Necromancy.Server.Tasks;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -20,14 +20,14 @@ namespace Necromancy.Server.Packet.Area
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendSkillStartCast));
 
-        private NecServer _server;
+        private readonly NecServer _server;
 
         public SendSkillStartCast(NecServer server) : base(server)
         {
             _server = server;
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_skill_start_cast;
+        public override ushort id => (ushort)AreaPacketId.send_skill_start_cast;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -38,14 +38,14 @@ namespace Necromancy.Server.Packet.Area
             int skillLookup = skillId / 1000;
             _Logger.Debug($"skillTarget [{skillTarget}]  skillID [{skillId}] skillLookup [{skillLookup}]");
             {
-                var eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
+                Dictionary<Func<int, bool>, Action> eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
                 {
-                    {x => (x > 114100 && x < 114199), () => ThiefSkill(client, skillId, skillTarget)},
-                    {x => (x > 114300 && x < 114399), () => ThiefSkill(client, skillId, skillTarget)},
-                    {x => (x > 113000 && x < 113999), () => MageSkill(client, skillId, skillTarget)},
+                    {x => x > 114100 && x < 114199, () => ThiefSkill(client, skillId, skillTarget)},
+                    {x => x > 114300 && x < 114399, () => ThiefSkill(client, skillId, skillTarget)},
+                    {x => x > 113000 && x < 113999, () => MageSkill(client, skillId, skillTarget)},
                     {x => x == 114607, () => ThiefSkill(client, skillId, skillTarget)},
                     {
-                        x => (x > 1 && x < 999999), () => MageSkill(client, skillId, skillTarget)
+                        x => x > 1 && x < 999999, () => MageSkill(client, skillId, skillTarget)
                     } //this is a default catch statement for unmapped skills to prevent un-handled exceptions
                 };
                 eventSwitchPerObjectId.First(sw => sw.Key(skillLookup)).Value();
@@ -77,7 +77,8 @@ namespace Necromancy.Server.Packet.Area
                 Trap(client, skillId);
                 return;
             }
-            else if (skillBase == 114607)
+
+            if (skillBase == 114607)
             {
                 Stealth(client, skillId);
                 return;
@@ -219,7 +220,7 @@ namespace Necromancy.Server.Packet.Area
         {
             IBuffer res4 = BufferProvider.Provide();
             res4.WriteInt32(mySkillId);
-            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_action_skill_start_cast, res4,
+            router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_action_skill_start_cast, res4,
                 ServerType.Area);
         }
 
@@ -228,20 +229,20 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res5 = BufferProvider.Provide();
             res5.WriteInt32(mySkillId);
             res5.WriteFloat(castingTime);
-            router.Send(client.map, (ushort) AreaPacketId.recv_eo_notify_disappear_schedule, res5, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_eo_notify_disappear_schedule, res5, ServerType.Area);
         }
 
         private void SendBattleReportStartNotify(NecClient client)
         {
             IBuffer res4 = BufferProvider.Provide();
             res4.WriteUInt32(client.character.instanceId);
-            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_start_notify, res4, ServerType.Area);
         }
 
         private void SendBattleReportEndNotify(NecClient client)
         {
             IBuffer res4 = BufferProvider.Provide();
-            router.Send(client.map, (ushort) AreaPacketId.recv_battle_report_end_notify, res4, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_battle_report_end_notify, res4, ServerType.Area);
         }
 
         private void SkillStartCast(NecClient client, int mySkillId, int mySkillTarget, float castingTime)
@@ -283,7 +284,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteFloat(
                 castingTime); //Casting time (countdown before auto-cast)    ./Skill_base.csv   Column I
-            router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_skill_start_cast_r, res, ServerType.Area);
         }
 
         private void SendSkillStartCastSelf(NecClient client, int mySkillId, uint mySkillTarget, float castingTime)
@@ -295,7 +296,7 @@ namespace Necromancy.Server.Packet.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(mySkillId); //previously Skill ID
             res.WriteFloat(castingTime);
-            router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_self, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_skill_start_cast_self, res, ServerType.Area);
         }
 
         private void SendSkillStartCastExR(NecClient client, int mySkillId, int mySkillTarget, float castingTime)
@@ -322,7 +323,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(5); // Effect time?
 
-            router.Send(client, (ushort) AreaPacketId.recv_skill_start_cast_ex_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_skill_start_cast_ex_r, res, ServerType.Area);
         }
     }
 }

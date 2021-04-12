@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_comment_switch;
+        public override ushort id => (ushort)AreaPacketId.send_comment_switch;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Area
 
             res.WriteInt32(0);
 
-            router.Send(client, (ushort) AreaPacketId.recv_comment_switch_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_comment_switch_r, res, ServerType.Area);
         }
     }
 }

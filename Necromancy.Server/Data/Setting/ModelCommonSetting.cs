@@ -2,7 +2,6 @@ namespace Necromancy.Server.Data.Setting
 {
     public class ModelCommonSetting : ISettingRepositoryItem
     {
-        public int id { get; set; }
         public int radius { get; set; }
         public int height { get; set; }
         public int crouchHeight { get; set; }
@@ -13,10 +12,11 @@ namespace Necromancy.Server.Data.Setting
         public int active { get; set; }
 
         /// <summary>
-        /// Developer Comment
+        ///     Developer Comment
         /// </summary>
         public string remarks { get; set; }
 
         public MonsterSetting monster { get; set; }
+        public int id { get; set; }
     }
 }

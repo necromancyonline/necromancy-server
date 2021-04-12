@@ -1,6 +1,4 @@
-using Arrowgene.Buffers;
 using Arrowgene.Logging;
-using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
@@ -12,15 +10,16 @@ namespace Necromancy.Server.Packet.Area
     public class SendItemUnequip : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemUnequip));
+
         public SendItemUnequip(NecServer server) : base(server)
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_item_unequip;
+        public override ushort id => (ushort)AreaPacketId.send_item_unequip;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            ItemEquipSlots equipSlot = (ItemEquipSlots) (1 << packet.data.ReadInt32());
+            ItemEquipSlots equipSlot = (ItemEquipSlots)(1 << packet.data.ReadInt32());
 
             ItemService itemService = new ItemService(client.character);
             int error = 0;
@@ -36,7 +35,10 @@ namespace Necromancy.Server.Packet.Area
                 RecvDataNotifyCharaData myCharacterData = new RecvDataNotifyCharaData(client.character, client.soul.name);
                 router.Send(client.map, myCharacterData, client);
             }
-            catch (ItemException e) { error = (int) e.type; }
+            catch (ItemException e)
+            {
+                error = (int)e.type;
+            }
 
             RecvItemUnequip recvItemUnequip = new RecvItemUnequip(client, error);
             router.Send(recvItemUnequip);

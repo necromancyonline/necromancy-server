@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSituationEnd : PacketResponse
     {
         public RecvSituationEnd()
-            : base((ushort) AreaPacketId.recv_situation_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_situation_end, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

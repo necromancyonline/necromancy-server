@@ -1,12 +1,12 @@
 namespace Necromancy.Server.Data.Setting
 {
     /// <summary>
-    /// Additional Item information, that was not provided or could not be extracted from the client.
+    ///     Additional Item information, that was not provided or could not be extracted from the client.
     /// </summary>
     public class ItemLibrarySetting : ISettingRepositoryItem
     {
-        public int id { get; set; }
         public string name { get; set; }
+
         //Equipment Slot Settings
         public string itemType { get; set; }
         public string equipmentType { get; set; }
@@ -121,23 +121,6 @@ namespace Necromancy.Server.Data.Setting
 
         //Special Description Text
         public string whenEquippedText { get; set; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        public int id { get; set; }
     }
 }

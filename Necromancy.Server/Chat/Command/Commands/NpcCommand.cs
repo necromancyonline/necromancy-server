@@ -6,13 +6,17 @@ using Necromancy.Server.Packet.Receive.Area;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Spawns a npc
+    ///     Spawns a npc
     /// </summary>
     public class NpcCommand : ServerChatCommand
     {
         public NpcCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "npc";
+        public override string helpText => "usage: `/npc [npcId] [modelId]` - Spawns an NPC";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -46,10 +50,10 @@ namespace Necromancy.Server.Chat.Command.Commands
             npcSpawn.npcId = npcSetting.id;
             npcSpawn.name = npcSetting.name;
             npcSpawn.title = npcSetting.title;
-            npcSpawn.level = (byte) npcSetting.level;
+            npcSpawn.level = (byte)npcSetting.level;
 
             npcSpawn.modelId = modelSetting.id;
-            npcSpawn.size = (byte) modelSetting.height;
+            npcSpawn.size = (byte)modelSetting.height;
 
             npcSpawn.mapId = client.character.mapId;
             npcSpawn.x = client.character.x;
@@ -59,16 +63,12 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             if (!server.database.InsertNpcSpawn(npcSpawn))
             {
-                responses.Add(ChatResponse.CommandError(client, $"NpcSpawn could not be saved to database"));
+                responses.Add(ChatResponse.CommandError(client, "NpcSpawn could not be saved to database"));
                 return;
             }
 
             RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
             router.Send(client.map, npcData);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "npc";
-        public override string helpText => "usage: `/npc [npcId] [modelId]` - Spawns an NPC";
     }
 }

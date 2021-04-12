@@ -10,8 +10,8 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Model.Skills;
 using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Tasks;
 using Necromancy.Server.Packet.Receive.Area;
+using Necromancy.Server.Tasks;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -26,7 +26,7 @@ namespace Necromancy.Server.Packet.Area
             _server = server;
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_skill_exec;
+        public override ushort id => (ushort)AreaPacketId.send_skill_exec;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -56,13 +56,13 @@ namespace Necromancy.Server.Packet.Area
 
             int skillLookup = skillId / 1000;
             _Logger.Debug($"skillLookup : {skillLookup}");
-            var eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
+            Dictionary<Func<int, bool>, Action> eventSwitchPerObjectId = new Dictionary<Func<int, bool>, Action>
             {
-                {x => (x > 114100 && x < 114199), () => ThiefSkill(client, skillId, targetId)},
-                {x => (x > 114300 && x < 114399), () => ThiefSkill(client, skillId, targetId)},
-                {x => x == 114607               , () => ThiefSkill(client, skillId, targetId)},
-                {x => (x > 113000 && x < 113999), () => MageSkill(client, skillId, targetId)},
-                {x => (x > 1 && x < 999999), () => MageSkill(client, skillId, targetId)} //this is a default catch statement for unmapped skills to prevent un-handled exceptions
+                {x => x > 114100 && x < 114199, () => ThiefSkill(client, skillId, targetId)},
+                {x => x > 114300 && x < 114399, () => ThiefSkill(client, skillId, targetId)},
+                {x => x == 114607, () => ThiefSkill(client, skillId, targetId)},
+                {x => x > 113000 && x < 113999, () => MageSkill(client, skillId, targetId)},
+                {x => x > 1 && x < 999999, () => MageSkill(client, skillId, targetId)} //this is a default catch statement for unmapped skills to prevent un-handled exceptions
             };
 
             eventSwitchPerObjectId.First(sw => sw.Key(skillLookup)).Value();
@@ -98,7 +98,7 @@ namespace Necromancy.Server.Packet.Area
                 new RecvSkillExecR(0, skillBaseSetting.castingCooldown, skillBaseSetting.rigidityTime);
             router.Send(execSuccess, client);
 
-            Spell spell = (Spell) server.instances.GetInstance((uint) client.character.activeSkillInstance);
+            Spell spell = (Spell)server.instances.GetInstance(client.character.activeSkillInstance);
             spell.SkillExec();
         }
 
@@ -119,7 +119,8 @@ namespace Necromancy.Server.Packet.Area
                 Trap(client, skillId, skillBaseSetting);
                 return;
             }
-            else if (skillBase == 114607)
+
+            if (skillBase == 114607)
             {
                 Stealth(client, skillId, skillBaseSetting);
                 return;
@@ -129,7 +130,7 @@ namespace Necromancy.Server.Packet.Area
                 new RecvSkillExecR(0, skillBaseSetting.castingCooldown, skillBaseSetting.rigidityTime);
             router.Send(execSuccess, client);
             ThiefSkill thiefSkill =
-                (ThiefSkill) server.instances.GetInstance((uint) client.character.activeSkillInstance);
+                (ThiefSkill)server.instances.GetInstance(client.character.activeSkillInstance);
             thiefSkill.SkillExec();
         }
 
@@ -179,7 +180,7 @@ namespace Necromancy.Server.Packet.Area
             router.Send(execSuccess, client);
 
             // ToDo  verify trap parts available and remove correct number from inventory
-            TrapStack trapStack = (TrapStack) server.instances.GetInstance((uint) client.character.activeSkillInstance);
+            TrapStack trapStack = (TrapStack)server.instances.GetInstance(client.character.activeSkillInstance);
             Trap trap = new Trap(skillBase, skillBaseSetting, eoBaseSetting, eoBaseSettingTriggered);
             _server.instances.AssignInstance(trap);
             _Logger.Debug($"trap.InstanceId [{trap.instanceId}]  trap.Name [{trap.name}]  skillId[{skillId}]");
@@ -196,7 +197,7 @@ namespace Necromancy.Server.Packet.Area
             RecvSkillExecR execSuccess = new RecvSkillExecR(0, cooldown, skillBaseSetting.rigidityTime);
             router.Send(execSuccess, client);
 
-            Stealth stealth = (Stealth) server.instances.GetInstance((uint) client.character.activeSkillInstance);
+            Stealth stealth = (Stealth)server.instances.GetInstance(client.character.activeSkillInstance);
             stealth.SkillExec();
         }
     }

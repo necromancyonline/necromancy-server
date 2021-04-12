@@ -7,11 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvEoUpdateEndTrapId : PacketResponse
     {
-        private readonly uint _instanceId;
         private readonly int _effectId;
+        private readonly uint _instanceId;
 
         public RecvEoUpdateEndTrapId(uint instanceId, int effectId)
-            : base((ushort) AreaPacketId.recv_eo_update_end_trapid, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_eo_update_end_trapid, ServerType.Area)
         {
             _instanceId = instanceId;
             _effectId = effectId;

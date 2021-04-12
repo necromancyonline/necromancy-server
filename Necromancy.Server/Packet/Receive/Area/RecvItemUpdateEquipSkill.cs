@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateEquipSkill : PacketResponse
     {
         public RecvItemUpdateEquipSkill()
-            : base((ushort) AreaPacketId.recv_item_update_equip_skill, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_equip_skill, ServerType.Area)
         {
         }
 
@@ -25,6 +25,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(0);
                 res.WriteInt16(0);
             }
+
             return res;
         }
     }

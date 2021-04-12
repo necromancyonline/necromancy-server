@@ -4,14 +4,62 @@ namespace Necromancy.Server.Common
 {
     public class Camellia
     {
+        /* sbox */
+        private static readonly byte[] _s = new byte[256]
+        {
+            0x70, 0x82, 0x2c, 0xec, 0xb3, 0x27, 0xc0, 0xe5,
+            0xe4, 0x85, 0x57, 0x35, 0xea, 0x0c, 0xae, 0x41,
+            0x23, 0xef, 0x6b, 0x93, 0x45, 0x19, 0xa5, 0x21,
+            0xed, 0x0e, 0x4f, 0x4e, 0x1d, 0x65, 0x92, 0xbd,
+            0x86, 0xb8, 0xaf, 0x8f, 0x7c, 0xeb, 0x1f, 0xce,
+            0x3e, 0x30, 0xdc, 0x5f, 0x5e, 0xc5, 0x0b, 0x1a,
+            0xa6, 0xe1, 0x39, 0xca, 0xd5, 0x47, 0x5d, 0x3d,
+            0xd9, 0x01, 0x5a, 0xd6, 0x51, 0x56, 0x6c, 0x4d,
+            0x8b, 0x0d, 0x9a, 0x66, 0xfb, 0xcc, 0xb0, 0x2d,
+            0x74, 0x12, 0x2b, 0x20, 0xf0, 0xb1, 0x84, 0x99,
+            0xdf, 0x4c, 0xcb, 0xc2, 0x34, 0x7e, 0x76, 0x05,
+            0x6d, 0xb7, 0xa9, 0x31, 0xd1, 0x17, 0x04, 0xd7,
+            0x14, 0x58, 0x3a, 0x61, 0xde, 0x1b, 0x11, 0x1c,
+            0x32, 0x0f, 0x9c, 0x16, 0x53, 0x18, 0xf2, 0x22,
+            0xfe, 0x44, 0xcf, 0xb2, 0xc3, 0xb5, 0x7a, 0x91,
+            0x24, 0x08, 0xe8, 0xa8, 0x60, 0xfc, 0x69, 0x50,
+            0xaa, 0xd0, 0xa0, 0x7d, 0xa1, 0x89, 0x62, 0x97,
+            0x54, 0x5b, 0x1e, 0x95, 0xe0, 0xff, 0x64, 0xd2,
+            0x10, 0xc4, 0x00, 0x48, 0xa3, 0xf7, 0x75, 0xdb,
+            0x8a, 0x03, 0xe6, 0xda, 0x09, 0x3f, 0xdd, 0x94,
+            0x87, 0x5c, 0x83, 0x02, 0xcd, 0x4a, 0x90, 0x33,
+            0x73, 0x67, 0xf6, 0xf3, 0x9d, 0x7f, 0xbf, 0xe2,
+            0x52, 0x9b, 0xd8, 0x26, 0xc8, 0x37, 0xc6, 0x3b,
+            0x81, 0x96, 0x6f, 0x4b, 0x13, 0xbe, 0x63, 0x2e,
+            0xe9, 0x79, 0xa7, 0x8c, 0x9f, 0x6e, 0xbc, 0x8e,
+            0x29, 0xf5, 0xf9, 0xb6, 0x2f, 0xfd, 0xb4, 0x59,
+            0x78, 0x98, 0x06, 0x6a, 0xe7, 0x46, 0x71, 0xba,
+            0xd4, 0x25, 0xab, 0x42, 0x88, 0xa2, 0x8d, 0xfa,
+            0x72, 0x07, 0xb9, 0x55, 0xf8, 0xee, 0xac, 0x0a,
+            0x36, 0x49, 0x2a, 0x68, 0x3c, 0x38, 0xf1, 0xa4,
+            0x40, 0x28, 0xd3, 0x7b, 0xbb, 0xc9, 0x43, 0xc1,
+            0x15, 0xe3, 0xad, 0xf4, 0x77, 0xc7, 0x80, 0x9e
+        };
+
+        /* key schedule constants */
+        private static readonly byte[][] _sigma = new byte[6][]
+        {
+            new byte[8] {0xa0, 0x9e, 0x66, 0x7f, 0x3b, 0xcc, 0x90, 0x8b},
+            new byte[8] {0xb6, 0x7a, 0xe8, 0x58, 0x4c, 0xaa, 0x73, 0xb2},
+            new byte[8] {0xc6, 0xef, 0x37, 0x2f, 0xe9, 0x4f, 0x82, 0xbe},
+            new byte[8] {0x54, 0xff, 0x53, 0xa5, 0xf1, 0xd3, 0x6f, 0x1c},
+            new byte[8] {0x10, 0xe5, 0x27, 0xfa, 0xde, 0x68, 0x2d, 0x1d},
+            new byte[8] {0xb0, 0x56, 0x88, 0xc2, 0xb3, 0xe6, 0xc1, 0xfd}
+        };
+
         /// <summary>
-        /// Dragons Dogma Online Network Encryption
+        ///     Dragons Dogma Online Network Encryption
         /// </summary>
         public void Encrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
         {
             // TODO - Modifies input value to apply XOR - make a copy
             // TODO check if input length is dividable by 16
-            uint keyLength = (uint) key.Length * 8;
+            uint keyLength = (uint)key.Length * 8;
             byte[][] subkey = new byte[34][];
 
 
@@ -26,10 +74,7 @@ namespace Necromancy.Server.Common
             while (current < length)
             {
                 int xorLen = current + 16 < length ? 16 : length - current;
-                for (int i = 0; i < xorLen; i++)
-                {
-                    input[current + i] = (byte) (input[current + i] ^ prv[i]);
-                }
+                for (int i = 0; i < xorLen; i++) input[current + i] = (byte)(input[current + i] ^ prv[i]);
                 CryptBlock(
                     false,
                     keyLength,
@@ -37,22 +82,19 @@ namespace Necromancy.Server.Common
                     subkey,
                     output.Slice(current, 16)
                 );
-                for (int i = 0; i < xorLen; i++)
-                {
-                    prv[i] = output[current + i];
-                }
+                for (int i = 0; i < xorLen; i++) prv[i] = output[current + i];
                 current += xorLen;
             }
         }
 
         /// <summary>
-        /// Dragons Dogma Online Network Decryption
+        ///     Dragons Dogma Online Network Decryption
         /// </summary>
         public void Decrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
         {
             // TODO check if input length is dividable by 16
 
-            uint keyLength = (uint) key.Length * 8;
+            uint keyLength = (uint)key.Length * 8;
             byte[][] subkey = new byte[34][];
             KeySchedule(keyLength, key, subkey);
             int length = input.Length;
@@ -72,15 +114,9 @@ namespace Necromancy.Server.Common
                     output.Slice(current, 16)
                 );
                 int xorLen = current + 16 < length ? 16 : length - current;
-                for (int i = 0; i < xorLen; i++)
-                {
-                    output[current + i] = (byte) (output[current + i] ^ prv[i]);
-                }
+                for (int i = 0; i < xorLen; i++) output[current + i] = (byte)(output[current + i] ^ prv[i]);
 
-                for (int i = 0; i < xorLen; i++)
-                {
-                    prv[i] = input[current + i];
-                }
+                for (int i = 0; i < xorLen; i++) prv[i] = input[current + i];
 
                 current += xorLen;
             }
@@ -99,15 +135,12 @@ namespace Necromancy.Server.Common
                 new byte[16],
                 new byte[16],
                 new byte[16],
-                new byte[16],
+                new byte[16]
             };
 
             // subkey
             // todo calculate and initialize subkey size
-            for (int subKeyIndex = 0; subKeyIndex < subkey.Length; subKeyIndex++)
-            {
-                subkey[subKeyIndex] = new byte[8];
-            }
+            for (int subKeyIndex = 0; subKeyIndex < subkey.Length; subKeyIndex++) subkey[subKeyIndex] = new byte[8];
 
             Span<byte> pl;
             Span<byte> pr;
@@ -131,7 +164,7 @@ namespace Necromancy.Server.Common
             int[] drop; /* pointer to drop128[] or drop256[] */
 
             /* padding */
-            int bytes = (int) keyLen / 8;
+            int bytes = (int)keyLen / 8;
             int rounds = bytes / 16;
             for (int round = 0; round < rounds; round++)
             {
@@ -142,12 +175,8 @@ namespace Necromancy.Server.Common
             }
 
             if (keyLen == 192)
-            {
                 for (i = 0; i < 8; i++)
-                {
-                    ikey[1][i + 8] = (byte) ~ikey[1][i];
-                }
-            }
+                    ikey[1][i + 8] = (byte)~ikey[1][i];
 
             /* generate intermediate keys KA, KB */
             Span<byte> spanKey2 = new Span<byte>(ikey[2]);
@@ -156,10 +185,7 @@ namespace Necromancy.Server.Common
 
             for (i = 0; i < 4; i++)
             {
-                if (i % 2 == 0)
-                {
-                    XorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
-                }
+                if (i % 2 == 0) XorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
 
                 CamelliaRound(_sigma[i], pl, pr);
                 p = pl;
@@ -202,7 +228,7 @@ namespace Necromancy.Server.Common
                         //  memcpy(subkey[ski++], &ikey[j / 2][(j % 2) * 8], 8);
                         byte[] iKeySrc = ikey[j / 2];
                         Span<byte> iKeySrcSpan = new Span<byte>(iKeySrc);
-                        Span<byte> src = iKeySrcSpan.Slice((j % 2) * 8, 8);
+                        Span<byte> src = iKeySrcSpan.Slice(j % 2 * 8, 8);
                         // todo optimize copy
                         Buffer.BlockCopy(src.ToArray(), 0, subkey[ski], 0, 8);
                         ski++;
@@ -216,16 +242,10 @@ namespace Necromancy.Server.Common
                 }
 
                 for (j = 0; j < maxikey; j++)
-                {
                     if (i < 4)
-                    {
                         Rot15(ikey[j]);
-                    }
                     else
-                    {
                         Rot17(ikey[j]);
-                    }
-                }
             }
         }
 
@@ -254,23 +274,16 @@ namespace Necromancy.Server.Common
             XorOctets(8, pt.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
 
             if (decrypt)
-            {
                 /* decryption */
                 ski--;
-            }
             else
-            {
                 /* encryption */
                 ski += 2;
-            }
 
             /* main iteration */
             for (r = 0; r < 24; r += 2)
             {
-                if (keyLen == 128 && r >= 18)
-                {
-                    break;
-                }
+                if (keyLen == 128 && r >= 18) break;
 
                 if (r == 6 || r == 12 || r == 18)
                 {
@@ -289,10 +302,7 @@ namespace Necromancy.Server.Common
             SwapHalfBlock(ct.Slice(0, 8), ct.Slice(8, 8));
 
             /* postwhitening */
-            if (decrypt)
-            {
-                ski--;
-            }
+            if (decrypt) ski--;
 
             //xorOctets(16, ct, subkey[ski], ct);
 
@@ -307,17 +317,17 @@ namespace Necromancy.Server.Common
 
         private byte S2(int x)
         {
-            return (byte) ((_s[x] << 1) + (_s[x] >> 7));
+            return (byte)((_s[x] << 1) + (_s[x] >> 7));
         }
 
         private byte S3(int x)
         {
-            return (byte) ((_s[x] << 7) + (_s[x] >> 1));
+            return (byte)((_s[x] << 7) + (_s[x] >> 1));
         }
 
         private byte S4(int x)
         {
-            return _s[(byte) (x << 1) + (x >> 7)];
+            return _s[(byte)(x << 1) + (x >> 7)];
         }
 
         /* dst[] <- src1[] ^ src2[] */
@@ -325,10 +335,7 @@ namespace Necromancy.Server.Common
         {
             int i;
 
-            for (i = 0; i < nOctets; i++)
-            {
-                dst[i] = (byte) (src1[i] ^ src2[i]);
-            }
+            for (i = 0; i < nOctets; i++) dst[i] = (byte)(src1[i] ^ src2[i]);
         }
 
         /* a[] <-> b[] */
@@ -348,10 +355,7 @@ namespace Necromancy.Server.Common
         {
             int i;
 
-            for (i = 0; i < 4; i++)
-            {
-                dst[i] = (byte) (src1[i] & src2[i]);
-            }
+            for (i = 0; i < 4; i++) dst[i] = (byte)(src1[i] & src2[i]);
         }
 
         /* dst[] <- src1[] | src2[] */
@@ -359,10 +363,7 @@ namespace Necromancy.Server.Common
         {
             int i;
 
-            for (i = 0; i < 4; i++)
-            {
-                dst[i] = (byte) (src1[i] | src2[i]);
-            }
+            for (i = 0; i < 4; i++) dst[i] = (byte)(src1[i] | src2[i]);
         }
 
         /* x[] <<<= 1 */
@@ -370,12 +371,9 @@ namespace Necromancy.Server.Common
         {
             byte x0 = x[0];
             nOctets--;
-            for (int i = 0; i < nOctets; i++)
-            {
-                x[i] = (byte) ((x[i] << 1) ^ (x[i + 1] >> 7));
-            }
+            for (int i = 0; i < nOctets; i++) x[i] = (byte)((x[i] << 1) ^ (x[i + 1] >> 7));
 
-            x[nOctets] = (byte) ((x[nOctets] << 1) ^ (x0 >> 7));
+            x[nOctets] = (byte)((x[nOctets] << 1) ^ (x0 >> 7));
         }
 
         /* rotate 128-bit data to the left by 16 bits */
@@ -385,10 +383,7 @@ namespace Necromancy.Server.Common
             byte x1 = x[1];
             int i;
 
-            for (i = 0; i < 14; i++)
-            {
-                x[i] = x[i + 2];
-            }
+            for (i = 0; i < 14; i++) x[i] = x[i + 2];
 
             x[i++] = x0;
             x[i] = x1;
@@ -402,12 +397,9 @@ namespace Necromancy.Server.Common
 
             Rot16(x);
             x15 = x[15];
-            for (i = 15; i >= 1; i--)
-            {
-                x[i] = (byte) ((x[i] >> 1) ^ (x[i - 1] << 7));
-            }
+            for (i = 15; i >= 1; i--) x[i] = (byte)((x[i] >> 1) ^ (x[i - 1] << 7));
 
-            x[0] = (byte) ((x[0] >> 1) ^ (x15 << 7));
+            x[0] = (byte)((x[0] >> 1) ^ (x15 << 7));
         }
 
         /* rotate 128-bit data to the left by 17 bits */
@@ -436,21 +428,21 @@ namespace Necromancy.Server.Common
             t[7] = S1(t[7]);
 
             /* P-Function with Feistel XOR */
-            byte a = (byte) (t[0] ^ t[3] ^ t[4] ^ t[5] ^ t[6]);
+            byte a = (byte)(t[0] ^ t[3] ^ t[4] ^ t[5] ^ t[6]);
             r[7] ^= a;
-            a ^= (byte) (t[0] ^ t[1] ^ t[2]);
+            a ^= (byte)(t[0] ^ t[1] ^ t[2]);
             r[3] ^= a;
-            a ^= (byte) (t[1] ^ t[6] ^ t[7]);
+            a ^= (byte)(t[1] ^ t[6] ^ t[7]);
             r[6] ^= a;
-            a ^= (byte) (t[0] ^ t[1] ^ t[3]);
+            a ^= (byte)(t[0] ^ t[1] ^ t[3]);
             r[2] ^= a;
-            a ^= (byte) (t[0] ^ t[5] ^ t[6]);
+            a ^= (byte)(t[0] ^ t[5] ^ t[6]);
             r[5] ^= a;
-            a ^= (byte) (t[0] ^ t[2] ^ t[3]);
+            a ^= (byte)(t[0] ^ t[2] ^ t[3]);
             r[1] ^= a;
-            a ^= (byte) (t[3] ^ t[4] ^ t[5]);
+            a ^= (byte)(t[3] ^ t[4] ^ t[5]);
             r[4] ^= a;
-            a ^= (byte) (t[1] ^ t[2] ^ t[3]);
+            a ^= (byte)(t[1] ^ t[2] ^ t[3]);
             r[0] ^= a;
         }
 
@@ -475,53 +467,5 @@ namespace Necromancy.Server.Common
             Rot1(4, t);
             XorOctets(4, t, y.Slice(4, 4), y.Slice(4, 4));
         }
-
-        /* sbox */
-        private static byte[] _s = new byte[256]
-        {
-            0x70, 0x82, 0x2c, 0xec, 0xb3, 0x27, 0xc0, 0xe5,
-            0xe4, 0x85, 0x57, 0x35, 0xea, 0x0c, 0xae, 0x41,
-            0x23, 0xef, 0x6b, 0x93, 0x45, 0x19, 0xa5, 0x21,
-            0xed, 0x0e, 0x4f, 0x4e, 0x1d, 0x65, 0x92, 0xbd,
-            0x86, 0xb8, 0xaf, 0x8f, 0x7c, 0xeb, 0x1f, 0xce,
-            0x3e, 0x30, 0xdc, 0x5f, 0x5e, 0xc5, 0x0b, 0x1a,
-            0xa6, 0xe1, 0x39, 0xca, 0xd5, 0x47, 0x5d, 0x3d,
-            0xd9, 0x01, 0x5a, 0xd6, 0x51, 0x56, 0x6c, 0x4d,
-            0x8b, 0x0d, 0x9a, 0x66, 0xfb, 0xcc, 0xb0, 0x2d,
-            0x74, 0x12, 0x2b, 0x20, 0xf0, 0xb1, 0x84, 0x99,
-            0xdf, 0x4c, 0xcb, 0xc2, 0x34, 0x7e, 0x76, 0x05,
-            0x6d, 0xb7, 0xa9, 0x31, 0xd1, 0x17, 0x04, 0xd7,
-            0x14, 0x58, 0x3a, 0x61, 0xde, 0x1b, 0x11, 0x1c,
-            0x32, 0x0f, 0x9c, 0x16, 0x53, 0x18, 0xf2, 0x22,
-            0xfe, 0x44, 0xcf, 0xb2, 0xc3, 0xb5, 0x7a, 0x91,
-            0x24, 0x08, 0xe8, 0xa8, 0x60, 0xfc, 0x69, 0x50,
-            0xaa, 0xd0, 0xa0, 0x7d, 0xa1, 0x89, 0x62, 0x97,
-            0x54, 0x5b, 0x1e, 0x95, 0xe0, 0xff, 0x64, 0xd2,
-            0x10, 0xc4, 0x00, 0x48, 0xa3, 0xf7, 0x75, 0xdb,
-            0x8a, 0x03, 0xe6, 0xda, 0x09, 0x3f, 0xdd, 0x94,
-            0x87, 0x5c, 0x83, 0x02, 0xcd, 0x4a, 0x90, 0x33,
-            0x73, 0x67, 0xf6, 0xf3, 0x9d, 0x7f, 0xbf, 0xe2,
-            0x52, 0x9b, 0xd8, 0x26, 0xc8, 0x37, 0xc6, 0x3b,
-            0x81, 0x96, 0x6f, 0x4b, 0x13, 0xbe, 0x63, 0x2e,
-            0xe9, 0x79, 0xa7, 0x8c, 0x9f, 0x6e, 0xbc, 0x8e,
-            0x29, 0xf5, 0xf9, 0xb6, 0x2f, 0xfd, 0xb4, 0x59,
-            0x78, 0x98, 0x06, 0x6a, 0xe7, 0x46, 0x71, 0xba,
-            0xd4, 0x25, 0xab, 0x42, 0x88, 0xa2, 0x8d, 0xfa,
-            0x72, 0x07, 0xb9, 0x55, 0xf8, 0xee, 0xac, 0x0a,
-            0x36, 0x49, 0x2a, 0x68, 0x3c, 0x38, 0xf1, 0xa4,
-            0x40, 0x28, 0xd3, 0x7b, 0xbb, 0xc9, 0x43, 0xc1,
-            0x15, 0xe3, 0xad, 0xf4, 0x77, 0xc7, 0x80, 0x9e
-        };
-
-        /* key schedule constants */
-        private static byte[][] _sigma = new byte[6][]
-        {
-            new byte[8] {0xa0, 0x9e, 0x66, 0x7f, 0x3b, 0xcc, 0x90, 0x8b},
-            new byte[8] {0xb6, 0x7a, 0xe8, 0x58, 0x4c, 0xaa, 0x73, 0xb2},
-            new byte[8] {0xc6, 0xef, 0x37, 0x2f, 0xe9, 0x4f, 0x82, 0xbe},
-            new byte[8] {0x54, 0xff, 0x53, 0xa5, 0xf1, 0xd3, 0x6f, 0x1c},
-            new byte[8] {0x10, 0xe5, 0x27, 0xfa, 0xde, 0x68, 0x2d, 0x1d},
-            new byte[8] {0xb0, 0x56, 0x88, 0xc2, 0xb3, 0xe6, 0xc1, 0xfd}
-        };
     }
 }

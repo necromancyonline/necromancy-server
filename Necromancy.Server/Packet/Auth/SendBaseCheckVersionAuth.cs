@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Auth
         {
         }
 
-        public override ushort id => (ushort) AuthPacketId.send_base_check_version;
+        public override ushort id => (ushort)AuthPacketId.send_base_check_version;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
@@ -28,7 +28,7 @@ namespace Necromancy.Server.Packet.Auth
             res.WriteUInt32(major);
             res.WriteUInt32(minor);
 
-            router.Send(connection, (ushort) AuthPacketId.recv_base_check_version_r, res);
+            router.Send(connection, (ushort)AuthPacketId.recv_base_check_version_r, res);
         }
     }
 }

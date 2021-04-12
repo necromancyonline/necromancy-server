@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapUpdatePoint : PacketResponse
     {
         public RecvRoguemapUpdatePoint()
-            : base((ushort) AreaPacketId.recv_roguemap_update_point, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_update_point, ServerType.Area)
         {
         }
 

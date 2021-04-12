@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly Buff[] _buffArr;
 
         public RecvSelfBuffNotify(Buff[] buffArr)
-            : base((ushort) AreaPacketId.recv_self_buff_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_buff_notify, ServerType.Area)
         {
             _buffArr = buffArr;
         }

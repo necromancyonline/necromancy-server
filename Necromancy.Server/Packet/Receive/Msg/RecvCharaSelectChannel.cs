@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaSelectChannel : PacketResponse
     {
         public RecvCharaSelectChannel()
-            : base((ushort) MsgPacketId.recv_chara_select_channel_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_select_channel_r, ServerType.Msg)
         {
         }
 
@@ -40,6 +40,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
                     res.WriteInt16(0);
                     res.WriteByte(0);
                 }
+
                 res.WriteByte(0);
             }
 

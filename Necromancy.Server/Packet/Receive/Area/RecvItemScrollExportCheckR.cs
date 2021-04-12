@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemScrollExportCheckR : PacketResponse
     {
         public RecvItemScrollExportCheckR()
-            : base((ushort) AreaPacketId.recv_item_scroll_export_check_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_scroll_export_check_r, ServerType.Area)
         {
         }
 
@@ -27,6 +27,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteFixedString("Xeno", 0x10);
                 res.WriteInt64(0);
             }
+
             return res;
         }
     }

@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly uint _alignment;
 
         public RecvCharaUpdateAlignment(uint alignment)
-            : base((ushort) AreaPacketId.recv_chara_update_alignment, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_alignment, ServerType.Area)
         {
             _alignment = alignment;
         }

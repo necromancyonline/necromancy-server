@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestChapterUpdated : PacketResponse
     {
         public RecvQuestChapterUpdated()
-            : base((ushort) AreaPacketId.recv_quest_chapter_updated, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_chapter_updated, ServerType.Area)
         {
         }
 

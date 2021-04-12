@@ -12,7 +12,7 @@ using Necromancy.Server.Packet.Receive.Msg;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Anything related commands.  This is a sandbox
+    ///     Anything related commands.  This is a sandbox
     /// </summary>
     public class RTestCommand : ServerChatCommand
     {
@@ -22,6 +22,12 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "rtest";
+
+        public override string helpText =>
+            "usage: `/rtest [argument] [number] [parameter]` - this is free-form for testing new recvs";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -30,9 +36,9 @@ namespace Necromancy.Server.Chat.Command.Commands
                 responses.Add(ChatResponse.CommandError(client, $"Invalid argument: {command[0]}"));
                 return;
             }
+
             int x = 1;
-            if (!int.TryParse(command[1], out  x))
-            {
+            if (!int.TryParse(command[1], out x))
                 try
                 {
                     string binaryString = command[1];
@@ -42,16 +48,11 @@ namespace Necromancy.Server.Chat.Command.Commands
                 }
                 catch
                 {
-                    responses.Add(ChatResponse.CommandError(client, $"no value specified. setting x to 1"));
+                    responses.Add(ChatResponse.CommandError(client, "no value specified. setting x to 1"));
                     //return;
                 }
 
-            }
-
-            if (!int.TryParse(command[2], out int y))
-            {
-                responses.Add(ChatResponse.CommandError(client, $"Good Job!"));
-            }
+            if (!int.TryParse(command[2], out int y)) responses.Add(ChatResponse.CommandError(client, "Good Job!"));
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(2);
             router.Send(client, (ushort)AreaPacketId.recv_situation_start, res, ServerType.Area);
@@ -59,11 +60,10 @@ namespace Necromancy.Server.Chat.Command.Commands
             res = BufferProvider.Provide();
             res.WriteInt32(0); // 0 = normal 1 = cinematic
             res.WriteByte(0);
-           //Router.Send(client, (ushort)AreaPacketId.recv_event_start, res, ServerType.Area);
+            //Router.Send(client, (ushort)AreaPacketId.recv_event_start, res, ServerType.Area);
 
             switch (command[0])
             {
-
                 case "itemobject":
                     RecvDataNotifyLocalItemobjectData itemObject = new RecvDataNotifyLocalItemobjectData(client.character, x);
                     router.Send(client.map, itemObject);
@@ -75,9 +75,9 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "itemuse":
-                    RecvItemUseNotify itemUseNotify = new RecvItemUseNotify((long)x, (float)y);
+                    RecvItemUseNotify itemUseNotify = new RecvItemUseNotify(x, y);
                     router.Send(client.map, itemUseNotify);
-                    RecvItemUse itemUse = new RecvItemUse(0 /*success*/, (float)y);
+                    RecvItemUse itemUse = new RecvItemUse(0 /*success*/, y);
                     router.Send(client.map, itemUse);
                     break;
 
@@ -146,7 +146,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "ap":
-                    RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(Util.GetRandomNumber(0,200));
+                    RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(Util.GetRandomNumber(0, 200));
                     router.Send(client.map, recvCharaUpdateAp);
                     client.character.gp.SetCurrent(25);
                     break;
@@ -186,7 +186,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     res.WriteUInt32(0); //errhceck
 
-                    router.Send(client, (ushort)0x2716, res, ServerType.Area);
+                    router.Send(client, 0x2716, res, ServerType.Area);
                     break;
 
                 case "o4abb":
@@ -195,7 +195,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res.WriteUInt32(0);
                     res.WriteUInt16(0);
 
-                    router.Send(client, (ushort)0x4abb, res, ServerType.Area);
+                    router.Send(client, 0x4abb, res, ServerType.Area);
                     break;
 
                 case "ob684":
@@ -249,8 +249,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
 
-
-
                 case "partnersummon":
                     RecvSoulPartnerSummonStartNotify recvSoulPartnerSummonStartNotify = new RecvSoulPartnerSummonStartNotify();
                     router.Send(client.map, recvSoulPartnerSummonStartNotify);
@@ -274,7 +272,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "dragonwarp":
-                    RecvSelfDragonWarpNotify recvSelfDragonWarpNotify = new RecvSelfDragonWarpNotify((int)client.character.instanceId+100);
+                    RecvSelfDragonWarpNotify recvSelfDragonWarpNotify = new RecvSelfDragonWarpNotify((int)client.character.instanceId + 100);
                     router.Send(client.map, recvSelfDragonWarpNotify);
                     break;
 
@@ -298,17 +296,17 @@ namespace Necromancy.Server.Chat.Command.Commands
                     client.character.piety += (ushort)Util.GetRandomNumber(0, 2);
                     client.character.luck += (ushort)Util.GetRandomNumber(0, 2);
                     int luckyShot = Util.GetRandomNumber(0, client.character.luck);
-                    if (luckyShot > (client.character.luck * .8))
+                    if (luckyShot > client.character.luck * .8)
                     {
                         client.character.hp.SetMax(client.character.hp.max + 10);
                         client.character.mp.SetMax(client.character.mp.max + 10);
-                        client.character.strength       = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.strength );
-                        client.character.vitality       = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.vitality);
-                        client.character.dexterity      = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.dexterity );
-                        client.character.agility        = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.agility );
-                        client.character.intelligence   = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.intelligence );
-                        client.character.piety          = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.piety );
-                        client.character.luck           = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.luck );
+                        client.character.strength = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.strength);
+                        client.character.vitality = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.vitality);
+                        client.character.dexterity = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.dexterity);
+                        client.character.agility = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.agility);
+                        client.character.intelligence = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.intelligence);
+                        client.character.piety = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.piety);
+                        client.character.luck = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.luck);
                     }
 
                     RecvCharaUpdateLvDetailStart recvCharaUpdateLvDetailStart = new RecvCharaUpdateLvDetailStart();
@@ -365,7 +363,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     resJ.WriteInt32(numEntries); //less than or equal to 0x20
                     for (int i = 0; i < numEntries; i++)
                     {
-                        resJ.WriteFloat(client.character.x+Util.GetRandomNumber(10,50));
+                        resJ.WriteFloat(client.character.x + Util.GetRandomNumber(10, 50));
                         resJ.WriteFloat(client.character.y + Util.GetRandomNumber(10, 50));
                         resJ.WriteFloat(client.character.z + Util.GetRandomNumber(10, 50));
                     }
@@ -378,20 +376,18 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "interface":
-                    RecvTradeNotifyInterfaceStatus recvTradeNotifyInterfaceStatus = new RecvTradeNotifyInterfaceStatus(status:x);
+                    RecvTradeNotifyInterfaceStatus recvTradeNotifyInterfaceStatus = new RecvTradeNotifyInterfaceStatus(x);
                     router.Send(client.map, recvTradeNotifyInterfaceStatus);
                     break;
 
 
                 default: //you don't know what you're doing do you?
                     _Logger.Error($"There is no recv of type : {command[0]} ");
-                    {
-                        responses.Add(ChatResponse.CommandError(client,
-                            $"{command[0]} is not a valid command."));
-                    }
+                {
+                    responses.Add(ChatResponse.CommandError(client,
+                        $"{command[0]} is not a valid command."));
+                }
                     break;
-
-
             }
 
             res = BufferProvider.Provide();
@@ -402,11 +398,5 @@ namespace Necromancy.Server.Chat.Command.Commands
             //Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
             //Router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "rtest";
-
-        public override string helpText =>
-            "usage: `/rtest [argument] [number] [parameter]` - this is free-form for testing new recvs";
     }
 }

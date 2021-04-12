@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_base_check_version;
+        public override ushort id => (ushort)AreaPacketId.send_base_check_version;
 
         public override void Handle(NecConnection connection, NecPacket packet)
         {
@@ -30,7 +30,7 @@ namespace Necromancy.Server.Packet.Area
             res.WriteUInt32(major);
             res.WriteUInt32(minor);
 
-            router.Send(connection, (ushort) AreaPacketId.recv_base_check_version_r, res);
+            router.Send(connection, (ushort)AreaPacketId.recv_base_check_version_r, res);
         }
     }
 }

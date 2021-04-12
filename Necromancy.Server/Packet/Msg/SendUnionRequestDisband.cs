@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_disband;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_disband;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -24,8 +24,8 @@ namespace Necromancy.Server.Packet.Msg
             IBuffer res = BufferProvider.Provide();
 
 
-            router.Send(client, (ushort) MsgPacketId.recv_base_login_r, res, ServerType.Msg);
-            Union myUnion = server.instances.GetInstance((uint) client.character.unionId) as Union;
+            router.Send(client, (ushort)MsgPacketId.recv_base_login_r, res, ServerType.Msg);
+            Union myUnion = server.instances.GetInstance((uint)client.character.unionId) as Union;
 
             if (!server.database.DeleteUnion(myUnion.id))
             {

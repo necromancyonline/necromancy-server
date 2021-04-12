@@ -12,7 +12,7 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// MapTranCommand related commands.
+    ///     MapTranCommand related commands.
     /// </summary>
     public class MapTranCommand : ServerChatCommand
     {
@@ -21,6 +21,12 @@ namespace Necromancy.Server.Chat.Command.Commands
         public MapTranCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "maptran";
+
+        public override string helpText =>
+            "usage: `/maptran [argument] [RowId] [parameter]` - spawns or updates a map transition";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -34,14 +40,11 @@ namespace Necromancy.Server.Chat.Command.Commands
             if (!int.TryParse(command[1], out int x))
             {
                 responses.Add(ChatResponse.CommandError(client,
-                    $"Please provide a value.  Destination Map from Map.csv, or a table ID for updating"));
+                    "Please provide a value.  Destination Map from Map.csv, or a table ID for updating"));
                 return;
             }
 
-            if (!int.TryParse(command[2], out int y))
-            {
-                responses.Add(ChatResponse.CommandError(client, $"Good Job!"));
-            }
+            if (!int.TryParse(command[2], out int y)) responses.Add(ChatResponse.CommandError(client, "Good Job!"));
 
             MapTransition myMapTransition = new MapTransition();
             IBuffer res = BufferProvider.Provide();
@@ -63,7 +66,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res1.WriteFloat(myMapTransition.maplinkWidth); // Width
                     res1.WriteInt32(Util.GetRandomNumber(0,
                         6)); // Aura color 0=blue 1=gold 2=white 3=red 4=purple 5=black  0 to 5, crash above 5
-                    router.Send(client.map, (ushort) AreaPacketId.recv_data_notify_maplink, res1, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_maplink, res1, ServerType.Area);
 
 
                     myMapTransition.mapId = client.character.mapId;
@@ -88,17 +91,14 @@ namespace Necromancy.Server.Chat.Command.Commands
                     myMapTransition.toPos.x = targetMap.x;
                     myMapTransition.toPos.y = targetMap.y;
                     myMapTransition.toPos.z = targetMap.z;
-                    myMapTransition.toPos.heading = (byte) targetMap.orientation;
+                    myMapTransition.toPos.heading = (byte)targetMap.orientation;
                     myMapTransition.state = true;
                     myMapTransition.created = DateTime.Now;
                     myMapTransition.updated = DateTime.Now;
 
-                    myMapTransition.maplinkHeading = (byte) (client.character.heading + 90);
-                    myMapTransition.maplinkHeading = (byte) (myMapTransition.maplinkHeading % 180);
-                    if (myMapTransition.maplinkHeading < 0)
-                    {
-                        myMapTransition.maplinkHeading += 180;
-                    }
+                    myMapTransition.maplinkHeading = (byte)(client.character.heading + 90);
+                    myMapTransition.maplinkHeading = (byte)(myMapTransition.maplinkHeading % 180);
+                    if (myMapTransition.maplinkHeading < 0) myMapTransition.maplinkHeading += 180;
 
                     responses.Add(ChatResponse.CommandError(client,
                         $"Spawned MapTransition {myMapTransition.instanceId}"));
@@ -112,11 +112,9 @@ namespace Necromancy.Server.Chat.Command.Commands
                                 "myMapTransition could not be saved to database"));
                             return;
                         }
-                        else
-                        {
-                            responses.Add(ChatResponse.CommandError(client,
-                                $"Added MapTransition {myMapTransition.id} to the database"));
-                        }
+
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"Added MapTransition {myMapTransition.id} to the database"));
                     }
 
                     //so you dont map transition immediatly
@@ -136,37 +134,27 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "add": //Adds a new entry to the database
-                    myMapTransition = server.instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.InsertMapTransition(myMapTransition))
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Added MapTransition {myMapTransition.id} to the database"));
-                    }
 
                     break;
                 case "update": //Updates an existing entry in the database
 
-                    myMapTransition = server.instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     //myMapTransition = Server.Database.SelectMapTransitionsById(x);
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Updated MapTransition {myMapTransition.id} in the database"));
-                    }
 
                     break;
                 case "setdestination"
@@ -182,16 +170,11 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Updated MapTransition {myMapTransition.id} in the database"));
-                    }
 
                     break;
                 case "setleft": //Updates the left position of the maptransition
@@ -204,16 +187,11 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Updated MapTransition {myMapTransition.id} in the database"));
-                    }
 
                     break;
                 case "setright": //Updates the right position of the maptransition
@@ -226,22 +204,17 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Updated MapTransition {myMapTransition.id} in the database"));
-                    }
 
                     break;
                 case "stop"
                     : //stops the maptrans task so you can modify the maptran.  actually this didnt work, so i just set your transition state to 'true' so it doesnt transition you
 
-                    myMapTransition = server.instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     //myMapTransition = Server.Database.SelectMapTransitionsById(x);
                     myMapTransition.Stop();
                     client.character.mapChange = true;
@@ -254,7 +227,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
                 case "start": //starts the maptrans task so you can test the maptran
 
-                    myMapTransition = server.instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     //myMapTransition = Server.Database.SelectMapTransitionsById(x);
                     myMapTransition.Start(server, client.map);
                     client.character.mapChange = false;
@@ -267,7 +240,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "remove": //removes a MapTransition from the database
-                    myMapTransition = server.instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     if (!server.database.DeleteMapTransition(myMapTransition.id))
                     {
                         responses.Add(ChatResponse.CommandError(client,
@@ -281,7 +254,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     }
 
                     res.WriteUInt32(myMapTransition.instanceId);
-                    router.Send(client.map, (ushort) AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
                     break;
 
                 default: //you don't know what you're doing do you?
@@ -293,12 +266,6 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
             }
         }
-
-        public override AccountStateType accountState => AccountStateType.Admin;
-        public override string key => "maptran";
-
-        public override string helpText =>
-            "usage: `/maptran [argument] [RowId] [parameter]` - spawns or updates a map transition";
     }
 }
 

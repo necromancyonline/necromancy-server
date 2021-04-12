@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWarningSystemMessage : PacketResponse
     {
         public RecvWarningSystemMessage()
-            : base((ushort) AreaPacketId.recv_warning_system_message, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_warning_system_message, ServerType.Area)
         {
         }
 

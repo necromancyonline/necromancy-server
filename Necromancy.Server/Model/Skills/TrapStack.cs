@@ -13,16 +13,13 @@ namespace Necromancy.Server.Model.Skills
     public class TrapStack : IInstance
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(TrapStack));
-
-        public uint instanceId { get; set; }
-
-        private NecClient _client;
         private readonly NecServer _server;
-        private uint _ownerInstanceId;
-        public int trapRadius { get; }
+
+        private readonly NecClient _client;
+        private readonly Map _map;
+        private readonly uint _ownerInstanceId;
+        private readonly Vector3 _trapPos;
         public TrapTask trapTask;
-        private Map _map;
-        private Vector3 _trapPos;
 
         public TrapStack(NecServer server, NecClient client, Vector3 trapPos, int trapRadius)
         {
@@ -33,6 +30,10 @@ namespace Necromancy.Server.Model.Skills
             _trapPos = trapPos;
             this.trapRadius = trapRadius;
         }
+
+        public int trapRadius { get; }
+
+        public uint instanceId { get; set; }
 
         public void StartCast(SkillBaseSetting skillBase)
         {
@@ -54,10 +55,7 @@ namespace Necromancy.Server.Model.Skills
         public void SkillExec(Trap trap, bool isBaseTrap)
         {
             Vector3 trgCoord = new Vector3(_client.character.x, _client.character.y, _client.character.z);
-            if (!int.TryParse($"{trap.skillId}".Substring(1, 6) + 1, out int effectId))
-            {
-                _Logger.Error($"Creating effectId from skillid [{trap.skillId}]");
-            }
+            if (!int.TryParse($"{trap.skillId}".Substring(1, 6) + 1, out int effectId)) _Logger.Error($"Creating effectId from skillid [{trap.skillId}]");
 
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
@@ -75,9 +73,9 @@ namespace Necromancy.Server.Model.Skills
 
             if (isBaseTrap)
             {
-                trapTask = new TrapTask(_server, _map, _trapPos, _ownerInstanceId, trap, this.instanceId);
+                trapTask = new TrapTask(_server, _map, _trapPos, _ownerInstanceId, trap, instanceId);
                 trapTask.AddTrap(trap);
-                _map.AddTrap(this.instanceId, this);
+                _map.AddTrap(instanceId, this);
                 trapTask.Start();
             }
             else

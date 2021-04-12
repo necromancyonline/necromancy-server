@@ -11,9 +11,9 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_search_recruited_party;
+        public override ushort id => (ushort)AreaPacketId.send_party_search_recruited_party;
 
-       public override void Handle(NecClient client, NecPacket packet)
+        public override void Handle(NecClient client, NecPacket packet)
         {
             uint objective = packet.data.ReadUInt32();
             int details = packet.data.ReadInt32();
@@ -30,12 +30,12 @@ namespace Necromancy.Server.Packet.Area
             int numEntries = 0x14;
             for (int i = 0; i < numEntries; i++)
             {
-                res.WriteInt32(510+i);//Party ID
-                res.WriteInt32(1);//Party type; 0 = closed, 1 = open.
-                res.WriteInt32(1);//Normal item distribution; 0 = do not distribute, 1 = random.
-                res.WriteInt32(1);//Rare item distribution; 0 = do not distribute, 1 = Draw.
+                res.WriteInt32(510 + i); //Party ID
+                res.WriteInt32(1); //Party type; 0 = closed, 1 = open.
+                res.WriteInt32(1); //Normal item distribution; 0 = do not distribute, 1 = random.
+                res.WriteInt32(1); //Rare item distribution; 0 = do not distribute, 1 = Draw.
                 res.WriteUInt32(client.character.instanceId); //Target playyer?
-                res.WriteUInt32(client.character.instanceId);//From player instance ID (but doesn't work?)
+                res.WriteUInt32(client.character.instanceId); //From player instance ID (but doesn't work?)
 
                 int numEntries2 = 0x4;
                 for (int j = 0; j < numEntries2; j++)

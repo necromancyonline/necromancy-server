@@ -11,9 +11,9 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_regist_member_recruit;
+        public override ushort id => (ushort)AreaPacketId.send_party_regist_member_recruit;
 
-       public override void Handle(NecClient client, NecPacket packet)
+        public override void Handle(NecClient client, NecPacket packet)
         {
             int objectiveId = packet.data.ReadInt32(); // always 0, 1, or 2. based on drop down selection
             int detailsId = packet.data.ReadInt32(); // Can Be Dungeon ID or Quest ID based on objective

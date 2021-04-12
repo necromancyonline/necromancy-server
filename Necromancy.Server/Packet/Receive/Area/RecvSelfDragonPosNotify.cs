@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSelfDragonPosNotify : PacketResponse
     {
-        private NecClient _client;
-        private byte _activate;
+        private readonly byte _activate;
+        private readonly NecClient _client;
+
         public RecvSelfDragonPosNotify(NecClient client, byte activate)
-            : base((ushort) AreaPacketId.recv_self_dragon_pos_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_dragon_pos_notify, ServerType.Area)
         {
             _client = client;
             _activate = activate;

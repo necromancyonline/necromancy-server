@@ -6,10 +6,7 @@ namespace Necromancy.Server.Data.Setting
 
         protected override HonorSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
             string name = properties[1];
             string condition = properties[2];
@@ -38,7 +35,7 @@ namespace Necromancy.Server.Data.Setting
             {
                 id = id,
                 name = name,
-                condition = condition,
+                condition = condition
                 //EffectId = effectId,
                 //HiddenTitle = hiddenTitle,
                 //AlwaysDisplayTitle = alwaysDisplayTitle,

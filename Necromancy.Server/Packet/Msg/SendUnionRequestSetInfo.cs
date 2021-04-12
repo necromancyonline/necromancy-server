@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Msg
         {
         }
 
-        public override ushort id => (ushort) MsgPacketId.send_union_request_set_info;
+        public override ushort id => (ushort)MsgPacketId.send_union_request_set_info;
 
 
         public override void Handle(NecClient client, NecPacket packet)
@@ -28,7 +28,7 @@ namespace Necromancy.Server.Packet.Msg
                 -1715	The news contained banned words
             */
 
-            router.Send(client, (ushort) MsgPacketId.recv_union_request_set_info_r, res, ServerType.Msg);
+            router.Send(client, (ushort)MsgPacketId.recv_union_request_set_info_r, res, ServerType.Msg);
 
             //ToDo
             //L"network::proto_msg_implement_client::recv_union_notify_info()\n"
@@ -41,7 +41,7 @@ namespace Necromancy.Server.Packet.Msg
             res2.WriteInt32(0); //Error check probably.  0 means success?
             res2.WriteCString($"{unionNews}"); //max size 0x196
 
-            router.Send(client.union.unionMembers, (ushort) MsgPacketId.recv_union_notify_info, res2,
+            router.Send(client.union.unionMembers, (ushort)MsgPacketId.recv_union_notify_info, res2,
                 ServerType.Msg);
         }
     }

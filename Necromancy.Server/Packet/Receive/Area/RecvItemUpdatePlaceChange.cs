@@ -8,15 +8,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemUpdatePlaceChange : PacketResponse
     {
-        private readonly ItemInstance _originItem;
         private readonly ItemInstance _destItem;
+        private readonly ItemInstance _originItem;
+
         public RecvItemUpdatePlaceChange(NecClient client, ItemInstance originItem, ItemInstance destItem)
-            : base((ushort) AreaPacketId.recv_item_update_place_change, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_place_change, ServerType.Area)
         {
             _originItem = originItem;
             _destItem = destItem;
             clients.Add(client);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

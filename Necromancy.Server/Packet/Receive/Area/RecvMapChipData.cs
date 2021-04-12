@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMapChipData : PacketResponse
     {
         public RecvMapChipData()
-            : base((ushort) AreaPacketId.recv_map_chip_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_map_chip_data, ServerType.Area)
         {
         }
 
@@ -18,10 +18,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             int numEntries = 0x2;
             res.WriteInt32(0);
             res.WriteInt32(numEntries); //less than 0x190
-            for (int k = 0; k < numEntries; k++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int k = 0; k < numEntries; k++) res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
             return res;

@@ -3,21 +3,8 @@ using Necromancy.Server.Data.Setting;
 
 namespace Necromancy.Server.Model.Skills
 {
-   public class Trap : IInstance
+    public class Trap : IInstance
     {
-        public uint instanceId { get; set; }
-        public string name { get; set; }
-        public int skillId { get; set; }
-        public int skillBaseId { get; set; }
-        public int triggerRadius { get; set; }
-        public int effectRadius { get; set; }
-        public int itemType { get; set; }
-        public int itemCount { get; set; }
-        public float castTime { get; set; }
-        public float trapTime { get; set; }
-        public int skillEffectId { get; set; }
-        public int triggerEffectId { get; set; }
-        public float  coolTime { get; set; }
         public Trap(int skillBase, SkillBaseSetting skillBaseSetting, EoBaseSetting eoBaseSetting, EoBaseSetting eoBaseSettingTriggered)
         {
             skillBaseId = skillBase;
@@ -34,5 +21,18 @@ namespace Necromancy.Server.Model.Skills
             coolTime = skillBaseSetting.castingCooldown;
         }
 
+        public string name { get; set; }
+        public int skillId { get; set; }
+        public int skillBaseId { get; set; }
+        public int triggerRadius { get; set; }
+        public int effectRadius { get; set; }
+        public int itemType { get; set; }
+        public int itemCount { get; set; }
+        public float castTime { get; set; }
+        public float trapTime { get; set; }
+        public int skillEffectId { get; set; }
+        public int triggerEffectId { get; set; }
+        public float coolTime { get; set; }
+        public uint instanceId { get; set; }
     }
 }

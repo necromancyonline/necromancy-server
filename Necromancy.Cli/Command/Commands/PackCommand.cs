@@ -6,26 +6,6 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class PackCommand : ConsoleCommand
     {
-        public override CommandResultType Handle(ConsoleParameter parameter)
-        {
-            FpmfArchiveIo archiveIo2 = new FpmfArchiveIo();
-
-            if (parameter.arguments.Count == 3)
-            {
-                FpmfArchiveIo hedFile = new FpmfArchiveIo();
-                hedFile.Pack(parameter.arguments[0], parameter.arguments[1], parameter.arguments[2]);
-                return CommandResultType.Completed;
-            } else if (parameter.arguments.Count == 4)
-            {
-                FpmfArchiveIo hedFile = new FpmfArchiveIo();
-                hedFile.Pack(parameter.arguments[0], parameter.arguments[1], parameter.arguments[2], parameter.arguments[3]);
-                return CommandResultType.Completed;
-            }
-
-
-            return CommandResultType.Continue;
-        }
-
         public override string key => "pack";
 
         /* Please save a copy of your client's data directory before using.
@@ -41,5 +21,27 @@ namespace Necromancy.Cli.Command.Commands
          */
         public override string description =>
             $"Packs Data. Ex.:{Environment.NewLine}pack \"C:/input\" \"C:/output\" \"script\"";
+
+        public override CommandResultType Handle(ConsoleParameter parameter)
+        {
+            FpmfArchiveIo archiveIo2 = new FpmfArchiveIo();
+
+            if (parameter.arguments.Count == 3)
+            {
+                FpmfArchiveIo hedFile = new FpmfArchiveIo();
+                hedFile.Pack(parameter.arguments[0], parameter.arguments[1], parameter.arguments[2]);
+                return CommandResultType.Completed;
+            }
+
+            if (parameter.arguments.Count == 4)
+            {
+                FpmfArchiveIo hedFile = new FpmfArchiveIo();
+                hedFile.Pack(parameter.arguments[0], parameter.arguments[1], parameter.arguments[2], parameter.arguments[3]);
+                return CommandResultType.Completed;
+            }
+
+
+            return CommandResultType.Continue;
+        }
     }
 }

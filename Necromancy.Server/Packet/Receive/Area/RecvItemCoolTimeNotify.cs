@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemCoolTimeNotify : PacketResponse
     {
         public RecvItemCoolTimeNotify()
-            : base((ushort) AreaPacketId.recv_item_cooltime_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_cooltime_notify, ServerType.Area)
         {
         }
 

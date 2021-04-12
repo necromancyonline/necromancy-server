@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_pass_draw;
+        public override ushort id => (ushort)AreaPacketId.send_party_pass_draw;
 
         public override void Handle(NecClient client, NecPacket packet)
         {

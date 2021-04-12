@@ -18,7 +18,7 @@ namespace Necromancy.Server.Model
             identity = "";
             soul = new Soul();
             character = new Character();
-            bodyCollection = new Dictionary<uint,NecClient>();
+            bodyCollection = new Dictionary<uint, NecClient>();
         }
 
         public DateTime creation { get; }
@@ -69,10 +69,7 @@ namespace Necromancy.Server.Model
                 return;
             }
 
-            if (authConnection != null)
-            {
-                identity += $"[Con:{authConnection.identity}]";
-            }
+            if (authConnection != null) identity += $"[Con:{authConnection.identity}]";
         }
 
         public void Close()

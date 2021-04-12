@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvJobChangeNotifyInfoR : PacketResponse
     {
         public RecvJobChangeNotifyInfoR()
-            : base((ushort) AreaPacketId.recv_job_change_notify_info_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_job_change_notify_info_r, ServerType.Area)
         {
         }
 
@@ -19,15 +19,9 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt16(0);
             res.WriteInt32(0);
             res.WriteInt32(numEntries); //less than 5
-            for (int k = 0; k < numEntries; k++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int k = 0; k < numEntries; k++) res.WriteInt32(0);
             res.WriteInt32(numEntries); //less than 5
-            for (int k = 0; k < numEntries; k++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int k = 0; k < numEntries; k++) res.WriteInt32(0);
             return res;
         }
     }

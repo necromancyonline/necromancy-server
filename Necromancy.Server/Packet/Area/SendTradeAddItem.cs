@@ -10,12 +10,13 @@ namespace Necromancy.Server.Packet.Area
     public class SendTradeAddItem : ClientHandler
     {
         private ItemInstance _itemInstance;
+
         public SendTradeAddItem(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_trade_add_item;
+        public override ushort id => (ushort)AreaPacketId.send_trade_add_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -27,7 +28,7 @@ namespace Necromancy.Server.Packet.Area
 
             ItemLocation fromLoc = new ItemLocation(fromZone, fromContainer, fromSlot);
             ItemService itemService = new ItemService(client.character);
-            _itemInstance = itemService.GetIdentifiedItem(fromLoc);//To do; get regular item instead of identified item. Mark item as in trade.
+            _itemInstance = itemService.GetIdentifiedItem(fromLoc); //To do; get regular item instead of identified item. Mark item as in trade.
             client.character.tradeWindowSlot[toSlot] = _itemInstance.instanceId;
 
             ItemLocation originalLocation = _itemInstance.location;
@@ -37,13 +38,14 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); // error check?
-            router.Send(client, (ushort) AreaPacketId.recv_trade_add_item_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_trade_add_item_r, res, ServerType.Area);
 
             if (targetClient != null)
             {
                 RecvItemInstance itemInstance = new RecvItemInstance(targetClient, _itemInstance);
                 router.Send(itemInstance);
             }
+
             _itemInstance.location = originalLocation;
         }
     }

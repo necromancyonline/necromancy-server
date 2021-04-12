@@ -2,7 +2,6 @@ namespace Necromancy.Server.Data.Setting
 {
     public class EoBaseSetting : ISettingRepositoryItem
     {
-        public int id { get; set; }
         public string name { get; set; }
         public int logId { get; set; }
         public string faction { get; set; }
@@ -11,5 +10,6 @@ namespace Necromancy.Server.Data.Setting
         public bool showName { get; set; }
         public string damageShape { get; set; }
         public int effectRadius { get; set; }
+        public int id { get; set; }
     }
 }

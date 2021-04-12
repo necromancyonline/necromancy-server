@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapEntryNewR : PacketResponse
     {
         public RecvRoguemapEntryNewR()
-            : base((ushort) AreaPacketId.recv_roguemap_entry_new_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_entry_new_r, ServerType.Area)
         {
         }
 

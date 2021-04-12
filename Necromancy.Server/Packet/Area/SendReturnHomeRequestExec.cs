@@ -15,14 +15,12 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-
             IBuffer res = BufferProvider.Provide();
 
-            res.WriteInt32(0);//Error lookup(I think) 0 - no error, 1 - Unable to use return command
-            res.WriteInt32(0);//Stores locally the amount of time before you can use the command again. (Can't get it to tick down.)
+            res.WriteInt32(0); //Error lookup(I think) 0 - no error, 1 - Unable to use return command
+            res.WriteInt32(0); //Stores locally the amount of time before you can use the command again. (Can't get it to tick down.)
 
             router.Send(client, (ushort)AreaPacketId.recv_return_home_request_exec_r, res, ServerType.Area);
         }
     }
 }
-

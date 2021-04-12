@@ -15,7 +15,7 @@ namespace Necromancy.Server.Packet.Auth
         {
         }
 
-        public override ushort id => (ushort) AuthPacketId.send_base_select_world;
+        public override ushort id => (ushort)AuthPacketId.send_base_select_world;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Auth
             res.WriteCString(settings.dataMsgIpAddress);
             res.WriteUInt16(settings.msgPort);
             res.WriteFixedString("", 0x14);
-            router.Send(client, (ushort) AuthPacketId.recv_base_select_world_r, res, ServerType.Auth);
+            router.Send(client, (ushort)AuthPacketId.recv_base_select_world_r, res, ServerType.Auth);
         }
     }
 }

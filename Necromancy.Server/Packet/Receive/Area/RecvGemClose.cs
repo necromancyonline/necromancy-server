@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGemClose : PacketResponse
     {
         public RecvGemClose()
-            : base((ushort) AreaPacketId.recv_gem_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gem_close_r, ServerType.Area)
         {
         }
 

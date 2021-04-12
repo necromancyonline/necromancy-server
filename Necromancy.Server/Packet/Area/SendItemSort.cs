@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -5,8 +7,6 @@ using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 using Necromancy.Server.Systems.Item;
-using System;
-using System.Collections.Generic;
 using static Necromancy.Server.Systems.Item.ItemService;
 
 namespace Necromancy.Server.Packet.Area
@@ -14,6 +14,7 @@ namespace Necromancy.Server.Packet.Area
     public class SendItemSort : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendItemSort));
+
         public SendItemSort(NecServer server) : base(server)
         {
         }
@@ -57,7 +58,10 @@ namespace Necromancy.Server.Packet.Area
                     router.Send(client, responses);
                 }
             }
-            catch (ItemException e) { error = (int)e.type; }
+            catch (ItemException e)
+            {
+                error = (int)e.type;
+            }
             catch (Exception e1)
             {
                 error = (int)ItemExceptionType.Generic;

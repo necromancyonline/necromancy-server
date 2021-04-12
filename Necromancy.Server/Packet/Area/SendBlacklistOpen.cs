@@ -1,8 +1,8 @@
+using System;
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
-using System;
 
 namespace Necromancy.Server.Packet.Area
 {
@@ -12,11 +12,10 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_blacklist_open;
+        public override ushort id => (ushort)AreaPacketId.send_blacklist_open;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-
             TimeSpan differenceJoined = DateTime.Today.ToUniversalTime() - DateTime.UnixEpoch;
             int dateAttackedCalculation = (int)Math.Floor(differenceJoined.TotalSeconds);
 
@@ -50,7 +49,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteInt32(Util.GetRandomNumber(0, 150)); //Count of items BlackListMember looted from you
                 res.WriteInt32(1); //Union ID?  we dont have any unions yet
                 res.WriteByte((byte)Util.GetRandomNumber(0, 2)); //Locked entry on blacklist  1:yes 0:No
-                res.WriteByte((byte)Util.GetRandomNumber(0,2)); // Current Bounty on blackCharacter.  1:Yes  0:No
+                res.WriteByte((byte)Util.GetRandomNumber(0, 2)); // Current Bounty on blackCharacter.  1:Yes  0:No
 
                 res.WriteInt32(blackSoul.id); //Soul ID of BlackListMember for sending bounty to Area server
                 res.WriteFixedString(blackSoul.name, 49); //Soul Name of BlackListMember

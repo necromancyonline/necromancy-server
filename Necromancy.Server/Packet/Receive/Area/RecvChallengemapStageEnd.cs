@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapStageEnd : PacketResponse
     {
         public RecvChallengemapStageEnd()
-            : base((ushort) AreaPacketId.recv_challengemap_stage_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_stage_end, ServerType.Area)
         {
         }
 

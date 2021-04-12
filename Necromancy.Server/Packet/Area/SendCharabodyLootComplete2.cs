@@ -9,14 +9,15 @@ namespace Necromancy.Server.Packet.Area
 {
     public class SendCharabodyLootComplete2 : ClientHandler
     {
-        private NecServer _server;
+        private readonly NecServer _server;
+
         public SendCharabodyLootComplete2(NecServer server) : base(server)
         {
             _server = server;
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_charabody_loot_complete2;
+        public override ushort id => (ushort)AreaPacketId.send_charabody_loot_complete2;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -37,7 +38,7 @@ namespace Necromancy.Server.Packet.Area
                 res.WriteByte(deadCharacter.lootNotify.container);
                 res.WriteInt16(deadCharacter.lootNotify.slot);
 
-                res.WriteInt16(1/*iteminstance.Quantity*/); //Number here is "pieces"
+                res.WriteInt16(1 /*iteminstance.Quantity*/); //Number here is "pieces"
                 res.WriteCString($"{client.soul.name}"); // soul name
                 res.WriteCString($"{client.character.name}"); // chara name
                 router.Send(deadClient, (ushort)AreaPacketId.recv_charabody_notify_loot_item, res, ServerType.Area);

@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_apply;
+        public override ushort id => (ushort)AreaPacketId.send_party_apply;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Packet.Area
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(errorCheck);
-            router.Send(client, (ushort) AreaPacketId.recv_party_apply_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_apply_r, res, ServerType.Area);
 
             RecvPartyNotifyApply recvPartyNotifyApply = new RecvPartyNotifyApply(client);
             router.Send(recvPartyNotifyApply, myPartyLeaderClient); //Send the application to the party leader.

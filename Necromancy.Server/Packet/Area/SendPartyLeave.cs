@@ -1,6 +1,5 @@
 using Arrowgene.Buffers;
 using Necromancy.Server.Common;
-using Necromancy.Server.Common.Instance;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet.Id;
 
@@ -12,20 +11,19 @@ namespace Necromancy.Server.Packet.Area
         {
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_party_leave;
+        public override ushort id => (ushort)AreaPacketId.send_party_leave;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
             Party myParty = server.instances.GetInstance(client.character.partyId) as Party;
 
 
-
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(client.character.instanceId);
 
-            router.Send(client, (ushort) AreaPacketId.recv_party_leave_r, res, ServerType.Area);
-            router.Send(client, (ushort) AreaPacketId.recv_chara_notify_party_leave, res, ServerType.Area);
-            router.Send(client.map, (ushort) AreaPacketId.recv_charabody_notify_party_leave, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_party_leave_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_chara_notify_party_leave, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_charabody_notify_party_leave, res, ServerType.Area);
 
             res = BufferProvider.Provide();
             res.WriteInt32(0); //Remove Reason

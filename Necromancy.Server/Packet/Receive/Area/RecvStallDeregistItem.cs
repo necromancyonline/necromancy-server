@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallDeregistItem : PacketResponse
     {
         public RecvStallDeregistItem()
-            : base((ushort) AreaPacketId.recv_stall_deregist_item_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_deregist_item_r, ServerType.Area)
         {
         }
 
