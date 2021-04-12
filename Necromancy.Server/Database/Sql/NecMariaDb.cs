@@ -24,7 +24,7 @@ namespace Necromancy.Server.Database.Sql
         public long version
         {
             get => long.Parse(Command("SELECT @@GLOBAL.user_version;", Connection()).ExecuteScalar().ToString());
-            set => Command(String.Format("SET GLOBAL user_version = {0};", value), Connection()).ExecuteNonQuery();
+            set => Command(string.Format("SET GLOBAL user_version = {0};", value), Connection()).ExecuteNonQuery();
         }
 
         public bool CreateDatabase()

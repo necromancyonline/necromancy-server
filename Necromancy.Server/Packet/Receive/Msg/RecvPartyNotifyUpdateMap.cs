@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyUpdateMap : PacketResponse
     {
         private readonly NecClient _client;
-        private Map _map;
+        private readonly Map _map;
 
         public RecvPartyNotifyUpdateMap(NecClient client)
             : base((ushort)MsgPacketId.recv_party_notify_update_map, ServerType.Msg)

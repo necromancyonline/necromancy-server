@@ -25,7 +25,7 @@ namespace Necromancy.Server.Logging
 
         public string ToLogText()
         {
-            String log = $"{clientIdentity} Packet Log";
+            string log = $"{clientIdentity} Packet Log";
             log += Environment.NewLine;
             log += "----------";
             log += Environment.NewLine;

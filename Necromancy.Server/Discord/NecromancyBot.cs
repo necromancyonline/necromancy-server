@@ -51,7 +51,7 @@ namespace Necromancy.Server.Discord
 
         public void Start()
         {
-            if (String.IsNullOrWhiteSpace(_setting.discordBotToken))
+            if (string.IsNullOrWhiteSpace(_setting.discordBotToken))
             {
                 _Logger.Info("No Discord Token");
                 return;

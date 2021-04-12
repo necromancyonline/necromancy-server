@@ -38,10 +38,10 @@ namespace Necromancy.Server.Common
             if (directoryInfo1.FullName == directoryInfo2.FullName)
                 result = directoryInfo1.FullName;
             else if (directoryInfo1.FullName.EndsWith(directoryInfo2.FullName))
-                result = directoryInfo1.FullName.Split(new[] {directoryInfo2.FullName},
+                result = directoryInfo1.FullName.Split(new[] { directoryInfo2.FullName },
                     StringSplitOptions.RemoveEmptyEntries)[0];
             else if (directoryInfo2.FullName.EndsWith(directoryInfo1.FullName))
-                result = directoryInfo2.FullName.Split(new[] {directoryInfo1.FullName},
+                result = directoryInfo2.FullName.Split(new[] { directoryInfo1.FullName },
                     StringSplitOptions.RemoveEmptyEntries)[0];
             else
                 result = "";
@@ -63,10 +63,10 @@ namespace Necromancy.Server.Common
             if (directoryInfo1.FullName == directoryInfo2.FullName)
                 result = "";
             else if (directoryInfo1.FullName.StartsWith(directoryInfo2.FullName))
-                result = directoryInfo1.FullName.Split(new[] {directoryInfo2.FullName},
+                result = directoryInfo1.FullName.Split(new[] { directoryInfo2.FullName },
                     StringSplitOptions.RemoveEmptyEntries)[0];
             else if (directoryInfo2.FullName.StartsWith(directoryInfo1.FullName))
-                result = directoryInfo2.FullName.Split(new[] {directoryInfo1.FullName},
+                result = directoryInfo2.FullName.Split(new[] { directoryInfo1.FullName },
                     StringSplitOptions.RemoveEmptyEntries)[0];
             else
                 result = "";

@@ -216,9 +216,9 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
                 default: //you don't know what you're doing do you?
                     _Logger.Error($"There is no recv of type : {command[0]} ");
-                {
-                    responses.Add(ChatResponse.CommandError(client, $"{command[0]} is not a valid gimmick command."));
-                }
+                    {
+                        responses.Add(ChatResponse.CommandError(client, $"{command[0]} is not a valid gimmick command."));
+                    }
                     break;
             }
         }

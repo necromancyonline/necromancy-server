@@ -5,7 +5,7 @@ namespace Necromancy.Server.Data.Setting
     public class ModelCommonCsvReader : CsvReader<ModelCommonSetting>
     {
         private readonly Dictionary<int, ModelAtrSetting> _modelAtrSettings;
-        private Dictionary<int, MonsterSetting> _monsterSetting;
+        private readonly Dictionary<int, MonsterSetting> _monsterSetting;
 
         public ModelCommonCsvReader(Dictionary<int, MonsterSetting> monsterSetting,
             Dictionary<int, ModelAtrSetting> modelAtrSettings)

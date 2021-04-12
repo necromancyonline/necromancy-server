@@ -44,7 +44,7 @@ namespace Necromancy.Server.Database.Sql
                 /* Migration naming scheme: [0-9]+-<description>.sql */
                 if (!long.TryParse(Regex.Match(Path.GetFileName(f), @"\d+").Value, NumberStyles.None,
                     NumberFormatInfo.InvariantInfo, out versionNumber))
-                    LogException(new FormatException(String.Format(
+                    LogException(new FormatException(string.Format(
                         "Failed to detect DB version for migration file: {0}. File name should begin with a database version number.",
                         f)));
 

@@ -220,10 +220,10 @@ namespace Necromancy.Server.Chat.Command.Commands
                     client.character.mapChange = true;
 
                     myMapTransition.updated = DateTime.Now;
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"Stoped {myMapTransition.instanceId}.  Safe to edit"));
-                }
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"Stoped {myMapTransition.instanceId}.  Safe to edit"));
+                    }
                     break;
                 case "start": //starts the maptrans task so you can test the maptran
 
@@ -233,10 +233,10 @@ namespace Necromancy.Server.Chat.Command.Commands
                     client.character.mapChange = false;
 
                     myMapTransition.updated = DateTime.Now;
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"Started {myMapTransition.instanceId}.  Safe to Warp"));
-                }
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"Started {myMapTransition.instanceId}.  Safe to Warp"));
+                    }
                     break;
 
                 case "remove": //removes a MapTransition from the database
@@ -259,10 +259,10 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 default: //you don't know what you're doing do you?
                     _Logger.Error($"There is no recv of type : {command[0]} ");
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"{command[0]} is not a valid MapTransition command."));
-                }
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"{command[0]} is not a valid MapTransition command."));
+                    }
                     break;
             }
         }

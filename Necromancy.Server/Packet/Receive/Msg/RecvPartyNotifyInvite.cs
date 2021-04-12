@@ -28,7 +28,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteUInt32(_client.character.instanceId);
             res.WriteUInt32(_party.partyLeaderId); //From player instance ID (but doesn't work?)
             foreach (NecClient client in _party.partyMembers)
-                //for (int i = 0; i < 6; i++)
+            //for (int i = 0; i < 6; i++)
             {
                 res.WriteInt32(_i + 1);
                 res.WriteUInt32(client.character.instanceId); //Instance Id?

@@ -496,9 +496,9 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                int[] hPandMPperChoice = {100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100};
-                byte[] conditionPerChoice = {150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120};
-                ulong[] goldCostPerChoice = {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
+                int[] hPandMPperChoice = { 100, 50, 100, 100, 100, 100, 100, 50, 80, 100, 100 };
+                byte[] conditionPerChoice = { 150, 50, 100, 110, 120, 160, 150, 50, 80, 100, 120 };
+                ulong[] goldCostPerChoice = { 0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000 };
                 _Logger.Debug($"The selection you have made is {client.character.eventSelectExtraSelectionCode}");
 
                 client.character.hp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);

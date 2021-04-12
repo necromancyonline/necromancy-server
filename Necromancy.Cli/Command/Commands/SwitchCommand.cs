@@ -59,9 +59,9 @@ namespace Necromancy.Cli.Command.Commands
         private ISwitchProperty FindSwitch(string key)
         {
             foreach (ISwitchConsumer consumer in _parameterConsumers)
-            foreach (ISwitchProperty property in consumer.switches)
-                if (property.key == key)
-                    return property;
+                foreach (ISwitchProperty property in consumer.switches)
+                    if (property.key == key)
+                        return property;
 
             return null;
         }
@@ -72,18 +72,18 @@ namespace Necromancy.Cli.Command.Commands
             sb.Append("Available Switches:");
             sb.Append(Environment.NewLine);
             foreach (ISwitchConsumer consumer in _parameterConsumers)
-            foreach (ISwitchProperty property in consumer.switches)
-            {
-                sb.Append(Environment.NewLine);
-                sb.Append(property.key);
-                sb.Append(Environment.NewLine);
-                sb.Append("> Ex.: ");
-                sb.Append(property.valueDescription);
-                sb.Append(Environment.NewLine);
-                sb.Append("> ");
-                sb.Append(property.description);
-                sb.Append(Environment.NewLine);
-            }
+                foreach (ISwitchProperty property in consumer.switches)
+                {
+                    sb.Append(Environment.NewLine);
+                    sb.Append(property.key);
+                    sb.Append(Environment.NewLine);
+                    sb.Append("> Ex.: ");
+                    sb.Append(property.valueDescription);
+                    sb.Append(Environment.NewLine);
+                    sb.Append("> ");
+                    sb.Append(property.description);
+                    sb.Append(Environment.NewLine);
+                }
 
             return sb.ToString();
         }

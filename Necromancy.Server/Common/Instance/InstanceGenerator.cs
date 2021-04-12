@@ -42,14 +42,14 @@ namespace Necromancy.Server.Common.Instance
             _pools.Add(_deadBodyPool);
 
             foreach (IInstanceIdPool pool in _pools)
-            foreach (IInstanceIdPool otherPool in _pools)
-            {
-                if (pool == otherPool) continue;
+                foreach (IInstanceIdPool otherPool in _pools)
+                {
+                    if (pool == otherPool) continue;
 
-                if (pool.lowerBound <= otherPool.upperBound && otherPool.lowerBound <= pool.upperBound)
-                    _Logger.Error(
-                        $"Pool: {pool.name}({pool.lowerBound}-{pool.upperBound}) overlaps with Pool {otherPool.name}({otherPool.lowerBound}-{otherPool.upperBound})");
-            }
+                    if (pool.lowerBound <= otherPool.upperBound && otherPool.lowerBound <= pool.upperBound)
+                        _Logger.Error(
+                            $"Pool: {pool.name}({pool.lowerBound}-{pool.upperBound}) overlaps with Pool {otherPool.name}({otherPool.lowerBound}-{otherPool.upperBound})");
+                }
 
             LogStatus();
         }

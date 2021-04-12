@@ -142,57 +142,57 @@ namespace Necromancy.Server.Packet
                     switch (_packetType)
                     {
                         case PacketType.Byte:
-                        {
-                            _dataSize = _buffer.ReadByte();
-                            _dataSize -= PACKET_ID_SIZE;
-                            _id = _buffer.ReadUInt16();
-                            _readHeader = true;
-                            break;
-                        }
+                            {
+                                _dataSize = _buffer.ReadByte();
+                                _dataSize -= PACKET_ID_SIZE;
+                                _id = _buffer.ReadUInt16();
+                                _readHeader = true;
+                                break;
+                            }
                         case PacketType.UInt16:
-                        {
-                            _dataSize = _buffer.ReadUInt16();
-                            _dataSize -= PACKET_ID_SIZE;
-                            _id = _buffer.ReadUInt16();
-                            _readHeader = true;
-                            break;
-                        }
+                            {
+                                _dataSize = _buffer.ReadUInt16();
+                                _dataSize -= PACKET_ID_SIZE;
+                                _id = _buffer.ReadUInt16();
+                                _readHeader = true;
+                                break;
+                            }
                         case PacketType.UInt32:
-                        {
-                            _dataSize = _buffer.ReadUInt32();
-                            _dataSize -= PACKET_ID_SIZE;
-                            _id = _buffer.ReadUInt16();
-                            _readHeader = true;
-                            break;
-                        }
+                            {
+                                _dataSize = _buffer.ReadUInt32();
+                                _dataSize -= PACKET_ID_SIZE;
+                                _id = _buffer.ReadUInt16();
+                                _readHeader = true;
+                                break;
+                            }
                         case PacketType.HeartBeat:
-                        {
-                            _dataSize = HEARTBEAT_PACKET_BODY_SIZE;
-                            _id = (ushort)CustomPacketId.SendHeartbeat;
-                            _readHeader = true;
-                            break;
-                        }
+                            {
+                                _dataSize = HEARTBEAT_PACKET_BODY_SIZE;
+                                _id = (ushort)CustomPacketId.SendHeartbeat;
+                                _readHeader = true;
+                                break;
+                            }
                         case PacketType.Unknown1:
-                        {
-                            _dataSize = UNKNOWN1_PACKET_BODY_SIZE;
-                            _id = (ushort)CustomPacketId.SendUnknown1;
-                            _readHeader = true;
-                            break;
-                        }
+                            {
+                                _dataSize = UNKNOWN1_PACKET_BODY_SIZE;
+                                _id = (ushort)CustomPacketId.SendUnknown1;
+                                _readHeader = true;
+                                break;
+                            }
                         case PacketType.Disconnect:
-                        {
-                            _dataSize = DISCONNECT_PACKET_BODY_SIZE;
-                            _id = (ushort)CustomPacketId.SendDisconnect;
-                            _readHeader = true;
-                            break;
-                        }
+                            {
+                                _dataSize = DISCONNECT_PACKET_BODY_SIZE;
+                                _id = (ushort)CustomPacketId.SendDisconnect;
+                                _readHeader = true;
+                                break;
+                            }
                         default:
-                        {
-                            // TODO update arrowgene buffer to read uint24 && int24
-                            _Logger.Error($"PacketType: '{_packetType}' not supported");
-                            Reset();
-                            return packets;
-                        }
+                            {
+                                // TODO update arrowgene buffer to read uint24 && int24
+                                _Logger.Error($"PacketType: '{_packetType}' not supported");
+                                Reset();
+                                return packets;
+                            }
                     }
                 }
 
@@ -236,21 +236,21 @@ namespace Necromancy.Server.Packet
             switch (packetType)
             {
                 case PacketType.HeartBeat:
-                {
-                    return PACKET_LENGTH_TYPE_SIZE;
-                }
+                    {
+                        return PACKET_LENGTH_TYPE_SIZE;
+                    }
                 case PacketType.Unknown1:
-                {
-                    return PACKET_LENGTH_TYPE_SIZE;
-                }
+                    {
+                        return PACKET_LENGTH_TYPE_SIZE;
+                    }
                 case PacketType.Disconnect:
-                {
-                    return PACKET_LENGTH_TYPE_SIZE;
-                }
+                    {
+                        return PACKET_LENGTH_TYPE_SIZE;
+                    }
                 default:
-                {
-                    return (byte)(PACKET_LENGTH_TYPE_SIZE + (packetType + 1) + PACKET_ID_SIZE);
-                }
+                    {
+                        return (byte)(PACKET_LENGTH_TYPE_SIZE + (packetType + 1) + PACKET_ID_SIZE);
+                    }
             }
         }
 

@@ -15,8 +15,7 @@ namespace Necromancy.Server.Data.Setting
                 return null;
 
             int.TryParse(properties[2], out int logId);
-            bool logBlockEnemy = false;
-            bool.TryParse(properties[3], out logBlockEnemy);
+            bool.TryParse(properties[3], out bool logBlockEnemy);
 
             int.TryParse(properties[4], out int castLogId);
 

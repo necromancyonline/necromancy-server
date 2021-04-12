@@ -37,8 +37,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            int x = 1;
-            if (!int.TryParse(command[1], out x))
+            if (!int.TryParse(command[1], out int x))
                 try
                 {
                     string binaryString = command[1];
@@ -383,10 +382,10 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 default: //you don't know what you're doing do you?
                     _Logger.Error($"There is no recv of type : {command[0]} ");
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"{command[0]} is not a valid command."));
-                }
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"{command[0]} is not a valid command."));
+                    }
                     break;
             }
 

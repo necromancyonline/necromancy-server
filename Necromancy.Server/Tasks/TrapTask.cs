@@ -19,8 +19,8 @@ namespace Necromancy.Server.Tasks
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(TrapTask));
 
-        private static readonly int[] _BaseTraps = {14301, 14302};
-        private static int[] _trapEnhancements = { };
+        private static readonly int[] _BaseTraps = { 14301, 14302 };
+        private static readonly int[] _trapEnhancements = { };
         private readonly int _detectHeight;
         private readonly int _detectRadius;
         private readonly Map _map;

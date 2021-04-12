@@ -376,42 +376,42 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 case "crime":
                     //for (byte i = 0; i < y; i++)
-                {
-                    NecClient crimeClient = server.clients.GetByCharacterInstanceId(x);
-                    IBuffer res40 = BufferProvider.Provide();
-                    res40.WriteUInt32(crimeClient.character.instanceId);
-                    res40.WriteByte((byte)y);
-                    client.character.criminalState = (byte)y;
-                    _Logger.Debug($"Setting crime level for Character {crimeClient.character.name} to {y}");
-                    router.Send(crimeClient, (ushort)AreaPacketId.recv_chara_update_notify_crime_lv, res40, ServerType.Area);
-                    router.Send(crimeClient.map, (ushort)AreaPacketId.recv_charabody_notify_crime_lv, res40, ServerType.Area, crimeClient);
-                    Thread.Sleep(400);
-                }
+                    {
+                        NecClient crimeClient = server.clients.GetByCharacterInstanceId(x);
+                        IBuffer res40 = BufferProvider.Provide();
+                        res40.WriteUInt32(crimeClient.character.instanceId);
+                        res40.WriteByte((byte)y);
+                        client.character.criminalState = (byte)y;
+                        _Logger.Debug($"Setting crime level for Character {crimeClient.character.name} to {y}");
+                        router.Send(crimeClient, (ushort)AreaPacketId.recv_chara_update_notify_crime_lv, res40, ServerType.Area);
+                        router.Send(crimeClient.map, (ushort)AreaPacketId.recv_charabody_notify_crime_lv, res40, ServerType.Area, crimeClient);
+                        Thread.Sleep(400);
+                    }
                     break;
 
                 case "inherit":
                     //for (byte i = 0; i < y; i++)
-                {
-                    NecClient inheritClient = server.clients.GetByCharacterInstanceId(x);
-                    IBuffer res41 = BufferProvider.Provide();
-                    res41.WriteInt32(y);
-                    res41.WriteInt32(0x64); //less than or equal to 0x64
-                    for (int i = 0; i < 0x64; i++) //limit is the int32 above
                     {
-                        res41.WriteInt32(i);
+                        NecClient inheritClient = server.clients.GetByCharacterInstanceId(x);
+                        IBuffer res41 = BufferProvider.Provide();
+                        res41.WriteInt32(y);
+                        res41.WriteInt32(0x64); //less than or equal to 0x64
+                        for (int i = 0; i < 0x64; i++) //limit is the int32 above
+                        {
+                            res41.WriteInt32(i);
+                            // TODO what ip is this? Area Msg ?? use -> Server.Setting.DataAreaIpAddress or Server.Setting.DataMsgIpAddress
+                            res41.WriteFixedString("127.0.0.1", 0x10); //size is 0x10
+                        }
+
+                        res41.WriteUInt32(client.character.instanceId);
                         // TODO what ip is this? Area Msg ?? use -> Server.Setting.DataAreaIpAddress or Server.Setting.DataMsgIpAddress
                         res41.WriteFixedString("127.0.0.1", 0x10); //size is 0x10
+                        res41.WriteByte((byte)y);
+                        router.Send(inheritClient, (ushort)MsgPacketId.recv_chara_get_inheritinfo_r, res41,
+                            ServerType.Msg);
+
+                        Thread.Sleep(400);
                     }
-
-                    res41.WriteUInt32(client.character.instanceId);
-                    // TODO what ip is this? Area Msg ?? use -> Server.Setting.DataAreaIpAddress or Server.Setting.DataMsgIpAddress
-                    res41.WriteFixedString("127.0.0.1", 0x10); //size is 0x10
-                    res41.WriteByte((byte)y);
-                    router.Send(inheritClient, (ushort)MsgPacketId.recv_chara_get_inheritinfo_r, res41,
-                        ServerType.Msg);
-
-                    Thread.Sleep(400);
-                }
                     break;
 
                 case "seqmask":

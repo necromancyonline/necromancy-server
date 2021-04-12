@@ -94,16 +94,16 @@ namespace Necromancy.Server.Systems.Item
             switch (loc.zoneType)
             {
                 case ItemZoneType.BagSlot:
-                {
-                    _zoneMap[ItemZoneType.EquippedBags].PutContainer(loc.slot, item.bagSize);
-                    _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
-                    break;
-                }
+                    {
+                        _zoneMap[ItemZoneType.EquippedBags].PutContainer(loc.slot, item.bagSize);
+                        _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
+                        break;
+                    }
                 default:
-                {
-                    _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
-                    break;
-                }
+                    {
+                        _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
+                        break;
+                    }
             }
         }
 
@@ -114,16 +114,16 @@ namespace Necromancy.Server.Systems.Item
             switch (item.location.zoneType)
             {
                 case ItemZoneType.BagSlot:
-                {
-                    _zoneMap[ItemZoneType.EquippedBags].RemoveContainer(item.location.slot);
-                    _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
-                    break;
-                }
+                    {
+                        _zoneMap[ItemZoneType.EquippedBags].RemoveContainer(item.location.slot);
+                        _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
+                        break;
+                    }
                 default:
-                {
-                    _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
-                    break;
-                }
+                    {
+                        _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
+                        break;
+                    }
             }
 
             item.location = ItemLocation.InvalidLocation;
@@ -195,15 +195,15 @@ namespace Necromancy.Server.Systems.Item
         public ItemInstance GetItemByInstanceId(ulong instanceId)
         {
             foreach (ItemZone itemZone in _zoneMap.Values)
-            foreach (Container container in itemZone.containers)
-            {
-                if (container == null) continue;
-                foreach (ItemInstance itemInstance in container.slots)
+                foreach (Container container in itemZone.containers)
                 {
-                    if (itemInstance == null) continue;
-                    if (itemInstance.instanceId == instanceId) return itemInstance;
+                    if (container == null) continue;
+                    foreach (ItemInstance itemInstance in container.slots)
+                    {
+                        if (itemInstance == null) continue;
+                        if (itemInstance.instanceId == instanceId) return itemInstance;
+                    }
                 }
-            }
 
             return null;
         }

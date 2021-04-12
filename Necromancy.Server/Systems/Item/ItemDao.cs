@@ -328,8 +328,8 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateItemLocation(ulong instanceId, ItemLocation loc)
         {
-            ulong[] instanceIds = new ulong[1] {instanceId};
-            ItemLocation[] locs = new ItemLocation[1] {loc};
+            ulong[] instanceIds = new ulong[1] { instanceId };
+            ItemLocation[] locs = new ItemLocation[1] { loc };
             UpdateItemLocations(instanceIds, locs);
         }
 

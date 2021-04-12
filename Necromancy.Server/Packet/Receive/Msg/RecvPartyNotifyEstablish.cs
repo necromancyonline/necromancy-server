@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyEstablish : PacketResponse
     {
         private readonly Party _party;
-        private NecClient _client;
+        private readonly NecClient _client;
         private int _i;
 
         public RecvPartyNotifyEstablish(NecClient client, Party party)

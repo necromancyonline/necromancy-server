@@ -48,7 +48,7 @@ namespace Necromancy.Server.Chat
                 errorType = ChatErrorType.GenericUnknownStatement,
                 message = message,
                 messageType = ChatMessageType.TextCommandLog,
-                recipients = {client}
+                recipients = { client }
             };
         }
 
@@ -62,7 +62,7 @@ namespace Necromancy.Server.Chat
                 errorType = ChatErrorType.Success,
                 message = message,
                 messageType = ChatMessageType.TextCommandLog,
-                recipients = {client}
+                recipients = { client }
             };
         }
     }

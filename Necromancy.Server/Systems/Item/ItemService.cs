@@ -109,7 +109,7 @@ namespace Necromancy.Server.Systems.Item
 
         public ItemInstance SpawnItemInstance(ItemZoneType itemZoneType, int baseId, ItemSpawnParams spawnParam)
         {
-            int[] itemIds = {baseId};
+            int[] itemIds = { baseId };
             ItemSpawnParams[] spawmParams = new ItemSpawnParams[1];
             spawmParams[0] = spawnParam;
             List<ItemInstance> items = SpawnItemInstances(itemZoneType, itemIds, spawmParams);

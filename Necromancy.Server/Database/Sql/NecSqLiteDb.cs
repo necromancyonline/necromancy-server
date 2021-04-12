@@ -30,7 +30,7 @@ namespace Necromancy.Server.Database.Sql
         public long version
         {
             get => (long)Command("PRAGMA user_version;", Connection()).ExecuteScalar();
-            set => Command(String.Format("PRAGMA user_version = {0};", value), Connection()).ExecuteNonQuery();
+            set => Command(string.Format("PRAGMA user_version = {0};", value), Connection()).ExecuteNonQuery();
         }
 
         public bool CreateDatabase()

@@ -23,9 +23,9 @@ namespace Necromancy.Server.Tasks
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MonsterTask));
 
-        private static readonly int[] _SkillList = {200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417};
+        private static readonly int[] _SkillList = { 200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417 };
 
-        private static int[] _effectList = {301411, 301412, 301413, 301414, 301415, 301416, 301417};
+        private static readonly int[] _effectList = { 301411, 301412, 301413, 301414, 301415, 301416, 301417 };
         private readonly float _agroDetectAngle;
         private readonly float _agroMoveAngle;
 

@@ -33,22 +33,22 @@ namespace Necromancy.Server.Chat.Command.Commands
             switch (command[0])
             {
                 case "map":
-                {
-                    foreach (NecClient theirClient in client.map.clientLookup.GetAll())
-                        responses.Add(ChatResponse.CommandInfo(client,
-                            $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
-
-                    break;
-                }
-                case "world":
-                {
-                    foreach (NecClient theirClient in server.clients.GetAll())
-                        if (theirClient.map != null)
+                    {
+                        foreach (NecClient theirClient in client.map.clientLookup.GetAll())
                             responses.Add(ChatResponse.CommandInfo(client,
                                 $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
 
-                    break;
-                }
+                        break;
+                    }
+                case "world":
+                    {
+                        foreach (NecClient theirClient in server.clients.GetAll())
+                            if (theirClient.map != null)
+                                responses.Add(ChatResponse.CommandInfo(client,
+                                    $"{theirClient.character.name} {theirClient.soul.name} is on Map {theirClient.character.mapId} with InstanceID {theirClient.character.instanceId}"));
+
+                        break;
+                    }
 
                 default:
                     foreach (NecClient otherClient in server.clients.GetAll())

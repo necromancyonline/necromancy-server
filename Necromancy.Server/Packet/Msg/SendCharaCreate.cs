@@ -12,18 +12,18 @@ namespace Necromancy.Server.Packet.Msg
     public class SendCharaCreate : ClientHandler
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendCharaCreate));
-        private readonly int[] _fighterItems = {10300199, 15000199, 100101, 200109, 310101, 410101, 510101};
-        private readonly int[] _fighterSkills = {11101, 11201};
-        private readonly int[] _mageItems = {11300199, 120110, 220101, 320101, 420101, 520101};
-        private readonly int[] _mageSkills = {13101, 13404};
-        private readonly int[] _priestItems = {11000199, 15000199, 120111, 220101, 320101, 420101, 520101};
-        private readonly int[] _priestSkills = {12501, 12601};
+        private readonly int[] _fighterItems = { 10300199, 15000199, 100101, 200109, 310101, 410101, 510101 };
+        private readonly int[] _fighterSkills = { 11101, 11201 };
+        private readonly int[] _mageItems = { 11300199, 120110, 220101, 320101, 420101, 520101 };
+        private readonly int[] _mageSkills = { 13101, 13404 };
+        private readonly int[] _priestItems = { 11000199, 15000199, 120111, 220101, 320101, 420101, 520101 };
+        private readonly int[] _priestSkills = { 12501, 12601 };
 
         // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
-        private readonly int[] _thiefItems = {10200199, 15000199, 110101, 200101, 300101, 400101, 500101};
+        private readonly int[] _thiefItems = { 10200199, 15000199, 110101, 200101, 300101, 400101, 500101 };
 
         // ToDo should we have separate claases for each class?  Fighter, Mage, Priest and Thief
-        private readonly int[] _thiefSkills = {14101, 14302, 14803};
+        private readonly int[] _thiefSkills = { 14101, 14302, 14803 };
 
         public SendCharaCreate(NecServer server) : base(server)
         {

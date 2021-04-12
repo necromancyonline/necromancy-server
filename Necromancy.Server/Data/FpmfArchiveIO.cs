@@ -13,8 +13,8 @@ namespace Necromancy.Server.Data
     {
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(FpmfArchiveIo));
 
-        private static readonly byte[] _MagicBytes = {0x46, 0x50, 0x4D, 0x46};
-        private static readonly byte[] _MagicBytesWoitm = {0x57, 0x4F, 0x49, 0x54, 0x4D};
+        private static readonly byte[] _MagicBytes = { 0x46, 0x50, 0x4D, 0x46 };
+        private static readonly byte[] _MagicBytesWoitm = { 0x57, 0x4F, 0x49, 0x54, 0x4D };
 
         public FpmfArchive Open(string hedFilePath)
         {

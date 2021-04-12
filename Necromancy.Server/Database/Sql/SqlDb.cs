@@ -180,7 +180,7 @@ namespace Necromancy.Server.Database.Sql
             AddParameter(command, name, value, DbType.String);
         }
 
-        protected void AddParameter(TCom command, string name, Int32 value)
+        protected void AddParameter(TCom command, string name, int value)
         {
             AddParameter(command, name, value, DbType.Int32);
         }
@@ -195,14 +195,14 @@ namespace Necromancy.Server.Database.Sql
             AddParameter(command, name, value, DbType.Byte);
         }
 
-        protected void AddParameter(TCom command, string name, UInt32 value)
+        protected void AddParameter(TCom command, string name, uint value)
         {
             AddParameter(command, name, value, DbType.UInt32);
         }
 
         protected void AddParameterEnumInt32<T>(TCom command, string name, T value) where T : Enum
         {
-            AddParameter(command, name, (Int32)(object)value, DbType.Int32);
+            AddParameter(command, name, (int)(object)value, DbType.Int32);
         }
 
         protected void AddParameter(TCom command, string name, DateTime? value)

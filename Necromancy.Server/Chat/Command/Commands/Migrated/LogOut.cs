@@ -19,7 +19,7 @@ namespace Necromancy.Server.Chat.Command.Commands
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
-            byte[] byteArr = new byte[8] {0x00, 0x06, 0xEE, 0x91, 0, 0, 0, 0};
+            byte[] byteArr = new byte[8] { 0x00, 0x06, 0xEE, 0x91, 0, 0, 0, 0 };
 
             IBuffer res = BufferProvider.Provide();
 
@@ -34,7 +34,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             Thread.Sleep(4000);
 
-            byte[] byteArrr = new byte[9] {0x00, 0x07, 0x52, 0x56, 0, 0, 0, 0, 0};
+            byte[] byteArrr = new byte[9] { 0x00, 0x07, 0x52, 0x56, 0, 0, 0, 0, 0 };
 
             IBuffer res2 = BufferProvider.Provide();
 
