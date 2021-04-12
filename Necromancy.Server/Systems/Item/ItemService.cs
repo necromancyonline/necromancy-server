@@ -453,8 +453,8 @@ namespace Necromancy.Server.Systems.Item
             BattleParam battleParam = new BattleParam();
 
             client.character.ConditionBonus();
-            client.character.Weight.SetCurrent(0);
-            client.character.Gp.SetMax(0);
+            client.character.weight.SetCurrent(0);
+            client.character.gp.SetMax(0);
             bool shieldCheck = false;
 
             foreach (ItemInstance itemInstance in client.character.equippedItems.Values)
@@ -470,26 +470,26 @@ namespace Necromancy.Server.Systems.Item
                     battleParam.plusMagicalDefence += (short)(itemInstance.magical + itemInstance.plusMagical);
                 }
 
-                client.character.Gp.SetMax(client.character.Gp.max + itemInstance.gp + itemInstance.plusGp);
-                client.character.Weight.Modify(itemInstance.weight + itemInstance.plusWeight);
+                client.character.gp.SetMax(client.character.gp.max + itemInstance.gp + itemInstance.plusGp);
+                client.character.weight.Modify(itemInstance.weight + itemInstance.plusWeight);
                 if ((itemInstance.type == ItemType.SHIELD_LARGE) | (itemInstance.type == ItemType.SHIELD_MEDIUM) | (itemInstance.type == ItemType.SHIELD_SMALL)) shieldCheck = true;
             }
 
             //if you dont have a shield on,  set your GP to 0.  no blocking for you
             if (shieldCheck == false)
             {
-                client.character.Gp.SetMax(0);
-                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.character.Gp.max);
+                client.character.gp.SetMax(0);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.character.gp.max);
                 responses.Add(recvCharaUpdateAc);
             }
 
-            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.character.Weight.max / 10, client.character.Weight.current / 10 /*Weight.Diff*/);
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.character.weight.max / 10, client.character.weight.current / 10 /*Weight.Diff*/);
             responses.Add(recvCharaUpdateMaxWeight);
 
-            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.character.Weight.current / 10);
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.character.weight.current / 10);
             responses.Add(recvCharaUpdateWeight);
 
-            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.character.Gp.max);
+            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.character.gp.max);
             responses.Add(recvCharaUpdateMaxAc);
 
             RecvCharaUpdateBattleBaseParam recvCharaUpdateBattleBaseParam = new RecvCharaUpdateBattleBaseParam(client.character, battleParam);

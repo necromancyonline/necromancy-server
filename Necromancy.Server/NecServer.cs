@@ -75,11 +75,11 @@ namespace Necromancy.Server
             settingRepository = new SettingRepository(this.setting.repositoryFolder).Initialize();
             database = new NecDatabaseBuilder(this.setting, settingRepository).Build();
             _authConsumer = new NecQueueConsumer(ServerType.Auth, this.setting, this.setting.authSocketSettings);
-            _authConsumer.ClientDisconnected += AuthClientDisconnected;
+            _authConsumer.clientDisconnected += AuthClientDisconnected;
             _msgConsumer = new NecQueueConsumer(ServerType.Msg, this.setting, this.setting.msgSocketSettings);
-            _msgConsumer.ClientDisconnected += MsgClientDisconnected;
+            _msgConsumer.clientDisconnected += MsgClientDisconnected;
             _areaConsumer = new NecQueueConsumer(ServerType.Area, this.setting, this.setting.areaSocketSettings);
-            _areaConsumer.ClientDisconnected += AreaClientDisconnected;
+            _areaConsumer.clientDisconnected += AreaClientDisconnected;
 
             _authServer = new AsyncEventServer(
                 this.setting.listenIpAddress,

@@ -35,7 +35,7 @@ namespace Necromancy.Server.Packet.Area
                     exception = GaurdExceptionType.Ok;
 
 
-            if (client.character.Gp.current < 1) exception = GaurdExceptionType.GpMissing;
+            if (client.character.gp.current < 1) exception = GaurdExceptionType.GpMissing;
 
 
             IBuffer res = BufferProvider.Provide();

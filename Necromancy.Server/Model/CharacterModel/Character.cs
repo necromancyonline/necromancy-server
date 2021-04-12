@@ -16,13 +16,13 @@ namespace Necromancy.Server.Model
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(Character));
 
         //Task
-        public CharacterTask CharacterTask;
-        public BaseStat Condition;
-        public BaseStat Gp;
-        public BaseStat Hp;
-        public BaseStat Mp;
-        public BaseStat Od;
-        public BaseStat Weight;
+        public CharacterTask characterTask;
+        public BaseStat condition;
+        public BaseStat gp;
+        public BaseStat hp;
+        public BaseStat mp;
+        public BaseStat od;
+        public BaseStat weight;
 
         public Character()
         {
@@ -45,12 +45,12 @@ namespace Necromancy.Server.Model
             experienceCurrent = 0;
             skillPoints = 0;
             eventSelectExecCode = -1;
-            Hp = new BaseStat(10, 10);
-            Mp = new BaseStat(450, 500);
-            Od = new BaseStat(150, 200);
-            Gp = new BaseStat(0, 0);
-            Weight = new BaseStat(456, 1234);
-            Condition = new BaseStat(140, 200);
+            hp = new BaseStat(10, 10);
+            mp = new BaseStat(450, 500);
+            od = new BaseStat(150, 200);
+            gp = new BaseStat(0, 0);
+            weight = new BaseStat(456, 1234);
+            condition = new BaseStat(140, 200);
             takeover = false;
             skillStartCast = 0;
             battleAnim = 0;
@@ -208,8 +208,8 @@ namespace Necromancy.Server.Model
 
         public void CreateTask(NecServer server, NecClient client)
         {
-            CharacterTask = new CharacterTask(server, client);
-            CharacterTask.Start();
+            characterTask = new CharacterTask(server, client);
+            characterTask.Start();
         }
 
         public void AddStateBit(CharacterState characterState)
@@ -229,25 +229,25 @@ namespace Necromancy.Server.Model
 
         public void ConditionBonus()
         {
-            if (Condition.current > 180) odRecoveryRate = 16; //+8 to all stats
-            else if (Condition.current > 140) odRecoveryRate = 8; //+4 to all stats
-            else if (Condition.current > 40) odRecoveryRate = 4; //+0
-            else if (Condition.current > 20) odRecoveryRate = 2; //-2 to all stats
+            if (condition.current > 180) odRecoveryRate = 16; //+8 to all stats
+            else if (condition.current > 140) odRecoveryRate = 8; //+4 to all stats
+            else if (condition.current > 40) odRecoveryRate = 4; //+0
+            else if (condition.current > 20) odRecoveryRate = 2; //-2 to all stats
             else odRecoveryRate = 2; // -4 to all stats //should be 1 recovery rate, but our 500ms tick reduces to 0
         }
 
         public void LoginCheckDead() //todo,  further analysis on character states and poses. eliminate this HP based overide
         {
-            if (Hp.current <= 0)
+            if (hp.current <= 0)
             {
                 hasDied = true;
                 state = CharacterState.SoulForm;
                 deadType = 1;
             }
 
-            if (Hp.current == -1)
+            if (hp.current == -1)
                 deadType = 4;
-            else if (Hp.current < -1) deadType = 5;
+            else if (hp.current < -1) deadType = 5;
         }
     }
 }

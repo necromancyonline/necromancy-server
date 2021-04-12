@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
         public RecvAuctionNotifyOpenItem(NecClient necClient, List<ItemInstance> auctionList) : base((ushort)AreaPacketId.recv_auction_notify_open_item, ServerType.Area)
         {
-            Clients.Add(necClient);
+            clients.Add(necClient);
             _auctionList = auctionList;
         }
 

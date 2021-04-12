@@ -7,7 +7,7 @@ namespace Necromancy.Server.Model
     public class DeadBody : IInstance
     {
         //Inventory
-        public Dictionary<ItemEquipSlots, ItemInstance> EquippedItems;
+        public Dictionary<ItemEquipSlots, ItemInstance> equippedItems;
 
         public DeadBody()
         {

@@ -148,7 +148,7 @@ namespace Necromancy.Cli
                     "--clear",
                     "--clear",
                     "Resets all switches to default",
-                    SwitchProperty<object>.NoOp,
+                    SwitchProperty<object>.noOp,
                     result => Reset()
                 )
             );

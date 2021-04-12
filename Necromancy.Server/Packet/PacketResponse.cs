@@ -6,12 +6,12 @@ namespace Necromancy.Server.Packet
 {
     public abstract class PacketResponse
     {
-        public readonly List<NecClient> Clients;
+        public readonly List<NecClient> clients;
         private NecPacket _packet;
 
         public PacketResponse(ushort id, ServerType serverType)
         {
-            Clients = new List<NecClient>();
+            clients = new List<NecClient>();
             this.id = id;
             this.serverType = serverType;
         }

@@ -52,25 +52,25 @@ namespace Necromancy.Server.Model
             {
                 if (mapTran.id == 0) //Only one special transition
                 {
-                    double angle = mapTran.MaplinkHeading / 255.0;
-                    mapTran.LeftPos.X = (float)((mapTran.ReferencePos.X + mapTran.MaplinkWidth / 2) * Math.Cos(angle));
-                    mapTran.LeftPos.Y = (float)(mapTran.ReferencePos.Y * Math.Cos(angle));
-                    mapTran.RightPos.X = (float)((mapTran.ReferencePos.X - mapTran.MaplinkWidth / 2) * Math.Cos(angle));
-                    mapTran.RightPos.Y = mapTran.ReferencePos.Y + mapTran.MaplinkWidth / 2;
+                    double angle = mapTran.maplinkHeading / 255.0;
+                    mapTran.leftPos.X = (float)((mapTran.referencePos.X + mapTran.maplinkWidth / 2) * Math.Cos(angle));
+                    mapTran.leftPos.Y = (float)(mapTran.referencePos.Y * Math.Cos(angle));
+                    mapTran.rightPos.X = (float)((mapTran.referencePos.X - mapTran.maplinkWidth / 2) * Math.Cos(angle));
+                    mapTran.rightPos.Y = mapTran.referencePos.Y + mapTran.maplinkWidth / 2;
                 }
-                else if (mapTran.InvertedTransition != true) //map is x dominant
+                else if (mapTran.invertedTransition != true) //map is x dominant
                 {
-                    mapTran.LeftPos.X = mapTran.ReferencePos.X + mapTran.MaplinkWidth / 2;
-                    mapTran.LeftPos.Y = mapTran.ReferencePos.Y;
-                    mapTran.RightPos.X = mapTran.ReferencePos.X - mapTran.MaplinkWidth / 2;
-                    mapTran.RightPos.Y = mapTran.ReferencePos.Y;
+                    mapTran.leftPos.X = mapTran.referencePos.X + mapTran.maplinkWidth / 2;
+                    mapTran.leftPos.Y = mapTran.referencePos.Y;
+                    mapTran.rightPos.X = mapTran.referencePos.X - mapTran.maplinkWidth / 2;
+                    mapTran.rightPos.Y = mapTran.referencePos.Y;
                 }
-                else if (mapTran.InvertedTransition) //map is y dominant
+                else if (mapTran.invertedTransition) //map is y dominant
                 {
-                    mapTran.LeftPos.X = mapTran.ReferencePos.X;
-                    mapTran.LeftPos.Y = mapTran.ReferencePos.Y + mapTran.MaplinkWidth / 2;
-                    mapTran.RightPos.X = mapTran.ReferencePos.X;
-                    mapTran.RightPos.Y = mapTran.ReferencePos.Y - mapTran.MaplinkWidth / 2;
+                    mapTran.leftPos.X = mapTran.referencePos.X;
+                    mapTran.leftPos.Y = mapTran.referencePos.Y + mapTran.maplinkWidth / 2;
+                    mapTran.rightPos.X = mapTran.referencePos.X;
+                    mapTran.rightPos.Y = mapTran.referencePos.Y - mapTran.maplinkWidth / 2;
                 }
 
                 server.instances.AssignInstance(mapTran);
@@ -124,8 +124,8 @@ namespace Necromancy.Server.Model
                 monsterSpawn.modelId = modelSetting.id;
                 //monsterSpawn.Size = (short) (modelSetting.Height / 2);   //commenting out to use size setting from database.
                 monsterSpawn.radius = (short)modelSetting.radius;
-                monsterSpawn.Hp.SetMax(300);
-                monsterSpawn.Hp.SetCurrent(300);
+                monsterSpawn.hp.SetMax(300);
+                monsterSpawn.hp.SetCurrent(300);
                 monsterSpawn.attackSkillId = monsterSetting.attackSkillId;
                 //monsterSpawn.Level = (byte) monsterSetting.Level;
                 monsterSpawn.combatMode = monsterSetting.combatMode;
@@ -138,46 +138,46 @@ namespace Necromancy.Server.Model
                 if (coords.Count > 0)
                 {
                     monsterSpawn.defaultCoords = false;
-                    monsterSpawn.MonsterCoords.Clear();
+                    monsterSpawn.monsterCoords.Clear();
                     foreach (MonsterCoord monsterCoord in coords)
                         //Console.WriteLine($"added coord {monsterCoord} to monster {monsterSpawn.InstanceId}");
-                        monsterSpawn.MonsterCoords.Add(monsterCoord);
+                        monsterSpawn.monsterCoords.Add(monsterCoord);
                 }
                 else
                 {
                     //home coordinate set to monster X,Y,Z from database
                     Vector3 homeVector3 = new Vector3(monsterSpawn.x, monsterSpawn.y, monsterSpawn.z);
                     MonsterCoord homeCoord = new MonsterCoord();
-                    homeCoord.Id = monsterSpawn.id;
+                    homeCoord.id = monsterSpawn.id;
                     homeCoord.monsterId = (uint)monsterSpawn.monsterId;
                     homeCoord.mapId = (uint)monsterSpawn.mapId;
                     homeCoord.coordIdx = 0;
                     homeCoord.destination = homeVector3;
-                    monsterSpawn.MonsterCoords.Add(homeCoord);
+                    monsterSpawn.monsterCoords.Add(homeCoord);
 
                     //default path part 2
                     Vector3 defaultVector3 = new Vector3(monsterSpawn.x, monsterSpawn.y + Util.GetRandomNumber(50, 150),
                         monsterSpawn.z);
                     MonsterCoord defaultCoord = new MonsterCoord();
-                    defaultCoord.Id = monsterSpawn.id;
+                    defaultCoord.id = monsterSpawn.id;
                     defaultCoord.monsterId = (uint)monsterSpawn.monsterId;
                     defaultCoord.mapId = (uint)monsterSpawn.mapId;
                     defaultCoord.coordIdx = 1;
                     defaultCoord.destination = defaultVector3;
 
-                    monsterSpawn.MonsterCoords.Add(defaultCoord);
+                    monsterSpawn.monsterCoords.Add(defaultCoord);
 
                     //default path part 3
                     Vector3 defaultVector32 = new Vector3(monsterSpawn.x + Util.GetRandomNumber(50, 150),
                         monsterSpawn.y + Util.GetRandomNumber(50, 150), monsterSpawn.z);
                     MonsterCoord defaultCoord2 = new MonsterCoord();
-                    defaultCoord2.Id = monsterSpawn.id;
+                    defaultCoord2.id = monsterSpawn.id;
                     defaultCoord2.monsterId = (uint)monsterSpawn.monsterId;
                     defaultCoord2.mapId = (uint)monsterSpawn.mapId;
                     defaultCoord2.coordIdx = 2; //64 is currently the Idx of monsterHome on send_map_get_info.cs
                     defaultCoord2.destination = defaultVector32;
 
-                    monsterSpawn.MonsterCoords.Add(defaultCoord2);
+                    monsterSpawn.monsterCoords.Add(defaultCoord2);
                 }
             }
         }
@@ -284,9 +284,9 @@ namespace Necromancy.Server.Model
                             {
                                 MonsterTask monsterTask = new MonsterTask(_server, monsterSpawn);
                                 if (monsterSpawn.defaultCoords)
-                                    monsterTask.MonsterHome = monsterSpawn.MonsterCoords[0];
+                                    monsterTask.monsterHome = monsterSpawn.monsterCoords[0];
                                 else
-                                    monsterTask.MonsterHome = monsterSpawn.MonsterCoords.Find(x => x.coordIdx == 64);
+                                    monsterTask.monsterHome = monsterSpawn.monsterCoords.Find(x => x.coordIdx == 64);
                                 monsterTask.Start();
                             }
                             else
@@ -389,7 +389,7 @@ namespace Necromancy.Server.Model
             lock (_trapLock)
             {
                 foreach (TrapStack trap in this.traps.Values)
-                    if (trap.TrapTask.ownerInstanceId == characterInstanceId)
+                    if (trap.trapTask.ownerInstanceId == characterInstanceId)
                         traps.Add(trap);
             }
 
@@ -402,9 +402,9 @@ namespace Necromancy.Server.Model
             lock (_trapLock)
             {
                 foreach (TrapStack trap in traps.Values)
-                    if (trap.TrapTask.ownerInstanceId == characterInstanceId)
+                    if (trap.trapTask.ownerInstanceId == characterInstanceId)
                     {
-                        double distance = Vector3.Distance(trap.TrapTask.trapPos, position);
+                        double distance = Vector3.Distance(trap.trapTask.trapPos, position);
                         if (distance < range)
                             return true;
                     }
@@ -418,9 +418,9 @@ namespace Necromancy.Server.Model
             lock (_trapLock)
             {
                 foreach (TrapStack trap in traps.Values)
-                    if (trap.TrapTask.ownerInstanceId == characterInstanceId)
+                    if (trap.trapTask.ownerInstanceId == characterInstanceId)
                     {
-                        double distance = Vector3.Distance(trap.TrapTask.trapPos, position);
+                        double distance = Vector3.Distance(trap.trapTask.trapPos, position);
                         if (distance < range)
                             return trap;
                     }

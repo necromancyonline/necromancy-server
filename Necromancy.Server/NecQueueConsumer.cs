@@ -24,9 +24,9 @@ namespace Necromancy.Server
 
         private readonly ServerType _serverType;
         private readonly NecSetting _setting;
-        public Action<NecConnection> ClientConnected;
+        public Action<NecConnection> clientConnected;
 
-        public Action<NecConnection> ClientDisconnected;
+        public Action<NecConnection> clientDisconnected;
 
         public NecQueueConsumer(ServerType serverType, NecSetting setting, AsyncEventSettings socketSetting) : base(
             socketSetting, serverType.ToString())
@@ -180,7 +180,7 @@ namespace Necromancy.Server
                 _Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
             }
 
-            Action<NecConnection> onClientDisconnected = ClientDisconnected;
+            Action<NecConnection> onClientDisconnected = clientDisconnected;
             if (onClientDisconnected != null)
                 try
                 {
@@ -203,7 +203,7 @@ namespace Necromancy.Server
                 _Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
             }
 
-            Action<NecConnection> onClientConnected = ClientConnected;
+            Action<NecConnection> onClientConnected = clientConnected;
             if (onClientConnected != null)
                 try
                 {

@@ -51,7 +51,7 @@ namespace Necromancy.Server.Tasks
         private bool _spawnMonster;
         private int _updateTime;
         private int _waitTime;
-        public MonsterCoord MonsterHome;
+        public MonsterCoord monsterHome;
 
         public MonsterTask(NecServer server, MonsterSpawn monster)
         {
@@ -62,7 +62,7 @@ namespace Necromancy.Server.Tasks
             monsterMoving = false;
             _casting = false;
             _spawnMonster = true;
-            MonsterHome = null;
+            monsterHome = null;
             this.monster.currentCoordIndex = 1;
             _pathingTick = 100;
             _agroTick = 200;
@@ -104,7 +104,7 @@ namespace Necromancy.Server.Tasks
             {
                 if (_spawnMonster)
                 {
-                    monster.Loot = new Loot(monster.level, monster.id); //reload loot table
+                    monster.loot = new Loot(monster.level, monster.id); //reload loot table
                     Thread.Sleep(_respawnTime / 2);
                     _updateTime = _pathingTick;
                     monster.currentCoordIndex = 1;
@@ -144,7 +144,7 @@ namespace Necromancy.Server.Tasks
 
         private void MonsterPath()
         {
-            MonsterCoord nextCoord = this.monster.MonsterCoords.Find(x => x.coordIdx == this.monster.currentCoordIndex);
+            MonsterCoord nextCoord = this.monster.monsterCoords.Find(x => x.coordIdx == this.monster.currentCoordIndex);
             Vector3 monster = new Vector3(this.monster.x, this.monster.y, this.monster.z);
             float distance = GetDistance(nextCoord.destination, monster);
             if (distance > this.monster.GetGotoDistance() && !monsterFreeze && !_monsterWaiting && !this.monster.GetAgro())
@@ -161,12 +161,12 @@ namespace Necromancy.Server.Tasks
                     _monsterWaiting = true;
                     _currentWait = 0;
                     //                        Thread.Sleep(2000);
-                    if (this.monster.currentCoordIndex < this.monster.MonsterCoords.Count - (this.monster.defaultCoords ? 1 : 2))
+                    if (this.monster.currentCoordIndex < this.monster.monsterCoords.Count - (this.monster.defaultCoords ? 1 : 2))
                         this.monster.currentCoordIndex++;
                     else
                         this.monster.currentCoordIndex = 0;
 
-                    this.monster.heading = (byte)GetHeading(this.monster.MonsterCoords
+                    this.monster.heading = (byte)GetHeading(this.monster.monsterCoords
                         .Find(x => x.coordIdx == this.monster.currentCoordIndex).destination);
                 }
             }
@@ -215,7 +215,7 @@ namespace Necromancy.Server.Tasks
                 return true;
             }
 
-            float homeDistance = GetDistance(MonsterHome.destination, monster);
+            float homeDistance = GetDistance(monsterHome.destination, monster);
             if (homeDistance >= agroRange * 4)
             {
                 foreach (uint instanceId in this.monster.GetAgroInstanceList()) this.monster.MonsterHate(server, false, instanceId);
@@ -346,7 +346,7 @@ namespace Necromancy.Server.Tasks
         {
             int damage = Util.GetRandomNumber(8, 43);
             Character currentTarget = monster.GetCurrentTarget();
-            currentTarget.Hp.Modify(-damage, monster.instanceId);
+            currentTarget.hp.Modify(-damage, monster.instanceId);
 
             _Logger.Debug($"Monster {monster.instanceId} is attacking {currentTarget.name}");
             List<PacketResponse> brList = new List<PacketResponse>();
@@ -354,7 +354,7 @@ namespace Necromancy.Server.Tasks
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
             RecvBattleReportNotifyHitEffect brHit = new RecvBattleReportNotifyHitEffect(currentTarget.instanceId);
             RecvBattleReportDamageHp brHp = new RecvBattleReportDamageHp(currentTarget.instanceId, damage);
-            RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(currentTarget.Hp.current);
+            RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(currentTarget.hp.current);
 
             brList.Add(brStart);
             brList.Add(brHit);
@@ -364,7 +364,7 @@ namespace Necromancy.Server.Tasks
             server.router.Send(_map.clientLookup.GetByCharacterInstanceId(currentTarget.instanceId),
                 cHpUpdate.ToPacket());
 
-            if (currentTarget.Hp.depleted)
+            if (currentTarget.hp.depleted)
             {
                 monster.SetAgro(false);
                 monster.monsterAgroList.Remove(currentTarget.instanceId);
@@ -504,12 +504,12 @@ namespace Necromancy.Server.Tasks
             _monsterWaiting = false;
             monster.SetGotoDistance(10);
             //monsterVelocity = 200;
-            MonsterCoord spawnCoords = monster.MonsterCoords.Find(x => x.coordIdx == 0);
+            MonsterCoord spawnCoords = monster.monsterCoords.Find(x => x.coordIdx == 0);
             monster.x = spawnCoords.destination.X;
             monster.y = spawnCoords.destination.Y;
             monster.z = spawnCoords.destination.Z;
-            monster.heading = (byte)GetHeading(monster.MonsterCoords.Find(x => x.coordIdx == 1).destination);
-            monster.Hp.ToMax();
+            monster.heading = (byte)GetHeading(monster.monsterCoords.Find(x => x.coordIdx == 1).destination);
+            monster.hp.ToMax();
             _respawnTime = monster.respawnTime;
             RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monster);
             foreach (NecClient client in _map.clientLookup.GetAll())
@@ -524,14 +524,14 @@ namespace Necromancy.Server.Tasks
         public bool MonsterCheck()
         {
             // Logger.Debug($"Monster HP [{_monster.GetHP()}]");
-            if (monster.Hp.current <= 0)
+            if (monster.hp.current <= 0)
             {
                 foreach (uint instanceId in monster.GetAgroInstanceList())
                 {
                     monster.MonsterHate(server, false, instanceId);
 
                     NecClient client = server.clients.GetByCharacterInstanceId(instanceId);
-                    client.character.experienceCurrent += monster.Loot.experience;
+                    client.character.experienceCurrent += monster.loot.experience;
 
                     IBuffer res = BufferProvider.Provide();
                     res.WriteUInt64(client.character.experienceCurrent);
@@ -539,7 +539,7 @@ namespace Necromancy.Server.Tasks
                     server.router.Send(client, (ushort)AreaPacketId.recv_self_exp_notify, res, ServerType.Area); //This should go to the party of whomever did the most damage.  TODO
 
                     //To-Do,  make a variable to track union gold
-                    client.character.adventureBagGold += monster.Loot.gold; //Updates your Character.AdventureBagGold
+                    client.character.adventureBagGold += monster.loot.gold; //Updates your Character.AdventureBagGold
 
                     res = BufferProvider.Provide();
                     res.WriteUInt64(client.character.adventureBagGold); // Sets your Adventure Bag Gold
@@ -660,12 +660,12 @@ namespace Necromancy.Server.Tasks
                     return;
                 float travelTime = distance / monster.monsterRunVelocity;
                 MonsterTick tick = new MonsterTick();
-                tick.XTick = moveTo.X;
-                tick.YTick = moveTo.Y;
-                tick.ZTick = moveTo.Z;
-                _agroTickMove.XTick = moveTo.X / travelTime / tickDivisor;
-                _agroTickMove.YTick = moveTo.Y / travelTime / tickDivisor;
-                _agroTickMove.ZTick = 0;
+                tick.xTick = moveTo.X;
+                tick.yTick = moveTo.Y;
+                tick.zTick = moveTo.Z;
+                _agroTickMove.xTick = moveTo.X / travelTime / tickDivisor;
+                _agroTickMove.yTick = moveTo.Y / travelTime / tickDivisor;
+                _agroTickMove.zTick = 0;
                 //Logger.Debug($"Moving distance [{distance}] monsterVelocity [{_monster.MonsterRunVelocity}]  travelTime[{travelTime}] xTick [{tick.xTick}] yTick [{tick.yTick}] moveTo.X [{moveTo.X}] moveTo.Y [{moveTo.Y}] moveTo.Z [{moveTo.Z}]");
                 monster.MonsterMove(server, 3, 0, tick, travelTime);
             }
@@ -676,8 +676,8 @@ namespace Necromancy.Server.Tasks
                 distance = GetDistance(monsterPos, _currentDest);
                 if (distance >= monster.monsterRunVelocity / tickDivisor)
                 {
-                    monster.x = monster.x + _agroTickMove.XTick;
-                    monster.y = monster.y + _agroTickMove.YTick;
+                    monster.x = monster.x + _agroTickMove.xTick;
+                    monster.y = monster.y + _agroTickMove.yTick;
                     //_monster.Z = _monster.Z + (moveTo.Z / travelTime) / tickDivisor;
                 }
                 else
@@ -707,7 +707,7 @@ namespace Necromancy.Server.Tasks
 
             Vector3 monster = new Vector3(this.monster.x, this.monster.y, this.monster.z);
             foreach (NecClient client in mapsClients)
-                if (client.character.Hp.depleted == false)
+                if (client.character.hp.depleted == false)
                 {
                     Vector3 character = new Vector3(client.character.x, client.character.y, client.character.z);
                     float distanceChar = GetDistance(character, monster);

@@ -33,7 +33,7 @@ namespace Necromancy.Server.Packet.Area
 
             Attribute attribute = new Attribute();
             attribute.DefaultClassAtributes(client.character.raceId);
-            client.character.Hp.SetMax(attribute.hp * client.character.level); //make better after HP calc exists
+            client.character.hp.SetMax(attribute.hp * client.character.level); //make better after HP calc exists
 
             SendDataGetSelfCharaData(client);
 
@@ -73,17 +73,17 @@ namespace Necromancy.Server.Packet.Area
             res.WriteUInt64(client.soul.experienceCurrent); // soul exp
             res.WriteInt64(100); // exp needed to level
             res.WriteInt64(200); // soul exp needed to level
-            res.WriteInt32(client.character.Hp.current); // current hp
-            res.WriteInt32(client.character.Mp.current); // current mp
-            res.WriteInt32(client.character.Od.current); // current od
-            res.WriteInt32(client.character.Hp.max); // max hp
-            res.WriteInt32(client.character.Mp.max); // maxmp
-            res.WriteInt32(client.character.Od.max); // max od
-            res.WriteInt32(client.character.Gp.current); // current guard points
-            res.WriteInt32(client.character.Gp.max); // max guard points
-            res.WriteInt32(client.character.Weight.current); // value/100 = current weight
-            res.WriteInt32(client.character.Weight.max); // value/100 = max weight
-            res.WriteByte((byte)client.character.Condition.current); // condition
+            res.WriteInt32(client.character.hp.current); // current hp
+            res.WriteInt32(client.character.mp.current); // current mp
+            res.WriteInt32(client.character.od.current); // current od
+            res.WriteInt32(client.character.hp.max); // max hp
+            res.WriteInt32(client.character.mp.max); // maxmp
+            res.WriteInt32(client.character.od.max); // max od
+            res.WriteInt32(client.character.gp.current); // current guard points
+            res.WriteInt32(client.character.gp.max); // max guard points
+            res.WriteInt32(client.character.weight.current); // value/100 = current weight
+            res.WriteInt32(client.character.weight.max); // value/100 = max weight
+            res.WriteByte((byte)client.character.condition.current); // condition
 
             // total stat level includes bonus'?
             res.WriteUInt16(client.character.strength); // str

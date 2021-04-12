@@ -161,7 +161,7 @@ namespace Necromancy.Server.Tasks
             RecvDataNotifyEoData eoTriggerData = new RecvDataNotifyEoData(trap.instanceId, monster.instanceId,
                 trap.triggerEffectId, trapPos, 2, 2);
             server.router.Send(_map, eoTriggerData);
-            float perHp = monster.Hp.current / (float)monster.Hp.max * 100;
+            float perHp = monster.hp.current / (float)monster.hp.max * 100;
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(ownerInstanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();

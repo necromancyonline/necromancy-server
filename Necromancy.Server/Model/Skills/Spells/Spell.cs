@@ -98,8 +98,8 @@ namespace Necromancy.Server.Model.Skills
                     trgCoord.X = monsterSpawn.x;
                     trgCoord.Y = monsterSpawn.y;
                     trgCoord.Z = monsterSpawn.z;
-                    int monsterHp = monsterSpawn.Hp.current;
-                    perHp = monsterHp > 0 ? monsterHp / (float)monsterSpawn.Hp.max * 100 : 0;
+                    int monsterHp = monsterSpawn.hp.current;
+                    perHp = monsterHp > 0 ? monsterHp / (float)monsterSpawn.hp.max * 100 : 0;
                     if (monsterSpawn.GetAgroCharacter(_client.character.instanceId))
                         monsterSpawn.UpdateHp(-damage);
                     else

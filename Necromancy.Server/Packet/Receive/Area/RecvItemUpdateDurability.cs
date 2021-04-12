@@ -14,7 +14,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort)AreaPacketId.recv_item_update_durability, ServerType.Area)
         {
             _durabilityChangedItem = durabilityChangedItem;
-            Clients.Add(client);
+            clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()

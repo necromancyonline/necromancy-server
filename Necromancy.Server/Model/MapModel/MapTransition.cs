@@ -9,22 +9,22 @@ namespace Necromancy.Server.Model
     {
         private NecServer _server;
         private MapTransitionTask _transitionTask;
-        public bool InvertedTransition;
-        public Vector3 LeftPos;
-        public int MapId;
-        public int MaplinkColor;
-        public byte MaplinkHeading;
-        public int MaplinkOffset;
-        public int MaplinkWidth;
-        public int RefDistance;
-        public Vector3 ReferencePos;
-        public Vector3 RightPos;
-        public MapPosition ToPos;
-        public int TransitionMapId;
+        public bool invertedTransition;
+        public Vector3 leftPos;
+        public int mapId;
+        public int maplinkColor;
+        public byte maplinkHeading;
+        public int maplinkOffset;
+        public int maplinkWidth;
+        public int refDistance;
+        public Vector3 referencePos;
+        public Vector3 rightPos;
+        public MapPosition toPos;
+        public int transitionMapId;
 
         public MapTransition()
         {
-            ToPos = new MapPosition();
+            toPos = new MapPosition();
         }
 
         public int id { get; set; }
@@ -36,8 +36,8 @@ namespace Necromancy.Server.Model
         public void Start(NecServer server, Map map)
         {
             _server = server;
-            _transitionTask = new MapTransitionTask(_server, map, TransitionMapId, ReferencePos, RefDistance, LeftPos,
-                RightPos, instanceId, InvertedTransition, ToPos, id);
+            _transitionTask = new MapTransitionTask(_server, map, transitionMapId, referencePos, refDistance, leftPos,
+                rightPos, instanceId, invertedTransition, toPos, id);
             _transitionTask.Start();
         }
 

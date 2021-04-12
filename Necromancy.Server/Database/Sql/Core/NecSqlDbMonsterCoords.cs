@@ -43,7 +43,7 @@ namespace Necromancy.Server.Database.Sql.Core
             }, out long autoIncrement);
             if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
-            monsterCoord.Id = (int)autoIncrement;
+            monsterCoord.id = (int)autoIncrement;
             return true;
         }
 
@@ -119,7 +119,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@x", monsterCoord.destination.X);
                 AddParameter(command, "@y", monsterCoord.destination.Y);
                 AddParameter(command, "@z", monsterCoord.destination.Z);
-                AddParameter(command, "@id", monsterCoord.Id);
+                AddParameter(command, "@id", monsterCoord.id);
             });
             return rowsAffected > NO_ROWS_AFFECTED;
         }
@@ -135,7 +135,7 @@ namespace Necromancy.Server.Database.Sql.Core
         {
             MonsterCoord monsterCoord = new MonsterCoord();
             Vector3 coords = new Vector3();
-            monsterCoord.Id = GetInt32(reader, "id");
+            monsterCoord.id = GetInt32(reader, "id");
             monsterCoord.monsterId = (uint)GetInt32(reader, "monster_id");
             monsterCoord.mapId = (uint)GetInt32(reader, "map_id");
             monsterCoord.coordIdx = GetInt32(reader, "coord_idx");

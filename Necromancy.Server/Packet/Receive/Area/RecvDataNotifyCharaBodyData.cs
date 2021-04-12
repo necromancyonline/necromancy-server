@@ -24,11 +24,11 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort)AreaPacketId.recv_data_notify_charabody_data, ServerType.Area)
         {
             _deadBody = deadBody;
-            foreach (ItemInstance itemInstance in _deadBody.EquippedItems.Values)
+            foreach (ItemInstance itemInstance in _deadBody.equippedItems.Values)
                 if (itemInstance.currentEquipSlot == ItemEquipSlots.Talkring)
-                    _deadBody.EquippedItems.Remove(itemInstance.currentEquipSlot); //Skip rendering talk rings.
-            _equippedItems = new ItemInstance[_deadBody.EquippedItems.Count];
-            _deadBody.EquippedItems.Values.CopyTo(_equippedItems, 0);
+                    _deadBody.equippedItems.Remove(itemInstance.currentEquipSlot); //Skip rendering talk rings.
+            _equippedItems = new ItemInstance[_deadBody.equippedItems.Count];
+            _deadBody.equippedItems.Values.CopyTo(_equippedItems, 0);
         }
 
         protected override IBuffer ToBuffer()

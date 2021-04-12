@@ -60,10 +60,10 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@class_id", character.classId);
                 AddParameter(command, "@level", character.level);
                 AddParameter(command, "@created", character.created);
-                AddParameter(command, "@hp_current", character.Hp.current);
-                AddParameter(command, "@mp_current", character.Mp.current);
+                AddParameter(command, "@hp_current", character.hp.current);
+                AddParameter(command, "@mp_current", character.mp.current);
                 AddParameter(command, "@gold", character.adventureBagGold);
-                AddParameter(command, "@condition_current", character.Condition.current);
+                AddParameter(command, "@condition_current", character.condition.current);
                 AddParameter(command, "@channel", character.channel);
                 AddParameter(command, "@face_arrange_id", character.faceArrangeId);
                 AddParameter(command, "@voice_id", character.voiceId);
@@ -159,10 +159,10 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@class_id", character.classId);
                 AddParameter(command, "@level", character.level);
                 AddParameter(command, "@created", character.created);
-                AddParameter(command, "@hp_current", character.Hp.current);
-                AddParameter(command, "@mp_current", character.Mp.current);
+                AddParameter(command, "@hp_current", character.hp.current);
+                AddParameter(command, "@mp_current", character.mp.current);
                 AddParameter(command, "@gold", character.adventureBagGold);
-                AddParameter(command, "@condition_current", character.Condition.current);
+                AddParameter(command, "@condition_current", character.condition.current);
                 AddParameter(command, "@channel", character.channel);
                 AddParameter(command, "@face_arrange_id", character.faceArrangeId);
                 AddParameter(command, "@voice_id", character.voiceId);
@@ -222,12 +222,12 @@ namespace Necromancy.Server.Database.Sql.Core
             character.luck = GetByte(reader, "luck");
             character.classId = GetByte(reader, "class_id");
             character.level = GetByte(reader, "level");
-            character.Hp.SetMax(GetInt32(reader, "hp_current")); //Temporary until Max HP calc is created
-            character.Mp.SetMax(GetInt32(reader, "mp_current")); //Temporary until Max HP calc is created
-            character.Hp.SetCurrent(GetInt32(reader, "hp_current"));
-            character.Mp.SetCurrent(GetInt32(reader, "mp_current"));
+            character.hp.SetMax(GetInt32(reader, "hp_current")); //Temporary until Max HP calc is created
+            character.mp.SetMax(GetInt32(reader, "mp_current")); //Temporary until Max HP calc is created
+            character.hp.SetCurrent(GetInt32(reader, "hp_current"));
+            character.mp.SetCurrent(GetInt32(reader, "mp_current"));
             character.adventureBagGold = GetUInt64(reader, "gold");
-            character.Condition.SetCurrent(GetInt32(reader, "condition_current"));
+            character.condition.SetCurrent(GetInt32(reader, "condition_current"));
             character.channel = GetInt32(reader, "channel");
             character.faceArrangeId = GetByte(reader, "face_arrange_id");
             character.voiceId = GetByte(reader, "voice_id");

@@ -34,7 +34,7 @@ namespace Necromancy.Server.Packet.Area
             byte logOutType = packet.data.ReadByte();
             byte x = packet.data.ReadByte();
             DateTime logoutTime = DateTime.Now.AddSeconds(castingTime);
-            client.character.CharacterTask.Logout(logoutTime, logOutType);
+            client.character.characterTask.Logout(logoutTime, logOutType);
         }
     }
 }

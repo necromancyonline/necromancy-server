@@ -4,7 +4,7 @@ namespace Necromancy.Server.Systems.Item
     {
         public const int MAX_GEM_SLOTS = 3;
 
-        public string TalkRingName = "";
+        public string talkRingName = "";
 
         /// <summary>
         ///     An instance of a base item. Holds mostly changable values.

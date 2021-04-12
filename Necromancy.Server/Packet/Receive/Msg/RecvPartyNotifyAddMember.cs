@@ -32,12 +32,12 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteUInt32(_client.character.classId); //Class/job
             res.WriteByte(_client.soul.level); //Soul rank
             res.WriteByte(_client.character.level); //Character level
-            res.WriteInt32(_client.character.Hp.current); // current hp?
-            res.WriteInt32(_client.character.Mp.current); // current mp?
-            res.WriteInt32(_client.character.Od.current); // current od?
-            res.WriteInt32(_client.character.Hp.max); // max hp?
-            res.WriteInt32(_client.character.Mp.max); // maxmp?
-            res.WriteInt32(_client.character.Od.max); // max od?
+            res.WriteInt32(_client.character.hp.current); // current hp?
+            res.WriteInt32(_client.character.mp.current); // current mp?
+            res.WriteInt32(_client.character.od.current); // current od?
+            res.WriteInt32(_client.character.hp.max); // max hp?
+            res.WriteInt32(_client.character.mp.max); // maxmp?
+            res.WriteInt32(_client.character.od.max); // max od?
             res.WriteInt32(_client.character.mapId); //Might make the character selectable?
             res.WriteInt32(_client.character.mapId); //One half of location? 1001902 = Illfalo Port but is actually Deep Sea Port
             res.WriteInt32(500); // current guard points?

@@ -25,16 +25,16 @@ namespace Necromancy.Server.Model
         //private int CurrentHp { get; set; }
         private int _gotoDistance;
         private bool _monsterAgro;
-        public BaseStat Hp;
-        public Loot Loot;
+        public BaseStat hp;
+        public Loot loot;
 
-        public List<MonsterCoord> MonsterCoords;
-        public BaseStat Mp;
-        public BaseStat Od;
+        public List<MonsterCoord> monsterCoords;
+        public BaseStat mp;
+        public BaseStat od;
 
         public MonsterSpawn()
         {
-            Hp = new BaseStat(300, 300);
+            hp = new BaseStat(300, 300);
             respawnTime = 10000;
             _gotoDistance = 10;
             spawnActive = false;
@@ -43,12 +43,12 @@ namespace Necromancy.Server.Model
             defaultCoords = true;
             created = DateTime.Now;
             updated = DateTime.Now;
-            MonsterCoords = new List<MonsterCoord>();
+            monsterCoords = new List<MonsterCoord>();
             monsterAgroList = new Dictionary<uint, int>();
             monsterWalkVelocity = 175;
             monsterRunVelocity = 300;
             monsterVisible = false;
-            Loot = new Loot(level, id);
+            loot = new Loot(level, id);
         }
 
         public int id { get; set; }
@@ -91,7 +91,7 @@ namespace Necromancy.Server.Model
             MonsterCoord monsterCoord = null)
         {
             if (monsterCoord == null)
-                monsterCoord = MonsterCoords[currentCoordIndex];
+                monsterCoord = monsterCoords[currentCoordIndex];
             Vector3 destPos = new Vector3(monsterCoord.destination.X, monsterCoord.destination.Y,
                 monsterCoord.destination.Z);
             Vector3 monsterPos = new Vector3(x, y, z);
@@ -121,7 +121,7 @@ namespace Necromancy.Server.Model
             MonsterCoord monsterCoord = null)
         {
             if (monsterCoord == null)
-                monsterCoord = MonsterCoords[currentCoordIndex];
+                monsterCoord = monsterCoords[currentCoordIndex];
             Vector3 destPos = new Vector3(monsterCoord.destination.X, monsterCoord.destination.Y,
                 monsterCoord.destination.Z);
             Vector3 monsterPos = new Vector3(x, y, z);
@@ -156,8 +156,8 @@ namespace Necromancy.Server.Model
             res.WriteFloat(x);
             res.WriteFloat(y);
             res.WriteFloat(z);
-            res.WriteFloat(moveTo.XTick); //X per tick
-            res.WriteFloat(moveTo.YTick); //Y Per tick
+            res.WriteFloat(moveTo.xTick); //X per tick
+            res.WriteFloat(moveTo.yTick); //Y Per tick
             res.WriteFloat(1); //verticalMovementSpeedMultiplier
 
             res.WriteFloat(1 / travelTime); //movementMultiplier
@@ -281,7 +281,7 @@ namespace Necromancy.Server.Model
         */
         public void UpdateHp(int modifier, NecServer server = null, bool verifyAgro = false, uint instanceId = 0)
         {
-            Hp.Modify(modifier);
+            hp.Modify(modifier);
             if (verifyAgro)
             {
                 if (server == null)
@@ -415,14 +415,14 @@ namespace Necromancy.Server.Model
 
     public class MonsterTick
     {
-        public float XTick;
-        public float YTick;
-        public float ZTick;
+        public float xTick;
+        public float yTick;
+        public float zTick;
     }
 
     public class MonsterCoord
     {
-        public int Id;
+        public int id;
         public uint monsterId { get; set; }
         public uint mapId { get; set; }
         public int coordIdx { get; set; }

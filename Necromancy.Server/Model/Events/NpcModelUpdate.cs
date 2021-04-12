@@ -4,7 +4,7 @@ namespace Necromancy.Server.Model
 {
     public class NpcModelUpdate : Event
     {
-        public uint Id;
+        public uint id;
 
         public NpcModelUpdate()
         {

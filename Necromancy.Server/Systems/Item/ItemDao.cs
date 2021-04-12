@@ -773,8 +773,8 @@ namespace Necromancy.Server.Systems.Item
             //itemInstance.StatusMalus = (ItemStatusEffect)Enum.Parse(typeof(ItemStatusEffect), reader.GetString("status_malus"));
             itemInstance.statusMalusPercent = reader.GetInt32("status_percent");
 
-            itemInstance.ObjectType = reader.GetString("object_type"); //not sure what this is for
-            itemInstance.EquipSlot2 = reader.GetString("equip_slot"); //not sure what this is for
+            itemInstance.objectType = reader.GetString("object_type"); //not sure what this is for
+            itemInstance.equipSlot2 = reader.GetString("equip_slot"); //not sure what this is for
 
             itemInstance.isUseableInTown = !reader.GetBoolean("no_use_in_town"); //not sure what this is for
             itemInstance.isStorable = !reader.GetBoolean("no_storage");
@@ -790,7 +790,7 @@ namespace Necromancy.Server.Systems.Item
 
             itemInstance.iconId = reader.GetInt32("icon");
 
-            itemInstance.TalkRingName = "";
+            itemInstance.talkRingName = "";
             //TODO fix all the data types once mysql is implemented
             itemInstance.bagSize = reader.GetByte("num_of_bag_slots");
 
