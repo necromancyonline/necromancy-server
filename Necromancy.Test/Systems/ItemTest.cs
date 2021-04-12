@@ -161,8 +161,8 @@ namespace Necromancy.Test.Systems
             [InlineData(100)]
             public void TestItemMovePlace(byte quantity)
             {
-                const ulong InstanceId = 756366;
-                ItemInstance itemInstance = new ItemInstance(InstanceId);
+                const ulong INSTANCE_ID = 756366;
+                ItemInstance itemInstance = new ItemInstance(INSTANCE_ID);
                 itemInstance.quantity = quantity;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, itemInstance);
@@ -172,10 +172,10 @@ namespace Necromancy.Test.Systems
 
                 Assert.Equal(MoveType.Place, moveResult.type);
                 Assert.Null(moveResult.originItem);
-                Assert.Equal(InstanceId, moveResult.destItem.instanceId);
+                Assert.Equal(INSTANCE_ID, moveResult.destItem.instanceId);
 
                 Assert.Null(_dummyCharacter.itemLocationVerifier.GetItem(fromLoc));
-                Assert.Equal(InstanceId, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
+                Assert.Equal(INSTANCE_ID, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
                 Assert.Equal(itemInstance.location, toLoc);
                 Assert.Equal(quantity, itemInstance.quantity);
             }
@@ -183,11 +183,11 @@ namespace Necromancy.Test.Systems
             [Fact]
             public void TestItemMoveNoItemAtLocation()
             {
-                const byte Quantity = 2;
+                const byte QUANTITY = 2;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
 
-                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, Quantity));
+                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, QUANTITY));
 
                 Assert.Equal(ItemExceptionType.Generic, e.type);
             }
@@ -195,16 +195,16 @@ namespace Necromancy.Test.Systems
             [Fact]
             public void TestItemMovePlaceInvalidQuantity()
             {
-                const ulong InstanceId = 756366;
-                const byte StartQuantity = 5;
-                const byte MoveQuantity = 10;
-                ItemInstance itemInstance = new ItemInstance(InstanceId);
-                itemInstance.quantity = StartQuantity;
+                const ulong INSTANCE_ID = 756366;
+                const byte START_QUANTITY = 5;
+                const byte MOVE_QUANTITY = 10;
+                ItemInstance itemInstance = new ItemInstance(INSTANCE_ID);
+                itemInstance.quantity = START_QUANTITY;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, itemInstance);
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
 
-                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, MoveQuantity));
+                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, MOVE_QUANTITY));
 
                 Assert.Equal(ItemExceptionType.Amount, e.type);
             }
@@ -212,28 +212,28 @@ namespace Necromancy.Test.Systems
             [Fact]
             public void TestItemMovePlaceQuantity()
             {
-                const ulong InstanceId = 756366;
-                const int StartQuantity = 10;
-                const int MoveQuantity = 6;
-                ItemInstance itemOriginal = new ItemInstance(InstanceId);
-                itemOriginal.quantity = StartQuantity;
+                const ulong INSTANCE_ID = 756366;
+                const int START_QUANTITY = 10;
+                const int MOVE_QUANTITY = 6;
+                ItemInstance itemOriginal = new ItemInstance(INSTANCE_ID);
+                itemOriginal.quantity = START_QUANTITY;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, itemOriginal);
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
 
-                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, MoveQuantity);
+                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, MOVE_QUANTITY);
 
                 Assert.Equal(MoveType.PlaceQuantity, moveResult.type);
-                Assert.Equal(InstanceId, moveResult.originItem.instanceId);
+                Assert.Equal(INSTANCE_ID, moveResult.originItem.instanceId);
 
                 Assert.Equal(fromLoc, itemOriginal.location);
-                Assert.Equal(StartQuantity - MoveQuantity, itemOriginal.quantity);
+                Assert.Equal(START_QUANTITY - MOVE_QUANTITY, itemOriginal.quantity);
                 Assert.NotNull(_dummyCharacter.itemLocationVerifier.GetItem(fromLoc));
-                Assert.Equal(InstanceId, _dummyCharacter.itemLocationVerifier.GetItem(fromLoc).instanceId);
+                Assert.Equal(INSTANCE_ID, _dummyCharacter.itemLocationVerifier.GetItem(fromLoc).instanceId);
 
                 Assert.Equal(itemOriginal.baseId, moveResult.destItem.baseId);
                 Assert.Equal(toLoc, moveResult.destItem.location);
-                Assert.Equal(MoveQuantity, moveResult.destItem.quantity);
+                Assert.Equal(MOVE_QUANTITY, moveResult.destItem.quantity);
                 Assert.NotNull(_dummyCharacter.itemLocationVerifier.GetItem(toLoc));
             }
 
@@ -244,16 +244,16 @@ namespace Necromancy.Test.Systems
             [InlineData(50, 67)]
             public void TestItemMoveSwap(byte fromQuantity, byte toQuantity)
             {
-                const ulong FromId = 234987915;
-                const ulong ToId = 33388888;
+                const ulong FROM_ID = 234987915;
+                const ulong TO_ID = 33388888;
 
-                ItemInstance fromItem = new ItemInstance(FromId);
+                ItemInstance fromItem = new ItemInstance(FROM_ID);
                 fromItem.quantity = fromQuantity;
                 fromItem.maxStackSize = fromQuantity;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, fromItem);
 
-                ItemInstance toItem = new ItemInstance(ToId);
+                ItemInstance toItem = new ItemInstance(TO_ID);
                 toItem.quantity = toQuantity;
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
                 _dummyCharacter.itemLocationVerifier.PutItem(toLoc, toItem);
@@ -261,74 +261,74 @@ namespace Necromancy.Test.Systems
                 MoveResult moveResult = _itemService.Move(fromLoc, toLoc, fromQuantity);
 
                 Assert.Equal(MoveType.Swap, moveResult.type);
-                Assert.Equal(FromId, moveResult.destItem.instanceId);
-                Assert.Equal(ToId, moveResult.originItem.instanceId);
+                Assert.Equal(FROM_ID, moveResult.destItem.instanceId);
+                Assert.Equal(TO_ID, moveResult.originItem.instanceId);
 
                 Assert.Equal(fromItem.location, toLoc);
-                Assert.Equal(FromId, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
+                Assert.Equal(FROM_ID, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
                 Assert.Equal(fromQuantity, fromItem.quantity);
                 Assert.Equal(toItem.location, fromLoc);
-                Assert.Equal(ToId, _dummyCharacter.itemLocationVerifier.GetItem(fromLoc).instanceId);
+                Assert.Equal(TO_ID, _dummyCharacter.itemLocationVerifier.GetItem(fromLoc).instanceId);
                 Assert.Equal(toQuantity, toItem.quantity);
             }
 
             [Fact]
             public void TestItemMoveAddQuantity()
             {
-                const ulong ToId = 234987915;
-                const ulong FromId = 34151555;
-                const int FromQuantity = 10;
-                const int ToQuantity = 30;
-                const int MoveQuantity = FromQuantity - 1;
+                const ulong TO_ID = 234987915;
+                const ulong FROM_ID = 34151555;
+                const int FROM_QUANTITY = 10;
+                const int TO_QUANTITY = 30;
+                const int MOVE_QUANTITY = FROM_QUANTITY - 1;
 
-                ItemInstance fromItem = new ItemInstance(FromId);
-                fromItem.quantity = FromQuantity;
+                ItemInstance fromItem = new ItemInstance(FROM_ID);
+                fromItem.quantity = FROM_QUANTITY;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, fromItem);
 
-                ItemInstance toItem = new ItemInstance(ToId);
-                toItem.maxStackSize = ToQuantity + MoveQuantity + 5;
-                toItem.quantity = ToQuantity;
+                ItemInstance toItem = new ItemInstance(TO_ID);
+                toItem.maxStackSize = TO_QUANTITY + MOVE_QUANTITY + 5;
+                toItem.quantity = TO_QUANTITY;
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
                 _dummyCharacter.itemLocationVerifier.PutItem(toLoc, toItem);
 
-                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, MoveQuantity);
+                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, MOVE_QUANTITY);
 
                 Assert.Equal(MoveType.AddQuantity, moveResult.type);
-                Assert.Equal(FromId, moveResult.originItem.instanceId);
-                Assert.Equal(ToId, moveResult.destItem.instanceId);
+                Assert.Equal(FROM_ID, moveResult.originItem.instanceId);
+                Assert.Equal(TO_ID, moveResult.destItem.instanceId);
 
-                Assert.Equal(FromId, _dummyCharacter.itemLocationVerifier.GetItem(fromLoc).instanceId);
-                Assert.Equal(FromQuantity - MoveQuantity, fromItem.quantity);
-                Assert.Equal(ToId, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
-                Assert.Equal(ToQuantity + MoveQuantity, toItem.quantity);
+                Assert.Equal(FROM_ID, _dummyCharacter.itemLocationVerifier.GetItem(fromLoc).instanceId);
+                Assert.Equal(FROM_QUANTITY - MOVE_QUANTITY, fromItem.quantity);
+                Assert.Equal(TO_ID, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
+                Assert.Equal(TO_QUANTITY + MOVE_QUANTITY, toItem.quantity);
             }
 
             [Fact]
             public void TestItemMoveAddQuantityWrongItem()
             {
-                const ulong ToId = 234987915;
-                const int BaseToId = 1234;
-                const ulong FromId = 34151555;
-                const int BaseFromId = 5678;
-                const int FromQuantity = 10;
-                const int ToQuantity = 30;
-                const int MoveQuantity = FromQuantity - 1;
+                const ulong TO_ID = 234987915;
+                const int BASE_TO_ID = 1234;
+                const ulong FROM_ID = 34151555;
+                const int BASE_FROM_ID = 5678;
+                const int FROM_QUANTITY = 10;
+                const int TO_QUANTITY = 30;
+                const int MOVE_QUANTITY = FROM_QUANTITY - 1;
 
-                ItemInstance fromItem = new ItemInstance(FromId);
-                fromItem.quantity = FromQuantity;
-                fromItem.baseId = BaseFromId;
+                ItemInstance fromItem = new ItemInstance(FROM_ID);
+                fromItem.quantity = FROM_QUANTITY;
+                fromItem.baseId = BASE_FROM_ID;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, fromItem);
 
-                ItemInstance toItem = new ItemInstance(ToId);
-                toItem.maxStackSize = ToQuantity + MoveQuantity + 5;
-                toItem.quantity = ToQuantity;
-                toItem.baseId = BaseToId;
+                ItemInstance toItem = new ItemInstance(TO_ID);
+                toItem.maxStackSize = TO_QUANTITY + MOVE_QUANTITY + 5;
+                toItem.quantity = TO_QUANTITY;
+                toItem.baseId = BASE_TO_ID;
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
                 _dummyCharacter.itemLocationVerifier.PutItem(toLoc, toItem);
 
-                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, MoveQuantity));
+                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(fromLoc, toLoc, MOVE_QUANTITY));
 
                 Assert.Equal(ItemExceptionType.BagLocation, e.type);
             }
@@ -336,102 +336,102 @@ namespace Necromancy.Test.Systems
             [Fact]
             public void TestItemMovePlaceAllQuantity()
             {
-                const ulong FromId = 34151555;
-                const ulong ToId = 234987915;
-                const int FromQuantity = 10;
-                const int ToQuantity = 30;
+                const ulong FROM_ID = 34151555;
+                const ulong TO_ID = 234987915;
+                const int FROM_QUANTITY = 10;
+                const int TO_QUANTITY = 30;
 
-                ItemInstance fromItem = new ItemInstance(FromId);
-                fromItem.quantity = FromQuantity;
+                ItemInstance fromItem = new ItemInstance(FROM_ID);
+                fromItem.quantity = FROM_QUANTITY;
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, fromItem);
 
-                ItemInstance toItem = new ItemInstance(ToId);
-                toItem.maxStackSize = ToQuantity + FromQuantity + 5;
-                toItem.quantity = ToQuantity;
+                ItemInstance toItem = new ItemInstance(TO_ID);
+                toItem.maxStackSize = TO_QUANTITY + FROM_QUANTITY + 5;
+                toItem.quantity = TO_QUANTITY;
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
                 _dummyCharacter.itemLocationVerifier.PutItem(toLoc, toItem);
 
-                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, FromQuantity);
+                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, FROM_QUANTITY);
 
                 Assert.Equal(MoveType.AllQuantity, moveResult.type);
                 Assert.Null(moveResult.originItem);
-                Assert.Equal(ToId, moveResult.destItem.instanceId);
+                Assert.Equal(TO_ID, moveResult.destItem.instanceId);
 
                 Assert.Null(_dummyCharacter.itemLocationVerifier.GetItem(fromLoc));
-                Assert.Equal(FromQuantity + ToQuantity, toItem.quantity);
-                Assert.Equal(ToId, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
+                Assert.Equal(FROM_QUANTITY + TO_QUANTITY, toItem.quantity);
+                Assert.Equal(TO_ID, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
             }
 
             [Fact]
             public void TestItemMovePlaceInEquippedBag()
             {
-                const ulong InstanceId = 756366;
-                const ulong BagId = 534577777;
-                const byte BagSize = 10;
-                const int Quantity = 1;
-                ItemInstance itemInstance = new ItemInstance(InstanceId);
+                const ulong INSTANCE_ID = 756366;
+                const ulong BAG_ID = 534577777;
+                const byte BAG_SIZE = 10;
+                const int QUANTITY = 1;
+                ItemInstance itemInstance = new ItemInstance(INSTANCE_ID);
                 ItemLocation fromLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(fromLoc, itemInstance);
 
-                ItemInstance equippedBag = new ItemInstance(BagId);
-                equippedBag.bagSize = BagSize;
+                ItemInstance equippedBag = new ItemInstance(BAG_ID);
+                equippedBag.bagSize = BAG_SIZE;
                 ItemLocation bagLocation = new ItemLocation(ItemZoneType.BagSlot, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(bagLocation, equippedBag);
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.EquippedBags, 0, 1);
 
-                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, Quantity);
+                MoveResult moveResult = _itemService.Move(fromLoc, toLoc, QUANTITY);
 
                 Assert.Equal(MoveType.Place, moveResult.type);
-                Assert.Equal(InstanceId, moveResult.destItem.instanceId);
+                Assert.Equal(INSTANCE_ID, moveResult.destItem.instanceId);
 
                 Assert.Null(_dummyCharacter.itemLocationVerifier.GetItem(fromLoc));
-                Assert.Equal(InstanceId, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
+                Assert.Equal(INSTANCE_ID, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
                 Assert.Equal(itemInstance.location, toLoc);
-                Assert.Equal(Quantity, itemInstance.quantity);
-                Assert.Equal(BagSize - 1, _dummyCharacter.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.EquippedBags));
+                Assert.Equal(QUANTITY, itemInstance.quantity);
+                Assert.Equal(BAG_SIZE - 1, _dummyCharacter.itemLocationVerifier.GetTotalFreeSpace(ItemZoneType.EquippedBags));
             }
 
             [Fact]
             public void TestItemMoveEmptyBagOutOfSlot()
             {
-                const ulong BagId = 534577777;
-                const int Quantity = 1;
-                ItemInstance bag = new ItemInstance(BagId);
+                const ulong BAG_ID = 534577777;
+                const int QUANTITY = 1;
+                ItemInstance bag = new ItemInstance(BAG_ID);
                 ItemLocation bagLoc = new ItemLocation(ItemZoneType.BagSlot, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(bagLoc, bag);
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
 
-                MoveResult moveResult = _itemService.Move(bagLoc, toLoc, Quantity);
+                MoveResult moveResult = _itemService.Move(bagLoc, toLoc, QUANTITY);
 
                 Assert.Equal(MoveType.Place, moveResult.type);
-                Assert.Equal(BagId, moveResult.destItem.instanceId);
+                Assert.Equal(BAG_ID, moveResult.destItem.instanceId);
 
                 Assert.Null(_dummyCharacter.itemLocationVerifier.GetItem(bagLoc));
-                Assert.Equal(BagId, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
+                Assert.Equal(BAG_ID, _dummyCharacter.itemLocationVerifier.GetItem(toLoc).instanceId);
                 Assert.Equal(bag.location, toLoc);
-                Assert.Equal(Quantity, bag.quantity);
+                Assert.Equal(QUANTITY, bag.quantity);
             }
 
             [Fact]
             public void TestItemMoveNonEmptyBagOutOfSlot()
             {
-                const ulong BagId = 534577777;
-                const ulong ItemInBagId = 5117;
-                const int Quantity = 1;
+                const ulong BAG_ID = 534577777;
+                const ulong ITEM_IN_BAG_ID = 5117;
+                const int QUANTITY = 1;
 
-                ItemInstance bag = new ItemInstance(BagId);
+                ItemInstance bag = new ItemInstance(BAG_ID);
                 bag.bagSize = 8;
                 ItemLocation bagLoc = new ItemLocation(ItemZoneType.BagSlot, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(bagLoc, bag);
 
-                ItemInstance itemInBag = new ItemInstance(ItemInBagId);
+                ItemInstance itemInBag = new ItemInstance(ITEM_IN_BAG_ID);
                 ItemLocation itemInBagLoc = new ItemLocation(ItemZoneType.EquippedBags, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(itemInBagLoc, itemInBag);
 
                 ItemLocation toLoc = new ItemLocation(ItemZoneType.AdventureBag, 0, 1);
 
-                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(bagLoc, toLoc, Quantity));
+                ItemException e = Assert.Throws<ItemException>(() => _itemService.Move(bagLoc, toLoc, QUANTITY));
 
                 Assert.Equal(ItemExceptionType.BagLocation, e.type);
             }
@@ -451,50 +451,50 @@ namespace Necromancy.Test.Systems
             [Fact]
             public void TestItemRemoveAll()
             {
-                const ulong InstanceId = 756366;
-                const int Quantity = 5;
-                ItemInstance itemInstance = new ItemInstance(InstanceId);
-                itemInstance.quantity = Quantity;
+                const ulong INSTANCE_ID = 756366;
+                const int QUANTITY = 5;
+                ItemInstance itemInstance = new ItemInstance(INSTANCE_ID);
+                itemInstance.quantity = QUANTITY;
                 ItemLocation loc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(loc, itemInstance);
 
-                ItemInstance result = _itemService.Remove(loc, Quantity);
+                ItemInstance result = _itemService.Remove(loc, QUANTITY);
 
                 Assert.Equal(0, result.quantity);
-                Assert.Equal(InstanceId, result.instanceId);
+                Assert.Equal(INSTANCE_ID, result.instanceId);
                 Assert.Equal(ItemLocation.InvalidLocation, result.location);
             }
 
             [Fact]
             public void TestItemRemoveSome()
             {
-                const ulong InstanceId = 756366;
-                const int QuantityToRemove = 5;
-                const int QuantityAvailable = QuantityToRemove + 5;
-                ItemInstance itemInstance = new ItemInstance(InstanceId);
-                itemInstance.quantity = QuantityAvailable;
+                const ulong INSTANCE_ID = 756366;
+                const int QUANTITY_TO_REMOVE = 5;
+                const int QUANTITY_AVAILABLE = QUANTITY_TO_REMOVE + 5;
+                ItemInstance itemInstance = new ItemInstance(INSTANCE_ID);
+                itemInstance.quantity = QUANTITY_AVAILABLE;
                 ItemLocation loc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(loc, itemInstance);
 
-                ItemInstance result = _itemService.Remove(loc, QuantityToRemove);
+                ItemInstance result = _itemService.Remove(loc, QUANTITY_TO_REMOVE);
 
-                Assert.Equal(QuantityAvailable - QuantityToRemove, result.quantity);
-                Assert.Equal(InstanceId, result.instanceId);
+                Assert.Equal(QUANTITY_AVAILABLE - QUANTITY_TO_REMOVE, result.quantity);
+                Assert.Equal(INSTANCE_ID, result.instanceId);
                 Assert.Equal(loc, result.location);
             }
 
             [Fact]
             public void TestItemRemoveTooMany()
             {
-                const ulong InstanceId = 756366;
-                const int QuantityAvailable = 5;
-                const int QuantityToRemove = QuantityAvailable + 5;
-                ItemInstance itemInstance = new ItemInstance(InstanceId);
-                itemInstance.quantity = QuantityAvailable;
+                const ulong INSTANCE_ID = 756366;
+                const int QUANTITY_AVAILABLE = 5;
+                const int QUANTITY_TO_REMOVE = QUANTITY_AVAILABLE + 5;
+                ItemInstance itemInstance = new ItemInstance(INSTANCE_ID);
+                itemInstance.quantity = QUANTITY_AVAILABLE;
                 ItemLocation loc = new ItemLocation(ItemZoneType.AdventureBag, 0, 0);
                 _dummyCharacter.itemLocationVerifier.PutItem(loc, itemInstance);
 
-                ItemException e = Assert.Throws<ItemException>(() => _itemService.Remove(loc, QuantityToRemove));
+                ItemException e = Assert.Throws<ItemException>(() => _itemService.Remove(loc, QUANTITY_TO_REMOVE));
 
                 Assert.Equal(ItemExceptionType.Amount, e.type);
             }

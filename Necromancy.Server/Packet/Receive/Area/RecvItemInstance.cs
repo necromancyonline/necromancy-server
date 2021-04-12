@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             _itemInstance = itemInstance;
             _client = client;
-            clients.Add(_client);
+            Clients.Add(_client);
         }
 
         protected override IBuffer ToBuffer()
@@ -35,7 +35,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(_itemInstance.currentDurability); //CURRENT DURABILITY
             res.WriteByte(_itemInstance.enhancementLevel); //ENHANCEMENT LEVEL?
             res.WriteByte(_itemInstance.specialForgeLevel); //?SPECIAL FORGE LEVEL?
-            res.WriteCString(_itemInstance.talkRingName); //TALK RING NAME
+            res.WriteCString(_itemInstance.TalkRingName); //TALK RING NAME
             res.WriteInt16(_itemInstance.physical); //PHYSICAL
             res.WriteInt16(_itemInstance.magical); //MAGICAL
             res.WriteInt32(_itemInstance.maximumDurability); //MAX DURABILITY

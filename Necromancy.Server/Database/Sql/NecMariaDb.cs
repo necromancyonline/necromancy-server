@@ -9,9 +9,9 @@ namespace Necromancy.Server.Database.Sql
     /// </summary>
     public class NecMariaDb : NecSqlDb<MySqlConnection, MySqlCommand>, IDatabase
     {
-        public const string MemoryDatabasePath = ":memory:";
+        public const string MEMORY_DATABASE_PATH = ":memory:";
 
-        private const string _SelectAutoIncrement = "SELECT last_insert_rowid()";
+        private const string SELECT_AUTO_INCREMENT = "SELECT last_insert_rowid()";
 
 
         private readonly string _connectionString;

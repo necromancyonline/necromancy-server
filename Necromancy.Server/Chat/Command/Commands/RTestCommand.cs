@@ -148,7 +148,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 case "ap":
                     RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(Util.GetRandomNumber(0, 200));
                     router.Send(client.map, recvCharaUpdateAp);
-                    client.character.gp.SetCurrent(25);
+                    client.character.Gp.SetCurrent(25);
                     break;
 
                 case "ac":
@@ -199,8 +199,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "ob684":
-                    Recv0XB684 recv0XB684 = new Recv0XB684();
-                    router.Send(client.map, recv0XB684);
+                    Recv0Xb684 recv0Xb684 = new Recv0Xb684();
+                    router.Send(client.map, recv0Xb684);
                     break;
 
                 case "ob4978":
@@ -239,13 +239,13 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "obd1f6":
-                    Recv0XD1F6 recv0XD1F6 = new Recv0XD1F6();
-                    router.Send(client.map, recv0XD1F6);
+                    Recv0Xd1F6 recv0Xd1F6 = new Recv0Xd1F6();
+                    router.Send(client.map, recv0Xd1F6);
                     break;
 
                 case "obe8b9":
-                    Recv0XE8B9 recv0XE8B9 = new Recv0XE8B9();
-                    router.Send(client.map, recv0XE8B9);
+                    Recv0Xe8B9 recv0Xe8B9 = new Recv0Xe8B9();
+                    router.Send(client.map, recv0Xe8B9);
                     break;
 
 
@@ -286,8 +286,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     router.Send(recvEventStart, client);
                     Experience experience = new Experience();
                     client.character.level++;
-                    client.character.hp.SetMax(client.character.hp.max + 10);
-                    client.character.mp.SetMax(client.character.mp.max + 10);
+                    client.character.Hp.SetMax(client.character.Hp.max + 10);
+                    client.character.Mp.SetMax(client.character.Mp.max + 10);
                     client.character.strength += (ushort)Util.GetRandomNumber(0, 2);
                     client.character.vitality += (ushort)Util.GetRandomNumber(0, 2);
                     client.character.dexterity += (ushort)Util.GetRandomNumber(0, 2);
@@ -298,8 +298,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     int luckyShot = Util.GetRandomNumber(0, client.character.luck);
                     if (luckyShot > client.character.luck * .8)
                     {
-                        client.character.hp.SetMax(client.character.hp.max + 10);
-                        client.character.mp.SetMax(client.character.mp.max + 10);
+                        client.character.Hp.SetMax(client.character.Hp.max + 10);
+                        client.character.Mp.SetMax(client.character.Mp.max + 10);
                         client.character.strength = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.strength);
                         client.character.vitality = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.vitality);
                         client.character.dexterity = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.dexterity);
@@ -315,8 +315,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.character, experience);
                     RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
 
-                    RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.character.hp.max);
-                    RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.character.mp.max);
+                    RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.character.Hp.max);
+                    RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.character.Mp.max);
                     RecvCharaUpdateAbility recvCharaUpdateAbilityStr = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Str, client.character.strength, client.character.battleParam.plusStrength);
                     RecvCharaUpdateAbility recvCharaUpdateAbilityVit = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Vit, client.character.vitality, client.character.battleParam.plusVitality);
                     RecvCharaUpdateAbility recvCharaUpdateAbilityDex = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Dex, client.character.dexterity, client.character.battleParam.plusDexterity);

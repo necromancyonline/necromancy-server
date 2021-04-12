@@ -49,13 +49,13 @@ namespace Necromancy.Server.Packet.Area
 
         public void LoadSoulState(NecClient client)
         {
-            if (client.character.hp.current <= 0)
+            if (client.character.Hp.current <= 0)
             {
                 client.character.state |= CharacterState.SoulForm;
                 client.character.hasDied = true;
             }
 
-            if (client.character.hp.current < -1) client.character.state |= CharacterState.LostState;
+            if (client.character.Hp.current < -1) client.character.state |= CharacterState.LostState;
             if ((int)client.account.state == 100) client.character.state |= CharacterState.GameMaster;
         }
 

@@ -2,7 +2,7 @@ namespace Necromancy.Server.Systems.Item
 {
     internal class ItemZone
     {
-        public const int NoContainersWithSpace = -1;
+        public const int NO_CONTAINERS_WITH_SPACE = -1;
 
         public ItemZone(int maxContainers, int maxContainerSize)
         {
@@ -46,9 +46,9 @@ namespace Necromancy.Server.Systems.Item
             get
             {
                 for (int i = 0; i < maxContainers; i++)
-                    if (containers[i] != null && containers[i].nextOpenSlot != Container.NoOpenSlots)
+                    if (containers[i] != null && containers[i].nextOpenSlot != Container.NO_OPEN_SLOTS)
                         return i;
-                return NoContainersWithSpace;
+                return NO_CONTAINERS_WITH_SPACE;
             }
         }
 

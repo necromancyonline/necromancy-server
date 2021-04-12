@@ -12,9 +12,9 @@ namespace Necromancy.Server.Database.Sql
     /// </summary>
     public class NecSqLiteDb : NecSqlDb<SQLiteConnection, SQLiteCommand>, IDatabase
     {
-        public const string MemoryDatabasePath = ":memory:";
+        public const string MEMORY_DATABASE_PATH = ":memory:";
 
-        private const string _SelectAutoIncrement = "SELECT last_insert_rowid()";
+        private const string SELECT_AUTO_INCREMENT = "SELECT last_insert_rowid()";
 
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecSqLiteDb));
 
@@ -35,7 +35,7 @@ namespace Necromancy.Server.Database.Sql
 
         public bool CreateDatabase()
         {
-            if (_databasePath != MemoryDatabasePath && !File.Exists(_databasePath))
+            if (_databasePath != MEMORY_DATABASE_PATH && !File.Exists(_databasePath))
             {
                 FileStream fs = File.Create(_databasePath);
                 fs.Close();

@@ -10,23 +10,23 @@ namespace Necromancy.Test.Database.Sql
 {
     public class SqlMigratorTest
     {
-        private const string _SqliteFile = "TestMigrations/db.sqlite";
-        private const string _MigrationDir = "TestMigrations/Script/Migrations/";
-        private const string _First = _MigrationDir + "1-first.sql";
+        private const string SQLITE_FILE = "TestMigrations/db.sqlite";
+        private const string MIGRATION_DIR = "TestMigrations/Script/Migrations/";
+        private const string FIRST = MIGRATION_DIR + "1-first.sql";
 
-        private const string _Second = _MigrationDir + "2.sql";
+        private const string SECOND = MIGRATION_DIR + "2.sql";
 
         /* 0 is a sample and will be silently ignored. */
-        private const string _IgnoreZero = _MigrationDir + "0.sql";
+        private const string IGNORE_ZERO = MIGRATION_DIR + "0.sql";
 
         /* Non-sql files should be ignored. */
-        private const string _IgnoreText = _MigrationDir + "notsql.txt";
+        private const string IGNORE_TEXT = MIGRATION_DIR + "notsql.txt";
 
         /* Same version, will throw ArgumentException. */
-        private const string _FailDuplicate = _MigrationDir + "1-dup.sql";
+        private const string FAIL_DUPLICATE = MIGRATION_DIR + "1-dup.sql";
 
         /* No version, will throw FormatException. */
-        private const string _FailNoversion = _MigrationDir + "noversion.sql";
+        private const string FAIL_NOVERSION = MIGRATION_DIR + "noversion.sql";
 
         private readonly ITestOutputHelper _output;
 
@@ -41,7 +41,7 @@ namespace Necromancy.Test.Database.Sql
         [Fact]
         public void TestSqlLite()
         {
-            IDatabase db = new NecSqLiteDb(_SqliteFile);
+            IDatabase db = new NecSqLiteDb(SQLITE_FILE);
             db.CreateDatabase();
             Assert.Equal(0, db.version);
 
@@ -49,7 +49,7 @@ namespace Necromancy.Test.Database.Sql
             TestValid(db);
 
             /* Test sync */
-            IDatabase db2 = new NecSqLiteDb(_SqliteFile);
+            IDatabase db2 = new NecSqLiteDb(SQLITE_FILE);
             db.CreateDatabase();
             db.version = 11;
             Assert.Equal(11, db.version);
@@ -98,7 +98,7 @@ namespace Necromancy.Test.Database.Sql
         private void TestValid(IDatabase db)
         {
             SqlMigrator migrator = new SqlMigrator(db);
-            migrator.Migrate(_MigrationDir);
+            migrator.Migrate(MIGRATION_DIR);
             /* Highest migration version = 2. */
             Assert.Equal(2, db.version);
             db.version = 0;
@@ -110,30 +110,30 @@ namespace Necromancy.Test.Database.Sql
             SqlMigrator migrator = new SqlMigrator(db);
 
             /* FAIL_DUPLICATE migration file is a version duplicate. */
-            Create(_FailDuplicate);
-            Assert.Throws<ArgumentException>(() => { migrator.Migrate(_MigrationDir); });
-            File.Delete(_FailDuplicate);
+            Create(FAIL_DUPLICATE);
+            Assert.Throws<ArgumentException>(() => { migrator.Migrate(MIGRATION_DIR); });
+            File.Delete(FAIL_DUPLICATE);
 
             /* FAIL_NOVERSION migration file has an invalid name, with no version. */
-            Create(_FailNoversion);
-            Assert.Throws<FormatException>(() => { migrator.Migrate(_MigrationDir); });
-            File.Delete(_FailNoversion);
+            Create(FAIL_NOVERSION);
+            Assert.Throws<FormatException>(() => { migrator.Migrate(MIGRATION_DIR); });
+            File.Delete(FAIL_NOVERSION);
         }
 
         private void PrepFiles()
         {
-            if (!Directory.Exists(_MigrationDir))
-                Directory.CreateDirectory(_MigrationDir);
-            Create(_First);
-            Create(_Second);
-            Create(_IgnoreZero);
-            Create(_IgnoreText);
+            if (!Directory.Exists(MIGRATION_DIR))
+                Directory.CreateDirectory(MIGRATION_DIR);
+            Create(FIRST);
+            Create(SECOND);
+            Create(IGNORE_ZERO);
+            Create(IGNORE_TEXT);
 
             /* Clean the runs with errors. */
-            if (File.Exists(_FailDuplicate))
-                File.Delete(_FailDuplicate);
-            if (File.Exists(_FailNoversion))
-                File.Delete(_FailNoversion);
+            if (File.Exists(FAIL_DUPLICATE))
+                File.Delete(FAIL_DUPLICATE);
+            if (File.Exists(FAIL_NOVERSION))
+                File.Delete(FAIL_NOVERSION);
         }
 
         private void Create(string fileName)

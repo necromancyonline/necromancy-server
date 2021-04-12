@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             _originItem = originItem;
             _destItem = destItem;
-            clients.Add(client);
+            Clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()

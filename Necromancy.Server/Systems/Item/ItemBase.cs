@@ -2,10 +2,10 @@ namespace Necromancy.Server.Systems.Item
 {
     public class ItemBase
     {
-        public string equipSlot2 = "WhoKnows"; //TODO
-        public string lore = "";
+        public string EquipSlot2 = "WhoKnows"; //TODO
+        public string Lore = "";
 
-        public string objectType = "NONE"; //TODO
+        public string ObjectType = "NONE"; //TODO
         public int baseId { get; set; }
         public ItemType type { get; set; }
         public ItemQualities quality { get; set; }

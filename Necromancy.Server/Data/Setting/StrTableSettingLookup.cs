@@ -6,7 +6,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class StrTableSettingLookup
     {
-        private const string _RegexStringIdPattern = @"<str ([0-9]+) ([0-9]+) ([0-9]+)>";
+        private const string REGEX_STRING_ID_PATTERN = @"<str ([0-9]+) ([0-9]+) ([0-9]+)>";
 
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(StrTableSettingLookup));
 
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Data.Setting
         /// <returns></returns>
         public StrTableSetting Get(string reference)
         {
-            Match match = Regex.Match(reference, _RegexStringIdPattern);
+            Match match = Regex.Match(reference, REGEX_STRING_ID_PATTERN);
             if (!int.TryParse(match.Groups[1].Value, out int id)) return null;
 
             if (!int.TryParse(match.Groups[2].Value, out int subId)) return null;

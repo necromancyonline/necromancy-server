@@ -4,16 +4,16 @@ namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionService
     {
-        public const int MaxBids = 8;
-        public const int MaxBidsNoDimento = 5;
-        public const int MaxLots = 5;
-        public const int MaxLotsNoDimento = 3;
-        public const int SecondsInAnHour = 60 * 60;
-        public const int MaxSearchResults = 100;
+        public const int MAX_BIDS = 8;
+        public const int MAX_BIDS_NO_DIMENTO = 5;
+        public const int MAX_LOTS = 5;
+        public const int MAX_LOTS_NO_DIMENTO = 3;
+        public const int SECONDS_IN_AN_HOUR = 60 * 60;
+        public const int MAX_SEARCH_RESULTS = 100;
 
-        private const int _ItemNotFoundId = -1;
+        private const int ITEM_NOT_FOUND_ID = -1;
 
-        private const double _ListingFeePercent = .05;
+        private const double LISTING_FEE_PERCENT = .05;
 
         private readonly NecClient _client;
         //private readonly IAuctionDao _auctionDao;

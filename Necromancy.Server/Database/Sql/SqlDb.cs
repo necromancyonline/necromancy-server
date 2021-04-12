@@ -12,8 +12,8 @@ namespace Necromancy.Server.Database.Sql
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        public const int NoRowsAffected = 0;
-        public const long NoAutoIncrement = 0;
+        public const int NO_ROWS_AFFECTED = 0;
+        public const long NO_AUTO_INCREMENT = 0;
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
 
         protected abstract TCon Connection();
@@ -41,7 +41,7 @@ namespace Necromancy.Server.Database.Sql
             {
                 _Logger.Error($"Query: {query}");
                 Exception(ex);
-                return NoRowsAffected;
+                return NO_ROWS_AFFECTED;
             }
         }
 
@@ -64,8 +64,8 @@ namespace Necromancy.Server.Database.Sql
             {
                 _Logger.Error($"Query: {query}");
                 Exception(ex);
-                autoIncrement = NoAutoIncrement;
-                return NoRowsAffected;
+                autoIncrement = NO_AUTO_INCREMENT;
+                return NO_ROWS_AFFECTED;
             }
         }
 

@@ -2,9 +2,9 @@ namespace Necromancy.Server.Systems.Item
 {
     public class ItemInstance : ItemBase
     {
-        public const int MaxGemSlots = 3;
+        public const int MAX_GEM_SLOTS = 3;
 
-        public string talkRingName = "";
+        public string TalkRingName = "";
 
         /// <summary>
         ///     An instance of a base item. Holds mostly changable values.

@@ -158,13 +158,13 @@ namespace Necromancy.Server.Packet.Area
 
             foreach (MapTransition mapTransition in client.map.mapTransitions.Values)
             {
-                float lineProximity = PDistance(characterPos, mapTransition.leftPos, mapTransition.rightPos);
+                float lineProximity = PDistance(characterPos, mapTransition.LeftPos, mapTransition.RightPos);
                 // Logger.Debug($"{_character.Name} checking map {mapTransition.MapId} [transition] id {mapTransition.Id} to destination {mapTransition.TransitionMapId}");
                 // Logger.Debug($"Distance to transition : {lineProximity}");
                 if (lineProximity < 155)
                 {
-                    if (!server.maps.TryGet(mapTransition.transitionMapId, out Map transitionMap)) return;
-                    transitionMap.EnterForce(client, mapTransition.toPos);
+                    if (!server.maps.TryGet(mapTransition.TransitionMapId, out Map transitionMap)) return;
+                    transitionMap.EnterForce(client, mapTransition.ToPos);
                 }
             }
         }

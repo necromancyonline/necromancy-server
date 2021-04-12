@@ -7,8 +7,8 @@ namespace Necromancy.Server.Database.Sql
 {
     public class ScriptRunner
     {
-        private const string _Delimiter = ";";
-        private const bool _FullLineDelimiter = false;
+        private const string DELIMITER = ";";
+        private const bool FULL_LINE_DELIMITER = false;
 
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(ScriptRunner));
 
@@ -44,11 +44,11 @@ namespace Necromancy.Server.Database.Sql
                     {
                         // Print comment
                     }
-                    else if (!_FullLineDelimiter && trimmedLine.EndsWith(_Delimiter)
-                             || _FullLineDelimiter && trimmedLine == _Delimiter)
+                    else if (!FULL_LINE_DELIMITER && trimmedLine.EndsWith(DELIMITER)
+                             || FULL_LINE_DELIMITER && trimmedLine == DELIMITER)
                     {
                         command.Append(
-                            line.Substring(0, line.LastIndexOf(_Delimiter, StringComparison.InvariantCulture)));
+                            line.Substring(0, line.LastIndexOf(DELIMITER, StringComparison.InvariantCulture)));
                         command.Append(" ");
                         _database.Execute(command.ToString());
                         command = null;

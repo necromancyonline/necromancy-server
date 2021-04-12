@@ -2,11 +2,11 @@ namespace Necromancy.Server.Model
 {
     public class ShortcutBar
     {
-        public const int Count = 10;
+        public const int COUNT = 10;
 
         public ShortcutBar()
         {
-            item = new ShortcutItem[Count];
+            item = new ShortcutItem[COUNT];
         }
 
         public ShortcutItem[] item { get; }

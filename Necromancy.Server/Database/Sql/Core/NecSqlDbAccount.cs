@@ -8,19 +8,19 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertAccount =
+        private const string SQL_INSERT_ACCOUNT =
             "INSERT INTO `account` (`name`, `normal_name`, `hash`, `mail`, `mail_verified`, `mail_verified_at`, `mail_token`, `password_token`, `state`, `last_login`, `created`) VALUES (@name, @normal_name, @hash, @mail, @mail_verified, @mail_verified_at, @mail_token, @password_token, @state, @last_login, @created);";
 
-        private const string _SqlSelectAccountById =
+        private const string SQL_SELECT_ACCOUNT_BY_ID =
             "SELECT `id`, `name`, `normal_name`, `hash`, `mail`, `mail_verified`, `mail_verified_at`, `mail_token`, `password_token`, `state`, `last_login`, `created` FROM `account` WHERE `id`=@id;";
 
-        private const string _SqlSelectAccountByName =
+        private const string SQL_SELECT_ACCOUNT_BY_NAME =
             "SELECT `id`, `name`, `normal_name`, `hash`, `mail`, `mail_verified`, `mail_verified_at`, `mail_token`, `password_token`, `state`, `last_login`, `created` FROM `account` WHERE `name`=@name;";
 
-        private const string _SqlUpdateAccount =
+        private const string SQL_UPDATE_ACCOUNT =
             "UPDATE `account` SET `name`=@name, `normal_name`=@normal_name, `hash`=@hash, `mail`=@mail, `mail_verified`=@mail_verified, `mail_verified_at`=@mail_verified_at, `mail_token`=@mail_token, `password_token`=@password_token, `state`=@state, `last_login`=@last_login, `created`=@created WHERE `id`=@id;";
 
-        private const string _SqlDeleteAccount =
+        private const string SQL_DELETE_ACCOUNT =
             "DELETE FROM `account` WHERE `id`=@id;";
 
         public Account CreateAccount(string name, string mail, string hash)
@@ -32,7 +32,7 @@ namespace Necromancy.Server.Database.Sql.Core
             account.hash = hash;
             account.state = AccountStateType.User;
             account.created = DateTime.Now;
-            int rowsAffected = ExecuteNonQuery(_SqlInsertAccount, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_ACCOUNT, command =>
             {
                 AddParameter(command, "@name", account.name);
                 AddParameter(command, "@normal_name", account.normalName);
@@ -46,7 +46,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@last_login", account.lastLogin);
                 AddParameter(command, "@created", account.created);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return null;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return null;
 
             account.id = (int)autoIncrement;
             return account;
@@ -55,7 +55,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Account SelectAccountByName(string accountName)
         {
             Account account = null;
-            ExecuteReader(_SqlSelectAccountByName,
+            ExecuteReader(SQL_SELECT_ACCOUNT_BY_NAME,
                 command => { AddParameter(command, "@name", accountName); }, reader =>
                 {
                     if (reader.Read()) account = ReadAccount(reader);
@@ -67,7 +67,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Account SelectAccountById(int accountId)
         {
             Account account = null;
-            ExecuteReader(_SqlSelectAccountById, command => { AddParameter(command, "@id", accountId); }, reader =>
+            ExecuteReader(SQL_SELECT_ACCOUNT_BY_ID, command => { AddParameter(command, "@id", accountId); }, reader =>
             {
                 if (reader.Read()) account = ReadAccount(reader);
             });
@@ -76,7 +76,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateAccount(Account account)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateAccount, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_ACCOUNT, command =>
             {
                 AddParameter(command, "@name", account.name);
                 AddParameter(command, "@normal_name", account.normalName);
@@ -91,14 +91,14 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", account.created);
                 AddParameter(command, "@id", account.id);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteAccount(int accountId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteAccount,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_ACCOUNT,
                 command => { AddParameter(command, "@id", accountId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private Account ReadAccount(DbDataReader reader)

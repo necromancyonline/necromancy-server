@@ -77,8 +77,8 @@ namespace Necromancy.Server.Chat.Command.Commands
             monsterSpawn.z = client.character.z;
             monsterSpawn.heading = client.character.heading;
 
-            monsterSpawn.hp.SetMax(100);
-            monsterSpawn.hp.SetCurrent(100);
+            monsterSpawn.Hp.SetMax(100);
+            monsterSpawn.Hp.SetCurrent(100);
 
             if (!server.database.InsertMonsterSpawn(monsterSpawn))
             {

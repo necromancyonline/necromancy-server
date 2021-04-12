@@ -48,7 +48,7 @@ namespace Necromancy.Server.Packet.Area
                 deadBody.beginnerProtection = (byte)client.character.beginnerProtection;
                 deadBody.charaName = client.character.name;
                 deadBody.soulName = client.soul.name;
-                deadBody.equippedItems = client.character.equippedItems;
+                deadBody.EquippedItems = client.character.equippedItems;
                 deadBody.raceId = client.character.raceId;
                 deadBody.sexId = client.character.sexId;
                 deadBody.hairId = client.character.hairId;
@@ -58,7 +58,7 @@ namespace Necromancy.Server.Packet.Area
                 deadBody.voiceId = client.character.voiceId;
                 deadBody.level = client.character.level;
                 deadBody.classId = client.character.classId;
-                deadBody.equippedItems = client.character.equippedItems;
+                deadBody.EquippedItems = client.character.equippedItems;
                 deadBody.connectionState = 1;
                 client.map.deadBodies.Add(deadBody.instanceId, deadBody);
                 RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);

@@ -8,24 +8,24 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertGimmick =
+        private const string SQL_INSERT_GIMMICK =
             "INSERT INTO `nec_gimmick_spawn` (`map_id`, `x`,  `y`, `z`, `heading`, `model_id`, `state`, `created`, `updated`) VALUES (@map_id, @x, @y, @z, @heading, @model_id, @state, @created, @updated);";
 
-        private const string _SqlSelectGimmicks =
+        private const string SQL_SELECT_GIMMICKS =
             "SELECT `id`, `map_id`, `x`,  `y`, `z`, `heading`, `model_id`, `state`, `created`, `updated` FROM `nec_gimmick_spawn`;";
 
-        private const string _SqlSelectGimmicksByMapId =
+        private const string SQL_SELECT_GIMMICKS_BY_MAP_ID =
             "SELECT `id`, `map_id`, `x`,  `y`, `z`, `heading`, `model_id`, `state`, `created`, `updated` FROM `nec_gimmick_spawn` WHERE `map_id`=@map_id;";
 
-        private const string _SqlUpdateGimmick =
+        private const string SQL_UPDATE_GIMMICK =
             "UPDATE `nec_gimmick_spawn` SET `id`=@id, `map_id`=@map_id, `x`=@x,  `y`=@y, `z`=@z, `heading`=@heading, `model_id`=@model_id, `state`=@state, `created`=@created, `updated`=@updated WHERE `id`=@id;";
 
-        private const string _SqlDeleteGimmick =
+        private const string SQL_DELETE_GIMMICK =
             "DELETE FROM `nec_gimmick_spawn` WHERE `id`=@id;";
 
         public bool InsertGimmick(Gimmick gimmick)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertGimmick, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_GIMMICK, command =>
             {
                 //AddParameter(command, "@id", gimmick.Id);
                 AddParameter(command, "@map_id", gimmick.mapId);
@@ -38,7 +38,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", gimmick.created);
                 AddParameter(command, "@updated", gimmick.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             gimmick.id = (int)autoIncrement;
             return true;
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<Gimmick> SelectGimmicks()
         {
             List<Gimmick> gimmicks = new List<Gimmick>();
-            ExecuteReader(_SqlSelectGimmicks, reader =>
+            ExecuteReader(SQL_SELECT_GIMMICKS, reader =>
             {
                 while (reader.Read())
                 {
@@ -61,7 +61,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<Gimmick> SelectGimmicksByMapId(int mapId)
         {
             List<Gimmick> gimmicks = new List<Gimmick>();
-            ExecuteReader(_SqlSelectGimmicksByMapId,
+            ExecuteReader(SQL_SELECT_GIMMICKS_BY_MAP_ID,
                 command => { AddParameter(command, "@map_id", mapId); },
                 reader =>
                 {
@@ -76,7 +76,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateGimmick(Gimmick gimmick)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateGimmick, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_GIMMICK, command =>
             {
                 AddParameter(command, "@id", gimmick.id);
                 AddParameter(command, "@map_id", gimmick.mapId);
@@ -89,14 +89,14 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", gimmick.created);
                 AddParameter(command, "@updated", gimmick.updated);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteGimmick(int gimmickId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteGimmick,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_GIMMICK,
                 command => { AddParameter(command, "@id", gimmickId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private Gimmick ReadGimmick(DbDataReader reader)

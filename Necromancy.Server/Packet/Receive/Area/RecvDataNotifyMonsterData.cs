@@ -91,8 +91,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(231);
             res.WriteByte(232);
             res.WriteByte(0); //new
-            res.WriteInt32(_monsterSpawn.hp.current); //Current HP
-            res.WriteInt32(_monsterSpawn.hp.max); //Max HP
+            res.WriteInt32(_monsterSpawn.Hp.current); //Current HP
+            res.WriteInt32(_monsterSpawn.Hp.max); //Max HP
             res.WriteInt32(numStatusEffects); // cmp to 0x80 = 128
             for (i = 0; i < numStatusEffects; i++)
             {

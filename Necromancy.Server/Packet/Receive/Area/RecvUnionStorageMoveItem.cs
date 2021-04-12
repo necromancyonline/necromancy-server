@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort)AreaPacketId.send_union_storage_move_item, ServerType.Area)
         {
             _error = error;
-            clients.Add(client);
+            Clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()

@@ -8,29 +8,29 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertSoul = @"
+        private const string SQL_INSERT_SOUL = @"
             INSERT INTO
                 nec_soul(account_id,name,level,created,password,experience_current,warehouse_gold,points_lawful,points_neutral,points_chaos,criminal_level,points_current,material_life,material_reincarnation,material_lawful,material_chaos)
             VALUES(@account_id,@name,@level,@created,@password,@experience_current,@warehouse_gold,@points_lawful,@points_neutral,@points_chaos,@criminal_level,@points_current,@material_life,@material_reincarnation,@material_lawful,@material_chaos)";
 
-        private const string _SqlSelectSoulById = @"
+        private const string SQL_SELECT_SOUL_BY_ID = @"
             SELECT * FROM nec_soul WHERE id=@id";
 
-        private const string _SqlSelectSoulByName = @"
+        private const string SQL_SELECT_SOUL_BY_NAME = @"
             SELECT * FROM nec_soul WHERE name=@name";
 
-        private const string _SqlSelectSoulsByAccountId = @"
+        private const string SQL_SELECT_SOULS_BY_ACCOUNT_ID = @"
             SELECT * FROM nec_soul WHERE account_id=@account_id";
 
-        private const string _SqlUpdateSoul =
+        private const string SQL_UPDATE_SOUL =
             "UPDATE `nec_soul` SET `account_id`=@account_id, `name`=@name, `level`=@level, `created`=@created, `password`=@password WHERE `id`=@id;";
 
-        private const string _SqlDeleteSoul =
+        private const string SQL_DELETE_SOUL =
             "DELETE FROM `nec_soul` WHERE `id`=@id;";
 
         public bool InsertSoul(Soul soul)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertSoul, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_SOUL, command =>
             {
                 AddParameter(command, "@account_id", soul.accountId);
                 AddParameter(command, "@name", soul.name);
@@ -49,7 +49,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@material_lawful", soul.materialLawful);
                 AddParameter(command, "@material_chaos", soul.materialChaos);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             soul.id = (int)autoIncrement;
             return true;
@@ -58,7 +58,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Soul SelectSoulById(int soulId)
         {
             Soul soul = null;
-            ExecuteReader(_SqlSelectSoulById,
+            ExecuteReader(SQL_SELECT_SOUL_BY_ID,
                 command => { AddParameter(command, "@id", soulId); }, reader =>
                 {
                     if (reader.Read()) soul = ReadSoul(reader);
@@ -69,7 +69,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Soul SelectSoulByName(string soulName)
         {
             Soul soul = null;
-            ExecuteReader(_SqlSelectSoulByName,
+            ExecuteReader(SQL_SELECT_SOUL_BY_NAME,
                 command => { AddParameter(command, "@name", soulName); }, reader =>
                 {
                     if (reader.Read()) soul = ReadSoul(reader);
@@ -80,7 +80,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<Soul> SelectSoulsByAccountId(int accountId)
         {
             List<Soul> souls = new List<Soul>();
-            ExecuteReader(_SqlSelectSoulsByAccountId,
+            ExecuteReader(SQL_SELECT_SOULS_BY_ACCOUNT_ID,
                 command => { AddParameter(command, "@account_id", accountId); }, reader =>
                 {
                     while (reader.Read())
@@ -94,7 +94,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateSoul(Soul soul)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateSoul, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_SOUL, command =>
             {
                 AddParameter(command, "@account_id", soul.accountId);
                 AddParameter(command, "@name", soul.name);
@@ -114,13 +114,13 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@material_lawful", soul.materialLawful);
                 AddParameter(command, "@material_chaos", soul.materialChaos);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteSoul(int soulId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteSoul, command => { AddParameter(command, "@id", soulId); });
-            return rowsAffected > NoRowsAffected;
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_SOUL, command => { AddParameter(command, "@id", soulId); });
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private Soul ReadSoul(DbDataReader reader)

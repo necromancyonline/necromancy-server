@@ -99,7 +99,7 @@ namespace Necromancy.Server.Chat
         private void RespondPostMessage(NecClient client, ChatErrorType chatErrorType)
         {
             RecvChatPostMessageR postMessageResponse = new RecvChatPostMessageR(chatErrorType);
-            postMessageResponse.clients.Add(client);
+            postMessageResponse.Clients.Add(client);
             _server.router.Send(postMessageResponse);
         }
     }

@@ -84,16 +84,16 @@ namespace Necromancy.Server.Packet.Area
                     $"target Character name [{targetClient.character.name}] distanceToCharacter [{distanceToCharacter}] Radius { /*[{monsterSpawn.Radius}]*/"125"} {targetClient.character.name}");
                 if (distanceToCharacter > /*targetClient.Character.Radius +*/ 125) continue;
 
-                if (targetClient.character.hp.depleted) continue;
+                if (targetClient.character.Hp.depleted) continue;
 
                 damage -= targetClient.character.battleParam.plusPhysicalDefence;
                 if (damage < 0) damage = 1; //pity damage
 
-                targetClient.character.hp.Modify(-damage, client.character.instanceId);
-                perHp = (float)targetClient.character.hp.current / targetClient.character.hp.max * 100;
+                targetClient.character.Hp.Modify(-damage, client.character.instanceId);
+                perHp = (float)targetClient.character.Hp.current / targetClient.character.Hp.max * 100;
                 _Logger.Debug(
-                    $"CurrentHp [{targetClient.character.hp.current}] MaxHp[{targetClient.character.hp.max}] perHp[{perHp}]");
-                RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(targetClient.character.hp.current);
+                    $"CurrentHp [{targetClient.character.Hp.current}] MaxHp[{targetClient.character.Hp.max}] perHp[{perHp}]");
+                RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(targetClient.character.Hp.current);
                 _server.router.Send(targetClient, cHpUpdate.ToPacket());
 
                 //logic to turn characters to criminals on criminal actions.  possibly should move to character task.
@@ -126,11 +126,11 @@ namespace Necromancy.Server.Packet.Area
                 ) //increased hitbox for monsters by a factor of 5.  Beetle radius is 40
                     continue;
 
-                if (monsterSpawn.hp.depleted) continue;
+                if (monsterSpawn.Hp.depleted) continue;
 
-                monsterSpawn.hp.Modify(-damage, client.character.instanceId);
-                perHp = (float)monsterSpawn.hp.current / monsterSpawn.hp.max * 100;
-                _Logger.Debug($"CurrentHp [{monsterSpawn.hp.current}] MaxHp[{monsterSpawn.hp.max}] perHp[{perHp}]");
+                monsterSpawn.Hp.Modify(-damage, client.character.instanceId);
+                perHp = (float)monsterSpawn.Hp.current / monsterSpawn.Hp.max * 100;
+                _Logger.Debug($"CurrentHp [{monsterSpawn.Hp.current}] MaxHp[{monsterSpawn.Hp.max}] perHp[{perHp}]");
 
                 //just for fun. turn on inactive monsters
                 if (monsterSpawn.active == false)
@@ -141,9 +141,9 @@ namespace Necromancy.Server.Packet.Area
                     {
                         MonsterTask monsterTask = new MonsterTask(_server, monsterSpawn);
                         if (monsterSpawn.defaultCoords)
-                            monsterTask.monsterHome = monsterSpawn.monsterCoords[0];
+                            monsterTask.MonsterHome = monsterSpawn.MonsterCoords[0];
                         else
-                            monsterTask.monsterHome = monsterSpawn.monsterCoords.Find(x => x.coordIdx == 64);
+                            monsterTask.MonsterHome = monsterSpawn.MonsterCoords.Find(x => x.coordIdx == 64);
                         monsterTask.Start();
                     }
                 }

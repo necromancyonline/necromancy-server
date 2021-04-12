@@ -19,7 +19,7 @@ namespace Necromancy.Server.Model.Skills
         private readonly uint _ownerInstanceId;
         private readonly NecServer _server;
         private readonly Vector3 _trapPos;
-        public TrapTask trapTask;
+        public TrapTask TrapTask;
 
         public TrapStack(NecServer server, NecClient client, Vector3 trapPos, int trapRadius)
         {
@@ -73,14 +73,14 @@ namespace Necromancy.Server.Model.Skills
 
             if (isBaseTrap)
             {
-                trapTask = new TrapTask(_server, _map, _trapPos, _ownerInstanceId, trap, instanceId);
-                trapTask.AddTrap(trap);
+                TrapTask = new TrapTask(_server, _map, _trapPos, _ownerInstanceId, trap, instanceId);
+                TrapTask.AddTrap(trap);
                 _map.AddTrap(instanceId, this);
-                trapTask.Start();
+                TrapTask.Start();
             }
             else
             {
-                trapTask.AddTrap(trap);
+                TrapTask.AddTrap(trap);
             }
         }
     }

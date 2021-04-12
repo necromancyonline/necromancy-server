@@ -5,7 +5,7 @@ namespace Necromancy.Server.Common
     public class Camellia
     {
         /* sbox */
-        private static readonly byte[] _s = new byte[256]
+        private static readonly byte[] _S = new byte[256]
         {
             0x70, 0x82, 0x2c, 0xec, 0xb3, 0x27, 0xc0, 0xe5,
             0xe4, 0x85, 0x57, 0x35, 0xea, 0x0c, 0xae, 0x41,
@@ -42,7 +42,7 @@ namespace Necromancy.Server.Common
         };
 
         /* key schedule constants */
-        private static readonly byte[][] _sigma = new byte[6][]
+        private static readonly byte[][] _Sigma = new byte[6][]
         {
             new byte[8] {0xa0, 0x9e, 0x66, 0x7f, 0x3b, 0xcc, 0x90, 0x8b},
             new byte[8] {0xb6, 0x7a, 0xe8, 0x58, 0x4c, 0xaa, 0x73, 0xb2},
@@ -187,7 +187,7 @@ namespace Necromancy.Server.Common
             {
                 if (i % 2 == 0) XorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
 
-                CamelliaRound(_sigma[i], pl, pr);
+                CamelliaRound(_Sigma[i], pl, pr);
                 p = pl;
                 pl = pr;
                 pr = p;
@@ -199,8 +199,8 @@ namespace Necromancy.Server.Common
                 Span<byte> spanKey3 = new Span<byte>(ikey[3]);
                 Span<byte> spanKey30 = spanKey3.Slice(0, 8);
                 Span<byte> spanKey38 = spanKey3.Slice(8, 8);
-                CamelliaRound(_sigma[4], spanKey30, spanKey38);
-                CamelliaRound(_sigma[5], spanKey38, spanKey30);
+                CamelliaRound(_Sigma[4], spanKey30, spanKey38);
+                CamelliaRound(_Sigma[5], spanKey38, spanKey30);
             }
 
             /* subkey generation */
@@ -312,22 +312,22 @@ namespace Necromancy.Server.Common
 
         private byte S1(int x)
         {
-            return _s[x];
+            return _S[x];
         }
 
         private byte S2(int x)
         {
-            return (byte)((_s[x] << 1) + (_s[x] >> 7));
+            return (byte)((_S[x] << 1) + (_S[x] >> 7));
         }
 
         private byte S3(int x)
         {
-            return (byte)((_s[x] << 7) + (_s[x] >> 1));
+            return (byte)((_S[x] << 7) + (_S[x] >> 1));
         }
 
         private byte S4(int x)
         {
-            return _s[(byte)(x << 1) + (x >> 7)];
+            return _S[(byte)(x << 1) + (x >> 7)];
         }
 
         /* dst[] <- src1[] ^ src2[] */

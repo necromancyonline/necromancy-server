@@ -8,24 +8,24 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertMonsterSpawn =
+        private const string SQL_INSERT_MONSTER_SPAWN =
             "INSERT INTO `nec_monster_spawn` (`monster_id`, `model_id`, `level`,  `name`, `title`, `map_id`, `x`, `y`, `z`, `active`, `heading`, `size`, `created`, `updated`) VALUES (@monster_id, @model_id, @level, @name, @title, @map_id, @x, @y, @z, @active, @heading, @size, @created, @updated);";
 
-        private const string _SqlSelectMonsterSpawns =
+        private const string SQL_SELECT_MONSTER_SPAWNS =
             "SELECT `id`, `monster_id`, `model_id`, `level`, `name`, `title`, `map_id`, `x`, `y`, `z`, `active`, `heading`, `size`, `created`, `updated` FROM `nec_monster_spawn`;";
 
-        private const string _SqlSelectMonsterSpawnsByMapId =
+        private const string SQL_SELECT_MONSTER_SPAWNS_BY_MAP_ID =
             "SELECT `id`, `monster_id`, `model_id`, `level`, `name`, `title`, `map_id`, `x`, `y`, `z`, `active`, `heading`, `size`, `created`, `updated` FROM `nec_monster_spawn` WHERE `map_id`=@map_id;";
 
-        private const string _SqlUpdateMonsterSpawn =
+        private const string SQL_UPDATE_MONSTER_SPAWN =
             "UPDATE `nec_monster_spawn` SET `monster_id`=@monster_id, `model_id`=@model_id, `level`=@level,  `name`=@name, `title`=@title, `map_id`=@map_id, `x`=@x, `y`=@y, `z`=@z, `active`=@active, `heading`=@heading, `size`=@size, `created`=@created, `updated`=@updated WHERE `id`=@id;";
 
-        private const string _SqlDeleteMonsterSpawn =
+        private const string SQL_DELETE_MONSTER_SPAWN =
             "DELETE FROM `nec_monster_spawn` WHERE `id`=@id;";
 
         public bool InsertMonsterSpawn(MonsterSpawn monsterSpawn)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertMonsterSpawn, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_MONSTER_SPAWN, command =>
             {
                 AddParameter(command, "@monster_id", monsterSpawn.monsterId);
                 AddParameter(command, "@model_id", monsterSpawn.modelId);
@@ -42,7 +42,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", monsterSpawn.created);
                 AddParameter(command, "@updated", monsterSpawn.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             monsterSpawn.id = (int)autoIncrement;
             return true;
@@ -51,7 +51,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<MonsterSpawn> SelectMonsterSpawns()
         {
             List<MonsterSpawn> monsterSpawns = new List<MonsterSpawn>();
-            ExecuteReader(_SqlSelectMonsterSpawns, reader =>
+            ExecuteReader(SQL_SELECT_MONSTER_SPAWNS, reader =>
             {
                 while (reader.Read())
                 {
@@ -65,7 +65,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<MonsterSpawn> SelectMonsterSpawnsByMapId(int mapId)
         {
             List<MonsterSpawn> monsterSpawns = new List<MonsterSpawn>();
-            ExecuteReader(_SqlSelectMonsterSpawnsByMapId,
+            ExecuteReader(SQL_SELECT_MONSTER_SPAWNS_BY_MAP_ID,
                 command => { AddParameter(command, "@map_id", mapId); },
                 reader =>
                 {
@@ -80,7 +80,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateMonsterSpawn(MonsterSpawn monsterSpawn)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateMonsterSpawn, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_MONSTER_SPAWN, command =>
             {
                 AddParameter(command, "@monster_id", monsterSpawn.monsterId);
                 AddParameter(command, "@model_id", monsterSpawn.modelId);
@@ -98,14 +98,14 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@updated", monsterSpawn.updated);
                 AddParameter(command, "@id", monsterSpawn.id);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteMonsterSpawn(int monsterSpawnId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteMonsterSpawn,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_MONSTER_SPAWN,
                 command => { AddParameter(command, "@id", monsterSpawnId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private MonsterSpawn ReadMonsterSpawn(DbDataReader reader)

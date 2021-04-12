@@ -8,8 +8,8 @@ namespace Necromancy.Server.Chat.Command
 {
     public class ChatCommandHandler : ChatHandler
     {
-        public const char ChatCommandStart = '/';
-        public const char ChatCommandSeparator = ' ';
+        public const char CHAT_COMMAND_START = '/';
+        public const char CHAT_COMMAND_SEPARATOR = ' ';
 
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ChatCommandHandler));
 
@@ -49,10 +49,10 @@ namespace Necromancy.Server.Chat.Command
 
             if (message.message == null || message.message.Length <= 1) return;
 
-            if (!message.message.StartsWith(ChatCommandStart)) return;
+            if (!message.message.StartsWith(CHAT_COMMAND_START)) return;
 
             string commandMessage = message.message.Substring(1);
-            string[] command = commandMessage.Split(ChatCommandSeparator);
+            string[] command = commandMessage.Split(CHAT_COMMAND_SEPARATOR);
             if (command.Length <= 0)
             {
                 _Logger.Error(client, $"Command '{message.message}' is invalid");

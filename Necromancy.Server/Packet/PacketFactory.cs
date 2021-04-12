@@ -12,11 +12,11 @@ namespace Necromancy.Server.Packet
 {
     public class PacketFactory
     {
-        public const int PacketIdSize = 2;
-        public const int PacketLengthTypeSize = 1;
-        public const int HeartbeatPacketBodySize = 8;
-        public const int Unknown1PacketBodySize = 8;
-        public const int DisconnectPacketBodySize = 4;
+        public const int PACKET_ID_SIZE = 2;
+        public const int PACKET_LENGTH_TYPE_SIZE = 1;
+        public const int HEARTBEAT_PACKET_BODY_SIZE = 8;
+        public const int UNKNOWN1_PACKET_BODY_SIZE = 8;
+        public const int DISCONNECT_PACKET_BODY_SIZE = 4;
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(PacketFactory));
         private readonly NecSetting _setting;
         private IBuffer _buffer;
@@ -60,7 +60,7 @@ namespace Necromancy.Server.Packet
                     buffer.WriteBytes(data);
                     break;
                 default:
-                    ulong dataSize = (ulong)(data.Length + PacketIdSize);
+                    ulong dataSize = (ulong)(data.Length + PACKET_ID_SIZE);
                     if (dataSize < byte.MaxValue)
                     {
                         packetType = PacketType.Byte;
@@ -117,7 +117,7 @@ namespace Necromancy.Server.Packet
                 read = false;
 
                 if (!_readPacketLengthType
-                    && _buffer.Size - _buffer.Position > PacketLengthTypeSize)
+                    && _buffer.Size - _buffer.Position > PACKET_LENGTH_TYPE_SIZE)
                 {
                     byte lengthType = _buffer.ReadByte();
                     if (!Enum.IsDefined(typeof(PacketType), lengthType))
@@ -134,17 +134,17 @@ namespace Necromancy.Server.Packet
 
                 if (_readPacketLengthType
                     && !_readHeader
-                    && _buffer.Size - _buffer.Position >= _headerSize - PacketLengthTypeSize)
+                    && _buffer.Size - _buffer.Position >= _headerSize - PACKET_LENGTH_TYPE_SIZE)
                 {
                     // TODO acquire 1st byte differently in case -1 doesnt work
-                    _header = _buffer.GetBytes(_buffer.Position - PacketLengthTypeSize, _headerSize);
+                    _header = _buffer.GetBytes(_buffer.Position - PACKET_LENGTH_TYPE_SIZE, _headerSize);
 
                     switch (_packetType)
                     {
                         case PacketType.Byte:
                         {
                             _dataSize = _buffer.ReadByte();
-                            _dataSize -= PacketIdSize;
+                            _dataSize -= PACKET_ID_SIZE;
                             _id = _buffer.ReadUInt16();
                             _readHeader = true;
                             break;
@@ -152,7 +152,7 @@ namespace Necromancy.Server.Packet
                         case PacketType.UInt16:
                         {
                             _dataSize = _buffer.ReadUInt16();
-                            _dataSize -= PacketIdSize;
+                            _dataSize -= PACKET_ID_SIZE;
                             _id = _buffer.ReadUInt16();
                             _readHeader = true;
                             break;
@@ -160,28 +160,28 @@ namespace Necromancy.Server.Packet
                         case PacketType.UInt32:
                         {
                             _dataSize = _buffer.ReadUInt32();
-                            _dataSize -= PacketIdSize;
+                            _dataSize -= PACKET_ID_SIZE;
                             _id = _buffer.ReadUInt16();
                             _readHeader = true;
                             break;
                         }
                         case PacketType.HeartBeat:
                         {
-                            _dataSize = HeartbeatPacketBodySize;
+                            _dataSize = HEARTBEAT_PACKET_BODY_SIZE;
                             _id = (ushort)CustomPacketId.SendHeartbeat;
                             _readHeader = true;
                             break;
                         }
                         case PacketType.Unknown1:
                         {
-                            _dataSize = Unknown1PacketBodySize;
+                            _dataSize = UNKNOWN1_PACKET_BODY_SIZE;
                             _id = (ushort)CustomPacketId.SendUnknown1;
                             _readHeader = true;
                             break;
                         }
                         case PacketType.Disconnect:
                         {
-                            _dataSize = DisconnectPacketBodySize;
+                            _dataSize = DISCONNECT_PACKET_BODY_SIZE;
                             _id = (ushort)CustomPacketId.SendDisconnect;
                             _readHeader = true;
                             break;
@@ -237,19 +237,19 @@ namespace Necromancy.Server.Packet
             {
                 case PacketType.HeartBeat:
                 {
-                    return PacketLengthTypeSize;
+                    return PACKET_LENGTH_TYPE_SIZE;
                 }
                 case PacketType.Unknown1:
                 {
-                    return PacketLengthTypeSize;
+                    return PACKET_LENGTH_TYPE_SIZE;
                 }
                 case PacketType.Disconnect:
                 {
-                    return PacketLengthTypeSize;
+                    return PACKET_LENGTH_TYPE_SIZE;
                 }
                 default:
                 {
-                    return (byte)(PacketLengthTypeSize + (packetType + 1) + PacketIdSize);
+                    return (byte)(PACKET_LENGTH_TYPE_SIZE + (packetType + 1) + PACKET_ID_SIZE);
                 }
             }
         }

@@ -29,8 +29,8 @@ namespace Necromancy.Server.Chat.Command.Commands
             IBuffer res = BufferProvider.Provide();
 
 
-            const int Number = 10;
-            for (int i = 0; i < Number; i++)
+            const int NUMBER = 10;
+            for (int i = 0; i < NUMBER; i++)
             {
                 res = BufferProvider.Provide();
                 res.WriteInt32(2);

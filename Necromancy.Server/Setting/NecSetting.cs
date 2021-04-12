@@ -15,7 +15,7 @@ namespace Necromancy.Server.Setting
         ///     The number is log2, so adding +1 doubles the time it takes.
         ///     https://wildlyinaccurate.com/bcrypt-choosing-a-work-factor/
         /// </summary>
-        public const int BCryptWorkFactor = 10;
+        public const int B_CRYPT_WORK_FACTOR = 10;
 
         public NecSetting()
         {

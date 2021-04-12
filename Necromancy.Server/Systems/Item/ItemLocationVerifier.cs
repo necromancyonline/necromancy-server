@@ -10,66 +10,66 @@ namespace Necromancy.Server.Systems.Item
     /// </summary>
     public class ItemLocationVerifier
     {
-        private const int _MaxContainersAdvBag = 1;
-        private const int _MaxContainerSizeAdvBag = 24;
+        private const int MAX_CONTAINERS_ADV_BAG = 1;
+        private const int MAX_CONTAINER_SIZE_ADV_BAG = 24;
 
-        private const int _MaxContainersEquippedBags = 7;
-        private const int _MaxContainerEquippedBags = 24;
+        private const int MAX_CONTAINERS_EQUIPPED_BAGS = 7;
+        private const int MAX_CONTAINER_EQUIPPED_BAGS = 24;
 
-        private const int _MaxContainersAvatar = 9;
-        private const int _MaxContainerSizeAvatar = 50;
+        private const int MAX_CONTAINERS_AVATAR = 9;
+        private const int MAX_CONTAINER_SIZE_AVATAR = 50;
 
-        private const int _MaxContainersBagSlot = 1;
-        private const int _MaxContainerSizeBagSlot = 7;
+        private const int MAX_CONTAINERS_BAG_SLOT = 1;
+        private const int MAX_CONTAINER_SIZE_BAG_SLOT = 7;
 
-        private const int _MaxContainersRoyalBag = 1;
-        private const int _MaxContainerSizeRoyalBag = 24;
+        private const int MAX_CONTAINERS_ROYAL_BAG = 1;
+        private const int MAX_CONTAINER_SIZE_ROYAL_BAG = 24;
 
-        private const int _MaxContainersTreasureBox = 1;
-        private const int _MaxContainerSizeTreasureBox = 10;
+        private const int MAX_CONTAINERS_TREASURE_BOX = 1;
+        private const int MAX_CONTAINER_SIZE_TREASURE_BOX = 10;
 
-        private const int _MaxContainersWarehouse = 27;
-        private const int _MaxContainerSizeWarehouse = 50;
+        private const int MAX_CONTAINERS_WAREHOUSE = 27;
+        private const int MAX_CONTAINER_SIZE_WAREHOUSE = 50;
 
-        private const int _MaxContainersAuctionLots = 1;
-        private const int _MaxContainerSizeAuctionLots = 15;
+        private const int MAX_CONTAINERS_AUCTION_LOTS = 1;
+        private const int MAX_CONTAINER_SIZE_AUCTION_LOTS = 15;
 
-        private const int _MaxContainersAuctionBids = 1; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
-        private const int _MaxContainerSizeAuctionBids = 15; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINERS_AUCTION_BIDS = 1; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINER_SIZE_AUCTION_BIDS = 15; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
 
-        private const int _MaxContainersAuctionSearch = 1; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
-        private const int _MaxContainerSizeAuctionSearch = 1000; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINERS_AUCTION_SEARCH = 1; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int MAX_CONTAINER_SIZE_AUCTION_SEARCH = 1000; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
 
         private readonly Dictionary<ItemZoneType, ItemZone> _zoneMap = new Dictionary<ItemZoneType, ItemZone>();
 
         public ItemLocationVerifier()
         {
-            _zoneMap.Add(ItemZoneType.AdventureBag, new ItemZone(_MaxContainersAdvBag, _MaxContainerSizeAdvBag));
-            _zoneMap[ItemZoneType.AdventureBag].PutContainer(0, _MaxContainerSizeAdvBag);
+            _zoneMap.Add(ItemZoneType.AdventureBag, new ItemZone(MAX_CONTAINERS_ADV_BAG, MAX_CONTAINER_SIZE_ADV_BAG));
+            _zoneMap[ItemZoneType.AdventureBag].PutContainer(0, MAX_CONTAINER_SIZE_ADV_BAG);
 
-            _zoneMap.Add(ItemZoneType.EquippedBags, new ItemZone(_MaxContainersEquippedBags, _MaxContainerEquippedBags));
+            _zoneMap.Add(ItemZoneType.EquippedBags, new ItemZone(MAX_CONTAINERS_EQUIPPED_BAGS, MAX_CONTAINER_EQUIPPED_BAGS));
 
-            _zoneMap.Add(ItemZoneType.PremiumBag, new ItemZone(_MaxContainersRoyalBag, _MaxContainerSizeRoyalBag));
-            _zoneMap.Add(ItemZoneType.BagSlot, new ItemZone(_MaxContainersBagSlot, _MaxContainerSizeBagSlot));
-            _zoneMap[ItemZoneType.BagSlot].PutContainer(0, _MaxContainerSizeBagSlot);
+            _zoneMap.Add(ItemZoneType.PremiumBag, new ItemZone(MAX_CONTAINERS_ROYAL_BAG, MAX_CONTAINER_SIZE_ROYAL_BAG));
+            _zoneMap.Add(ItemZoneType.BagSlot, new ItemZone(MAX_CONTAINERS_BAG_SLOT, MAX_CONTAINER_SIZE_BAG_SLOT));
+            _zoneMap[ItemZoneType.BagSlot].PutContainer(0, MAX_CONTAINER_SIZE_BAG_SLOT);
 
-            _zoneMap.Add(ItemZoneType.AvatarInventory, new ItemZone(_MaxContainersAvatar, _MaxContainerSizeAvatar));
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(0, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(1, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(2, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(3, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(4, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(5, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(6, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(7, _MaxContainerSizeAvatar);
-            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(8, _MaxContainerSizeAvatar);
+            _zoneMap.Add(ItemZoneType.AvatarInventory, new ItemZone(MAX_CONTAINERS_AVATAR, MAX_CONTAINER_SIZE_AVATAR));
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(0, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(1, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(2, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(3, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(4, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(5, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(6, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(7, MAX_CONTAINER_SIZE_AVATAR);
+            _zoneMap[ItemZoneType.AvatarInventory].PutContainer(8, MAX_CONTAINER_SIZE_AVATAR);
 
-            _zoneMap.Add(ItemZoneType.TreasureBox, new ItemZone(_MaxContainersTreasureBox, _MaxContainerSizeTreasureBox));
-            _zoneMap.Add(ItemZoneType.Warehouse, new ItemZone(_MaxContainersWarehouse, _MaxContainerSizeWarehouse));
-            _zoneMap[ItemZoneType.Warehouse].PutContainer(0, _MaxContainerSizeWarehouse);
+            _zoneMap.Add(ItemZoneType.TreasureBox, new ItemZone(MAX_CONTAINERS_TREASURE_BOX, MAX_CONTAINER_SIZE_TREASURE_BOX));
+            _zoneMap.Add(ItemZoneType.Warehouse, new ItemZone(MAX_CONTAINERS_WAREHOUSE, MAX_CONTAINER_SIZE_WAREHOUSE));
+            _zoneMap[ItemZoneType.Warehouse].PutContainer(0, MAX_CONTAINER_SIZE_WAREHOUSE);
 
-            _zoneMap.Add(ItemZoneType.ProbablyAuctionLots, new ItemZone(_MaxContainersAuctionLots, _MaxContainerSizeAuctionLots));
-            _zoneMap[ItemZoneType.ProbablyAuctionLots].PutContainer(0, _MaxContainerSizeAuctionLots);
+            _zoneMap.Add(ItemZoneType.ProbablyAuctionLots, new ItemZone(MAX_CONTAINERS_AUCTION_LOTS, MAX_CONTAINER_SIZE_AUCTION_LOTS));
+            _zoneMap[ItemZoneType.ProbablyAuctionLots].PutContainer(0, MAX_CONTAINER_SIZE_AUCTION_LOTS);
         }
 
         public ItemInstance GetItem(ItemLocation loc)
@@ -163,10 +163,10 @@ namespace Necromancy.Server.Systems.Item
         public ItemLocation NextOpenSlot(ItemZoneType itemZoneType)
         {
             int nextContainerWithSpace = _zoneMap[itemZoneType].nextContainerWithSpace;
-            if (nextContainerWithSpace != ItemZone.NoContainersWithSpace)
+            if (nextContainerWithSpace != ItemZone.NO_CONTAINERS_WITH_SPACE)
             {
                 int nextOpenSlot = _zoneMap[itemZoneType].GetContainer(nextContainerWithSpace).nextOpenSlot;
-                if (nextOpenSlot != Container.NoOpenSlots)
+                if (nextOpenSlot != Container.NO_OPEN_SLOTS)
                 {
                     ItemLocation itemLocation = new ItemLocation(itemZoneType, (byte)nextContainerWithSpace, (short)nextOpenSlot);
                     return itemLocation;
@@ -198,7 +198,7 @@ namespace Necromancy.Server.Systems.Item
             foreach (Container container in itemZone.containers)
             {
                 if (container == null) continue;
-                foreach (ItemInstance itemInstance in container.slots)
+                foreach (ItemInstance itemInstance in container.Slots)
                 {
                     if (itemInstance == null) continue;
                     if (itemInstance.instanceId == instanceId) return itemInstance;

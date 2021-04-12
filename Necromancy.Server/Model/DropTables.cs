@@ -20,20 +20,20 @@ namespace Necromancy.Server.Model
             _dropTables = new List<DropTable>();
             DropTable beetle = new DropTable(40101);
             DropTableItem item1 = new DropTableItem();
-            item1.itemId = 1;
-            item1.rarity = 1;
-            item1.minItems = 1;
-            item1.maxitems = 5;
+            item1.ItemId = 1;
+            item1.Rarity = 1;
+            item1.MinItems = 1;
+            item1.Maxitems = 5;
             DropTableItem item2 = new DropTableItem();
-            item2.itemId = 50100101;
-            item2.rarity = 2;
-            item2.minItems = 1;
-            item2.maxitems = 3;
+            item2.ItemId = 50100101;
+            item2.Rarity = 2;
+            item2.MinItems = 1;
+            item2.Maxitems = 3;
             DropTableItem item3 = new DropTableItem();
-            item3.itemId = 10200101;
-            item3.rarity = 3;
-            item3.minItems = 1;
-            item3.maxitems = 1;
+            item3.ItemId = 10200101;
+            item3.Rarity = 3;
+            item3.MinItems = 1;
+            item3.Maxitems = 1;
 
             beetle.AddItem(item1);
             beetle.AddItem(item2);
@@ -53,10 +53,10 @@ namespace Necromancy.Server.Model
                 List<DropTableItem> itemDrop = monsterDrop.FindAll(roll);
                 if (itemDrop.Count == 1)
                 {
-                    _Logger.Debug($"ItemId [ItemDrop ItemId {itemDrop[0].itemId}]");
-                    if (!_server.settingRepository.itemInfo.TryGetValue(itemDrop[0].itemId, out ItemInfoSetting itemSetting))
+                    _Logger.Debug($"ItemId [ItemDrop ItemId {itemDrop[0].ItemId}]");
+                    if (!_server.settingRepository.itemInfo.TryGetValue(itemDrop[0].ItemId, out ItemInfoSetting itemSetting))
                     {
-                        _Logger.Error($"Could not retrieve ItemSettings for ItemId [{itemDrop[0].itemId}]");
+                        _Logger.Error($"Could not retrieve ItemSettings for ItemId [{itemDrop[0].ItemId}]");
                         return null;
                     }
 
@@ -134,27 +134,27 @@ namespace Necromancy.Server.Model
 
         public List<DropTableItem> FindAll(int rarity)
         {
-            return dropTableItems.FindAll(x => x.rarity == rarity);
+            return dropTableItems.FindAll(x => x.Rarity == rarity);
         }
     }
 
     public class DropTableItem
     {
-        public int itemId;
-        public int maxitems;
-        public int minItems;
-        public int rarity;
+        public int ItemId;
+        public int Maxitems;
+        public int MinItems;
+        public int Rarity;
     }
 
     public class DropItem
     {
-        public ItemBase item;
-        public int numItems;
+        public ItemBase Item;
+        public int NumItems;
 
         public DropItem(int numItems, ItemBase item)
         {
-            this.item = item;
-            this.numItems = numItems;
+            this.Item = item;
+            this.NumItems = numItems;
         }
     }
 }

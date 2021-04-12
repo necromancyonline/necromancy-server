@@ -24,9 +24,9 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(numEntries); //less than or equal to 0x80
             for (int i = 0; i < _buffArr.Length; i++)
             {
-                res.WriteInt32(_buffArr[i].buffId);
-                res.WriteInt32(_buffArr[i].unknown1);
-                res.WriteInt32(_buffArr[i].unknown2);
+                res.WriteInt32(_buffArr[i].BuffId);
+                res.WriteInt32(_buffArr[i].Unknown1);
+                res.WriteInt32(_buffArr[i].Unknown2);
             }
 /*            for (int i = 0; i < numEmptyBuffs; i++)
             {

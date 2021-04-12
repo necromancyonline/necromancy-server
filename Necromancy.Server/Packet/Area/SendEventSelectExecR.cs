@@ -158,8 +158,8 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                if (client.character.hp.current == client.character.hp.max &&
-                    client.character.mp.current == client.character.mp.max)
+                if (client.character.Hp.current == client.character.Hp.max &&
+                    client.character.Mp.current == client.character.Mp.max)
                 {
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString(
@@ -178,14 +178,14 @@ namespace Necromancy.Server.Packet.Area
                         ServerType.Area); // show system message on middle of the screen.
 
                     IBuffer res7 = BufferProvider.Provide();
-                    res7.WriteInt32(client.character.hp.max); //To-Do : Math for Max gain of 50% MaxHp
+                    res7.WriteInt32(client.character.Hp.max); //To-Do : Math for Max gain of 50% MaxHp
                     router.Send(client, (ushort)AreaPacketId.recv_chara_update_hp, res7, ServerType.Area);
-                    client.character.hp.ToMax();
+                    client.character.Hp.ToMax();
 
                     IBuffer res9 = BufferProvider.Provide();
-                    res9.WriteInt32(client.character.mp.max); //To-Do : Math for Max gain of 50% MaxMp
+                    res9.WriteInt32(client.character.Mp.max); //To-Do : Math for Max gain of 50% MaxMp
                     router.Send(client, (ushort)AreaPacketId.recv_chara_update_mp, res9, ServerType.Area);
-                    client.character.mp.SetCurrent(client.character.mp.max);
+                    client.character.Mp.SetCurrent(client.character.Mp.max);
                 }
             }
             else if (client.character.eventSelectExecCode == 1)
@@ -209,8 +209,8 @@ namespace Necromancy.Server.Packet.Area
         {
             if (client.character.eventSelectExecCode == 0)
             {
-                if (client.character.hp.current == client.character.hp.max &&
-                    client.character.mp.current == client.character.mp.max)
+                if (client.character.Hp.current == client.character.Hp.max &&
+                    client.character.Mp.current == client.character.Mp.max)
                 {
                     IBuffer res12 = BufferProvider.Provide();
                     res12.WriteCString("What do you want Adul to say?"); // Length 0xC01
@@ -225,14 +225,14 @@ namespace Necromancy.Server.Packet.Area
                         ServerType.Area); // show system message on middle of the screen.
 
                     IBuffer res7 = BufferProvider.Provide();
-                    res7.WriteInt32(client.character.hp.max); //To-Do : Math for Max gain of 50% MaxHp
+                    res7.WriteInt32(client.character.Hp.max); //To-Do : Math for Max gain of 50% MaxHp
                     router.Send(client, (ushort)AreaPacketId.recv_chara_update_hp, res7, ServerType.Area);
-                    client.character.hp.ToMax();
+                    client.character.Hp.ToMax();
 
                     IBuffer res9 = BufferProvider.Provide();
-                    res9.WriteInt32(client.character.mp.max); //To-Do : Math for Max gain of 50% MaxMp
+                    res9.WriteInt32(client.character.Mp.max); //To-Do : Math for Max gain of 50% MaxMp
                     router.Send(client, (ushort)AreaPacketId.recv_chara_update_mp, res9, ServerType.Area);
-                    client.character.mp.ToMax();
+                    client.character.Mp.ToMax();
                 }
             }
             else if (client.character.eventSelectExecCode == 1)
@@ -501,18 +501,18 @@ namespace Necromancy.Server.Packet.Area
                 ulong[] goldCostPerChoice = {0, 0, 60, 300, 1200, 3000, 100, 0, 60, 300, 10000};
                 _Logger.Debug($"The selection you have made is {client.character.eventSelectExtraSelectionCode}");
 
-                client.character.hp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
-                client.character.mp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
-                client.character.condition.SetCurrent(conditionPerChoice[client.character.eventSelectExtraSelectionCode]);
-                client.character.od.ToMax();
-                client.character.gp.ToMax();
+                client.character.Hp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
+                client.character.Mp.SetCurrent((sbyte)hPandMPperChoice[client.character.eventSelectExtraSelectionCode], true);
+                client.character.Condition.SetCurrent(conditionPerChoice[client.character.eventSelectExtraSelectionCode]);
+                client.character.Od.ToMax();
+                client.character.Gp.ToMax();
                 client.character.adventureBagGold -= goldCostPerChoice[client.character.eventSelectExtraSelectionCode];
-                if (client.character.hp.current >= client.character.hp.max) client.character.hp.ToMax();
-                if (client.character.mp.current >= client.character.mp.current) client.character.mp.ToMax();
+                if (client.character.Hp.current >= client.character.Hp.max) client.character.Hp.ToMax();
+                if (client.character.Mp.current >= client.character.Mp.current) client.character.Mp.ToMax();
 
-                RecvCharaUpdateHp recvCharaUpdateHp = new RecvCharaUpdateHp(client.character.hp.current);
+                RecvCharaUpdateHp recvCharaUpdateHp = new RecvCharaUpdateHp(client.character.Hp.current);
                 router.Send(recvCharaUpdateHp, client);
-                RecvCharaUpdateMp recvCharaUpdateMp = new RecvCharaUpdateMp(client.character.mp.current);
+                RecvCharaUpdateMp recvCharaUpdateMp = new RecvCharaUpdateMp(client.character.Mp.current);
                 router.Send(recvCharaUpdateMp, client);
                 RecvCharaUpdateCon recvCharaUpdateCon = new RecvCharaUpdateCon(conditionPerChoice[client.character.eventSelectExtraSelectionCode]);
                 router.Send(recvCharaUpdateCon, client);
@@ -564,8 +564,8 @@ namespace Necromancy.Server.Packet.Area
                     while (client.character.experienceCurrent > experience.CalculateLevelUp((uint)client.character.level + 1).cumulativeExperience)
                     {
                         client.character.level++;
-                        client.character.hp.SetMax(client.character.hp.max + 10);
-                        client.character.mp.SetMax(client.character.mp.max + 10);
+                        client.character.Hp.SetMax(client.character.Hp.max + 10);
+                        client.character.Mp.SetMax(client.character.Mp.max + 10);
                         client.character.strength += (ushort)Util.GetRandomNumber(0, 2);
                         client.character.vitality += (ushort)Util.GetRandomNumber(0, 2);
                         client.character.dexterity += (ushort)Util.GetRandomNumber(0, 2);
@@ -576,8 +576,8 @@ namespace Necromancy.Server.Packet.Area
                         int luckyShot = Util.GetRandomNumber(0, client.character.luck);
                         if (luckyShot > client.character.luck * .8)
                         {
-                            client.character.hp.SetMax(client.character.hp.max + 10);
-                            client.character.mp.SetMax(client.character.mp.max + 10);
+                            client.character.Hp.SetMax(client.character.Hp.max + 10);
+                            client.character.Mp.SetMax(client.character.Mp.max + 10);
                             client.character.strength = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.strength);
                             client.character.vitality = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.vitality);
                             client.character.dexterity = (ushort)(Util.GetRandomNumber(-2, 2) + client.character.dexterity);
@@ -593,8 +593,8 @@ namespace Necromancy.Server.Packet.Area
                         RecvCharaUpdateLvDetail2 recvCharaUpdateLvDetail2 = new RecvCharaUpdateLvDetail2(client.character, experience);
                         RecvCharaUpdateLvDetailEnd recvCharaUpdateLvDetailEnd = new RecvCharaUpdateLvDetailEnd();
 
-                        RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.character.hp.max);
-                        RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.character.mp.max);
+                        RecvCharaUpdateMaxHp recvCharaUpdateMaxHp = new RecvCharaUpdateMaxHp(client.character.Hp.max);
+                        RecvCharaUpdateMaxMp recvCharaUpdateMaxMp = new RecvCharaUpdateMaxMp(client.character.Mp.max);
                         RecvCharaUpdateAbility recvCharaUpdateAbilityStr = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Str, client.character.strength, client.character.battleParam.plusStrength);
                         RecvCharaUpdateAbility recvCharaUpdateAbilityVit = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Vit, client.character.vitality, client.character.battleParam.plusVitality);
                         RecvCharaUpdateAbility recvCharaUpdateAbilityDex = new RecvCharaUpdateAbility((int)RecvCharaUpdateAbility.Ability.Dex, client.character.dexterity, client.character.battleParam.plusDexterity);

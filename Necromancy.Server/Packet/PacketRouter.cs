@@ -89,7 +89,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(PacketResponse response)
         {
-            foreach (NecClient client in response.clients) Send(client, response.ToPacket());
+            foreach (NecClient client in response.Clients) Send(client, response.ToPacket());
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Necromancy.Server.Packet
             {
                 foreach (PacketResponse response in buffers)
                 {
-                    response.clients.Add(client);
+                    response.Clients.Add(client);
                     Send(response);
                 }
             }
@@ -126,10 +126,10 @@ namespace Necromancy.Server.Packet
         public void Send(Map map, PacketResponse response, params NecClient[] excepts)
         {
             List<NecClient> mapClients = map.clientLookup.GetAll();
-            mapClients.AddRange(response.clients);
-            response.clients.Clear();
+            mapClients.AddRange(response.Clients);
+            response.Clients.Clear();
             List<NecClient> clients = GetClients(mapClients, excepts);
-            response.clients.AddRange(clients);
+            response.Clients.AddRange(clients);
             Send(response);
         }
 
@@ -138,7 +138,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(PacketResponse response, List<NecClient> clientList)
         {
-            foreach (NecClient client in clientList) response.clients.Add(client);
+            foreach (NecClient client in clientList) response.Clients.Add(client);
             Send(response);
         }
 
@@ -147,7 +147,7 @@ namespace Necromancy.Server.Packet
         /// </summary>
         public void Send(PacketResponse response, params NecClient[] clients)
         {
-            response.clients.AddRange(clients);
+            response.Clients.AddRange(clients);
             Send(response);
         }
 
@@ -157,7 +157,7 @@ namespace Necromancy.Server.Packet
         public void Send(ChatResponse response)
         {
             RecvChatNotifyMessage notifyMessage = new RecvChatNotifyMessage(response);
-            notifyMessage.clients.AddRange(response.recipients);
+            notifyMessage.Clients.AddRange(response.recipients);
             Send(notifyMessage);
         }
 

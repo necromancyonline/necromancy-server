@@ -62,9 +62,9 @@ namespace Necromancy.Server.Packet.Msg
             //-------------------------------------
             // Send Character Creation packets to Database for laster use.
 
-            if (!maps.TryGet(Map.NewCharacterMapId, out Map map))
+            if (!maps.TryGet(Map.NEW_CHARACTER_MAP_ID, out Map map))
             {
-                _Logger.Error($"New character map not found MapId: {Map.NewCharacterMapId}");
+                _Logger.Error($"New character map not found MapId: {Map.NEW_CHARACTER_MAP_ID}");
                 client.Close();
             }
 
@@ -90,10 +90,10 @@ namespace Necromancy.Server.Packet.Msg
             character.faceId = faceId;
             character.faceArrangeId = faceArrangeId;
             character.voiceId = voiceId;
-            character.hp.SetMax(attribute.hp);
-            character.hp.SetCurrent(attribute.hp);
-            character.mp.SetMax(attribute.mp);
-            character.mp.SetCurrent(attribute.mp);
+            character.Hp.SetMax(attribute.hp);
+            character.Hp.SetCurrent(attribute.hp);
+            character.Mp.SetMax(attribute.mp);
+            character.Mp.SetCurrent(attribute.mp);
             character.strength = (ushort)(strength + attribute.str);
             character.vitality = (ushort)(vitality + attribute.vit);
             character.dexterity = (ushort)(dexterity + attribute.dex);

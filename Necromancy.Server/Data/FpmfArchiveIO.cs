@@ -13,8 +13,8 @@ namespace Necromancy.Server.Data
     {
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(FpmfArchiveIo));
 
-        private static readonly byte[] _magicBytes = {0x46, 0x50, 0x4D, 0x46};
-        private static readonly byte[] _magicBytesWoitm = {0x57, 0x4F, 0x49, 0x54, 0x4D};
+        private static readonly byte[] _MagicBytes = {0x46, 0x50, 0x4D, 0x46};
+        private static readonly byte[] _MagicBytesWoitm = {0x57, 0x4F, 0x49, 0x54, 0x4D};
 
         public FpmfArchive Open(string hedFilePath)
         {
@@ -28,7 +28,7 @@ namespace Necromancy.Server.Data
             hedBuffer.SetPositionStart();
             byte[] magicBytes = hedBuffer.ReadBytes(4);
             for (int i = 0; i < 4; i++)
-                if (magicBytes[i] != _magicBytes[i])
+                if (magicBytes[i] != _MagicBytes[i])
                     throw new Exception("Invalid File");
 
             FpmfArchive archive = new FpmfArchive();
@@ -150,7 +150,7 @@ namespace Necromancy.Server.Data
             hedBuffer.SetPositionStart();
             byte[] magicBytes = hedBuffer.ReadBytes(4);
             for (int i = 0; i < 4; i++)
-                if (magicBytes[i] != _magicBytes[i])
+                if (magicBytes[i] != _MagicBytes[i])
                     throw new Exception("Invalid File");
 
             FpmfArchive archive = new FpmfArchive();
@@ -251,7 +251,7 @@ namespace Necromancy.Server.Data
                 fileBuff.WriteUInt32(archiveFile.unknown1);
             }
 
-            headerBuff.WriteBytes(_magicBytes);
+            headerBuff.WriteBytes(_MagicBytes);
             headerBuff.WriteInt32(0);
             headerBuff.WriteUInt32(archive.unknown0);
             headerBuff.WriteUInt32(archive.unknown1);
@@ -386,7 +386,7 @@ namespace Necromancy.Server.Data
             buffer.SetPositionStart();
             byte[] magicBytes = buffer.ReadBytes(5);
             for (int i = 0; i < 5; i++)
-                if (magicBytes[i] != _magicBytesWoitm[i])
+                if (magicBytes[i] != _MagicBytesWoitm[i])
                     throw new Exception("Invalid WOITM File");
 
             short version = buffer.ReadInt16(); // cmp to 1

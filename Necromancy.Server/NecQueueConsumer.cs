@@ -13,7 +13,7 @@ namespace Necromancy.Server
 {
     public class NecQueueConsumer : ThreadedBlockingQueueConsumer
     {
-        public const int NoExpectedSize = -1;
+        public const int NO_EXPECTED_SIZE = -1;
 
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecQueueConsumer));
 
@@ -24,9 +24,9 @@ namespace Necromancy.Server
 
         private readonly ServerType _serverType;
         private readonly NecSetting _setting;
-        public Action<NecConnection> clientConnected;
+        public Action<NecConnection> ClientConnected;
 
-        public Action<NecConnection> clientDisconnected;
+        public Action<NecConnection> ClientDisconnected;
 
         public NecQueueConsumer(ServerType serverType, NecSetting setting, AsyncEventSettings socketSetting) : base(
             socketSetting, serverType.ToString())
@@ -117,7 +117,7 @@ namespace Necromancy.Server
             }
 
             IConnectionHandler connectionHandler = _connectionHandlers[packet.id];
-            if (connectionHandler.expectedSize != NoExpectedSize && packet.data.Size < connectionHandler.expectedSize)
+            if (connectionHandler.expectedSize != NO_EXPECTED_SIZE && packet.data.Size < connectionHandler.expectedSize)
             {
                 _Logger.Error(connection,
                     $"[{_serverType}] Ignoring Packed (Id:{packet.id}) is smaller ({packet.data.Size}) than expected ({connectionHandler.expectedSize})");
@@ -145,7 +145,7 @@ namespace Necromancy.Server
             }
 
             IClientHandler clientHandler = _clientHandlers[packet.id];
-            if (clientHandler.expectedSize != NoExpectedSize && packet.data.Size < clientHandler.expectedSize)
+            if (clientHandler.expectedSize != NO_EXPECTED_SIZE && packet.data.Size < clientHandler.expectedSize)
             {
                 _Logger.Error(client,
                     $"[{_serverType}] Ignoring Packed (Id:{packet.id}) is smaller ({packet.data.Size}) than expected ({clientHandler.expectedSize})");
@@ -180,7 +180,7 @@ namespace Necromancy.Server
                 _Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
             }
 
-            Action<NecConnection> onClientDisconnected = clientDisconnected;
+            Action<NecConnection> onClientDisconnected = ClientDisconnected;
             if (onClientDisconnected != null)
                 try
                 {
@@ -203,7 +203,7 @@ namespace Necromancy.Server
                 _Logger.Debug($"[{_serverType}] Clients Count: {_connections.Count}");
             }
 
-            Action<NecConnection> onClientConnected = clientConnected;
+            Action<NecConnection> onClientConnected = ClientConnected;
             if (onClientConnected != null)
                 try
                 {

@@ -334,10 +334,10 @@ namespace Necromancy.Server.Systems.Item
             spawnParam.quantity = quantity;
             spawnParam.itemStatuses = moveResult.originItem.statuses;
 
-            const int Size = 1;
-            ItemLocation[] locs = new ItemLocation[Size];
-            int[] baseIds = new int[Size];
-            ItemSpawnParams[] spawnParams = new ItemSpawnParams[Size];
+            const int SIZE = 1;
+            ItemLocation[] locs = new ItemLocation[SIZE];
+            int[] baseIds = new int[SIZE];
+            ItemSpawnParams[] spawnParams = new ItemSpawnParams[SIZE];
 
             locs[0] = to;
             baseIds[0] = moveResult.originItem.baseId;
@@ -453,8 +453,8 @@ namespace Necromancy.Server.Systems.Item
             BattleParam battleParam = new BattleParam();
 
             client.character.ConditionBonus();
-            client.character.weight.SetCurrent(0);
-            client.character.gp.SetMax(0);
+            client.character.Weight.SetCurrent(0);
+            client.character.Gp.SetMax(0);
             bool shieldCheck = false;
 
             foreach (ItemInstance itemInstance in client.character.equippedItems.Values)
@@ -470,26 +470,26 @@ namespace Necromancy.Server.Systems.Item
                     battleParam.plusMagicalDefence += (short)(itemInstance.magical + itemInstance.plusMagical);
                 }
 
-                client.character.gp.SetMax(client.character.gp.max + itemInstance.gp + itemInstance.plusGp);
-                client.character.weight.Modify(itemInstance.weight + itemInstance.plusWeight);
+                client.character.Gp.SetMax(client.character.Gp.max + itemInstance.gp + itemInstance.plusGp);
+                client.character.Weight.Modify(itemInstance.weight + itemInstance.plusWeight);
                 if ((itemInstance.type == ItemType.SHIELD_LARGE) | (itemInstance.type == ItemType.SHIELD_MEDIUM) | (itemInstance.type == ItemType.SHIELD_SMALL)) shieldCheck = true;
             }
 
             //if you dont have a shield on,  set your GP to 0.  no blocking for you
             if (shieldCheck == false)
             {
-                client.character.gp.SetMax(0);
-                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.character.gp.max);
+                client.character.Gp.SetMax(0);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(client.character.Gp.max);
                 responses.Add(recvCharaUpdateAc);
             }
 
-            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.character.weight.max / 10, client.character.weight.current / 10 /*Weight.Diff*/);
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.character.Weight.max / 10, client.character.Weight.current / 10 /*Weight.Diff*/);
             responses.Add(recvCharaUpdateMaxWeight);
 
-            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.character.weight.current / 10);
+            RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.character.Weight.current / 10);
             responses.Add(recvCharaUpdateWeight);
 
-            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.character.gp.max);
+            RecvCharaUpdateMaxAc recvCharaUpdateMaxAc = new RecvCharaUpdateMaxAc(client.character.Gp.max);
             responses.Add(recvCharaUpdateMaxAc);
 
             RecvCharaUpdateBattleBaseParam recvCharaUpdateBattleBaseParam = new RecvCharaUpdateBattleBaseParam(client.character, battleParam);
@@ -731,7 +731,7 @@ namespace Necromancy.Server.Systems.Item
         //auction functions
         public MoveResult Exhibit(ItemLocation itemLocation, byte exhibitSlot, byte quantity, int auctionTimeSelector, ulong minBid, ulong buyoutPrice, string comment)
         {
-            const int MaxLots = 10; //TODO update with dimento?
+            const int MAX_LOTS = 10; //TODO update with dimento?
             ItemInstance fromItem = _character.itemLocationVerifier.GetItem(itemLocation);
             ItemLocation exhibitLocation = new ItemLocation(ItemZoneType.ProbablyAuctionLots, 0, exhibitSlot);
             bool hasToItem = _character.itemLocationVerifier.HasItem(exhibitLocation);
@@ -761,20 +761,20 @@ namespace Necromancy.Server.Systems.Item
             moveResult.destItem.comment = comment;
 
             int auctionTimeInSecondsFromNow = 0;
-            const int SecondsPerFourHours = 60 * 60 * 4;
+            const int SECONDS_PER_FOUR_HOURS = 60 * 60 * 4;
             switch (auctionTimeSelector) //TODO something not working
             {
                 case 0: // 4 hours
-                    auctionTimeInSecondsFromNow = SecondsPerFourHours;
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS;
                     break;
                 case 1: // 8 hours
-                    auctionTimeInSecondsFromNow = SecondsPerFourHours * 2;
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 2;
                     break;
                 case 2: // 12 hours
-                    auctionTimeInSecondsFromNow = SecondsPerFourHours * 3;
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 3;
                     break;
                 case 3: // 24 hours
-                    auctionTimeInSecondsFromNow = SecondsPerFourHours * 6;
+                    auctionTimeInSecondsFromNow = SECONDS_PER_FOUR_HOURS * 6;
                     break;
             }
 

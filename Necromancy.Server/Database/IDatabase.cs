@@ -7,7 +7,7 @@ namespace Necromancy.Server.Database
 {
     public interface IDatabase
     {
-        const int InvalidDatabaseId = -1;
+        const int INVALID_DATABASE_ID = -1;
 
         long version { get; set; }
 

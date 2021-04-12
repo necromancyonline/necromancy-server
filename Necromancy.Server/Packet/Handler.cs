@@ -24,6 +24,6 @@ namespace Necromancy.Server.Packet
         protected IDatabase database { get; }
 
         public abstract ushort id { get; }
-        public virtual int expectedSize => NecQueueConsumer.NoExpectedSize;
+        public virtual int expectedSize => NecQueueConsumer.NO_EXPECTED_SIZE;
     }
 }

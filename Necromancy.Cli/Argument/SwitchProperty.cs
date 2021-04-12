@@ -6,7 +6,7 @@ namespace Necromancy.Cli.Argument
 
         public delegate bool TryParseHandler(string value, out T result);
 
-        public static TryParseHandler noOp = (string value, out T result) =>
+        public static TryParseHandler NoOp = (string value, out T result) =>
         {
             result = default;
             return true;

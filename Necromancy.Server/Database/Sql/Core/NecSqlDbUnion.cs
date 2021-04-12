@@ -7,28 +7,28 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertUnion =
+        private const string SQL_INSERT_UNION =
             "INSERT INTO `nec_union` (`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created`)VALUES(@name,@leader_character_id,@subleader1_character_id,@subleader2_character_id,@level,@current_exp,@next_level_exp,@member_limit_increase,@cape_design_id,@union_news,@created);";
 
-        private const string _SqlSelectUnionById =
+        private const string SQL_SELECT_UNION_BY_ID =
             "SELECT `id`,`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created` FROM `nec_union` WHERE `id`=@id;";
 
-        private const string _SqlSelectUnionByLeaderId =
+        private const string SQL_SELECT_UNION_BY_LEADER_ID =
             "SELECT `id`,`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created` FROM `nec_union` WHERE `leader_character_id`=@leader_character_id;";
 
-        private const string _SqlSelectUnionByName =
+        private const string SQL_SELECT_UNION_BY_NAME =
             "SELECT `id`,`name`,`leader_character_id`,`subleader1_character_id`,`subleader2_character_id`,`level`,`current_exp`,`next_level_exp`,`member_limit_increase`,`cape_design_id`,`union_news`,`created` FROM `nec_union` WHERE `name`=@name;";
 
 
-        private const string _SqlUpdateUnion =
+        private const string SQL_UPDATE_UNION =
             "UPDATE `nec_union` SET `id`=@id,`name`=@name,`leader_character_id`=@leader_character_id,`subleader1_character_id`=@subleader1_character_id,`subleader2_character_id`=@subleader2_character_id,`level`=@level,`current_exp`=@current_exp,`next_level_exp`=@next_level_exp,`member_limit_increase`=@member_limit_increase,`cape_design_id`=@cape_design_id,`union_news`=@union_news,`created`=@created WHERE `id`=@id;";
 
-        private const string _SqlDeleteUnion =
+        private const string SQL_DELETE_UNION =
             "DELETE FROM `nec_union` WHERE `id`=@id;";
 
         public bool InsertUnion(Union union)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertUnion, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_UNION, command =>
             {
                 //AddParameter(command, "@id", union.Id);
                 AddParameter(command, "@name", union.name);
@@ -43,7 +43,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@union_news", union.unionNews);
                 AddParameter(command, "@created", union.created);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             union.id = (int)autoIncrement;
             return true;
@@ -52,7 +52,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Union SelectUnionById(int unionId)
         {
             Union union = null;
-            ExecuteReader(_SqlSelectUnionById,
+            ExecuteReader(SQL_SELECT_UNION_BY_ID,
                 command => { AddParameter(command, "@id", unionId); }, reader =>
                 {
                     if (reader.Read()) union = ReadUnion(reader);
@@ -63,7 +63,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Union SelectUnionByLeaderId(int leaderId)
         {
             Union union = null;
-            ExecuteReader(_SqlSelectUnionByLeaderId,
+            ExecuteReader(SQL_SELECT_UNION_BY_LEADER_ID,
                 command => { AddParameter(command, "@leader_character_id", leaderId); }, reader =>
                 {
                     if (reader.Read()) union = ReadUnion(reader);
@@ -74,7 +74,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Union SelectUnionByName(string unionName)
         {
             Union union = null;
-            ExecuteReader(_SqlSelectUnionByName,
+            ExecuteReader(SQL_SELECT_UNION_BY_NAME,
                 command => { AddParameter(command, "@name", unionName); }, reader =>
                 {
                     if (reader.Read()) union = ReadUnion(reader);
@@ -84,7 +84,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateUnion(Union union)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateUnion, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_UNION, command =>
             {
                 AddParameter(command, "@id", union.id);
                 AddParameter(command, "@name", union.name);
@@ -99,13 +99,13 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@union_news", union.unionNews);
                 AddParameter(command, "@created", union.created);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteUnion(int unionId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteUnion, command => { AddParameter(command, "@id", unionId); });
-            return rowsAffected > NoRowsAffected;
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_UNION, command => { AddParameter(command, "@id", unionId); });
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private Union ReadUnion(DbDataReader reader)

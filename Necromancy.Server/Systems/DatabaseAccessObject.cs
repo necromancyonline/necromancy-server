@@ -12,7 +12,7 @@ namespace Necromancy.Server.Systems
     //TODO MOVE UNDER /DATABASE
     public class DatabaseAccessObject
     {
-        protected const int NoRowsAffected = 0;
+        protected const int NO_ROWS_AFFECTED = 0;
         protected static readonly ILogger Logger = LogProvider.Logger(typeof(DatabaseAccessObject));
 
         private readonly string _sqLiteConnectionString;
@@ -59,7 +59,7 @@ namespace Necromancy.Server.Systems
             {
                 Logger.Error($"Query: {query}");
                 Exception(ex);
-                return NoRowsAffected;
+                return NO_ROWS_AFFECTED;
             }
         }
 

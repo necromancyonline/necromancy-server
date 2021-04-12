@@ -2,10 +2,10 @@ namespace Necromancy.Server.Systems.Item
 {
     public class AuctionItemSearchConditions
     {
-        private const int _MinSoulRank = 0;
-        private const int _MaxSoulRank = 99;
-        private const int _MinForgePrice = 0;
-        private const int _MaxForgePrice = 99;
+        private const int MIN_SOUL_RANK = 0;
+        private const int MAX_SOUL_RANK = 99;
+        private const int MIN_FORGE_PRICE = 0;
+        private const int MAX_FORGE_PRICE = 99;
 
         public int soulRankMin { get; set; }
         public int soulRankMax { get; set; }
@@ -26,22 +26,22 @@ namespace Necromancy.Server.Systems.Item
 
         public bool HasValidSoulRankMin()
         {
-            return soulRankMin >= _MinSoulRank && soulRankMin <= _MaxSoulRank;
+            return soulRankMin >= MIN_SOUL_RANK && soulRankMin <= MAX_SOUL_RANK;
         }
 
         public bool HasValidSoulRankMax()
         {
-            return soulRankMax >= _MinSoulRank && soulRankMax <= _MaxSoulRank;
+            return soulRankMax >= MIN_SOUL_RANK && soulRankMax <= MAX_SOUL_RANK;
         }
 
         public bool HasValidForgePriceMin()
         {
-            return forgePriceMin >= _MinForgePrice && forgePriceMin <= _MinForgePrice;
+            return forgePriceMin >= MIN_FORGE_PRICE && forgePriceMin <= MIN_FORGE_PRICE;
         }
 
         public bool HasValidForgePriceMax()
         {
-            return forgePriceMax >= _MaxForgePrice && forgePriceMax <= _MaxForgePrice;
+            return forgePriceMax >= MAX_FORGE_PRICE && forgePriceMax <= MAX_FORGE_PRICE;
         }
     }
 }

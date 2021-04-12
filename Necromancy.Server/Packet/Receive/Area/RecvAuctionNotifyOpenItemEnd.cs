@@ -9,7 +9,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         public RecvAuctionNotifyOpenItemEnd(NecClient necClient) : base((ushort)AreaPacketId.recv_auction_notify_open_item_end, ServerType.Area)
         {
-            clients.Add(necClient);
+            Clients.Add(necClient);
         }
 
         protected override IBuffer ToBuffer()

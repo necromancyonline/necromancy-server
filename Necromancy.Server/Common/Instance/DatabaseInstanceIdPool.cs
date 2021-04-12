@@ -35,7 +35,7 @@ namespace Necromancy.Server.Common.Instance
             if (instanceId < lowerBound || instanceId > upperBound)
             {
                 _Logger.Error($"InstanceId: {instanceId} does not belong to pool {name} ({lowerBound}-{upperBound})");
-                return IDatabase.InvalidDatabaseId;
+                return IDatabase.INVALID_DATABASE_ID;
             }
 
             return (int)(instanceId - lowerBound);
@@ -46,7 +46,7 @@ namespace Necromancy.Server.Common.Instance
             if (dbId > size)
             {
                 _Logger.Error($"Exhausted pool {name} size of {size} for dbId: {dbId}");
-                instanceId = InstanceGenerator.InvalidInstanceId;
+                instanceId = InstanceGenerator.INVALID_INSTANCE_ID;
                 return false;
             }
 
@@ -58,7 +58,7 @@ namespace Necromancy.Server.Common.Instance
             if (!_idPool.TryAdd(instanceId, dbId))
             {
                 _Logger.Error($"DbId: {dbId} already assigned to instanceId: {instanceId} for pool {name}");
-                instanceId = InstanceGenerator.InvalidInstanceId;
+                instanceId = InstanceGenerator.INVALID_INSTANCE_ID;
                 return false;
             }
 

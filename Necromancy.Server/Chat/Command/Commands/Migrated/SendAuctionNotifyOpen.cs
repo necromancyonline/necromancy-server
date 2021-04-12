@@ -31,8 +31,8 @@ namespace Necromancy.Server.Chat.Command.Commands
             List<ItemInstance> bids = itemService.GetBids();
             List<AuctionEquipmentSearchConditions> equipSearch = itemService.GetEquipmentSearchConditions();
             List<AuctionItemSearchConditions> itemSearch = itemService.GetItemSearchConditions();
-            const byte IsInMaintenanceMode = 0x0;
-            const int MaxLots = 15;
+            const byte IS_IN_MAINTENANCE_MODE = 0x0;
+            const int MAX_LOTS = 15;
 
             IBuffer res = BufferProvider.Provide();
 
@@ -92,7 +92,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteInt32(equipSearch.Count); //Less than or equal to 0x8
             foreach (AuctionEquipmentSearchConditions equipCond in equipSearch)
             {
-                res.WriteFixedString(equipCond.text, AuctionEquipmentSearchConditions.MaxTextLength); //V| Search Text
+                res.WriteFixedString(equipCond.text, AuctionEquipmentSearchConditions.MAX_TEXT_LENGTH); //V| Search Text
                 res.WriteByte(equipCond.forgePriceMin); //V| Grade min
                 res.WriteByte(equipCond.forgePriceMax); //V| Grade max
                 res.WriteByte(equipCond.soulRankMin); //V| Level min
@@ -110,7 +110,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                 res.WriteInt64(0); //TODO UNKNOWN
                 res.WriteInt64(0);
-                res.WriteFixedString(equipCond.description, AuctionEquipmentSearchConditions.MaxDescriptionLength); //v| Saved Search Description
+                res.WriteFixedString(equipCond.description, AuctionEquipmentSearchConditions.MAX_DESCRIPTION_LENGTH); //v| Saved Search Description
                 res.WriteByte(0); //TODO UNKNOWN
                 res.WriteByte(0); //TODO UNKNOWN
             }

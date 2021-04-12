@@ -5,9 +5,9 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Msg
 {
-    public class Recv0XC991 : PacketResponse
+    public class Recv0Xc991 : PacketResponse
     {
-        public Recv0XC991()
+        public Recv0Xc991()
             : base((ushort)MsgPacketId.recv_0xC991, ServerType.Msg)
         {
         }

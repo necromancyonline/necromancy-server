@@ -19,7 +19,7 @@ namespace Necromancy.Server.Tasks
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(TrapTask));
 
-        private static readonly int[] _baseTraps = {14301, 14302};
+        private static readonly int[] _BaseTraps = {14301, 14302};
         private static int[] _trapEnhancements = { };
         private readonly int _detectHeight;
         private readonly int _detectRadius;
@@ -161,7 +161,7 @@ namespace Necromancy.Server.Tasks
             RecvDataNotifyEoData eoTriggerData = new RecvDataNotifyEoData(trap.instanceId, monster.instanceId,
                 trap.triggerEffectId, trapPos, 2, 2);
             server.router.Send(_map, eoTriggerData);
-            float perHp = monster.hp.current / (float)monster.hp.max * 100;
+            float perHp = monster.Hp.current / (float)monster.Hp.max * 100;
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(ownerInstanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
@@ -213,7 +213,7 @@ namespace Necromancy.Server.Tasks
 
         public static bool BaseTrap(int skillId)
         {
-            return _baseTraps.Contains(skillId);
+            return _BaseTraps.Contains(skillId);
         }
     }
 }

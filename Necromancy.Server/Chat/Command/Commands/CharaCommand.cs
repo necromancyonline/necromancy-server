@@ -79,7 +79,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 case "hp":
                     IBuffer res = BufferProvider.Provide();
                     res.WriteInt32(y);
-                    character2.hp.SetCurrent(y);
+                    character2.Hp.SetCurrent(y);
                     router.Send(client, (ushort)AreaPacketId.recv_chara_update_hp, res, ServerType.Area);
                     break;
 
@@ -343,8 +343,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     break;
 
                 case "damage":
-                    int hp = character2.hp.current;
-                    client.character.hp.Modify(-hp, character2.instanceId);
+                    int hp = character2.Hp.current;
+                    client.character.Hp.Modify(-hp, character2.instanceId);
                     IBuffer res35 = BufferProvider.Provide();
                     res35.WriteInt32(hp - hp);
                     router.Send(client, (ushort)AreaPacketId.recv_chara_update_hp, res35, ServerType.Area);

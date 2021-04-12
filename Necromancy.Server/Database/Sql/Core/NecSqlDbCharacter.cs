@@ -8,34 +8,34 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertCharacter = @"
+        private const string SQL_INSERT_CHARACTER = @"
             INSERT INTO nec_character(account_id,soul_id,slot,map_id,x,y,z,name,race_id,sex_id,hair_id,hair_color_id,face_id,strength,vitality,dexterity,agility,intelligence,piety,luck,class_id,level,created,hp_current,mp_current,gold,condition_current,channel,face_arrange_id,voice_id,experience_current,skill_points)
             VALUES(@account_id,@soul_id,@slot,@map_id,@x,@y,@z,@name,@race_id,@sex_id,@hair_id,@hair_color_id,@face_id,@strength,@vitality,@dexterity,@agility,@intelligence,@piety,@luck,@class_id,@level,@created,@hp_current,@mp_current,@gold,@condition_current,@channel,@face_arrange_id,@voice_id,@experience_current,@skill_points)";
 
-        private const string _SqlSelectCharacterById = @"
+        private const string SQL_SELECT_CHARACTER_BY_ID = @"
             SELECT * FROM nec_character WHERE id=@id";
 
-        private const string _SqlSelectCharactersByAccountId = @"
+        private const string SQL_SELECT_CHARACTERS_BY_ACCOUNT_ID = @"
             SELECT * FROM nec_character WHERE account_id=@account_id";
 
-        private const string _SqlSelectCharactersBySoulId = @"
+        private const string SQL_SELECT_CHARACTERS_BY_SOUL_ID = @"
             SELECT * FROM nec_character WHERE soul_id=@soul_id";
 
-        private const string _SqlSelectCharacterBySlot = @"
+        private const string SQL_SELECT_CHARACTER_BY_SLOT = @"
             SELECT * FROM nec_character WHERE soul_id=@soul_id AND slot=@slot";
 
-        private const string _SqlUpdateCharacter =
+        private const string SQL_UPDATE_CHARACTER =
             "UPDATE `nec_character` SET `account_id`=@account_id, `soul_id`=@soul_id, `slot`=@slot, `map_id`=@map_id, `x`=@x, `y`=@y, `z`=@z, `name`=@name, `race_id`=@race_id, `sex_id`=@sex_id, `hair_id`=@hair_id, `hair_color_id`=@hair_color_id, `face_id`=@face_id, `strength`=@strength, `vitality`=@vitality, `dexterity`=@dexterity, `agility`=@agility, `intelligence`=@intelligence, `piety`=@piety, `luck`=@luck, `class_id`=@class_id, `level`=@level, `created`=@created, `hp_current`=@hp_current, `mp_current`=@mp_current, `gold`=@gold, `condition_current`=@condition_current, `channel`=@channel, `face_arrange_id`=@face_arrange_id, `voice_id`=@voice_id, `experience_current`=@experience_current, `skill_points`=@skill_points WHERE `id`=@id;";
 
-        private const string _SqlDeleteCharacter =
+        private const string SQL_DELETE_CHARACTER =
             "DELETE FROM `nec_character` WHERE `id`=@id;";
 
-        private const string _SqlSelectCharacters =
+        private const string SQL_SELECT_CHARACTERS =
             "SELECT * FROM `nec_character`;";
 
         public bool InsertCharacter(Character character)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertCharacter, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_CHARACTER, command =>
             {
                 AddParameter(command, "@account_id", character.accountId);
                 AddParameter(command, "@soul_id", character.soulId);
@@ -60,17 +60,17 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@class_id", character.classId);
                 AddParameter(command, "@level", character.level);
                 AddParameter(command, "@created", character.created);
-                AddParameter(command, "@hp_current", character.hp.current);
-                AddParameter(command, "@mp_current", character.mp.current);
+                AddParameter(command, "@hp_current", character.Hp.current);
+                AddParameter(command, "@mp_current", character.Mp.current);
                 AddParameter(command, "@gold", character.adventureBagGold);
-                AddParameter(command, "@condition_current", character.condition.current);
+                AddParameter(command, "@condition_current", character.Condition.current);
                 AddParameter(command, "@channel", character.channel);
                 AddParameter(command, "@face_arrange_id", character.faceArrangeId);
                 AddParameter(command, "@voice_id", character.voiceId);
                 AddParameter(command, "@experience_current", character.experienceCurrent);
                 AddParameter(command, "@skill_points", character.skillPoints);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             character.id = (int)autoIncrement;
             return true;
@@ -79,7 +79,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Character SelectCharacterById(int characterId)
         {
             Character character = null;
-            ExecuteReader(_SqlSelectCharacterById,
+            ExecuteReader(SQL_SELECT_CHARACTER_BY_ID,
                 command => { AddParameter(command, "@id", characterId); }, reader =>
                 {
                     if (reader.Read()) character = ReadCharacter(reader);
@@ -90,7 +90,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<Character> SelectCharactersByAccountId(int accountId)
         {
             List<Character> characters = new List<Character>();
-            ExecuteReader(_SqlSelectCharactersByAccountId,
+            ExecuteReader(SQL_SELECT_CHARACTERS_BY_ACCOUNT_ID,
                 command => { AddParameter(command, "@account_id", accountId); }, reader =>
                 {
                     while (reader.Read())
@@ -105,7 +105,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<Character> SelectCharactersBySoulId(int soulId)
         {
             List<Character> characters = new List<Character>();
-            ExecuteReader(_SqlSelectCharactersBySoulId,
+            ExecuteReader(SQL_SELECT_CHARACTERS_BY_SOUL_ID,
                 command => { AddParameter(command, "@soul_id", soulId); }, reader =>
                 {
                     while (reader.Read())
@@ -120,7 +120,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public Character SelectCharacterBySlot(int soulId, int slot)
         {
             Character characters = null;
-            ExecuteReader(_SqlSelectCharacterBySlot,
+            ExecuteReader(SQL_SELECT_CHARACTER_BY_SLOT,
                 command =>
                 {
                     AddParameter(command, "@soul_id", soulId);
@@ -134,7 +134,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateCharacter(Character character)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateCharacter, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_CHARACTER, command =>
             {
                 AddParameter(command, "@account_id", character.accountId);
                 AddParameter(command, "@soul_id", character.soulId);
@@ -159,10 +159,10 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@class_id", character.classId);
                 AddParameter(command, "@level", character.level);
                 AddParameter(command, "@created", character.created);
-                AddParameter(command, "@hp_current", character.hp.current);
-                AddParameter(command, "@mp_current", character.mp.current);
+                AddParameter(command, "@hp_current", character.Hp.current);
+                AddParameter(command, "@mp_current", character.Mp.current);
                 AddParameter(command, "@gold", character.adventureBagGold);
-                AddParameter(command, "@condition_current", character.condition.current);
+                AddParameter(command, "@condition_current", character.Condition.current);
                 AddParameter(command, "@channel", character.channel);
                 AddParameter(command, "@face_arrange_id", character.faceArrangeId);
                 AddParameter(command, "@voice_id", character.voiceId);
@@ -170,20 +170,20 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@skill_points", character.skillPoints);
                 AddParameter(command, "@id", character.id);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteCharacter(int characterId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteCharacter,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_CHARACTER,
                 command => { AddParameter(command, "@id", characterId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public List<Character> SelectCharacters()
         {
             List<Character> characters = new List<Character>();
-            ExecuteReader(_SqlSelectCharacters,
+            ExecuteReader(SQL_SELECT_CHARACTERS,
                 command => { }, reader =>
                 {
                     while (reader.Read())
@@ -222,12 +222,12 @@ namespace Necromancy.Server.Database.Sql.Core
             character.luck = GetByte(reader, "luck");
             character.classId = GetByte(reader, "class_id");
             character.level = GetByte(reader, "level");
-            character.hp.SetMax(GetInt32(reader, "hp_current")); //Temporary until Max HP calc is created
-            character.mp.SetMax(GetInt32(reader, "mp_current")); //Temporary until Max HP calc is created
-            character.hp.SetCurrent(GetInt32(reader, "hp_current"));
-            character.mp.SetCurrent(GetInt32(reader, "mp_current"));
+            character.Hp.SetMax(GetInt32(reader, "hp_current")); //Temporary until Max HP calc is created
+            character.Mp.SetMax(GetInt32(reader, "mp_current")); //Temporary until Max HP calc is created
+            character.Hp.SetCurrent(GetInt32(reader, "hp_current"));
+            character.Mp.SetCurrent(GetInt32(reader, "mp_current"));
             character.adventureBagGold = GetUInt64(reader, "gold");
-            character.condition.SetCurrent(GetInt32(reader, "condition_current"));
+            character.Condition.SetCurrent(GetInt32(reader, "condition_current"));
             character.channel = GetInt32(reader, "channel");
             character.faceArrangeId = GetByte(reader, "face_arrange_id");
             character.voiceId = GetByte(reader, "voice_id");

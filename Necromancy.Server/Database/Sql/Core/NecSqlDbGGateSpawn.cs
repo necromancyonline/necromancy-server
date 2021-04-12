@@ -8,24 +8,24 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertGGateSpawn =
+        private const string SQL_INSERT_G_GATE_SPAWN =
             "INSERT INTO `nec_gGate_spawn` (`serial_id`,`interaction`,`name`,`title`,`map_id`, `x`,  `y`, `z`, `heading`, `model_id`, `size`,`active`,`glow`,`created`, `updated`) VALUES (@serial_id,@interaction,@name,@title,@map_id, @x, @y, @z, @heading, @model_id, @size, @active, @glow, @created, @updated);";
 
-        private const string _SqlSelectGGateSpawns =
+        private const string SQL_SELECT_G_GATE_SPAWNS =
             "SELECT `id`, `serial_id`,`interaction`,`name`,`title`,`map_id`, `x`,  `y`, `z`, `heading`, `model_id`, `size`,`active`,`glow`,`created`, `updated` FROM `nec_ggate_spawn`;";
 
-        private const string _SqlSelectGGateSpawnsByMapId =
+        private const string SQL_SELECT_G_GATE_SPAWNS_BY_MAP_ID =
             "SELECT `id`, `serial_id`,`interaction`,`name`,`title`,`map_id`, `x`,  `y`, `z`, `heading`, `model_id`, `size`,`active`,`glow`,`created`, `updated` FROM `nec_ggate_spawn` WHERE `map_id`=@map_id;";
 
-        private const string _SqlUpdateGGateSpawn =
+        private const string SQL_UPDATE_G_GATE_SPAWN =
             "UPDATE `nec_ggate_spawn` SET `id`=@id,`serial_id`=@serial_id,`interaction`=@interaction,`name`=@name,`title`=@title,`map_id`=@map_id, `x`=@x,  `y`=@y, `z`=@z, `heading`=@heading, `model_id`=@model_id, `size`=@size,`active`=@active,`glow`=@glow,`created`=@created, `updated`=@updated WHERE `id`=@id;";
 
-        private const string _SqlDeleteGGateSpawn =
+        private const string SQL_DELETE_G_GATE_SPAWN =
             "DELETE FROM `nec_ggate_spawn` WHERE `id`=@id;";
 
         public bool InsertGGateSpawn(GGateSpawn gGateSpawn)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertGGateSpawn, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_G_GATE_SPAWN, command =>
             {
                 //AddParameter(command, "@id", gGateSpawn.Id);
                 AddParameter(command, "@serial_id", gGateSpawn.serialId);
@@ -44,7 +44,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", gGateSpawn.created);
                 AddParameter(command, "@updated", gGateSpawn.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             gGateSpawn.id = (int)autoIncrement;
             return true;
@@ -53,7 +53,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<GGateSpawn> SelectGGateSpawns()
         {
             List<GGateSpawn> gGateSpawns = new List<GGateSpawn>();
-            ExecuteReader(_SqlSelectGGateSpawns, reader =>
+            ExecuteReader(SQL_SELECT_G_GATE_SPAWNS, reader =>
             {
                 while (reader.Read())
                 {
@@ -67,7 +67,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<GGateSpawn> SelectGGateSpawnsByMapId(int mapId)
         {
             List<GGateSpawn> gGateSpawns = new List<GGateSpawn>();
-            ExecuteReader(_SqlSelectGGateSpawnsByMapId,
+            ExecuteReader(SQL_SELECT_G_GATE_SPAWNS_BY_MAP_ID,
                 command => { AddParameter(command, "@map_id", mapId); },
                 reader =>
                 {
@@ -82,7 +82,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateGGateSpawn(GGateSpawn gGateSpawn)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateGGateSpawn, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_G_GATE_SPAWN, command =>
             {
                 AddParameter(command, "@id", gGateSpawn.id);
                 AddParameter(command, "@serial_id", gGateSpawn.serialId);
@@ -101,14 +101,14 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", gGateSpawn.created);
                 AddParameter(command, "@updated", gGateSpawn.updated);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteGGateSpawn(int gGateSpawnId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteGGateSpawn,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_G_GATE_SPAWN,
                 command => { AddParameter(command, "@id", gGateSpawnId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private GGateSpawn ReadGGateSpawn(DbDataReader reader)

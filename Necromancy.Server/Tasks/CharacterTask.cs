@@ -54,9 +54,9 @@ namespace Necromancy.Server.Tasks
                     if (DateTime.Now >= _logoutTime)
                         LogOutRequest();
 
-                if (_client.character.hp.depleted && !_playerDied)
+                if (_client.character.Hp.depleted && !_playerDied)
                     PlayerDead();
-                else if (!_client.character.hp.depleted && _playerDied)
+                else if (!_client.character.Hp.depleted && _playerDied)
                     _playerDied = false;
 
                 StatRegen();
@@ -94,23 +94,23 @@ namespace Necromancy.Server.Tasks
 
         private void StatRegen()
         {
-            if (_client.character.gp.current < _client.character.gp.max)
+            if (_client.character.Gp.current < _client.character.Gp.max)
             {
-                _client.character.gp.SetCurrent(_client.character.gp.current + 5 /*_client.Character.GPRecoveryRate*/);
-                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(_client.character.gp.current);
+                _client.character.Gp.SetCurrent(_client.character.Gp.current + 5 /*_client.Character.GPRecoveryRate*/);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(_client.character.Gp.current);
                 _server.router.Send(recvCharaUpdateAc, _client);
             }
 
             if (_client.character.movementPose == 4 /*running byte*/)
             {
-                _client.character.od.SetCurrent(_client.character.od.current - 5 /*_client.Character.APCostDiff*/);
-                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.od.current);
+                _client.character.Od.SetCurrent(_client.character.Od.current - 5 /*_client.Character.APCostDiff*/);
+                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.Od.current);
                 _server.router.Send(recvCharaUpdateAp, _client);
             }
-            else if (_client.character.od.current < _client.character.od.max)
+            else if (_client.character.Od.current < _client.character.Od.max)
             {
-                _client.character.od.SetCurrent(_client.character.od.current + _client.character.odRecoveryRate / 2);
-                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.od.current);
+                _client.character.Od.SetCurrent(_client.character.Od.current + _client.character.odRecoveryRate / 2);
+                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.Od.current);
                 _server.router.Send(recvCharaUpdateAp, _client);
             }
         }
@@ -141,7 +141,7 @@ namespace Necromancy.Server.Tasks
             deadBody.beginnerProtection = (byte)_client.character.beginnerProtection;
             deadBody.charaName = _client.character.name;
             deadBody.soulName = _client.soul.name;
-            deadBody.equippedItems = _client.character.equippedItems;
+            deadBody.EquippedItems = _client.character.equippedItems;
             deadBody.raceId = _client.character.raceId;
             deadBody.sexId = _client.character.sexId;
             deadBody.hairId = _client.character.hairId;
@@ -151,7 +151,7 @@ namespace Necromancy.Server.Tasks
             deadBody.voiceId = _client.character.voiceId;
             deadBody.level = _client.character.level;
             deadBody.classId = _client.character.classId;
-            deadBody.equippedItems = _client.character.equippedItems;
+            deadBody.EquippedItems = _client.character.equippedItems;
             deadBody.criminalStatus = _client.character.criminalState;
             deadBody.connectionState = 1;
             _clients = _client.map.clientLookup.GetAll();

@@ -11,8 +11,8 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class ServerCommand : ConsoleCommand, ISwitchConsumer
     {
-        private const string _SettingFile = "server_setting.json";
-        private const string _SecretFile = "server_secret.json";
+        private const string SETTING_FILE = "server_setting.json";
+        private const string SECRET_FILE = "server_secret.json";
         public static readonly ILogger Logger = LogProvider.Logger(typeof(ServerCommand));
         private NecServer _server;
         private bool _service;
@@ -50,29 +50,29 @@ namespace Necromancy.Cli.Command.Commands
             if (_server == null)
             {
                 SettingProvider settingProvider = new SettingProvider();
-                NecSetting setting = settingProvider.Load<NecSetting>(_SettingFile);
+                NecSetting setting = settingProvider.Load<NecSetting>(SETTING_FILE);
                 if (setting == null)
                 {
-                    Logger.Info($"No `{_SettingFile}` file found, creating new");
+                    Logger.Info($"No `{SETTING_FILE}` file found, creating new");
                     setting = new NecSetting();
-                    settingProvider.Save(setting, _SettingFile);
+                    settingProvider.Save(setting, SETTING_FILE);
                 }
                 else
                 {
-                    Logger.Info($"Loaded Setting from: {settingProvider.GetSettingsPath(_SettingFile)}");
+                    Logger.Info($"Loaded Setting from: {settingProvider.GetSettingsPath(SETTING_FILE)}");
                 }
 
                 SettingProvider secretsProvider = new SettingProvider(setting.secretsFolder);
-                NecSecret secret = secretsProvider.Load<NecSecret>(_SecretFile);
+                NecSecret secret = secretsProvider.Load<NecSecret>(SECRET_FILE);
                 if (secret == null)
                 {
-                    Logger.Info($"No `{_SecretFile}` file found, creating new");
+                    Logger.Info($"No `{SECRET_FILE}` file found, creating new");
                     secret = new NecSecret();
-                    secretsProvider.Save(secret, _SecretFile);
+                    secretsProvider.Save(secret, SECRET_FILE);
                 }
                 else
                 {
-                    Logger.Info($"Loaded Secrets from: {secretsProvider.GetSettingsPath(_SecretFile)}");
+                    Logger.Info($"Loaded Secrets from: {secretsProvider.GetSettingsPath(SECRET_FILE)}");
                 }
 
                 setting.discordBotToken = secret.discordBotToken;

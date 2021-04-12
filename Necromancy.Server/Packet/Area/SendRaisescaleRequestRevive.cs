@@ -27,9 +27,9 @@ namespace Necromancy.Server.Packet.Area
             {
                 client.character.state = CharacterState.InvulnerableForm;
                 client.character.hasDied = false;
-                client.character.hp.depleted = false;
+                client.character.Hp.depleted = false;
                 client.character.deadType = 0;
-                client.character.hp.ToMax();
+                client.character.Hp.ToMax();
 
 
                 IBuffer res1 = BufferProvider.Provide();
@@ -84,7 +84,7 @@ namespace Necromancy.Server.Packet.Area
                 Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                 (t1 =>
                     {
-                        RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.character.hp.max);
+                        RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(client.character.Hp.max);
                         router.Send(client, cHpUpdate.ToPacket());
 
                         //if you are not dead, do normal stuff.  else...  do dead person stuff

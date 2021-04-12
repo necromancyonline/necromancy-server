@@ -113,7 +113,7 @@ namespace Necromancy.Server.Packet.Area
 
             foreach (MapTransition mapTran in client.map.mapTransitions.Values)
             {
-                RecvDataNotifyMapLink mapLink = new RecvDataNotifyMapLink(mapTran.instanceId, mapTran.referencePos, mapTran.maplinkOffset, mapTran.maplinkWidth, mapTran.maplinkColor, mapTran.maplinkHeading);
+                RecvDataNotifyMapLink mapLink = new RecvDataNotifyMapLink(mapTran.instanceId, mapTran.ReferencePos, mapTran.MaplinkOffset, mapTran.MaplinkWidth, mapTran.MaplinkColor, mapTran.MaplinkHeading);
                 router.Send(mapLink, client);
 
                 //un-comment for debugging maplinks to visualize the left and right Reference Positions

@@ -35,8 +35,8 @@ namespace Necromancy.Cli
 {
     internal class Program
     {
-        public const char CliSeparator = ' ';
-        public const char CliValueSeparator = '=';
+        public const char CLI_SEPARATOR = ' ';
+        public const char CLI_VALUE_SEPARATOR = '=';
 
         public static readonly ILogger Logger = LogProvider.Logger(typeof(Program));
 
@@ -150,7 +150,7 @@ namespace Necromancy.Cli
                     // Ctrl+Z, Ctrl+C or error
                     break;
 
-                string[] arguments = Util.ParseTextArguments(line, CliSeparator, '"');
+                string[] arguments = Util.ParseTextArguments(line, CLI_SEPARATOR, '"');
                 if (arguments.Length <= 0)
                 {
                     Logger.Error($"Invalid input: '{line}'. Type 'help' for a list of available commands.");
@@ -207,10 +207,10 @@ namespace Necromancy.Cli
             ConsoleParameter parameter = new ConsoleParameter(paramKey);
             foreach (string arg in args)
             {
-                int count = CountChar(arg, CliValueSeparator);
+                int count = CountChar(arg, CLI_VALUE_SEPARATOR);
                 if (count == 1)
                 {
-                    string[] keyValue = arg.Split(CliValueSeparator);
+                    string[] keyValue = arg.Split(CLI_VALUE_SEPARATOR);
                     if (keyValue.Length == 2)
                     {
                         string key = keyValue[0];

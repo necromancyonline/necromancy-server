@@ -27,7 +27,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res1.WriteInt64((long)CharacterState.LostState); //
                 router.Send(client.map, (ushort)AreaPacketId.recv_chara_notify_stateflag, res1, ServerType.Area);
 
-                client.character.hp.SetCurrent(-2); //This will make you show lost on chara select.
+                client.character.Hp.SetCurrent(-2); //This will make you show lost on chara select.
 
                 IBuffer res4 = BufferProvider.Provide();
                 router.Send(client, (ushort)AreaPacketId.recv_self_lost_notify, res4, ServerType.Area);
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             if (client.character.hasDied == false)
             {
                 client.character.hasDied = true;
-                client.character.hp.Modify(-client.character.hp.current);
+                client.character.Hp.Modify(-client.character.Hp.current);
             }
         }
     }

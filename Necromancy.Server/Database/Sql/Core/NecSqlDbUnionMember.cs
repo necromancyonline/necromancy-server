@@ -8,27 +8,27 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertUnionMember =
+        private const string SQL_INSERT_UNION_MEMBER =
             "INSERT INTO `nec_union_member` (`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined`)VALUES(@union_id,@character_id,@member_priviledge_bitmask,@rank,@joined);";
 
-        private const string _SqlSelectUnionMemberByCharacterId =
+        private const string SQL_SELECT_UNION_MEMBER_BY_CHARACTER_ID =
             "SELECT `id`,`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined` FROM `nec_union_member` WHERE `character_id`=@character_id;";
 
-        private const string _SqlSelectUnionMembersByUnionId =
+        private const string SQL_SELECT_UNION_MEMBERS_BY_UNION_ID =
             "SELECT `id`,`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined` FROM `nec_union_member` WHERE `union_id`=@union_id;";
 
-        private const string _SqlUpdateUnionMember =
+        private const string SQL_UPDATE_UNION_MEMBER =
             "UPDATE `nec_union_member` SET `union_id`=@union_id,`character_id`=@character_id,`member_priviledge_bitmask`=@member_priviledge_bitmask,`rank`=@rank,`joined`=@joined  WHERE `character_id`=@character_id;";
 
-        private const string _SqlDeleteUnionMember =
+        private const string SQL_DELETE_UNION_MEMBER =
             "DELETE FROM `nec_union_member` WHERE `character_id`=@character_id;";
 
-        private const string _SqlDeleteAllUnionMember =
+        private const string SQL_DELETE_ALL_UNION_MEMBER =
             "DELETE FROM `nec_union_member` WHERE `union_id`=@union_id;";
 
         public bool InsertUnionMember(UnionMember unionMember)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlInsertUnionMember, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_UNION_MEMBER, command =>
             {
                 //AddParameter(command, "@id", unionMember.Id);
                 AddParameter(command, "@union_id", unionMember.unionId);
@@ -37,7 +37,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@rank", unionMember.rank);
                 AddParameter(command, "@joined", unionMember.joined);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
             unionMember.id = (int)autoIncrement;
             return true;
@@ -46,7 +46,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public UnionMember SelectUnionMemberByCharacterId(int characterDatabaseId)
         {
             UnionMember unionMember = null;
-            ExecuteReader(_SqlSelectUnionMemberByCharacterId,
+            ExecuteReader(SQL_SELECT_UNION_MEMBER_BY_CHARACTER_ID,
                 command => { AddParameter(command, "@character_id", characterDatabaseId); }, reader =>
                 {
                     if (reader.Read()) unionMember = ReadUnionMember(reader);
@@ -57,7 +57,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<UnionMember> SelectUnionMembersByUnionId(int unionId)
         {
             List<UnionMember> unionMembers = new List<UnionMember>();
-            ExecuteReader(_SqlSelectUnionMembersByUnionId,
+            ExecuteReader(SQL_SELECT_UNION_MEMBERS_BY_UNION_ID,
                 command => { AddParameter(command, "@union_id", unionId); }, reader =>
                 {
                     while (reader.Read())
@@ -71,7 +71,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateUnionMember(UnionMember unionMember)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlUpdateUnionMember, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_UNION_MEMBER, command =>
             {
                 AddParameter(command, "@id", unionMember.id);
                 AddParameter(command, "@union_id", unionMember.unionId);
@@ -80,19 +80,19 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@rank", unionMember.rank);
                 AddParameter(command, "@joined", unionMember.joined);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteUnionMember(int characterDatabaseId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteUnionMember, command => { AddParameter(command, "@character_id", characterDatabaseId); });
-            return rowsAffected > NoRowsAffected;
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_UNION_MEMBER, command => { AddParameter(command, "@character_id", characterDatabaseId); });
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteAllUnionMembers(int unionId)
         {
-            int rowsAffected = ExecuteNonQuery(_SqlDeleteAllUnionMember, command => { AddParameter(command, "@union_id", unionId); });
-            return rowsAffected > NoRowsAffected;
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_ALL_UNION_MEMBER, command => { AddParameter(command, "@union_id", unionId); });
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private UnionMember ReadUnionMember(DbDataReader reader)

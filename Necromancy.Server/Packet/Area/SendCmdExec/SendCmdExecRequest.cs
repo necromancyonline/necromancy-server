@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
         public string CommandString()
         {
             return
-                $"{ChatCommandHandler.ChatCommandStart}{command} {string.Join(ChatCommandHandler.ChatCommandSeparator, parameter)}";
+                $"{ChatCommandHandler.CHAT_COMMAND_START}{command} {string.Join(ChatCommandHandler.CHAT_COMMAND_SEPARATOR, parameter)}";
         }
     }
 }

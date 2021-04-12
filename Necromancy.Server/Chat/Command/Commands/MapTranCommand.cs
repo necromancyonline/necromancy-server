@@ -62,43 +62,43 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res1.WriteFloat(client.character.y); //y
                     res1.WriteFloat(client.character.z + 2); //z
                     res1.WriteByte(client.character.heading); // offset
-                    res1.WriteFloat(myMapTransition.maplinkOffset); // Height
-                    res1.WriteFloat(myMapTransition.maplinkWidth); // Width
+                    res1.WriteFloat(myMapTransition.MaplinkOffset); // Height
+                    res1.WriteFloat(myMapTransition.MaplinkWidth); // Width
                     res1.WriteInt32(Util.GetRandomNumber(0,
                         6)); // Aura color 0=blue 1=gold 2=white 3=red 4=purple 5=black  0 to 5, crash above 5
                     router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_maplink, res1, ServerType.Area);
 
 
-                    myMapTransition.mapId = client.character.mapId;
-                    myMapTransition.transitionMapId = x;
-                    myMapTransition.referencePos.X = client.character.x;
-                    myMapTransition.referencePos.Y = client.character.y;
-                    myMapTransition.referencePos.Z = client.character.z;
-                    myMapTransition.maplinkHeading = client.character.heading;
-                    myMapTransition.maplinkColor =
+                    myMapTransition.MapId = client.character.mapId;
+                    myMapTransition.TransitionMapId = x;
+                    myMapTransition.ReferencePos.X = client.character.x;
+                    myMapTransition.ReferencePos.Y = client.character.y;
+                    myMapTransition.ReferencePos.Z = client.character.z;
+                    myMapTransition.MaplinkHeading = client.character.heading;
+                    myMapTransition.MaplinkColor =
                         0; //  Aura color 0=blue (safe, town) 1=gold (locked) 2=white (open) 3=red (occupied) 4=purple (special) 5=black (Boss Exit)  0 to 5, crash above 5
-                    myMapTransition.maplinkOffset = 200;
-                    myMapTransition.maplinkWidth = 1000;
-                    myMapTransition.refDistance = 400;
-                    myMapTransition.leftPos.X = client.character.x + 50;
-                    myMapTransition.leftPos.Y = client.character.y + 50;
-                    myMapTransition.leftPos.Z = client.character.z + 10;
-                    myMapTransition.rightPos.X = client.character.x - 50;
-                    myMapTransition.rightPos.Y = client.character.y - 50;
-                    myMapTransition.rightPos.Z = client.character.z - 10;
-                    myMapTransition.invertedTransition = false;
+                    myMapTransition.MaplinkOffset = 200;
+                    myMapTransition.MaplinkWidth = 1000;
+                    myMapTransition.RefDistance = 400;
+                    myMapTransition.LeftPos.X = client.character.x + 50;
+                    myMapTransition.LeftPos.Y = client.character.y + 50;
+                    myMapTransition.LeftPos.Z = client.character.z + 10;
+                    myMapTransition.RightPos.X = client.character.x - 50;
+                    myMapTransition.RightPos.Y = client.character.y - 50;
+                    myMapTransition.RightPos.Z = client.character.z - 10;
+                    myMapTransition.InvertedTransition = false;
                     server.settingRepository.map.TryGetValue(x, out MapSetting targetMap);
-                    myMapTransition.toPos.x = targetMap.x;
-                    myMapTransition.toPos.y = targetMap.y;
-                    myMapTransition.toPos.z = targetMap.z;
-                    myMapTransition.toPos.heading = (byte)targetMap.orientation;
+                    myMapTransition.ToPos.x = targetMap.x;
+                    myMapTransition.ToPos.y = targetMap.y;
+                    myMapTransition.ToPos.z = targetMap.z;
+                    myMapTransition.ToPos.heading = (byte)targetMap.orientation;
                     myMapTransition.state = true;
                     myMapTransition.created = DateTime.Now;
                     myMapTransition.updated = DateTime.Now;
 
-                    myMapTransition.maplinkHeading = (byte)(client.character.heading + 90);
-                    myMapTransition.maplinkHeading = (byte)(myMapTransition.maplinkHeading % 180);
-                    if (myMapTransition.maplinkHeading < 0) myMapTransition.maplinkHeading += 180;
+                    myMapTransition.MaplinkHeading = (byte)(client.character.heading + 90);
+                    myMapTransition.MaplinkHeading = (byte)(myMapTransition.MaplinkHeading % 180);
+                    if (myMapTransition.MaplinkHeading < 0) myMapTransition.MaplinkHeading += 180;
 
                     responses.Add(ChatResponse.CommandError(client,
                         $"Spawned MapTransition {myMapTransition.instanceId}"));
@@ -162,11 +162,11 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     //myMapTransition = Server.Instances.GetInstance((uint)x) as MapTransition;
                     myMapTransition = server.database.SelectMapTransitionsById(x);
-                    myMapTransition.toPos.x = client.character.x;
-                    myMapTransition.toPos.y = client.character.y;
-                    myMapTransition.toPos.z = client.character.z;
-                    myMapTransition.toPos.heading = client.character.heading;
-                    myMapTransition.transitionMapId = client.character.mapId;
+                    myMapTransition.ToPos.x = client.character.x;
+                    myMapTransition.ToPos.y = client.character.y;
+                    myMapTransition.ToPos.z = client.character.z;
+                    myMapTransition.ToPos.heading = client.character.heading;
+                    myMapTransition.TransitionMapId = client.character.mapId;
 
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))
@@ -181,9 +181,9 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     //myMapTransition = Server.Instances.GetInstance((uint)x) as MapTransition;
                     myMapTransition = server.database.SelectMapTransitionsById(x);
-                    myMapTransition.leftPos.X = client.character.x;
-                    myMapTransition.leftPos.Y = client.character.y;
-                    myMapTransition.leftPos.Z = client.character.z;
+                    myMapTransition.LeftPos.X = client.character.x;
+                    myMapTransition.LeftPos.Y = client.character.y;
+                    myMapTransition.LeftPos.Z = client.character.z;
 
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))
@@ -198,9 +198,9 @@ namespace Necromancy.Server.Chat.Command.Commands
 
                     //myMapTransition = Server.Instances.GetInstance((uint)x) as MapTransition;
                     myMapTransition = server.database.SelectMapTransitionsById(x);
-                    myMapTransition.rightPos.X = client.character.x;
-                    myMapTransition.rightPos.Y = client.character.y;
-                    myMapTransition.rightPos.Z = client.character.z;
+                    myMapTransition.RightPos.X = client.character.x;
+                    myMapTransition.RightPos.Y = client.character.y;
+                    myMapTransition.RightPos.Z = client.character.z;
 
                     myMapTransition.updated = DateTime.Now;
                     if (!server.database.UpdateMapTransition(myMapTransition))

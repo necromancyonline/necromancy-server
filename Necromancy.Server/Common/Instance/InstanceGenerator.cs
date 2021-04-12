@@ -11,7 +11,7 @@ namespace Necromancy.Server.Common.Instance
     /// </summary>
     public class InstanceGenerator
     {
-        public const uint InvalidInstanceId = 0;
+        public const uint INVALID_INSTANCE_ID = 0;
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(InstanceGenerator));
         private readonly DatabaseInstanceIdPool _characterPool;
         private readonly DatabaseInstanceIdPool _deadBodyPool;
@@ -123,11 +123,11 @@ namespace Necromancy.Server.Common.Instance
             }
             else
             {
-                instanceId = InvalidInstanceId;
+                instanceId = INVALID_INSTANCE_ID;
                 success = false;
             }
 
-            if (instanceId == InvalidInstanceId)
+            if (instanceId == INVALID_INSTANCE_ID)
             {
                 _Logger.Error($"Failed to retrieve instanceId for type {instance.GetType()}");
                 return;
@@ -156,7 +156,7 @@ namespace Necromancy.Server.Common.Instance
         public void FreeInstance(IInstance instance)
         {
             uint instanceId = instance.instanceId;
-            if (instanceId == InvalidInstanceId)
+            if (instanceId == INVALID_INSTANCE_ID)
             {
                 _Logger.Error("Failed to free, instanceId is invalid");
                 return;

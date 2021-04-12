@@ -8,7 +8,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public abstract class CsvReader<T>
     {
-        private const int _BufferSize = 128;
+        private const int BUFFER_SIZE = 128;
 
         //public static readonly Encoding encodingShiftJis = Encoding.GetEncoding(932);
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(CsvReader<T>));
@@ -27,7 +27,7 @@ namespace Necromancy.Server.Data.Setting
             if (file.Exists)
                 using (FileStream fileStream = File.OpenRead(file.FullName))
                 {
-                    using (StreamReader streamReader = new StreamReader(fileStream, Encoding.UTF8, true, _BufferSize))
+                    using (StreamReader streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BUFFER_SIZE))
                     {
                         string line;
                         while ((line = streamReader.ReadLine()) != null) ProcessLine(line, items);

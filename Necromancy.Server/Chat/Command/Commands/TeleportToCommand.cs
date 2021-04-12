@@ -103,9 +103,9 @@ namespace Necromancy.Server.Chat.Command.Commands
             else if (mapTran2 != null)
             {
                 res.WriteUInt32(client.character.instanceId);
-                res.WriteFloat(mapTran2.referencePos.X);
-                res.WriteFloat(mapTran2.referencePos.Y);
-                res.WriteFloat(mapTran2.referencePos.Z);
+                res.WriteFloat(mapTran2.ReferencePos.X);
+                res.WriteFloat(mapTran2.ReferencePos.Y);
+                res.WriteFloat(mapTran2.ReferencePos.Z);
                 res.WriteByte(client.character.heading);
                 res.WriteByte(client.character.movementAnim);
             }

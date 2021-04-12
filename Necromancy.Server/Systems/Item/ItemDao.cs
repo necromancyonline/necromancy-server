@@ -7,7 +7,7 @@ namespace Necromancy.Server.Systems.Item
 {
     internal class ItemDao : DatabaseAccessObject, IItemDao
     {
-        private const string _SqlSelectItemInstanceById = @"
+        private const string SQL_SELECT_ITEM_INSTANCE_BY_ID = @"
             SELECT
                 *
             FROM
@@ -15,7 +15,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlSelectItemInstanceByLocation = @"
+        private const string SQL_SELECT_ITEM_INSTANCE_BY_LOCATION = @"
             SELECT
                 *
             FROM
@@ -29,7 +29,7 @@ namespace Necromancy.Server.Systems.Item
             AND
                 slot = @slot";
 
-        private const string _SqlSelectSpawnedItemByIds = @"
+        private const string SQL_SELECT_SPAWNED_ITEM_BY_IDS = @"
             SELECT
                 *
             FROM
@@ -37,7 +37,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id IN ({0})";
 
-        private const string _SqlSelectOwnedInventoryItems = @"
+        private const string SQL_SELECT_OWNED_INVENTORY_ITEMS = @"
             SELECT
                 *
             FROM
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Systems.Item
             AND
                 zone IN (0,1,2,8,12)"; //adventure bag, equipped bags,royal bag, bag slot, avatar inventory
 
-        private const string _SqlSelectLootableInventoryItems = @"
+        private const string SQL_SELECT_LOOTABLE_INVENTORY_ITEMS = @"
             SELECT
                 *
             FROM
@@ -57,7 +57,7 @@ namespace Necromancy.Server.Systems.Item
             AND
                 zone IN (0,1,2)"; //adventure bag, equipped bags,royal bag
 
-        private const string _SqlUpdateItemLocation = @"
+        private const string SQL_UPDATE_ITEM_LOCATION = @"
             UPDATE
                 nec_item_instance
             SET
@@ -65,7 +65,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlUpdateItemQuantity = @"
+        private const string SQL_UPDATE_ITEM_QUANTITY = @"
             UPDATE
                 nec_item_instance
             SET
@@ -73,7 +73,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlUpdateItemEquipMask = @"
+        private const string SQL_UPDATE_ITEM_EQUIP_MASK = @"
             UPDATE
                 nec_item_instance
             SET
@@ -81,7 +81,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlUpdateItemEnhancementLevel = @"
+        private const string SQL_UPDATE_ITEM_ENHANCEMENT_LEVEL = @"
             UPDATE
                 nec_item_instance
             SET
@@ -89,7 +89,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlUpdateItemCurrentDurability = @"
+        private const string SQL_UPDATE_ITEM_CURRENT_DURABILITY = @"
             UPDATE
                 nec_item_instance
             SET
@@ -97,7 +97,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlUpdateItemOwnerAndStatus = @"
+        private const string SQL_UPDATE_ITEM_OWNER_AND_STATUS = @"
             UPDATE
                 nec_item_instance
             SET
@@ -105,13 +105,13 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlDeleteItemInstance = @"
+        private const string SQL_DELETE_ITEM_INSTANCE = @"
             DELETE FROM
                 nec_item_instance
             WHERE
                 id = @id";
 
-        private const string _SqlInsertItemInstances = @"
+        private const string SQL_INSERT_ITEM_INSTANCES = @"
             INSERT INTO
 	            nec_item_instance
 		        (
@@ -162,7 +162,7 @@ namespace Necromancy.Server.Systems.Item
             SELECT last_insert_rowid()";
 
         //TODO move auction stuff to partial namespace for easier reading
-        private const string _SqlSelectAuctions = @"
+        private const string SQL_SELECT_AUCTIONS = @"
             SELECT
                 item_instance.*,
 				nec_soul.id AS owner_soul_id
@@ -177,7 +177,7 @@ namespace Necromancy.Server.Systems.Item
             AND
                 owner_soul_id != @owner_soul_id";
 
-        private const string _SqlUpdateExhibit = @"
+        private const string SQL_UPDATE_EXHIBIT = @"
             UPDATE
                 nec_item_instance
             SET
@@ -185,7 +185,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlUpdateCancelExhibit = @"
+        private const string SQL_UPDATE_CANCEL_EXHIBIT = @"
             UPDATE
                 nec_item_instance
             SET
@@ -193,7 +193,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlSelectBids = @"
+        private const string SQL_SELECT_BIDS = @"
             SELECT
                 item_instance.*,
                 bidder_soul_id,
@@ -208,7 +208,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 bidder_soul_id = @bidder_soul_id";
 
-        private const string _SqlSelectLots = @"
+        private const string SQL_SELECT_LOTS = @"
             SELECT
                 item_instance.*,
 				nec_soul.id AS owner_soul_id
@@ -223,7 +223,7 @@ namespace Necromancy.Server.Systems.Item
             AND
                 zone = 82"; //Probably auction lot zone, may be 83
 
-        private const string _SqlSelectBuyoutPrice = @"
+        private const string SQL_SELECT_BUYOUT_PRICE = @"
             SELECT
                 buyout_price
             FROM
@@ -231,7 +231,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlInsertAuctionBid = @"
+        private const string SQL_INSERT_AUCTION_BID = @"
             INSERT INTO
                 nec_auction_bids
                 (
@@ -246,7 +246,7 @@ namespace Necromancy.Server.Systems.Item
                     @current_bid
                 )";
 
-        private const string _SqlUpdateAuctionWinnerSoulId = @"
+        private const string SQL_UPDATE_AUCTION_WINNER_SOUL_ID = @"
             UPDATE
                 nec_item_instance
             SET
@@ -254,7 +254,7 @@ namespace Necromancy.Server.Systems.Item
             WHERE
                 id = @id";
 
-        private const string _SqlSelectAuctionWinnerSoulId = @"
+        private const string SQL_SELECT_AUCTION_WINNER_SOUL_ID = @"
             SELECT
                 winner_soul_id
             FROM
@@ -269,20 +269,20 @@ namespace Necromancy.Server.Systems.Item
         public ItemInstance SelectItemInstance(long instanceId)
         {
             ItemInstance itemInstance = null;
-            ExecuteReader(_SqlSelectItemInstanceById,
+            ExecuteReader(SQL_SELECT_ITEM_INSTANCE_BY_ID,
                 command => { AddParameter(command, "@id", instanceId); }, reader => { itemInstance = MakeItemInstance(reader); });
             return itemInstance;
         }
 
         public void DeleteItemInstance(ulong instanceId)
         {
-            ExecuteNonQuery(_SqlDeleteItemInstance,
+            ExecuteNonQuery(SQL_DELETE_ITEM_INSTANCE,
                 command => { AddParameter(command, "@id", instanceId); });
         }
 
         public void UpdateItemEquipMask(ulong instanceId, ItemEquipSlots equipSlots)
         {
-            ExecuteNonQuery(_SqlUpdateItemEquipMask,
+            ExecuteNonQuery(SQL_UPDATE_ITEM_EQUIP_MASK,
                 command =>
                 {
                     AddParameter(command, "@current_equip_slot", (int)equipSlots);
@@ -292,7 +292,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateItemEnhancementLevel(ulong instanceId, int level)
         {
-            ExecuteNonQuery(_SqlUpdateItemEnhancementLevel,
+            ExecuteNonQuery(SQL_UPDATE_ITEM_ENHANCEMENT_LEVEL,
                 command =>
                 {
                     AddParameter(command, "@enhancement_level", level);
@@ -302,7 +302,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses)
         {
-            ExecuteNonQuery(_SqlUpdateItemOwnerAndStatus,
+            ExecuteNonQuery(SQL_UPDATE_ITEM_OWNER_AND_STATUS,
                 command =>
                 {
                     AddParameter(command, "@statuses", statuses);
@@ -313,7 +313,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
         {
-            ExecuteNonQuery(_SqlUpdateItemCurrentDurability,
+            ExecuteNonQuery(SQL_UPDATE_ITEM_CURRENT_DURABILITY,
                 command =>
                 {
                     AddParameter(command, "@current_durability", currentDurability);
@@ -341,7 +341,7 @@ namespace Necromancy.Server.Systems.Item
                 using DbConnection conn = GetSqlConnection();
                 conn.Open();
                 using DbCommand command = conn.CreateCommand();
-                command.CommandText = _SqlUpdateItemLocation;
+                command.CommandText = SQL_UPDATE_ITEM_LOCATION;
                 for (int i = 0; i < size; i++)
                 {
                     command.Parameters.Clear();
@@ -355,7 +355,7 @@ namespace Necromancy.Server.Systems.Item
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {_SqlUpdateItemLocation}");
+                Logger.Error($"Query: {SQL_UPDATE_ITEM_LOCATION}");
                 Exception(ex);
             }
         }
@@ -368,7 +368,7 @@ namespace Necromancy.Server.Systems.Item
                 using DbConnection conn = GetSqlConnection();
                 conn.Open();
                 using DbCommand command = conn.CreateCommand();
-                command.CommandText = _SqlUpdateItemQuantity;
+                command.CommandText = SQL_UPDATE_ITEM_QUANTITY;
                 for (int i = 0; i < size; i++)
                 {
                     command.Parameters.Clear();
@@ -379,7 +379,7 @@ namespace Necromancy.Server.Systems.Item
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {_SqlUpdateItemQuantity}");
+                Logger.Error($"Query: {SQL_UPDATE_ITEM_QUANTITY}");
                 Exception(ex);
             }
         }
@@ -393,7 +393,7 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> SelectOwnedInventoryItems(int ownerId)
         {
             List<ItemInstance> ownedItemInstances = new List<ItemInstance>();
-            ExecuteReader(_SqlSelectOwnedInventoryItems,
+            ExecuteReader(SQL_SELECT_OWNED_INVENTORY_ITEMS,
                 command => { AddParameter(command, "@owner_id", ownerId); }, reader =>
                 {
                     while (reader.Read()) ownedItemInstances.Add(MakeItemInstance(reader));
@@ -410,7 +410,7 @@ namespace Necromancy.Server.Systems.Item
                 using DbConnection conn = GetSqlConnection();
                 conn.Open();
                 using DbCommand command = conn.CreateCommand();
-                command.CommandText = _SqlInsertItemInstances;
+                command.CommandText = SQL_INSERT_ITEM_INSTANCES;
                 long[] lastIds = new long[size];
                 for (int i = 0; i < size; i++)
                 {
@@ -476,7 +476,7 @@ namespace Necromancy.Server.Systems.Item
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {_SqlInsertItemInstances}");
+                Logger.Error($"Query: {SQL_INSERT_ITEM_INSTANCES}");
                 Exception(ex);
             }
 
@@ -486,7 +486,7 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> SelectLootableInventoryItems(uint ownerId)
         {
             List<ItemInstance> lootableItemInstances = new List<ItemInstance>();
-            ExecuteReader(_SqlSelectOwnedInventoryItems,
+            ExecuteReader(SQL_SELECT_OWNED_INVENTORY_ITEMS,
                 command => { AddParameter(command, "@owner_id", ownerId); }, reader =>
                 {
                     while (reader.Read()) lootableItemInstances.Add(MakeItemInstance(reader));
@@ -498,7 +498,7 @@ namespace Necromancy.Server.Systems.Item
         {
             List<ItemInstance> auctions = new List<ItemInstance>();
             int i = 0;
-            ExecuteReader(_SqlSelectAuctions,
+            ExecuteReader(SQL_SELECT_AUCTIONS,
                 command => { AddParameter(command, "@owner_soul_id", ownerSoulId); }, reader =>
                 {
                     while (reader.Read())
@@ -512,7 +512,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateAuctionExhibit(ItemInstance itemInstance)
         {
-            ExecuteNonQuery(_SqlUpdateExhibit, command =>
+            ExecuteNonQuery(SQL_UPDATE_EXHIBIT, command =>
             {
                 AddParameter(command, "@id", itemInstance.instanceId);
                 AddParameter(command, "@consigner_soul_name", itemInstance.consignerSoulName);
@@ -525,7 +525,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateAuctionCancelExhibit(ulong instanceId)
         {
-            ExecuteNonQuery(_SqlUpdateCancelExhibit, command =>
+            ExecuteNonQuery(SQL_UPDATE_CANCEL_EXHIBIT, command =>
             {
                 AddParameter(command, "@id", instanceId);
                 AddParameterNull(command, "@consigner_soul_name");
@@ -541,7 +541,7 @@ namespace Necromancy.Server.Systems.Item
         {
             List<ItemInstance> bids = new List<ItemInstance>();
             int i = 0;
-            ExecuteReader(_SqlSelectBids,
+            ExecuteReader(SQL_SELECT_BIDS,
                 command => { AddParameter(command, "@bidder_soul_id", bidderSoulId); }, reader =>
                 {
                     while (reader.Read())
@@ -561,7 +561,7 @@ namespace Necromancy.Server.Systems.Item
         {
             List<ItemInstance> lots = new List<ItemInstance>();
             int i = 0;
-            ExecuteReader(_SqlSelectLots,
+            ExecuteReader(SQL_SELECT_LOTS,
                 command => { AddParameter(command, "@owner_soul_id", ownerSoulId); }, reader =>
                 {
                     while (reader.Read())
@@ -576,7 +576,7 @@ namespace Necromancy.Server.Systems.Item
         public ulong SelectBuyoutPrice(ulong instanceId)
         {
             ulong buyoutPrice = 0;
-            ExecuteReader(_SqlSelectBuyoutPrice,
+            ExecuteReader(SQL_SELECT_BUYOUT_PRICE,
                 command => { AddParameter(command, "@id", instanceId); }, reader =>
                 {
                     reader.Read();
@@ -587,7 +587,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void InsertAuctionBid(ulong instanceId, int bidderSoulId, ulong bid)
         {
-            ExecuteNonQuery(_SqlInsertAuctionBid, command =>
+            ExecuteNonQuery(SQL_INSERT_AUCTION_BID, command =>
             {
                 AddParameter(command, "@instance_id", instanceId);
                 AddParameter(command, "@bidder_soul_id", bidderSoulId);
@@ -597,7 +597,7 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateAuctionWinner(ulong instanceId, int winnerSoulId)
         {
-            ExecuteNonQuery(_SqlUpdateAuctionWinnerSoulId, command =>
+            ExecuteNonQuery(SQL_UPDATE_AUCTION_WINNER_SOUL_ID, command =>
             {
                 AddParameter(command, "@winner_soul_id", winnerSoulId);
                 AddParameter(command, "@id", instanceId);
@@ -607,7 +607,7 @@ namespace Necromancy.Server.Systems.Item
         public int SelectAuctionWinnerSoulId(ulong instanceId)
         {
             int winnerSoulId = 0;
-            ExecuteReader(_SqlSelectAuctionWinnerSoulId,
+            ExecuteReader(SQL_SELECT_AUCTION_WINNER_SOUL_ID,
                 command => { AddParameter(command, "@id", instanceId); }, reader =>
                 {
                     reader.Read();
@@ -773,8 +773,8 @@ namespace Necromancy.Server.Systems.Item
             //itemInstance.StatusMalus = (ItemStatusEffect)Enum.Parse(typeof(ItemStatusEffect), reader.GetString("status_malus"));
             itemInstance.statusMalusPercent = reader.GetInt32("status_percent");
 
-            itemInstance.objectType = reader.GetString("object_type"); //not sure what this is for
-            itemInstance.equipSlot2 = reader.GetString("equip_slot"); //not sure what this is for
+            itemInstance.ObjectType = reader.GetString("object_type"); //not sure what this is for
+            itemInstance.EquipSlot2 = reader.GetString("equip_slot"); //not sure what this is for
 
             itemInstance.isUseableInTown = !reader.GetBoolean("no_use_in_town"); //not sure what this is for
             itemInstance.isStorable = !reader.GetBoolean("no_storage");
@@ -790,7 +790,7 @@ namespace Necromancy.Server.Systems.Item
 
             itemInstance.iconId = reader.GetInt32("icon");
 
-            itemInstance.talkRingName = "";
+            itemInstance.TalkRingName = "";
             //TODO fix all the data types once mysql is implemented
             itemInstance.bagSize = reader.GetByte("num_of_bag_slots");
 

@@ -14,7 +14,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             : base((ushort)AreaPacketId.recv_item_remove, ServerType.Area)
         {
             _item = item;
-            clients.Add(client);
+            Clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()

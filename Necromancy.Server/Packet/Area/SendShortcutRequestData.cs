@@ -21,11 +21,11 @@ namespace Necromancy.Server.Packet.Area
 
             // Need to find definitions for different action types as Ids do overlap,  0 ?, 1 ?, 2 ? , 3 for skill_tree item, 4 for system , 5 for emote
             // Should we have a shortcutBarItem class?
-            const int MaxShortcutBars = 5;
-            for (int i = 0; i < MaxShortcutBars; i++)
+            const int MAX_SHORTCUT_BARS = 5;
+            for (int i = 0; i < MAX_SHORTCUT_BARS; i++)
             {
                 ShortcutBar shortcutBar = database.GetShortcutBar(client.character, i);
-                for (int j = 0; j < ShortcutBar.Count; j++)
+                for (int j = 0; j < ShortcutBar.COUNT; j++)
                 {
                     if (shortcutBar.item[j] is null) continue;
                     IBuffer res0 = BufferProvider.Provide();

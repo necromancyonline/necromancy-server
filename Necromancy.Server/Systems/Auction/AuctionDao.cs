@@ -5,7 +5,7 @@ namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionDao : DatabaseAccessObject
     {
-        private const string _SqlCreateItemsUpForAuctionView = @"
+        private const string SQL_CREATE_ITEMS_UP_FOR_AUCTION_VIEW = @"
             DROP VIEW IF EXISTS items_up_for_auction;
             CREATE VIEW IF NOT EXISTS items_up_for_auction
 	            (
@@ -47,7 +47,7 @@ namespace Necromancy.Server.Systems.Auction
             ON
                 item_instance.owner_id = consigner.id";
 
-        private const string _SqlInsertLot = @"
+        private const string SQL_INSERT_LOT = @"
             INSERT INTO
                 nec_auction
                 (
@@ -70,7 +70,7 @@ namespace Necromancy.Server.Systems.Auction
                     @comment
                 )";
 
-        private const string _SqlUpdateBid = @"
+        private const string SQL_UPDATE_BID = @"
             UPDATE
                 nec_auction_item
             SET
@@ -80,7 +80,7 @@ namespace Necromancy.Server.Systems.Auction
             WHERE
                 id = @id";
 
-        private const string _SqlSelectBids = @"
+        private const string SQL_SELECT_BIDS = @"
             SELECT
                 *
             FROM
@@ -88,7 +88,7 @@ namespace Necromancy.Server.Systems.Auction
             WHERE
                 bidder_id = @character_id";
 
-        private const string _SqlSelectLots = @"
+        private const string SQL_SELECT_LOTS = @"
             SELECT
                 *
             FROM
@@ -96,7 +96,7 @@ namespace Necromancy.Server.Systems.Auction
             WHERE
                 consigner_id = @character_id";
 
-        private const string _SqlSelectItem = @"
+        private const string SQL_SELECT_ITEM = @"
             SELECT
                 *
             FROM
@@ -104,7 +104,7 @@ namespace Necromancy.Server.Systems.Auction
             WHERE
                 id = @id";
 
-        private const string _SqlSelectItemsByCriteria = @"";
+        private const string SQL_SELECT_ITEMS_BY_CRITERIA = @"";
 
 
         public AuctionDao()
@@ -114,7 +114,7 @@ namespace Necromancy.Server.Systems.Auction
 
         private void CreateView()
         {
-            ExecuteNonQuery(_SqlCreateItemsUpForAuctionView, command => { });
+            ExecuteNonQuery(SQL_CREATE_ITEMS_UP_FOR_AUCTION_VIEW, command => { });
         }
 
         //public bool InsertLot(ItemInstance auctionLot)

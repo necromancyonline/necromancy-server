@@ -4,7 +4,7 @@ namespace Necromancy.Server.Data.Setting
 {
     public class MapCsvReader : CsvReader<MapSetting>
     {
-        private const string _RegexNamePattern =
+        private const string REGEX_NAME_PATTERN =
             @"(<str [0-9]+ [0-9]+ [0-9]+>)\\(<str [0-9]+ [0-9]+ [0-9]+>)\\(<str [0-9]+ [0-9]+ [0-9]+>)";
 
         private readonly StrTableSettingLookup _stringLookup;
@@ -31,7 +31,7 @@ namespace Necromancy.Server.Data.Setting
             string nameReference = properties[3];
             if (!string.IsNullOrEmpty(nameReference))
             {
-                Match match = Regex.Match(nameReference, _RegexNamePattern);
+                Match match = Regex.Match(nameReference, REGEX_NAME_PATTERN);
                 if (match.Success && match.Groups.Count == 4)
                 {
                     StrTableSetting countryStr = _stringLookup.Get(match.Groups[1].Value);

@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Msg
 {
     public class SendBaseLogin : ConnectionHandler
     {
-        public const int SoulCount = 8;
+        public const int SOUL_COUNT = 8;
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(SendBaseLogin));
 
         public SendBaseLogin(NecServer server) : base(server)
@@ -63,7 +63,7 @@ namespace Necromancy.Server.Packet.Msg
 
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //  Error
-            for (int i = 0; i < SoulCount; i++)
+            for (int i = 0; i < SOUL_COUNT; i++)
                 if (souls.Count > i)
                 {
                     Soul soul = souls[0];
