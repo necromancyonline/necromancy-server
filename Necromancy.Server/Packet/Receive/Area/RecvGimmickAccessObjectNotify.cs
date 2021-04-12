@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGimmickAccessObjectNotify : PacketResponse
     {
         public RecvGimmickAccessObjectNotify()
-            : base((ushort) AreaPacketId.recv_gimmick_access_object_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gimmick_access_object_notify, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerLibraryPartner : PacketResponse
     {
         public RecvSoulPartnerLibraryPartner()
-            : base((ushort) AreaPacketId.recv_soul_partner_library_partner, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_library_partner, ServerType.Area)
         {
         }
 
@@ -31,17 +31,11 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 int numEntries2 = 0x7; //must be 0x7
                 //495f20
-                for (int k = 0; k < numEntries2; k++)
-                {
-                    res.WriteInt16(0);
-                }
+                for (int k = 0; k < numEntries2; k++) res.WriteInt16(0);
                 int numEntries3 = 0x5; //must be 0x5
-                for (int k = 0; k < numEntries3; k++)
-                {
-                    res.WriteInt32(0);
-                }
-
+                for (int k = 0; k < numEntries3; k++) res.WriteInt32(0);
             }
+
             return res;
         }
     }

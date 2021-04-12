@@ -8,10 +8,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateBattleBaseParam : PacketResponse
     {
-        private Character _character;
-        private BattleParam _battleParam;
+        private readonly BattleParam _battleParam;
+        private readonly Character _character;
+
         public RecvCharaUpdateBattleBaseParam(Character character, BattleParam battleParam)
-            : base((ushort) AreaPacketId.recv_chara_update_battle_base_param, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_battle_base_param, ServerType.Area)
         {
             _character = character;
             _battleParam = battleParam;

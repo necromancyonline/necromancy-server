@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerCreatePartnerEnd : PacketResponse
     {
         public RecvSoulPartnerCreatePartnerEnd()
-            : base((ushort) AreaPacketId.recv_soul_partner_create_partner_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_create_partner_end, ServerType.Area)
         {
         }
 

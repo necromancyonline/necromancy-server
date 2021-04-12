@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestNotifyWorkBonusRate : PacketResponse
     {
         public RecvQuestNotifyWorkBonusRate()
-            : base((ushort) AreaPacketId.recv_quest_notify_work_bonus_rate, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_notify_work_bonus_rate, ServerType.Area)
         {
         }
 
@@ -23,6 +23,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(0);
                 res.WriteInt16(0);
             }
+
             res.WriteInt32(numEntries); //less than 0x14
             for (int k = 0; k < numEntries; k++)
             {
@@ -30,6 +31,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(0);
                 res.WriteInt16(0);
             }
+
             return res;
         }
     }

@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvAuctionNotifyOpenItemEnd : PacketResponse
     {
-        public RecvAuctionNotifyOpenItemEnd(NecClient necClient) : base((ushort) AreaPacketId.recv_auction_notify_open_item_end, ServerType.Area)
+        public RecvAuctionNotifyOpenItemEnd(NecClient necClient) : base((ushort)AreaPacketId.recv_auction_notify_open_item_end, ServerType.Area)
         {
             clients.Add(necClient);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

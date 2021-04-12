@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRaisescaleUpdateSuccessPer : PacketResponse
     {
         public RecvRaisescaleUpdateSuccessPer()
-            : base((ushort) AreaPacketId.recv_raisescale_update_success_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_raisescale_update_success_per, ServerType.Area)
         {
         }
 

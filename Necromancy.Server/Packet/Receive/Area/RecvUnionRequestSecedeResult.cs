@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionRequestSecedeResult : PacketResponse
     {
         public RecvUnionRequestSecedeResult()
-            : base((ushort) AreaPacketId.recv_union_request_secede_result, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_request_secede_result, ServerType.Area)
         {
         }
 

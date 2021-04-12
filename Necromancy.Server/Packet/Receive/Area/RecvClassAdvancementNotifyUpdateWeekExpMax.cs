@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvClassAdvancementNotifyUpdateWeekExpMax : PacketResponse
     {
         public RecvClassAdvancementNotifyUpdateWeekExpMax()
-            : base((ushort) AreaPacketId.recv_class_advancement_notify_update_week_exp_max, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_class_advancement_notify_update_week_exp_max, ServerType.Area)
         {
         }
 

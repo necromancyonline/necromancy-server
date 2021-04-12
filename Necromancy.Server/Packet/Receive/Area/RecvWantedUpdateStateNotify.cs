@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvWantedUpdateStateNotify : PacketResponse
     {
-        private int _instanceId; //???
-        private int _wantedState; //???
+        private readonly int _instanceId; //???
+        private readonly int _wantedState; //???
+
         public RecvWantedUpdateStateNotify(int instanceId, int wantedState)
-            : base((ushort) AreaPacketId.recv_wanted_update_state_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_update_state_notify, ServerType.Area)
         {
             _instanceId = instanceId;
             _wantedState = wantedState;

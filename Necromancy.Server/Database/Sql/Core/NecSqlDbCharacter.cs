@@ -8,20 +8,20 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertCharacter =@"
+        private const string _SqlInsertCharacter = @"
             INSERT INTO nec_character(account_id,soul_id,slot,map_id,x,y,z,name,race_id,sex_id,hair_id,hair_color_id,face_id,strength,vitality,dexterity,agility,intelligence,piety,luck,class_id,level,created,hp_current,mp_current,gold,condition_current,channel,face_arrange_id,voice_id,experience_current,skill_points)
             VALUES(@account_id,@soul_id,@slot,@map_id,@x,@y,@z,@name,@race_id,@sex_id,@hair_id,@hair_color_id,@face_id,@strength,@vitality,@dexterity,@agility,@intelligence,@piety,@luck,@class_id,@level,@created,@hp_current,@mp_current,@gold,@condition_current,@channel,@face_arrange_id,@voice_id,@experience_current,@skill_points)";
 
-        private const string _SqlSelectCharacterById =@"
+        private const string _SqlSelectCharacterById = @"
             SELECT * FROM nec_character WHERE id=@id";
 
-        private const string _SqlSelectCharactersByAccountId =@"
+        private const string _SqlSelectCharactersByAccountId = @"
             SELECT * FROM nec_character WHERE account_id=@account_id";
 
-        private const string _SqlSelectCharactersBySoulId =@"
+        private const string _SqlSelectCharactersBySoulId = @"
             SELECT * FROM nec_character WHERE soul_id=@soul_id";
 
-        private const string _SqlSelectCharacterBySlot =@"
+        private const string _SqlSelectCharacterBySlot = @"
             SELECT * FROM nec_character WHERE soul_id=@soul_id AND slot=@slot";
 
         private const string _SqlUpdateCharacter =
@@ -29,6 +29,7 @@ namespace Necromancy.Server.Database.Sql.Core
 
         private const string _SqlDeleteCharacter =
             "DELETE FROM `nec_character` WHERE `id`=@id;";
+
         private const string _SqlSelectCharacters =
             "SELECT * FROM `nec_character`;";
 
@@ -69,12 +70,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@experience_current", character.experienceCurrent);
                 AddParameter(command, "@skill_points", character.skillPoints);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            character.id = (int) autoIncrement;
+            character.id = (int)autoIncrement;
             return true;
         }
 
@@ -84,10 +82,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectCharacterById,
                 command => { AddParameter(command, "@id", characterId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        character = ReadCharacter(reader);
-                    }
+                    if (reader.Read()) character = ReadCharacter(reader);
                 });
             return character;
         }
@@ -132,10 +127,7 @@ namespace Necromancy.Server.Database.Sql.Core
                     AddParameter(command, "@slot", slot);
                 }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        characters = ReadCharacter(reader);
-                    }
+                    if (reader.Read()) characters = ReadCharacter(reader);
                 });
             return characters;
         }

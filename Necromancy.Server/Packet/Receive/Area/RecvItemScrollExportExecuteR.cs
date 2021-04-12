@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemScrollExportExecuteR : PacketResponse
     {
         public RecvItemScrollExportExecuteR()
-            : base((ushort) AreaPacketId.recv_item_scroll_export_execute_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_scroll_export_execute_r, ServerType.Area)
         {
         }
 

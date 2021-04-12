@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvLocalObjectNotifyState : PacketResponse
     {
         public RecvLocalObjectNotifyState()
-            : base((ushort) AreaPacketId.recv_local_object_notify_state, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_local_object_notify_state, ServerType.Area)
         {
         }
 

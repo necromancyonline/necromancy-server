@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillTreeUpdateCooltime : PacketResponse
     {
         public RecvSkillTreeUpdateCooltime()
-            : base((ushort) AreaPacketId.recv_skill_tree_update_cooltime, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_tree_update_cooltime, ServerType.Area)
         {
         }
 

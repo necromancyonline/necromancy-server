@@ -20,10 +20,7 @@ namespace Necromancy.Server.Database
         {
             _setting = setting;
             _settingRepository = settingRepository;
-            if (_settingRepository == null)
-            {
-                _settingRepository = new SettingRepository(_setting.repositoryFolder).Initialize();
-            }
+            if (_settingRepository == null) _settingRepository = new SettingRepository(_setting.repositoryFolder).Initialize();
         }
 
         public IDatabase Build()
@@ -62,20 +59,11 @@ namespace Necromancy.Server.Database
                     MapData mapData = new MapData();
                     mapData.id = mapSetting.id;
                     mapData.country = mapSetting.country;
-                    if (mapData.country == null)
-                    {
-                        mapData.country = "";
-                    }
+                    if (mapData.country == null) mapData.country = "";
                     mapData.area = mapSetting.area;
-                    if (mapData.area == null)
-                    {
-                        mapData.area = "";
-                    }
+                    if (mapData.area == null) mapData.area = "";
                     mapData.place = mapSetting.place;
-                    if (mapData.place == null)
-                    {
-                        mapData.place = "";
-                    }
+                    if (mapData.place == null) mapData.place = "";
                     mapData.x = mapSetting.x;
                     mapData.y = mapSetting.y;
                     mapData.z = mapSetting.z;
@@ -99,7 +87,6 @@ namespace Necromancy.Server.Database
                 scriptRunner.Run(Path.Combine(_setting.databaseSettings.scriptFolder, "data_item_library.sql"));
                 scriptRunner.Run(Path.Combine(_setting.databaseSettings.scriptFolder, "data_item_instance.sql"));
                 scriptRunner.Run(Path.Combine(_setting.databaseSettings.scriptFolder, "data_shortcut_bar.sql"));
-
             }
 
             SqlMigrator migrator = new SqlMigrator(database);

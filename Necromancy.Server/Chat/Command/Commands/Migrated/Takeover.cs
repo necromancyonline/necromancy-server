@@ -46,10 +46,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                         npcSpawn.y = client.character.y;
                         npcSpawn.z = client.character.z;
                         npcSpawn.updated = DateTime.Now;
-                        if (!server.database.UpdateNpcSpawn(npcSpawn))
-                        {
-                            _Logger.Error("Could not update the database");
-                        }
+                        if (!server.database.UpdateNpcSpawn(npcSpawn)) _Logger.Error("Could not update the database");
 
                         break;
                     case MonsterSpawn monsterSpawn:

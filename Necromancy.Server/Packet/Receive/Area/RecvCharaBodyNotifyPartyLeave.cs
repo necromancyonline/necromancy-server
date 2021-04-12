@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyNotifyPartyLeave : PacketResponse
     {
-        private uint _id;
+        private readonly uint _id;
+
         public RecvCharaBodyNotifyPartyLeave(uint id)
-            : base((ushort) AreaPacketId.recv_charabody_notify_party_leave, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_notify_party_leave, ServerType.Area)
         {
             _id = id;
         }

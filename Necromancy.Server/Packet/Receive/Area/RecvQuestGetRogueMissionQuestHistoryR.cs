@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestGetRogueMissionQuestHistoryR : PacketResponse
     {
         public RecvQuestGetRogueMissionQuestHistoryR()
-            : base((ushort) AreaPacketId.recv_quest_get_rogue_mission_quest_history_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_get_rogue_mission_quest_history_r, ServerType.Area)
         {
         }
 

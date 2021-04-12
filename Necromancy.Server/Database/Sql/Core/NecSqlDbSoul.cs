@@ -8,12 +8,12 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertSoul =@"
+        private const string _SqlInsertSoul = @"
             INSERT INTO
                 nec_soul(account_id,name,level,created,password,experience_current,warehouse_gold,points_lawful,points_neutral,points_chaos,criminal_level,points_current,material_life,material_reincarnation,material_lawful,material_chaos)
             VALUES(@account_id,@name,@level,@created,@password,@experience_current,@warehouse_gold,@points_lawful,@points_neutral,@points_chaos,@criminal_level,@points_current,@material_life,@material_reincarnation,@material_lawful,@material_chaos)";
 
-        private const string _SqlSelectSoulById =@"
+        private const string _SqlSelectSoulById = @"
             SELECT * FROM nec_soul WHERE id=@id";
 
         private const string _SqlSelectSoulByName = @"
@@ -49,12 +49,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@material_lawful", soul.materialLawful);
                 AddParameter(command, "@material_chaos", soul.materialChaos);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            soul.id = (int) autoIncrement;
+            soul.id = (int)autoIncrement;
             return true;
         }
 
@@ -64,10 +61,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectSoulById,
                 command => { AddParameter(command, "@id", soulId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        soul = ReadSoul(reader);
-                    }
+                    if (reader.Read()) soul = ReadSoul(reader);
                 });
             return soul;
         }
@@ -78,10 +72,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectSoulByName,
                 command => { AddParameter(command, "@name", soulName); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        soul = ReadSoul(reader);
-                    }
+                    if (reader.Read()) soul = ReadSoul(reader);
                 });
             return soul;
         }

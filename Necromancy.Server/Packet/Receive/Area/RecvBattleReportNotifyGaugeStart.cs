@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNotifyGaugeStart : PacketResponse
     {
         public RecvBattleReportNotifyGaugeStart()
-            : base((ushort) AreaPacketId.recv_battle_report_notify_gauge_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_notify_gauge_start, ServerType.Area)
         {
         }
 

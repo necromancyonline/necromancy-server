@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRouletteUpdateSettings : PacketResponse
     {
         public RecvRouletteUpdateSettings()
-            : base((ushort) AreaPacketId.recv_roulette_update_settings, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roulette_update_settings, ServerType.Area)
         {
         }
 

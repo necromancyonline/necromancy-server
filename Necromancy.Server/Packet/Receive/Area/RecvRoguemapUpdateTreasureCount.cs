@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapUpdateTreasureCount : PacketResponse
     {
         public RecvRoguemapUpdateTreasureCount()
-            : base((ushort) AreaPacketId.recv_roguemap_update_treasure_count, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_update_treasure_count, ServerType.Area)
         {
         }
 

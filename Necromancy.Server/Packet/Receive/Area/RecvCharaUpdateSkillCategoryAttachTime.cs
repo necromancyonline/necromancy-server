@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateSkillCategoryAttachTime : PacketResponse
     {
         public RecvCharaUpdateSkillCategoryAttachTime()
-            : base((ushort) AreaPacketId.recv_chara_update_skill_category_attach_time, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_skill_category_attach_time, ServerType.Area)
         {
         }
 

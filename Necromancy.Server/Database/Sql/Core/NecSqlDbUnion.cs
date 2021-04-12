@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Data.Common;
 using Necromancy.Server.Model.Union;
 
@@ -44,12 +43,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@union_news", union.unionNews);
                 AddParameter(command, "@created", union.created);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            union.id = (int) autoIncrement;
+            union.id = (int)autoIncrement;
             return true;
         }
 
@@ -59,23 +55,18 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectUnionById,
                 command => { AddParameter(command, "@id", unionId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        union = ReadUnion(reader);
-                    }
+                    if (reader.Read()) union = ReadUnion(reader);
                 });
             return union;
         }
+
         public Union SelectUnionByLeaderId(int leaderId)
         {
             Union union = null;
             ExecuteReader(_SqlSelectUnionByLeaderId,
                 command => { AddParameter(command, "@leader_character_id", leaderId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        union = ReadUnion(reader);
-                    }
+                    if (reader.Read()) union = ReadUnion(reader);
                 });
             return union;
         }
@@ -86,10 +77,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectUnionByName,
                 command => { AddParameter(command, "@name", unionName); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        union = ReadUnion(reader);
-                    }
+                    if (reader.Read()) union = ReadUnion(reader);
                 });
             return union;
         }

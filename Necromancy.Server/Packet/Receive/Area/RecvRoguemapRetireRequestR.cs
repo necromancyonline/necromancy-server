@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapRetireRequestR : PacketResponse
     {
         public RecvRoguemapRetireRequestR()
-            : base((ushort) AreaPacketId.recv_roguemap_retire_request_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_retire_request_r, ServerType.Area)
         {
         }
 

@@ -56,12 +56,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", mapTran.created);
                 AddParameter(command, "@updated", mapTran.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            mapTran.id = (int) autoIncrement;
+            mapTran.id = (int)autoIncrement;
             return true;
         }
 
@@ -78,6 +75,7 @@ namespace Necromancy.Server.Database.Sql.Core
             });
             return mapTrans;
         }
+
         public MapTransition SelectMapTransitionsById(int id)
         {
             MapTransition mapTrans = null;
@@ -85,13 +83,11 @@ namespace Necromancy.Server.Database.Sql.Core
                 command => { AddParameter(command, "@id", id); },
                 reader =>
                 {
-                    if (reader.Read())
-                    {
-                        mapTrans = ReadMapTransition(reader);
-                    }
+                    if (reader.Read()) mapTrans = ReadMapTransition(reader);
                 });
             return mapTrans;
         }
+
         public List<MapTransition> SelectMapTransitionsByMapId(int mapId)
         {
             List<MapTransition> mapTrans = new List<MapTransition>();
@@ -107,7 +103,6 @@ namespace Necromancy.Server.Database.Sql.Core
                 });
             return mapTrans;
         }
-
 
 
         public bool UpdateMapTransition(MapTransition mapTran)

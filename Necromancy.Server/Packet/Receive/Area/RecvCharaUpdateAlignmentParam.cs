@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateAlignmentParam : PacketResponse
     {
         public RecvCharaUpdateAlignmentParam()
-            : base((ushort) AreaPacketId.recv_chara_update_alignment_param, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_alignment_param, ServerType.Area)
         {
         }
 

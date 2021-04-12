@@ -73,6 +73,6 @@ namespace Necromancy.Server.Model
         Forgeticket = Other, //FG_TKT
         ForgeSpSupport = Other, //特殊鍛錬万能素材
         Material = Other, //JP ONLY
-        Wholechat = Allcht,
+        Wholechat = Allcht
     }
 }

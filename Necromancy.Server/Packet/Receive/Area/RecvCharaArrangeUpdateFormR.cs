@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaArrangeUpdateFormR : PacketResponse
     {
         public RecvCharaArrangeUpdateFormR()
-            : base((ushort) AreaPacketId.recv_chara_arrange_update_form_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_arrange_update_form_r, ServerType.Area)
         {
         }
 

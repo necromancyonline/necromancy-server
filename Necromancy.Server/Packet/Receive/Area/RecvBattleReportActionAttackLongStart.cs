@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportActionAttackLongStart : PacketResponse
     {
         public RecvBattleReportActionAttackLongStart()
-            : base((ushort) AreaPacketId.recv_battle_report_action_attack_long_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_attack_long_start, ServerType.Area)
         {
         }
 

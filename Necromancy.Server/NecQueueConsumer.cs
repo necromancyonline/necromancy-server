@@ -22,8 +22,11 @@ namespace Necromancy.Server
         private readonly Dictionary<ITcpSocket, NecConnection> _connections;
         private readonly object _lock;
 
-        private ServerType _serverType;
-        private NecSetting _setting;
+        private readonly ServerType _serverType;
+        private readonly NecSetting _setting;
+        public Action<NecConnection> clientConnected;
+
+        public Action<NecConnection> clientDisconnected;
 
         public NecQueueConsumer(ServerType serverType, NecSetting setting, AsyncEventSettings socketSetting) : base(
             socketSetting, serverType.ToString())
@@ -36,9 +39,6 @@ namespace Necromancy.Server
             _connections = new Dictionary<ITcpSocket, NecConnection>();
         }
 
-        public Action<NecConnection> clientDisconnected;
-        public Action<NecConnection> clientConnected;
-
         public void Clear()
         {
             _clientHandlers.Clear();
@@ -50,25 +50,17 @@ namespace Necromancy.Server
             if (overwrite)
             {
                 if (_clientHandlers.ContainsKey(clientHandler.id))
-                {
                     _clientHandlers[clientHandler.id] = clientHandler;
-                }
                 else
-                {
                     _clientHandlers.Add(clientHandler.id, clientHandler);
-                }
 
                 return;
             }
 
             if (_clientHandlers.ContainsKey(clientHandler.id))
-            {
                 _Logger.Error($"[{_serverType}] ClientHandlerId: {clientHandler.id} already exists");
-            }
             else
-            {
                 _clientHandlers.Add(clientHandler.id, clientHandler);
-            }
         }
 
         public void AddHandler(IConnectionHandler connectionHandler, bool overwrite = false)
@@ -76,33 +68,22 @@ namespace Necromancy.Server
             if (overwrite)
             {
                 if (_connectionHandlers.ContainsKey(connectionHandler.id))
-                {
                     _connectionHandlers[connectionHandler.id] = connectionHandler;
-                }
                 else
-                {
                     _connectionHandlers.Add(connectionHandler.id, connectionHandler);
-                }
 
                 return;
             }
 
             if (_connectionHandlers.ContainsKey(connectionHandler.id))
-            {
                 _Logger.Error($"[{_serverType}] ConnectionHandlerId: {connectionHandler.id} already exists");
-            }
             else
-            {
                 _connectionHandlers.Add(connectionHandler.id, connectionHandler);
-            }
         }
 
         protected override void HandleReceived(ITcpSocket socket, byte[] data)
         {
-            if (!socket.IsAlive)
-            {
-                return;
-            }
+            if (!socket.IsAlive) return;
 
             NecConnection connection;
             lock (_lock)
@@ -121,13 +102,9 @@ namespace Necromancy.Server
             {
                 NecClient client = connection.client;
                 if (client != null)
-                {
                     HandleReceived_Client(client, packet);
-                }
                 else
-                {
                     HandleReceived_Connection(connection, packet);
-                }
             }
         }
 
@@ -205,7 +182,6 @@ namespace Necromancy.Server
 
             Action<NecConnection> onClientDisconnected = clientDisconnected;
             if (onClientDisconnected != null)
-            {
                 try
                 {
                     onClientDisconnected.Invoke(connection);
@@ -214,7 +190,6 @@ namespace Necromancy.Server
                 {
                     _Logger.Exception(connection, ex);
                 }
-            }
 
             _Logger.Info(connection, $"[{_serverType}] Client disconnected");
         }
@@ -230,7 +205,6 @@ namespace Necromancy.Server
 
             Action<NecConnection> onClientConnected = clientConnected;
             if (onClientConnected != null)
-            {
                 try
                 {
                     onClientConnected.Invoke(connection);
@@ -239,7 +213,6 @@ namespace Necromancy.Server
                 {
                     _Logger.Exception(connection, ex);
                 }
-            }
 
             _Logger.Info(connection, $"[{_serverType}] Client connected");
         }

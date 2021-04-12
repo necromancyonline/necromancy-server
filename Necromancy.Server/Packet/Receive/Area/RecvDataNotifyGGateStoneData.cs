@@ -7,10 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvDataNotifyGGateStoneData : PacketResponse
     {
-        private GGateSpawn _gGateSpawn;
+        private readonly GGateSpawn _gGateSpawn;
 
         public RecvDataNotifyGGateStoneData(GGateSpawn gGateSpawn)
-            : base((ushort) AreaPacketId.recv_data_notify_ggate_stone_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_ggate_stone_data, ServerType.Area)
         {
             _gGateSpawn = gGateSpawn;
         }

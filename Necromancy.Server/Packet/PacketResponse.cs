@@ -6,6 +6,7 @@ namespace Necromancy.Server.Packet
 {
     public abstract class PacketResponse
     {
+        public readonly List<NecClient> clients;
         private NecPacket _packet;
 
         public PacketResponse(ushort id, ServerType serverType)
@@ -15,7 +16,6 @@ namespace Necromancy.Server.Packet
             this.serverType = serverType;
         }
 
-        public readonly List<NecClient> clients;
         public ServerType serverType { get; }
         public ushort id { get; }
 
@@ -23,10 +23,7 @@ namespace Necromancy.Server.Packet
 
         public NecPacket ToPacket()
         {
-            if (_packet == null)
-            {
-                _packet = new NecPacket(id, ToBuffer(), serverType);
-            }
+            if (_packet == null) _packet = new NecPacket(id, ToBuffer(), serverType);
 
             return _packet;
         }

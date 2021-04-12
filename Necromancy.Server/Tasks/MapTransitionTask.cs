@@ -25,12 +25,12 @@ namespace Necromancy.Server.Tasks
         private readonly Map _map;
         private readonly int _refDistance;
         private readonly Vector3 _referencePos;
-        private bool _taskActive;
         private readonly int _tickTime;
         private readonly MapPosition _toPos;
         private readonly int _transitionMapId;
         private readonly Vector3 _transitionPos1;
         private readonly Vector3 _transitionPos2;
+        private bool _taskActive;
 
         public MapTransitionTask(NecServer server, Map map, int transitionMapId, Vector3 referencePos, int refDistance,
             Vector3 transitionPos1, Vector3 transitionPos2, uint instanceId, bool invertedTransition, MapPosition toPos,

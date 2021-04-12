@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateSkillCategoryCostPer : PacketResponse
     {
         public RecvCharaUpdateSkillCategoryCostPer()
-            : base((ushort) AreaPacketId.recv_chara_update_skill_category_cost_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_skill_category_cost_per, ServerType.Area)
         {
         }
 

@@ -181,14 +181,10 @@ namespace Necromancy.Server.Chat.Command.Commands
                     myGimmick = server.instances.GetInstance((uint)x) as Gimmick;
                     myGimmick.updated = DateTime.Now;
                     if (!server.database.InsertGimmick(myGimmick))
-                    {
                         responses.Add(ChatResponse.CommandError(client, "myGimmick could not be saved to database"));
-                    }
                     else
-                    {
                         responses.Add(
                             ChatResponse.CommandError(client, $"Added gimmick {myGimmick.id} to the database"));
-                    }
 
                     break;
                 case "update": //Updates an existing entry in the database

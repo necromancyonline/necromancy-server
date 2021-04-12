@@ -1,5 +1,3 @@
-using Necromancy.Server.Common;
-
 namespace Necromancy.Server.Systems.Item
 {
     public class ItemSpawnParams

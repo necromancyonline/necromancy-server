@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapNotifyIntervalResult : PacketResponse
     {
         public RecvChallengemapNotifyIntervalResult()
-            : base((ushort) AreaPacketId.recv_challengemap_notify_interval_result, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_notify_interval_result, ServerType.Area)
         {
         }
 

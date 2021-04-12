@@ -42,12 +42,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", monsterSpawn.created);
                 AddParameter(command, "@updated", monsterSpawn.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            monsterSpawn.id = (int) autoIncrement;
+            monsterSpawn.id = (int)autoIncrement;
             return true;
         }
 

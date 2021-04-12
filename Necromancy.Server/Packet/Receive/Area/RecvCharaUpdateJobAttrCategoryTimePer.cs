@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateJobAttrCategoryTimePer : PacketResponse
     {
         public RecvCharaUpdateJobAttrCategoryTimePer()
-            : base((ushort) AreaPacketId.recv_chara_update_job_attr_category_time_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_job_attr_category_time_per, ServerType.Area)
         {
         }
 

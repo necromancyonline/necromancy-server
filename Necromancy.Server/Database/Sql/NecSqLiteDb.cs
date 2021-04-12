@@ -8,21 +8,15 @@ using Necromancy.Server.Logging;
 namespace Necromancy.Server.Database.Sql
 {
     /// <summary>
-    /// SQLite Necromancy database.
+    ///     SQLite Necromancy database.
     /// </summary>
     public class NecSqLiteDb : NecSqlDb<SQLiteConnection, SQLiteCommand>, IDatabase
     {
         public const string MemoryDatabasePath = ":memory:";
 
-        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecSqLiteDb));
-
-        public long version
-        {
-            get { return (long) Command("PRAGMA user_version;", Connection()).ExecuteScalar(); }
-            set { Command(String.Format("PRAGMA user_version = {0};", value), Connection()).ExecuteNonQuery(); }
-        }
-
         private const string _SelectAutoIncrement = "SELECT last_insert_rowid()";
+
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecSqLiteDb));
 
         private readonly string _databasePath;
         private string _connectionString;
@@ -31,6 +25,12 @@ namespace Necromancy.Server.Database.Sql
         {
             _databasePath = databasePath;
             _Logger.Info($"Database Path: {_databasePath}");
+        }
+
+        public long version
+        {
+            get => (long)Command("PRAGMA user_version;", Connection()).ExecuteScalar();
+            set => Command(String.Format("PRAGMA user_version = {0};", value), Connection()).ExecuteNonQuery();
         }
 
         public bool CreateDatabase()
@@ -63,10 +63,7 @@ namespace Necromancy.Server.Database.Sql
 
         protected override SQLiteConnection Connection()
         {
-            if (_connectionString == null)
-            {
-                _connectionString = BuildConnectionString(_databasePath);
-            }
+            if (_connectionString == null) _connectionString = BuildConnectionString(_databasePath);
 
             SQLiteConnection connection = new SQLiteConnection(_connectionString);
             return connection.OpenAndReturn();
@@ -78,8 +75,8 @@ namespace Necromancy.Server.Database.Sql
         }
 
         /// <summary>
-        /// Thread Safe on Connection basis.
-        /// http://www.sqlite.org/c3ref/last_insert_rowid.html
+        ///     Thread Safe on Connection basis.
+        ///     http://www.sqlite.org/c3ref/last_insert_rowid.html
         /// </summary>
         protected override long AutoIncrement(SQLiteConnection connection, SQLiteCommand command)
         {

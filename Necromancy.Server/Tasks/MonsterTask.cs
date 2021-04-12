@@ -26,28 +26,28 @@ namespace Necromancy.Server.Tasks
         private static readonly int[] _skillList = {200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417};
 
         private static int[] _effectList = {301411, 301412, 301413, 301414, 301415, 301416, 301417};
-        private int _agroCheckTime;
         private readonly float _agroDetectAngle;
         private readonly float _agroMoveAngle;
-        private int _agroMoveTime;
 
         private readonly int _agroTick;
         private readonly MonsterTick _agroTickMove;
+        private readonly Map _map;
+        private readonly int _pathingTick;
+        private readonly uint _skillInstanceId;
+        private int _agroCheckTime;
+        private int _agroMoveTime;
         private bool _casting;
         private int _castState;
         private Vector3 _currentDest;
         private int _currentSkill;
         private int _currentWait;
-        private readonly Map _map;
         private bool _monsterWaiting;
 
         //private int currentDest;
         private int _moveTime;
-        private readonly int _pathingTick;
 
         //private int monsterVelocity;
         private int _respawnTime;
-        private readonly uint _skillInstanceId;
         private bool _spawnMonster;
         private int _updateTime;
         private int _waitTime;

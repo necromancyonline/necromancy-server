@@ -9,8 +9,9 @@ namespace Necromancy.Server.Packet.Receive.Auth
     public class RecvBaseSelectWorld : PacketResponse
     {
         private readonly NecSetting _necSetting;
+
         public RecvBaseSelectWorld(NecSetting necSetting)
-            : base((ushort) AuthPacketId.recv_base_select_world_r, ServerType.Auth)
+            : base((ushort)AuthPacketId.recv_base_select_world_r, ServerType.Auth)
         {
             _necSetting = necSetting;
         }

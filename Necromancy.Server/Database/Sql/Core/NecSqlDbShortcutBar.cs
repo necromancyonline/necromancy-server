@@ -20,7 +20,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@character_id", character.id);
                 AddParameter(command, "@bar_num", barNumber);
                 AddParameter(command, "@slot_num", slotNumber);
-                AddParameter(command, "@shortcut_type", (int) shortcutItem.type);
+                AddParameter(command, "@shortcut_type", (int)shortcutItem.type);
                 AddParameter(command, "@shortcut_id", shortcutItem.id);
             });
         }

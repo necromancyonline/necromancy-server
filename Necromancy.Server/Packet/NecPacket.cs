@@ -7,45 +7,6 @@ namespace Necromancy.Server.Packet
 {
     public class NecPacket
     {
-        public static string GetPacketIdName(ushort id, ServerType serverType)
-        {
-            switch (serverType)
-            {
-                case ServerType.Auth:
-                    if (Enum.IsDefined(typeof(AuthPacketId), id))
-                    {
-                        AuthPacketId authPacketId = (AuthPacketId) id;
-                        return authPacketId.ToString();
-                    }
-
-                    break;
-                case ServerType.Msg:
-                    if (Enum.IsDefined(typeof(MsgPacketId), id))
-                    {
-                        MsgPacketId msgPacketId = (MsgPacketId) id;
-                        return msgPacketId.ToString();
-                    }
-
-                    break;
-                case ServerType.Area:
-                    if (Enum.IsDefined(typeof(AreaPacketId), id))
-                    {
-                        AreaPacketId areaPacketId = (AreaPacketId) id;
-                        return areaPacketId.ToString();
-                    }
-
-                    break;
-            }
-
-            if (Enum.IsDefined(typeof(CustomPacketId), id))
-            {
-                CustomPacketId customPacketId = (CustomPacketId) id;
-                return customPacketId.ToString();
-            }
-
-            return null;
-        }
-
         private string _packetIdName;
 
         public NecPacket(ushort id, IBuffer buffer, ServerType serverType)
@@ -75,19 +36,52 @@ namespace Necromancy.Server.Packet
         {
             get
             {
-                if (_packetIdName != null)
-                {
-                    return _packetIdName;
-                }
+                if (_packetIdName != null) return _packetIdName;
 
                 _packetIdName = GetPacketIdName(id, serverType);
-                if (_packetIdName == null)
-                {
-                    _packetIdName = $"ID_NOT_DEFINED_{serverType}_{id}";
-                }
+                if (_packetIdName == null) _packetIdName = $"ID_NOT_DEFINED_{serverType}_{id}";
 
                 return _packetIdName;
             }
+        }
+
+        public static string GetPacketIdName(ushort id, ServerType serverType)
+        {
+            switch (serverType)
+            {
+                case ServerType.Auth:
+                    if (Enum.IsDefined(typeof(AuthPacketId), id))
+                    {
+                        AuthPacketId authPacketId = (AuthPacketId)id;
+                        return authPacketId.ToString();
+                    }
+
+                    break;
+                case ServerType.Msg:
+                    if (Enum.IsDefined(typeof(MsgPacketId), id))
+                    {
+                        MsgPacketId msgPacketId = (MsgPacketId)id;
+                        return msgPacketId.ToString();
+                    }
+
+                    break;
+                case ServerType.Area:
+                    if (Enum.IsDefined(typeof(AreaPacketId), id))
+                    {
+                        AreaPacketId areaPacketId = (AreaPacketId)id;
+                        return areaPacketId.ToString();
+                    }
+
+                    break;
+            }
+
+            if (Enum.IsDefined(typeof(CustomPacketId), id))
+            {
+                CustomPacketId customPacketId = (CustomPacketId)id;
+                return customPacketId.ToString();
+            }
+
+            return null;
         }
     }
 }

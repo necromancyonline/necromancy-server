@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfSalvageEnd : PacketResponse
     {
-        private int _code;
+        private readonly int _code;
+
         public RecvCharaBodySelfSalvageEnd(int code)
-            : base((ushort) AreaPacketId.recv_charabody_self_salvage_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_self_salvage_end, ServerType.Area)
         {
             _code = code;
         }

@@ -1,4 +1,3 @@
-
 namespace Necromancy.Server.Systems.Item
 {
     public class ForgeMultiplier //TODO what is this for?

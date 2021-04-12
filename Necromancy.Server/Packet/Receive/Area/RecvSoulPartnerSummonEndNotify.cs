@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerSummonEndNotify : PacketResponse
     {
         public RecvSoulPartnerSummonEndNotify()
-            : base((ushort) AreaPacketId.recv_soul_partner_summon_end_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_summon_end_notify, ServerType.Area)
         {
         }
 

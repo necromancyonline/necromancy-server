@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Data.Common;
 using Necromancy.Server.Model;
 
@@ -35,10 +34,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@numbers_of_items", quest.numbersOfItems);
                 AddParameter(command, "@items_type", quest.itemsType);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
             quest.questId = (int)autoIncrement;
             return true;
@@ -51,10 +47,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectQuestById,
                 command => { AddParameter(command, "@quest_id", questId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        quest = ReadQuest(reader);
-                    }
+                    if (reader.Read()) quest = ReadQuest(reader);
                 });
             return quest;
         }

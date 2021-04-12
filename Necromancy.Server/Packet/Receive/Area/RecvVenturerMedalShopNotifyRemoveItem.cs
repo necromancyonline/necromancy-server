@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvVenturerMedalShopNotifyRemoveItem : PacketResponse
     {
         public RecvVenturerMedalShopNotifyRemoveItem()
-            : base((ushort) AreaPacketId.recv_venturer_medal_shop_notify_remove_item, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_venturer_medal_shop_notify_remove_item, ServerType.Area)
         {
         }
 

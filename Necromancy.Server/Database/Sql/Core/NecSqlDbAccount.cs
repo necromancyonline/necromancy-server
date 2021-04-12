@@ -46,12 +46,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@last_login", account.lastLogin);
                 AddParameter(command, "@created", account.created);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return null;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return null;
 
-            account.id = (int) autoIncrement;
+            account.id = (int)autoIncrement;
             return account;
         }
 
@@ -61,10 +58,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectAccountByName,
                 command => { AddParameter(command, "@name", accountName); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        account = ReadAccount(reader);
-                    }
+                    if (reader.Read()) account = ReadAccount(reader);
                 });
 
             return account;
@@ -75,10 +69,7 @@ namespace Necromancy.Server.Database.Sql.Core
             Account account = null;
             ExecuteReader(_SqlSelectAccountById, command => { AddParameter(command, "@id", accountId); }, reader =>
             {
-                if (reader.Read())
-                {
-                    account = ReadAccount(reader);
-                }
+                if (reader.Read()) account = ReadAccount(reader);
             });
             return account;
         }
@@ -122,7 +113,7 @@ namespace Necromancy.Server.Database.Sql.Core
             account.mailVerifiedAt = GetDateTimeNullable(reader, "mail_verified_at");
             account.mailToken = GetStringNullable(reader, "mail_token");
             account.passwordToken = GetStringNullable(reader, "password_token");
-            account.state = (AccountStateType) GetInt32(reader, "state");
+            account.state = (AccountStateType)GetInt32(reader, "state");
             account.lastLogin = GetDateTimeNullable(reader, "last_login");
             account.created = GetDateTime(reader, "created");
             return account;

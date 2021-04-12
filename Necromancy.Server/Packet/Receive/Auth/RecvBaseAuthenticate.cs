@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Auth
     public class RecvBaseAuthenticate : PacketResponse
     {
         public RecvBaseAuthenticate()
-            : base((ushort) AuthPacketId.recv_base_authenticate_r, ServerType.Auth)
+            : base((ushort)AuthPacketId.recv_base_authenticate_r, ServerType.Auth)
         {
         }
 

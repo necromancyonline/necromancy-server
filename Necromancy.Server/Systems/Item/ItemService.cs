@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Arrowgene.Logging;
 using Necromancy.Server.Data.Setting;
 using Necromancy.Server.Logging;
@@ -5,55 +7,11 @@ using Necromancy.Server.Model;
 using Necromancy.Server.Model.Stats;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Receive.Area;
-using System;
-using System.Collections.Generic;
 
 namespace Necromancy.Server.Systems.Item
 {
     public class ItemService
     {
-        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ItemService));
-
-        private readonly Character _character;
-        private readonly IItemDao _itemDao;
-
-        public class MoveResult
-        {
-            /// <summary>
-            /// The type of move that is done. Determines which server responses to send back.
-            /// </summary>
-            public MoveType type { get; internal set; } = MoveType.None;
-            /// <summary>
-            /// The item that is at the location moved from. Can be null if there is no item swapped.
-            /// </summary>
-            public ItemInstance originItem { get; internal set; }
-            /// <summary>
-            /// The item that is at the destination. Will not be null unless an error occurs.
-            /// </summary>
-            public ItemInstance destItem { get; internal set; }
-            public MoveResult() { }
-
-            public MoveResult(MoveType moveType)
-            {
-                type = moveType;
-            }
-        }
-
-        internal ItemInstance GetItem(ItemLocation location)
-        {
-            return _character.itemLocationVerifier.GetItem(location);
-        }
-
-        internal ItemInstance GetIdentifiedItem(ItemLocation location)
-        {
-            ItemInstance item = _character.itemLocationVerifier.GetItem(location);
-            if (item.statuses.HasFlag(ItemStatuses.Unidentified))
-            {
-                item.statuses &= ~ItemStatuses.Unidentified;
-            }
-            return item;
-        }
-
         public enum MoveType
         {
             Place,
@@ -63,6 +21,11 @@ namespace Necromancy.Server.Systems.Item
             AllQuantity,
             None
         }
+
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ItemService));
+
+        private readonly Character _character;
+        private readonly IItemDao _itemDao;
 
         public ItemService(Character character)
         {
@@ -76,60 +39,65 @@ namespace Necromancy.Server.Systems.Item
             _character = character;
         }
 
+        internal ItemInstance GetItem(ItemLocation location)
+        {
+            return _character.itemLocationVerifier.GetItem(location);
+        }
+
+        internal ItemInstance GetIdentifiedItem(ItemLocation location)
+        {
+            ItemInstance item = _character.itemLocationVerifier.GetItem(location);
+            if (item.statuses.HasFlag(ItemStatuses.Unidentified)) item.statuses &= ~ItemStatuses.Unidentified;
+            return item;
+        }
+
         public ItemInstance Equip(ItemLocation location, ItemEquipSlots equipSlot)
         {
             ItemInstance item = _character.itemLocationVerifier.GetItem(location);
             item.currentEquipSlot = equipSlot;
             if (_character.equippedItems.ContainsKey(equipSlot))
-            {
                 _character.equippedItems[equipSlot] = item;
-            }
             else
-            {
                 _character.equippedItems.Add(equipSlot, item);
-            }
             _itemDao.UpdateItemEquipMask(item.instanceId, equipSlot);
             return item;
         }
+
         public ItemInstance CheckAlreadyEquipped(ItemEquipSlots equipmentSlotType)
         {
             ItemInstance itemInstance = null;
-            if (equipmentSlotType == ItemEquipSlots.LeftHand | equipmentSlotType == ItemEquipSlots.RightHand)
+            if ((equipmentSlotType == ItemEquipSlots.LeftHand) | (equipmentSlotType == ItemEquipSlots.RightHand))
             {
                 if (_character.equippedItems.ContainsKey(ItemEquipSlots.LeftHand | ItemEquipSlots.RightHand))
-                {
-                    _character.equippedItems.TryGetValue((ItemEquipSlots.LeftHand | ItemEquipSlots.RightHand), out itemInstance);
-                }
+                    _character.equippedItems.TryGetValue(ItemEquipSlots.LeftHand | ItemEquipSlots.RightHand, out itemInstance);
                 else
-                {
                     _character.equippedItems.TryGetValue(equipmentSlotType, out itemInstance);
-                }
             }
             else
             {
                 _character.equippedItems.TryGetValue(equipmentSlotType, out itemInstance);
             }
+
             return itemInstance;
         }
+
         /// <returns></returns>
         public ItemInstance Unequip(ItemEquipSlots equipSlot)
         {
-
             ItemInstance item = _character.equippedItems[equipSlot];
             _character.equippedItems.Remove(equipSlot);
             item.currentEquipSlot = ItemEquipSlots.None;
             _itemDao.UpdateItemEquipMask(item.instanceId, ItemEquipSlots.None);
             return item;
         }
+
         internal ItemInstance GetLootedItem(ItemLocation location)
         {
             ItemInstance item = _character.itemLocationVerifier.GetItem(location);
-            if (item.currentEquipSlot != ItemEquipSlots.None)
-            {
-                Unequip(item.currentEquipSlot);
-            }
+            if (item.currentEquipSlot != ItemEquipSlots.None) Unequip(item.currentEquipSlot);
             return item;
         }
+
         public ItemInstance PutLootedItem(ItemInstance itemInstance)
         {
             //ToDo,  make this find space in more than just your adventure bag.
@@ -141,7 +109,7 @@ namespace Necromancy.Server.Systems.Item
 
         public ItemInstance SpawnItemInstance(ItemZoneType itemZoneType, int baseId, ItemSpawnParams spawnParam)
         {
-            int[] itemIds = new int[] { baseId };
+            int[] itemIds = {baseId};
             ItemSpawnParams[] spawmParams = new ItemSpawnParams[1];
             spawmParams[0] = spawnParam;
             List<ItemInstance> items = SpawnItemInstances(itemZoneType, itemIds, spawmParams);
@@ -153,15 +121,11 @@ namespace Necromancy.Server.Systems.Item
             if (_character.itemLocationVerifier.GetTotalFreeSpace(itemZoneType) < baseIds.Length) throw new ItemException(ItemExceptionType.InventoryFull);
             ItemLocation[] nextOpenLocations = _character.itemLocationVerifier.NextOpenSlots(itemZoneType, baseIds.Length);
             List<ItemInstance> itemInstances = _itemDao.InsertItemInstances(_character.id, nextOpenLocations, baseIds, spawnParams);
-            foreach (ItemInstance item in itemInstances)
-            {
-                _character.itemLocationVerifier.PutItem(item.location, item);
-            }
+            foreach (ItemInstance item in itemInstances) _character.itemLocationVerifier.PutItem(item.location, item);
             return itemInstances;
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns>A list of items in your adventure bag, equipped bags, bag slot, premium bag, and avatar inventory.</returns>
         public List<ItemInstance> LoadOwneditemInstances(NecServer server)
@@ -171,14 +135,13 @@ namespace Necromancy.Server.Systems.Item
             List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.id);
             //load bags first
             foreach (ItemInstance item in ownedItems)
-            {
                 if (item.location.zoneType == ItemZoneType.BagSlot)
                 {
                     ItemLocation location = item.location; //only needed on load inventory because item's location is already populated and it is not in the manager
                     item.location = ItemLocation.InvalidLocation; //only needed on load inventory because item's location is already populated and it is not in the manager
                     _character.itemLocationVerifier.PutItem(location, item);
                 }
-            }
+
             foreach (ItemInstance itemInstance in ownedItems)
             {
                 if (itemInstance.location.slot < 0) //remove invalid db rows on login.
@@ -186,6 +149,7 @@ namespace Necromancy.Server.Systems.Item
                     _itemDao.DeleteItemInstance(itemInstance.instanceId);
                     continue;
                 }
+
                 if (itemInstance.location.zoneType != ItemZoneType.BagSlot)
                 {
                     ItemLocation location = itemInstance.location; //only needed on load inventory because item's location is already populated and it is not in the manager
@@ -196,30 +160,30 @@ namespace Necromancy.Server.Systems.Item
                     if (itemLibrarySetting != null)
                     {
                         itemInstance.maximumDurability = itemLibrarySetting.durability; //Temporary until we get durability in itemLibrary
-                        if (itemInstance.currentDurability > itemInstance.maximumDurability) { itemInstance.currentDurability = itemInstance.maximumDurability; }
-                        if (itemInstance.weight == 0) { itemInstance.weight += 1234; }
+                        if (itemInstance.currentDurability > itemInstance.maximumDurability) itemInstance.currentDurability = itemInstance.maximumDurability;
+                        if (itemInstance.weight == 0) itemInstance.weight += 1234;
                         if (itemInstance.type == ItemType.SHIELD_LARGE || itemInstance.type == ItemType.SHIELD_MEDIUM || itemInstance.type == ItemType.SHIELD_SMALL)
                         {
                             if (itemInstance.gp == 0) itemInstance.gp += 50;
                             if (itemInstance.maximumDurability <= 0) itemInstance.maximumDurability = 55;
                         }
                     }
+
                     //update items base stats per enchantment level.
-                    ForgeMultiplier forgeMultiplier = this.LoginLoadMultiplier(itemInstance.enhancementLevel);
+                    ForgeMultiplier forgeMultiplier = LoginLoadMultiplier(itemInstance.enhancementLevel);
                     itemInstance.physical = (short)(itemInstance.physical * forgeMultiplier.factor);
                     itemInstance.magical = (short)(itemInstance.magical * forgeMultiplier.factor);
                     itemInstance.maximumDurability = (short)(itemInstance.maximumDurability * forgeMultiplier.durability);
                     itemInstance.hardness = (byte)(itemInstance.hardness + forgeMultiplier.hardness);
                     itemInstance.weight = (short)(itemInstance.weight - forgeMultiplier.weight);
-                    if (itemInstance.weight < 0) { itemInstance.weight = 0; } //this is lazy, fix the weight math issue.
+                    if (itemInstance.weight < 0) itemInstance.weight = 0;
 
                     _character.itemLocationVerifier.PutItem(location, itemInstance);
                 }
-                if (itemInstance.currentEquipSlot != ItemEquipSlots.None)
-                {
-                    _character.equippedItems.Add(itemInstance.currentEquipSlot, itemInstance);
-                }
+
+                if (itemInstance.currentEquipSlot != ItemEquipSlots.None) _character.equippedItems.Add(itemInstance.currentEquipSlot, itemInstance);
             }
+
             return ownedItems;
         }
 
@@ -228,7 +192,6 @@ namespace Necromancy.Server.Systems.Item
             _character.equippedItems.Clear();
             List<ItemInstance> ownedItems = _itemDao.SelectOwnedInventoryItems(_character.id);
             foreach (ItemInstance item in ownedItems)
-            {
                 if (item.currentEquipSlot != ItemEquipSlots.None)
                 {
                     if (!_character.equippedItems.ContainsKey(item.currentEquipSlot))
@@ -242,8 +205,8 @@ namespace Necromancy.Server.Systems.Item
                         _itemDao.UpdateItemEquipMask(item.instanceId, ItemEquipSlots.None);
                     }
                 }
-            }
         }
+
         public ItemInstance Remove(ItemLocation location, byte quantity)
         {
             ItemInstance item = _character.itemLocationVerifier.GetItem(location);
@@ -265,12 +228,15 @@ namespace Necromancy.Server.Systems.Item
                 quantities[0] = item.quantity;
                 _itemDao.UpdateItemQuantities(instanceIds, quantities);
             }
+
             return item;
         }
+
         public ulong Sell(ItemLocation location, byte quantity)
         {
             throw new NotImplementedException();
         }
+
         public MoveResult Move(ItemLocation from, ItemLocation to, byte quantity)
         {
             ItemInstance fromItem = _character.itemLocationVerifier.GetItem(from);
@@ -285,31 +251,21 @@ namespace Necromancy.Server.Systems.Item
             if (fromItem.location.zoneType == ItemZoneType.BagSlot && !_character.itemLocationVerifier.IsEmptyContainer(ItemZoneType.EquippedBags, fromItem.location.slot)) throw new ItemException(ItemExceptionType.BagLocation);
 
             if (!hasToItem && quantity == fromItem.quantity)
-            {
                 moveResult = MoveItemPlace(to, fromItem);
-            }
             else if (!hasToItem && quantity < fromItem.quantity)
-            {
                 moveResult = MoveItemPlaceQuantity(to, fromItem, quantity);
-            }
             else if (hasToItem && quantity == fromItem.quantity && (fromItem.baseId != toItem.baseId || fromItem.quantity == fromItem.maxStackSize))
-            {
                 moveResult = MoveItemSwap(from, to, fromItem, toItem);
-            }
             else if (hasToItem && quantity < fromItem.quantity && toItem.baseId == fromItem.baseId)
-            {
                 moveResult = MoveItemAddQuantity(fromItem, toItem, quantity);
-            }
-            else if (hasToItem && quantity == fromItem.quantity && toItem.baseId == fromItem.baseId && quantity <= (toItem.maxStackSize - toItem.quantity))
-            {
-                moveResult = MoveItemAllQuantity(fromItem, toItem, quantity);
-            }
+            else if (hasToItem && quantity == fromItem.quantity && toItem.baseId == fromItem.baseId && quantity <= toItem.maxStackSize - toItem.quantity) moveResult = MoveItemAllQuantity(fromItem, toItem, quantity);
 
             return moveResult;
         }
 
         /// <summary>
-        /// Used when the there is no item already in the end location and the quantity moved is equal to the total quantity of items in the original location.
+        ///     Used when the there is no item already in the end location and the quantity moved is equal to the total quantity of
+        ///     items in the original location.
         /// </summary>
         /// <param name="to">Move to this location.</param>
         /// <param name="fromItem">Move this item.</param>
@@ -328,9 +284,10 @@ namespace Necromancy.Server.Systems.Item
 
             return moveResult;
         }
+
         /// <summary>
-        ///  Used when the there is an item already in the end location,the quantity moved is equal to the total quantity<br/>
-        ///  of items in the original location, and the item at the end location is a different base item or stacked full.
+        ///     Used when the there is an item already in the end location,the quantity moved is equal to the total quantity<br />
+        ///     of items in the original location, and the item at the end location is a different base item or stacked full.
         /// </summary>
         /// <param name="from">Swap back to this location.</param>
         /// <param name="to">Move to this location.</param>
@@ -358,11 +315,15 @@ namespace Necromancy.Server.Systems.Item
         }
 
         /// <summary>
-        /// Used when the there is no item already in the end location and the quantity moved is less than total quantity of items in the original location.
+        ///     Used when the there is no item already in the end location and the quantity moved is less than total quantity of
+        ///     items in the original location.
         /// </summary>
         /// <param name="to">Move to this location.</param>
         /// <param name="fromItem">Move a quantity from this item.</param>
-        /// <returns>Result containing the original item with less quantity and a new instance with the remaining amount at the destination.</returns>
+        /// <returns>
+        ///     Result containing the original item with less quantity and a new instance with the remaining amount at the
+        ///     destination.
+        /// </returns>
         private MoveResult MoveItemPlaceQuantity(ItemLocation to, ItemInstance fromItem, byte quantity)
         {
             MoveResult moveResult = new MoveResult(MoveType.PlaceQuantity);
@@ -390,8 +351,9 @@ namespace Necromancy.Server.Systems.Item
         }
 
         /// <summary>
-        /// Used if there is the same item at the end location that is not at max stack size and the quantity moved is less than total quantity of items in the original location.<br/>
-        /// If the stack would be filled with less than the passed quantity, fill the stack and return leftovers.
+        ///     Used if there is the same item at the end location that is not at max stack size and the quantity moved is less
+        ///     than total quantity of items in the original location.<br />
+        ///     If the stack would be filled with less than the passed quantity, fill the stack and return leftovers.
         /// </summary>
         /// <param name="fromItem">Item to subract quantity from.</param>
         /// <param name="toItem">Location of item to add quantity to.</param>
@@ -419,8 +381,10 @@ namespace Necromancy.Server.Systems.Item
 
             return moveResult;
         }
+
         /// <summary>
-        /// Used if there is the same item at the end location that is not at max stack size and the quantity moved is less equal to the quantity of items in the original location.
+        ///     Used if there is the same item at the end location that is not at max stack size and the quantity moved is less
+        ///     equal to the quantity of items in the original location.
         /// </summary>
         /// <param name="fromItem">Removed item.</param>
         /// <param name="toItem">Updated item.</param>
@@ -478,6 +442,7 @@ namespace Necromancy.Server.Systems.Item
                 case MoveType.None:
                     break;
             }
+
             return responses;
         }
 
@@ -494,7 +459,7 @@ namespace Necromancy.Server.Systems.Item
 
             foreach (ItemInstance itemInstance in client.character.equippedItems.Values)
             {
-                if (itemInstance.currentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | itemInstance.currentEquipSlot == ItemEquipSlots.Quiver)
+                if (itemInstance.currentEquipSlot.HasFlag(ItemEquipSlots.RightHand) | (itemInstance.currentEquipSlot == ItemEquipSlots.Quiver))
                 {
                     battleParam.plusPhysicalAttack += (short)(itemInstance.physical + itemInstance.plusPhysical);
                     battleParam.plusMagicalAttack += (short)(itemInstance.magical + itemInstance.plusMagical);
@@ -504,10 +469,10 @@ namespace Necromancy.Server.Systems.Item
                     battleParam.plusPhysicalDefence += (short)(itemInstance.physical + itemInstance.plusPhysical);
                     battleParam.plusMagicalDefence += (short)(itemInstance.magical + itemInstance.plusMagical);
                 }
+
                 client.character.gp.SetMax(client.character.gp.max + itemInstance.gp + itemInstance.plusGp);
                 client.character.weight.Modify(itemInstance.weight + itemInstance.plusWeight);
-                if (itemInstance.type == ItemType.SHIELD_LARGE | itemInstance.type == ItemType.SHIELD_MEDIUM | itemInstance.type == ItemType.SHIELD_SMALL)
-                { shieldCheck = true; }
+                if ((itemInstance.type == ItemType.SHIELD_LARGE) | (itemInstance.type == ItemType.SHIELD_MEDIUM) | (itemInstance.type == ItemType.SHIELD_SMALL)) shieldCheck = true;
             }
 
             //if you dont have a shield on,  set your GP to 0.  no blocking for you
@@ -518,7 +483,7 @@ namespace Necromancy.Server.Systems.Item
                 responses.Add(recvCharaUpdateAc);
             }
 
-            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.character.weight.max / 10, client.character.weight.current / 10/*Weight.Diff*/);
+            RecvCharaUpdateMaxWeight recvCharaUpdateMaxWeight = new RecvCharaUpdateMaxWeight(client.character.weight.max / 10, client.character.weight.current / 10 /*Weight.Diff*/);
             responses.Add(recvCharaUpdateMaxWeight);
 
             RecvCharaUpdateWeight recvCharaUpdateWeight = new RecvCharaUpdateWeight(client.character.weight.current / 10);
@@ -538,13 +503,9 @@ namespace Necromancy.Server.Systems.Item
         {
             //TODO ADD PROTECTIONS TO SQL CALL SO ALL ITEMS CANT BE LOOTED
             List<ItemInstance> lootableItems = _itemDao.SelectLootableInventoryItems(characterId);
-            foreach (ItemInstance itemInstance in lootableItems)
-            {
-                itemInstance.statuses &= ItemStatuses.Unidentified;
-            }
+            foreach (ItemInstance itemInstance in lootableItems) itemInstance.statuses &= ItemStatuses.Unidentified;
             return lootableItems;
         }
-
 
 
         //TODO What is this for?
@@ -555,19 +516,63 @@ namespace Necromancy.Server.Systems.Item
             int hardness = 0;
             switch (level)
             {
-                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
-                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
-                case 2: factor = 1.15; durability = 1.2; hardness = 0; break;
-                case 3: factor = 1.27; durability = 1.3; hardness = 0; break;
-                case 4: factor = 1.39; durability = 1.4; hardness = 0; break;
-                case 5: factor = 1.54; durability = 1.5; hardness = 1; break;
-                case 6: factor = 1.69; durability = 1.6; hardness = 0; break;
-                case 7: factor = 1.84; durability = 1.7; hardness = 0; break;
-                case 8: factor = 1.99; durability = 1.8; hardness = 0; break;
-                case 9: factor = 2.14; durability = 1.9; hardness = 0; break;
-                case 10: factor = 2.29; durability = 2.0; hardness = 2; break;
-                default: break;
+                case 0:
+                    factor = 1.00;
+                    durability = 1.0;
+                    hardness = 0;
+                    break;
+                case 1:
+                    factor = 1.05;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 2:
+                    factor = 1.15;
+                    durability = 1.2;
+                    hardness = 0;
+                    break;
+                case 3:
+                    factor = 1.27;
+                    durability = 1.3;
+                    hardness = 0;
+                    break;
+                case 4:
+                    factor = 1.39;
+                    durability = 1.4;
+                    hardness = 0;
+                    break;
+                case 5:
+                    factor = 1.54;
+                    durability = 1.5;
+                    hardness = 1;
+                    break;
+                case 6:
+                    factor = 1.69;
+                    durability = 1.6;
+                    hardness = 0;
+                    break;
+                case 7:
+                    factor = 1.84;
+                    durability = 1.7;
+                    hardness = 0;
+                    break;
+                case 8:
+                    factor = 1.99;
+                    durability = 1.8;
+                    hardness = 0;
+                    break;
+                case 9:
+                    factor = 2.14;
+                    durability = 1.9;
+                    hardness = 0;
+                    break;
+                case 10:
+                    factor = 2.29;
+                    durability = 2.0;
+                    hardness = 2;
+                    break;
             }
+
             ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
             forgeMultiplier.factor = factor;
             forgeMultiplier.durability = durability;
@@ -584,19 +589,68 @@ namespace Necromancy.Server.Systems.Item
             int hardness = 0;
             switch (level)
             {
-                case 0: factor = 1.00; durability = 1.0; hardness = 0; break;
-                case 1: factor = 1.05; durability = 1.1; hardness = 0; break;
-                case 2: factor = 1.10; durability = 1.1; hardness = 0; break;
-                case 3: factor = 1.12; durability = 1.1; hardness = 0; break;
-                case 4: factor = 1.12; durability = 1.1; hardness = 0; break;
-                case 5: factor = 1.15; durability = 1.1; hardness = 1; break;
-                case 6: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 7: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 8: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 9: factor = 1.15; durability = 1.1; hardness = 0; break;
-                case 10: factor = 1.15; durability = 1.1; hardness = 1; break;
-                default: factor = 1.00; durability = 1.0; hardness = 0; break;
+                case 0:
+                    factor = 1.00;
+                    durability = 1.0;
+                    hardness = 0;
+                    break;
+                case 1:
+                    factor = 1.05;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 2:
+                    factor = 1.10;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 3:
+                    factor = 1.12;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 4:
+                    factor = 1.12;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 5:
+                    factor = 1.15;
+                    durability = 1.1;
+                    hardness = 1;
+                    break;
+                case 6:
+                    factor = 1.15;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 7:
+                    factor = 1.15;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 8:
+                    factor = 1.15;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 9:
+                    factor = 1.15;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 10:
+                    factor = 1.15;
+                    durability = 1.1;
+                    hardness = 1;
+                    break;
+                default:
+                    factor = 1.00;
+                    durability = 1.0;
+                    hardness = 0;
+                    break;
             }
+
             ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
             forgeMultiplier.factor = factor;
             forgeMultiplier.durability = durability;
@@ -604,6 +658,7 @@ namespace Necromancy.Server.Systems.Item
             forgeMultiplier.weight = 100; //toDo
             return forgeMultiplier;
         }
+
         public void UpdateEnhancementLevel(ItemInstance itemInstance)
         {
             _itemDao.UpdateItemEnhancementLevel(itemInstance.instanceId, itemInstance.enhancementLevel);
@@ -619,6 +674,7 @@ namespace Necromancy.Server.Systems.Item
                 itemInstances.Add(itemInstance);
                 _itemDao.UpdateItemCurrentDurability(itemInstance.instanceId, itemInstance.maximumDurability);
             }
+
             return itemInstances;
         }
 
@@ -628,6 +684,7 @@ namespace Necromancy.Server.Systems.Item
             _character.adventureBagGold -= amount;
             return _character.adventureBagGold;
         }
+
         public ulong AddGold(ulong amount)
         {
             _character.adventureBagGold += amount;
@@ -635,7 +692,7 @@ namespace Necromancy.Server.Systems.Item
         }
 
         /// <summary>
-        /// This may seem insane but the client requires every auction house listing, this dumps it into the client.
+        ///     This may seem insane but the client requires every auction house listing, this dumps it into the client.
         /// </summary>
         /// <returns>Every single auction house listing.</returns>
         public List<ItemInstance> GetItemsUpForAuction()
@@ -649,6 +706,7 @@ namespace Necromancy.Server.Systems.Item
                 itemInstance.location = new ItemLocation(ItemZoneType.ProbablyAuctionSearch, 0, i);
                 i++;
             }
+
             return auctions;
         }
 
@@ -667,10 +725,7 @@ namespace Necromancy.Server.Systems.Item
 
 
             _itemDao.InsertAuctionBid(instanceId, _character.soulId, bid);
-            if (isBuyout == 1)
-            {
-                _itemDao.UpdateAuctionWinner(instanceId, _character.soulId);
-            }
+            if (isBuyout == 1) _itemDao.UpdateAuctionWinner(instanceId, _character.soulId);
         }
 
         //auction functions
@@ -697,13 +752,8 @@ namespace Necromancy.Server.Systems.Item
             //iManager.SubtractGold((int) Math.Ceiling(auctionItem.BuyoutPrice * LISTING_FEE_PERCENT));
 
             if (quantity == fromItem.quantity)
-            {
                 moveResult = MoveItemPlace(exhibitLocation, fromItem);
-            }
-            else if (quantity < fromItem.quantity)
-            {
-                moveResult = MoveItemPlaceQuantity(exhibitLocation, fromItem, quantity);
-            }
+            else if (quantity < fromItem.quantity) moveResult = MoveItemPlaceQuantity(exhibitLocation, fromItem, quantity);
 
             moveResult.destItem.consignerSoulName = _character.name;
             moveResult.destItem.minimumBid = minBid;
@@ -727,6 +777,7 @@ namespace Necromancy.Server.Systems.Item
                     auctionTimeInSecondsFromNow = SecondsPerFourHours * 6;
                     break;
             }
+
             moveResult.destItem.secondsUntilExpiryTime = auctionTimeInSecondsFromNow;
 
             _itemDao.UpdateAuctionExhibit(moveResult.destItem);
@@ -765,10 +816,7 @@ namespace Necromancy.Server.Systems.Item
         public List<ItemInstance> GetLots()
         {
             List<ItemInstance> itemInstances = _itemDao.SelectLots(_character.id);
-            foreach (ItemInstance item in itemInstances)
-            {
-                _character.itemLocationVerifier.PutItem(item.location, item);
-            }
+            foreach (ItemInstance item in itemInstances) _character.itemLocationVerifier.PutItem(item.location, item);
             return _itemDao.SelectLots(_character.soulId);
         }
 
@@ -790,6 +838,33 @@ namespace Necromancy.Server.Systems.Item
         public void PutEquipmentSearchConditions(AuctionEquipmentSearchConditions auctionEquipmentSearchConditions)
         {
             throw new NotImplementedException();
+        }
+
+        public class MoveResult
+        {
+            public MoveResult()
+            {
+            }
+
+            public MoveResult(MoveType moveType)
+            {
+                type = moveType;
+            }
+
+            /// <summary>
+            ///     The type of move that is done. Determines which server responses to send back.
+            /// </summary>
+            public MoveType type { get; internal set; } = MoveType.None;
+
+            /// <summary>
+            ///     The item that is at the location moved from. Can be null if there is no item swapped.
+            /// </summary>
+            public ItemInstance originItem { get; internal set; }
+
+            /// <summary>
+            ///     The item that is at the destination. Will not be null unless an error occurs.
+            /// </summary>
+            public ItemInstance destItem { get; internal set; }
         }
     }
 }

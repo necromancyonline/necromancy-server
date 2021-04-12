@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerStorageMergeStartR : PacketResponse
     {
         public RecvSoulPartnerStorageMergeStartR()
-            : base((ushort) AreaPacketId.recv_soul_partner_storage_merge_start_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_storage_merge_start_r, ServerType.Area)
         {
         }
 

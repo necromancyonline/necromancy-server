@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulFragmentRequestSkillListR : PacketResponse
     {
         public RecvSoulFragmentRequestSkillListR()
-            : base((ushort) AreaPacketId.recv_soul_fragment_request_skill_list_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_fragment_request_skill_list_r, ServerType.Area)
         {
         }
 
@@ -24,6 +24,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteByte(0);
             }
+
             return res;
         }
     }

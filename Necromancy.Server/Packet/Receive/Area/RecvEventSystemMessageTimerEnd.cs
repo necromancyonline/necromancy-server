@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventSystemMessageTimerEnd : PacketResponse
     {
         public RecvEventSystemMessageTimerEnd()
-            : base((ushort) AreaPacketId.recv_event_system_message_timer_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_system_message_timer_end, ServerType.Area)
         {
         }
 

@@ -19,16 +19,16 @@ namespace Necromancy.Server.Tasks
 
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(CharacterTask));
+        private readonly NecClient _client;
 
         private readonly object _logoutLock = new object();
-        private readonly NecClient _client;
+        private readonly NecServer _server;
+        private readonly int _tickTime;
         private List<NecClient> _clients;
         private DateTime _logoutTime;
         private byte _logoutType;
         private bool _playerDied;
-        private readonly NecServer _server;
         private int _tickCounter;
-        private readonly int _tickTime;
 
         public CharacterTask(NecServer server, NecClient client)
         {

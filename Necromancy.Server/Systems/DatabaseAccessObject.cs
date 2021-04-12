@@ -1,13 +1,10 @@
-using Arrowgene.Logging;
-using Necromancy.Server.Setting;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
-using System.Text;
-
+using Arrowgene.Logging;
+using Necromancy.Server.Setting;
 
 namespace Necromancy.Server.Systems
 {
@@ -15,9 +12,8 @@ namespace Necromancy.Server.Systems
     //TODO MOVE UNDER /DATABASE
     public class DatabaseAccessObject
     {
-        protected static readonly ILogger Logger = LogProvider.Logger(typeof(DatabaseAccessObject));
-
         protected const int NoRowsAffected = 0;
+        protected static readonly ILogger Logger = LogProvider.Logger(typeof(DatabaseAccessObject));
 
         private readonly string _sqLiteConnectionString;
 

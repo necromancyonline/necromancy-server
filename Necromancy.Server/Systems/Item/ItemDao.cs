@@ -1,16 +1,12 @@
-using Arrowgene.Logging;
-using Necromancy.Server.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SQLite;
 
 namespace Necromancy.Server.Systems.Item
 {
-    class ItemDao : DatabaseAccessObject, IItemDao
+    internal class ItemDao : DatabaseAccessObject, IItemDao
     {
-
         private const string _SqlSelectItemInstanceById = @"
             SELECT
                 *
@@ -249,6 +245,7 @@ namespace Necromancy.Server.Systems.Item
                     @bidder_soul_id,
                     @current_bid
                 )";
+
         private const string _SqlUpdateAuctionWinnerSoulId = @"
             UPDATE
                 nec_item_instance
@@ -273,27 +270,14 @@ namespace Necromancy.Server.Systems.Item
         {
             ItemInstance itemInstance = null;
             ExecuteReader(_SqlSelectItemInstanceById,
-                command =>
-                {
-                    AddParameter(command, "@id", instanceId);
-                }, reader =>
-                {
-                    itemInstance = MakeItemInstance(reader);
-                });
+                command => { AddParameter(command, "@id", instanceId); }, reader => { itemInstance = MakeItemInstance(reader); });
             return itemInstance;
         }
 
-        public ItemInstance[] SelectItemInstances(long[] instanceIds)
-        {
-            throw new NotImplementedException();
-        }
         public void DeleteItemInstance(ulong instanceId)
         {
             ExecuteNonQuery(_SqlDeleteItemInstance,
-                command =>
-                {
-                    AddParameter(command, "@id", instanceId);
-                });
+                command => { AddParameter(command, "@id", instanceId); });
         }
 
         public void UpdateItemEquipMask(ulong instanceId, ItemEquipSlots equipSlots)
@@ -326,6 +310,7 @@ namespace Necromancy.Server.Systems.Item
                     AddParameter(command, "@id", instanceId);
                 });
         }
+
         public void UpdateItemCurrentDurability(ulong instanceId, int currentDurability)
         {
             ExecuteNonQuery(_SqlUpdateItemCurrentDurability,
@@ -343,8 +328,8 @@ namespace Necromancy.Server.Systems.Item
 
         public void UpdateItemLocation(ulong instanceId, ItemLocation loc)
         {
-            ulong[] instanceIds = new ulong[1] { instanceId };
-            ItemLocation[] locs = new ItemLocation[1] { loc };
+            ulong[] instanceIds = new ulong[1] {instanceId};
+            ItemLocation[] locs = new ItemLocation[1] {loc};
             UpdateItemLocations(instanceIds, locs);
         }
 
@@ -400,7 +385,8 @@ namespace Necromancy.Server.Systems.Item
         }
 
         /// <summary>
-        /// This selects only the items in the player's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and Avatar inventory.
+        ///     This selects only the items in the player's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and
+        ///     Avatar inventory.
         /// </summary>
         /// <param name="ownerId">Owner of items.</param>
         /// <returns></returns>
@@ -408,15 +394,9 @@ namespace Necromancy.Server.Systems.Item
         {
             List<ItemInstance> ownedItemInstances = new List<ItemInstance>();
             ExecuteReader(_SqlSelectOwnedInventoryItems,
-                command =>
+                command => { AddParameter(command, "@owner_id", ownerId); }, reader =>
                 {
-                    AddParameter(command, "@owner_id", ownerId);
-                }, reader =>
-                {
-                    while (reader.Read())
-                    {
-                        ownedItemInstances.Add(MakeItemInstance(reader));
-                    }
+                    while (reader.Read()) ownedItemInstances.Add(MakeItemInstance(reader));
                 });
             return ownedItemInstances;
         }
@@ -492,17 +472,153 @@ namespace Necromancy.Server.Systems.Item
 
                 command.CommandText = string.Format("SELECT * FROM item_instance WHERE id IN({0})", string.Join(", ", parameters));
                 using DbDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    itemInstances.Add(MakeItemInstance(reader));
-                }
+                while (reader.Read()) itemInstances.Add(MakeItemInstance(reader));
             }
             catch (Exception ex)
             {
                 Logger.Error($"Query: {_SqlInsertItemInstances}");
                 Exception(ex);
             }
+
             return itemInstances;
+        }
+
+        public List<ItemInstance> SelectLootableInventoryItems(uint ownerId)
+        {
+            List<ItemInstance> lootableItemInstances = new List<ItemInstance>();
+            ExecuteReader(_SqlSelectOwnedInventoryItems,
+                command => { AddParameter(command, "@owner_id", ownerId); }, reader =>
+                {
+                    while (reader.Read()) lootableItemInstances.Add(MakeItemInstance(reader));
+                });
+            return lootableItemInstances;
+        }
+
+        public List<ItemInstance> SelectAuctions(uint ownerSoulId)
+        {
+            List<ItemInstance> auctions = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(_SqlSelectAuctions,
+                command => { AddParameter(command, "@owner_soul_id", ownerSoulId); }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        auctions.Add(itemInstance);
+                    }
+                });
+            return auctions;
+        }
+
+        public void UpdateAuctionExhibit(ItemInstance itemInstance)
+        {
+            ExecuteNonQuery(_SqlUpdateExhibit, command =>
+            {
+                AddParameter(command, "@id", itemInstance.instanceId);
+                AddParameter(command, "@consigner_soul_name", itemInstance.consignerSoulName);
+                AddParameter(command, "@expiry_datetime", CalcExpiryTime(itemInstance.secondsUntilExpiryTime));
+                AddParameter(command, "@min_bid", itemInstance.minimumBid);
+                AddParameter(command, "@buyout_price", itemInstance.buyoutPrice);
+                AddParameter(command, "@comment", itemInstance.comment);
+            });
+        }
+
+        public void UpdateAuctionCancelExhibit(ulong instanceId)
+        {
+            ExecuteNonQuery(_SqlUpdateCancelExhibit, command =>
+            {
+                AddParameter(command, "@id", instanceId);
+                AddParameterNull(command, "@consigner_soul_name");
+                AddParameterNull(command, "@expiry_datetime");
+                AddParameterNull(command, "@min_bid");
+                AddParameterNull(command, "@buyout_price");
+                AddParameterNull(command, "@comment");
+                AddParameterNull(command, "@bidder_soul_id");
+            });
+        }
+
+        public List<ItemInstance> SelectBids(int bidderSoulId)
+        {
+            List<ItemInstance> bids = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(_SqlSelectBids,
+                command => { AddParameter(command, "@bidder_soul_id", bidderSoulId); }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        itemInstance.currentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
+                        itemInstance.bidderSoulId = reader.IsDBNull("bidder_soul_id") ? 0 : reader.GetInt32("bidder_soul_id");
+                        itemInstance.maxBid = reader.IsDBNull("max_bid") ? 0 : reader.GetInt32("max_bid");
+                        itemInstance.isBidCancelled = reader.GetBoolean("is_cancelled");
+                        bids.Add(itemInstance);
+                    }
+                });
+            return bids;
+        }
+
+        public List<ItemInstance> SelectLots(int ownerSoulId)
+        {
+            List<ItemInstance> lots = new List<ItemInstance>();
+            int i = 0;
+            ExecuteReader(_SqlSelectLots,
+                command => { AddParameter(command, "@owner_soul_id", ownerSoulId); }, reader =>
+                {
+                    while (reader.Read())
+                    {
+                        ItemInstance itemInstance = MakeItemInstance(reader);
+                        lots.Add(itemInstance);
+                    }
+                });
+            return lots;
+        }
+
+        public ulong SelectBuyoutPrice(ulong instanceId)
+        {
+            ulong buyoutPrice = 0;
+            ExecuteReader(_SqlSelectBuyoutPrice,
+                command => { AddParameter(command, "@id", instanceId); }, reader =>
+                {
+                    reader.Read();
+                    buyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price"); //TODO remove cast
+                });
+            return buyoutPrice;
+        }
+
+        public void InsertAuctionBid(ulong instanceId, int bidderSoulId, ulong bid)
+        {
+            ExecuteNonQuery(_SqlInsertAuctionBid, command =>
+            {
+                AddParameter(command, "@instance_id", instanceId);
+                AddParameter(command, "@bidder_soul_id", bidderSoulId);
+                AddParameter(command, "@current_bid", bid);
+            });
+        }
+
+        public void UpdateAuctionWinner(ulong instanceId, int winnerSoulId)
+        {
+            ExecuteNonQuery(_SqlUpdateAuctionWinnerSoulId, command =>
+            {
+                AddParameter(command, "@winner_soul_id", winnerSoulId);
+                AddParameter(command, "@id", instanceId);
+            });
+        }
+
+        public int SelectAuctionWinnerSoulId(ulong instanceId)
+        {
+            int winnerSoulId = 0;
+            ExecuteReader(_SqlSelectAuctionWinnerSoulId,
+                command => { AddParameter(command, "@id", instanceId); }, reader =>
+                {
+                    reader.Read();
+                    winnerSoulId = reader.IsDBNull("winner_soul_id") ? 0 : reader.GetInt32("winner_soul_id"); //TODO remove cast
+                });
+            return winnerSoulId;
+        }
+
+        public ItemInstance[] SelectItemInstances(long[] instanceIds)
+        {
+            throw new NotImplementedException();
         }
 
         private ItemInstance MakeItemInstance(DbDataReader reader)
@@ -692,28 +808,11 @@ namespace Necromancy.Server.Systems.Item
             return itemInstance;
         }
 
-        public List<ItemInstance> SelectLootableInventoryItems(uint ownerId)
-        {
-            List<ItemInstance> lootableItemInstances = new List<ItemInstance>();
-            ExecuteReader(_SqlSelectOwnedInventoryItems,
-                command =>
-                {
-                    AddParameter(command, "@owner_id", ownerId);
-                }, reader =>
-                {
-                    while (reader.Read())
-                    {
-                        lootableItemInstances.Add(MakeItemInstance(reader));
-                    }
-                });
-            return lootableItemInstances;
-        }
-
         private int CalcSecondsToExpiry(long unixTimeSecondsExpiry)
         {
             DateTime dNow = DateTime.Now;
             DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
-            return ((int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds()));
+            return (int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds());
         }
 
         private long CalcExpiryTime(int secondsToExpiry)
@@ -721,142 +820,6 @@ namespace Necromancy.Server.Systems.Item
             DateTime dNow = DateTime.Now;
             DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
             return dOffsetNow.ToUnixTimeSeconds() + secondsToExpiry;
-        }
-
-        public List<ItemInstance> SelectAuctions(uint ownerSoulId)
-        {
-            List<ItemInstance> auctions = new List<ItemInstance>();
-            int i = 0;
-            ExecuteReader(_SqlSelectAuctions,
-                command => {
-                    AddParameter(command, "@owner_soul_id", ownerSoulId);
-                }, reader =>
-                {
-                    while (reader.Read())
-                    {
-                        ItemInstance itemInstance = MakeItemInstance(reader);
-                        auctions.Add(itemInstance);
-                    }
-                });
-            return auctions;
-        }
-
-        public void UpdateAuctionExhibit(ItemInstance itemInstance)
-        {
-            ExecuteNonQuery(_SqlUpdateExhibit, command =>
-            {
-                AddParameter(command, "@id", itemInstance.instanceId);
-                AddParameter(command, "@consigner_soul_name", itemInstance.consignerSoulName);
-                AddParameter(command, "@expiry_datetime", CalcExpiryTime(itemInstance.secondsUntilExpiryTime));
-                AddParameter(command, "@min_bid", itemInstance.minimumBid);
-                AddParameter(command, "@buyout_price", itemInstance.buyoutPrice);
-                AddParameter(command, "@comment", itemInstance.comment);
-            });
-        }
-
-        public void UpdateAuctionCancelExhibit(ulong instanceId)
-        {
-            ExecuteNonQuery(_SqlUpdateCancelExhibit, command =>
-            {
-                AddParameter(command, "@id", instanceId);
-                AddParameterNull(command, "@consigner_soul_name");
-                AddParameterNull(command, "@expiry_datetime");
-                AddParameterNull(command, "@min_bid");
-                AddParameterNull(command, "@buyout_price");
-                AddParameterNull(command, "@comment");
-                AddParameterNull(command, "@bidder_soul_id");
-            });
-        }
-
-        public List<ItemInstance> SelectBids(int bidderSoulId)
-        {
-            List<ItemInstance> bids = new List<ItemInstance>();
-            int i = 0;
-            ExecuteReader(_SqlSelectBids,
-                command =>
-                {
-                    AddParameter(command, "@bidder_soul_id", bidderSoulId);
-                }, reader =>
-                {
-                    while (reader.Read())
-                    {
-                        ItemInstance itemInstance = MakeItemInstance(reader);
-                        itemInstance.currentBid = reader.IsDBNull("current_bid") ? 0 : reader.GetInt32("current_bid");
-                        itemInstance.bidderSoulId = reader.IsDBNull("bidder_soul_id") ? 0 : reader.GetInt32("bidder_soul_id");
-                        itemInstance.maxBid = reader.IsDBNull("max_bid") ? 0 : reader.GetInt32("max_bid");
-                        itemInstance.isBidCancelled = reader.GetBoolean("is_cancelled");
-                        bids.Add(itemInstance);
-                    }
-                });
-            return bids;
-        }
-
-        public List<ItemInstance> SelectLots(int ownerSoulId)
-        {
-            List<ItemInstance> lots = new List<ItemInstance>();
-            int i = 0;
-            ExecuteReader(_SqlSelectLots,
-                command =>
-                {
-                    AddParameter(command, "@owner_soul_id", ownerSoulId);
-                }, reader =>
-                {
-                    while (reader.Read())
-                    {
-                        ItemInstance itemInstance = MakeItemInstance(reader);
-                        lots.Add(itemInstance);
-                    }
-                });
-            return lots;
-        }
-
-        public ulong SelectBuyoutPrice(ulong instanceId)
-        {
-            ulong buyoutPrice = 0;
-            ExecuteReader(_SqlSelectBuyoutPrice,
-                command =>
-                {
-                    AddParameter(command, "@id", instanceId);
-                }, reader =>
-                {
-                    reader.Read();
-                    buyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong) reader.GetInt64("buyout_price"); //TODO remove cast
-                });
-            return buyoutPrice;
-        }
-
-        public void InsertAuctionBid(ulong instanceId, int bidderSoulId, ulong bid)
-        {
-            ExecuteNonQuery(_SqlInsertAuctionBid, command =>
-            {
-                AddParameter(command, "@instance_id", instanceId);
-                AddParameter(command, "@bidder_soul_id", bidderSoulId);
-                AddParameter(command, "@current_bid", bid);
-            });
-        }
-
-        public void UpdateAuctionWinner(ulong instanceId, int winnerSoulId)
-        {
-            ExecuteNonQuery(_SqlUpdateAuctionWinnerSoulId, command =>
-            {
-                AddParameter(command, "@winner_soul_id", winnerSoulId);
-                AddParameter(command, "@id", instanceId);
-            });
-        }
-
-        public int SelectAuctionWinnerSoulId(ulong instanceId)
-        {
-            int winnerSoulId = 0;
-            ExecuteReader(_SqlSelectAuctionWinnerSoulId,
-                command =>
-                {
-                    AddParameter(command, "@id", instanceId);
-                }, reader =>
-                {
-                    reader.Read();
-                    winnerSoulId = reader.IsDBNull("winner_soul_id") ? 0 : reader.GetInt32("winner_soul_id"); //TODO remove cast
-                });
-            return winnerSoulId;
         }
     }
 }

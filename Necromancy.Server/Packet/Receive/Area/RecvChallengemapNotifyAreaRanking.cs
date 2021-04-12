@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapNotifyAreaRanking : PacketResponse
     {
         public RecvChallengemapNotifyAreaRanking()
-            : base((ushort) AreaPacketId.recv_challengemap_notify_area_ranking, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_notify_area_ranking, ServerType.Area)
         {
         }
 
@@ -49,10 +49,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteFixedString("Test4", 0x5B);
-                for (int i = 0; i < 0x3; i++)
-                {
-                    res.WriteInt64(0);
-                }
+                for (int i = 0; i < 0x3; i++) res.WriteInt64(0);
 
                 for (int j = 0; j < 0x64; j++)
                 {
@@ -62,12 +59,10 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteInt32(0);
                     res.WriteInt32(0);
                     res.WriteFixedString("Test4", 0x5B);
-                    for (int i = 0; i < 0x3; i++)
-                    {
-                        res.WriteInt64(0);
-                    }
+                    for (int i = 0; i < 0x3; i++) res.WriteInt64(0);
                 }
             }
+
             return res;
         }
     }

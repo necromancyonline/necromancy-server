@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapUpdateMonsterDefeatCount : PacketResponse
     {
         public RecvRoguemapUpdateMonsterDefeatCount()
-            : base((ushort) AreaPacketId.recv_roguemap_update_monster_defeat_count, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_update_monster_defeat_count, ServerType.Area)
         {
         }
 

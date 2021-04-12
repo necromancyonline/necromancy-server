@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvClassAdvancementNotifyLearnAll : PacketResponse
     {
         public RecvClassAdvancementNotifyLearnAll()
-            : base((ushort) AreaPacketId.recv_class_advancement_notify_learn_all, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_class_advancement_notify_learn_all, ServerType.Area)
         {
         }
 

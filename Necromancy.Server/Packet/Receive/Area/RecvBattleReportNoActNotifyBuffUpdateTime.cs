@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNoActNotifyBuffUpdateTime : PacketResponse
     {
         public RecvBattleReportNoActNotifyBuffUpdateTime()
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_buff_update_time, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_notify_buff_update_time, ServerType.Area)
         {
         }
 

@@ -10,9 +10,9 @@ namespace Necromancy.Server.Model
     public class DropTables
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(DropTables));
+        private readonly List<DropTable> _dropTables;
 
         private readonly NecServer _server;
-        private readonly List<DropTable> _dropTables;
 
         public DropTables(NecServer server)
         {

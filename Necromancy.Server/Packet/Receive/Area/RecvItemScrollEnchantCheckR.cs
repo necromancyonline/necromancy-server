@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemScrollEnchantCheckR : PacketResponse
     {
         public RecvItemScrollEnchantCheckR()
-            : base((ushort) AreaPacketId.recv_item_scroll_enchant_check_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_scroll_enchant_check_r, ServerType.Area)
         {
         }
 
@@ -32,11 +32,9 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteInt32(0);
                     res.WriteInt32(0);
                     int numEntries5 = 0x2; //must be 0x2
-                    for (int k = 0; k < numEntries5; k++)
-                    {
-                        res.WriteInt16(0);
-                    }
+                    for (int k = 0; k < numEntries5; k++) res.WriteInt16(0);
                 }
+
                 int numEntries2 = 0x5; //must be 0x5
                 for (int j = 0; j < numEntries2; j++)
                 {
@@ -45,12 +43,10 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteInt32(0);
                     res.WriteInt32(0);
                     int numEntries5 = 0x2; //must be 0x2
-                    for (int k = 0; k < numEntries5; k++)
-                    {
-                        res.WriteInt16(0);
-                    }
+                    for (int k = 0; k < numEntries5; k++) res.WriteInt16(0);
                 }
             }
+
             return res;
         }
     }

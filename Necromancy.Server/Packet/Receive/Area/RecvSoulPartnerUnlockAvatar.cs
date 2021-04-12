@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerUnlockAvatar : PacketResponse
     {
         public RecvSoulPartnerUnlockAvatar()
-            : base((ushort) AreaPacketId.recv_soul_partner_unlock_avatar, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_unlock_avatar, ServerType.Area)
         {
         }
 

@@ -38,12 +38,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@created", gimmick.created);
                 AddParameter(command, "@updated", gimmick.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            gimmick.id = (int) autoIncrement;
+            gimmick.id = (int)autoIncrement;
             return true;
         }
 

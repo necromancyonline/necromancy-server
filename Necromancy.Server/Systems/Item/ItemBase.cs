@@ -1,12 +1,11 @@
-using Necromancy.Server.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Necromancy.Server.Systems.Item
 {
     public class ItemBase
     {
+        public string equipSlot2 = "WhoKnows"; //TODO
+        public string lore = "";
+
+        public string objectType = "NONE"; //TODO
         public int baseId { get; set; }
         public ItemType type { get; set; }
         public ItemQualities quality { get; set; }
@@ -27,7 +26,7 @@ namespace Necromancy.Server.Systems.Item
         public byte requiredSoulRank { get; set; }
         public byte requiredLevel { get; set; }
 
-        public byte physicalSlash {get; set;}
+        public byte physicalSlash { get; set; }
         public byte physicalStrike { get; set; }
         public byte physicalPierce { get; set; }
 
@@ -66,11 +65,10 @@ namespace Necromancy.Server.Systems.Item
         public byte resistConfusion { get; set; }
         public byte resistFear { get; set; }
 
-        public ItemStatusEffect statusMalus {get; set; }
+        public ItemStatusEffect statusMalus { get; set; }
+
         public int statusMalusPercent { get; set; }
 
-        public string objectType = "NONE"; //TODO
-        public string equipSlot2 = "WhoKnows"; //TODO
         //public string IconType = "eh"; //TODO
         public byte bagSize { get; set; }
         public bool isUseableInTown { get; set; }
@@ -81,8 +79,6 @@ namespace Necromancy.Server.Systems.Item
         public bool isTradableAfterUse { get; set; }
         public bool isStealable { get; set; }
         public bool isGoldBorder { get; set; }
-        public string lore = "";
         public int iconId { get; set; }
-
     }
 }

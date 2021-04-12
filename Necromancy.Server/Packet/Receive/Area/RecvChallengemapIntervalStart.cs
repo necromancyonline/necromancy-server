@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapIntervalStart : PacketResponse
     {
         public RecvChallengemapIntervalStart()
-            : base((ushort) AreaPacketId.recv_challengemap_interval_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_interval_start, ServerType.Area)
         {
         }
 
@@ -20,16 +20,10 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
-            for (int k = 0; k < 0x3; k++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int k = 0; k < 0x3; k++) res.WriteInt32(0);
             res.WriteFixedString("Xeno", 0xC1);
             res.WriteInt32(0);
-            for (int k = 0; k < 0x3; k++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int k = 0; k < 0x3; k++) res.WriteInt32(0);
             res.WriteFixedString("Xeno", 0xC1);
             res.WriteInt32(0);
             res.WriteInt32(0);

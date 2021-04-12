@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaNotifyRaiseDownper : PacketResponse
     {
         public RecvCharaNotifyRaiseDownper()
-            : base((ushort) AreaPacketId.recv_chara_notify_raise_downper, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_notify_raise_downper, ServerType.Area)
         {
         }
 

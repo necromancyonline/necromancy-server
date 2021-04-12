@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapNotifyIntervalSkipNum : PacketResponse
     {
         public RecvChallengemapNotifyIntervalSkipNum()
-            : base((ushort) AreaPacketId.recv_challengemap_notify_interval_skip_num, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_notify_interval_skip_num, ServerType.Area)
         {
         }
 

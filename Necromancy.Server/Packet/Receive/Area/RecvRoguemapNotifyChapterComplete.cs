@@ -21,14 +21,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteUInt32(0);
 
 
-            for (int i = 0; i < 0x4; i++)
-            {
-                res.WriteInt32(0);
-            }
-            for (int i = 0; i < 0x4; i++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int i = 0; i < 0x4; i++) res.WriteInt32(0);
+            for (int i = 0; i < 0x4; i++) res.WriteInt32(0);
 
             res.WriteByte(0);
             res.WriteByte(0);

@@ -8,11 +8,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemInstanceUnidentified : PacketResponse
     {
-        private readonly ItemInstance _itemInstance;
         private readonly NecClient _client;
+        private readonly ItemInstance _itemInstance;
 
         public RecvItemInstanceUnidentified(NecClient client, ItemInstance itemInstance)
-            : base((ushort) AreaPacketId.recv_item_instance_unidentified, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_instance_unidentified, ServerType.Area)
         {
             _itemInstance = itemInstance;
             _client = client;
@@ -21,13 +21,13 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt64((ulong) _itemInstance.instanceId);              //item instance ID
-            res.WriteCString(_itemInstance.unidentifiedName);               //unidentified item name
-            res.WriteInt32((int) _itemInstance.type);                       //item type
-            res.WriteInt32((int) _itemInstance.equipAllowedSlots);          //allowed equipment slots
+            res.WriteUInt64(_itemInstance.instanceId); //item instance ID
+            res.WriteCString(_itemInstance.unidentifiedName); //unidentified item name
+            res.WriteInt32((int)_itemInstance.type); //item type
+            res.WriteInt32((int)_itemInstance.equipAllowedSlots); //allowed equipment slots
             res.WriteByte(_itemInstance.quantity);
 
-            res.WriteInt32((int)_itemInstance.statuses);                    //statuses
+            res.WriteInt32((int)_itemInstance.statuses); //statuses
             //BEGIN ITEM  UPDATE EQUMASK SECTION
             res.WriteInt32(_itemInstance.baseId); //Sets your Item ID per Iteration
             res.WriteByte(0); //hair
@@ -51,16 +51,16 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(0); // separate in assembly
             res.WriteByte(0); // separate in assembly
 
-            res.WriteByte((byte) _itemInstance.location.zoneType);
+            res.WriteByte((byte)_itemInstance.location.zoneType);
             res.WriteByte(_itemInstance.location.container);
             res.WriteInt16(_itemInstance.location.slot);
             res.WriteInt32((int)_itemInstance.currentEquipSlot); //CURRENT EQUIP SLOT
             res.WriteInt64(Util.GetRandomNumber(1, 10)); //unknown
-            res.WriteInt32(Util.GetRandomNumber(1, 10));//unknown
-            res.WriteInt16(5);//unknown
+            res.WriteInt32(Util.GetRandomNumber(1, 10)); //unknown
+            res.WriteInt16(5); //unknown
             res.WriteInt32(Util.GetRandomNumber(1, 10)); //unknown
 
-            res.WriteFixedString($"", 16); // Camilia decrypt key (unused)
+            res.WriteFixedString("", 16); // Camilia decrypt key (unused)
 
             return res;
         }

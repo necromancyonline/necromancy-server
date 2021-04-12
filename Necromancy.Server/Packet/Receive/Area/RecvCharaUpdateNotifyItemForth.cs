@@ -12,7 +12,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly int _unknown2;
 
         public RecvCharaUpdateNotifyItemForth(uint instanceId, int unknown1, int unknown2)
-            : base((ushort) AreaPacketId.recv_chara_update_notify_item_forth, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_notify_item_forth, ServerType.Area)
         {
             _instanceId = instanceId;
             _unknown1 = unknown1;

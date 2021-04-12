@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Auth
     public class RecvCpfNotifyError : PacketResponse
     {
         public RecvCpfNotifyError()
-            : base((ushort) AuthPacketId.recv_cpf_notify_error, ServerType.Auth)
+            : base((ushort)AuthPacketId.recv_cpf_notify_error, ServerType.Auth)
         {
         }
 

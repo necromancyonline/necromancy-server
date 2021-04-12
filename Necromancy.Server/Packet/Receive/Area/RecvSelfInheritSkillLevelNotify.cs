@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfInheritSkillLevelNotify : PacketResponse
     {
         public RecvSelfInheritSkillLevelNotify()
-            : base((ushort) AreaPacketId.recv_self_inherit_skill_level_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_inherit_skill_level_notify, ServerType.Area)
         {
         }
 

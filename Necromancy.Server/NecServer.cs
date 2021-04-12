@@ -51,24 +51,13 @@ namespace Necromancy.Server
     public class NecServer
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecServer));
-
-        public NecSetting setting { get; }
-        public PacketRouter router { get; }
-        public ClientLookup clients { get; }
-        public MapLookup maps { get; }
-        public IDatabase database { get; }
-        public SettingRepository settingRepository { get; }
-        public ChatManager chat { get; }
-        public NecromancyBot necromancyBot { get; }
-        public InstanceGenerator instances { get; }
-        public bool running => _running;
+        private readonly NecQueueConsumer _areaConsumer;
+        private readonly AsyncEventServer _areaServer;
 
         private readonly NecQueueConsumer _authConsumer;
-        private readonly NecQueueConsumer _msgConsumer;
-        private readonly NecQueueConsumer _areaConsumer;
         private readonly AsyncEventServer _authServer;
+        private readonly NecQueueConsumer _msgConsumer;
         private readonly AsyncEventServer _msgServer;
-        private readonly AsyncEventServer _areaServer;
         private volatile bool _running;
 
         public NecServer(NecSetting setting)
@@ -118,6 +107,17 @@ namespace Necromancy.Server
             LoadHandler();
         }
 
+        public NecSetting setting { get; }
+        public PacketRouter router { get; }
+        public ClientLookup clients { get; }
+        public MapLookup maps { get; }
+        public IDatabase database { get; }
+        public SettingRepository settingRepository { get; }
+        public ChatManager chat { get; }
+        public NecromancyBot necromancyBot { get; }
+        public InstanceGenerator instances { get; }
+        public bool running => _running;
+
         public void Start()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
@@ -156,28 +156,19 @@ namespace Necromancy.Server
         private void AreaClientDisconnected(NecConnection connection)
         {
             NecClient client = connection.client;
-            if (client == null)
-            {
-                return;
-            }
+            if (client == null) return;
             //Try to update the character stats.
-            if (!this.database.UpdateCharacter(client.character))
-            {
-                _Logger.Error("Could not update the database with character details before disconnect");
-            }
-            if (!this.database.UpdateSoul(client.soul))
-            {
-                _Logger.Error("Could not update the database with soul details before disconnect");
-            }
+            if (!database.UpdateCharacter(client.character)) _Logger.Error("Could not update the database with character details before disconnect");
+            if (!database.UpdateSoul(client.soul)) _Logger.Error("Could not update the database with soul details before disconnect");
             clients.Remove(client);
 
             //I disconnected while my dead body was being carried around by another player
-            if (client.character.hasDied == true)
+            if (client.character.hasDied)
             {
-                DeadBody deadBody = this.instances.GetInstance(client.character.deadBodyInstanceId) as DeadBody;
+                DeadBody deadBody = instances.GetInstance(client.character.deadBodyInstanceId) as DeadBody;
                 if (deadBody.salvagerId != 0)
                 {
-                    NecClient mySalvager = this.clients.GetByCharacterInstanceId(deadBody.salvagerId);
+                    NecClient mySalvager = clients.GetByCharacterInstanceId(deadBody.salvagerId);
                     if (mySalvager != null)
                     {
                         deadBody.x = mySalvager.character.x;
@@ -190,9 +181,7 @@ namespace Necromancy.Server
                         mySalvager.map.deadBodies.Add(deadBody.instanceId, deadBody);
                         RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                         if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                        {
                             router.Send(mySalvager.map, cBodyData.ToPacket(), client);
-                        }
 
                         //must occur after the charaBody notify.
                         RecvCharaBodySalvageEnd recvCharaBodySalvageEnd = new RecvCharaBodySalvageEnd(deadBody.instanceId, 5);
@@ -204,7 +193,7 @@ namespace Necromancy.Server
             //while i was dead and being carried around, the player carrying me disconnected
             foreach (NecClient collectedBody in client.bodyCollection.Values)
             {
-                DeadBody deadBody = this.instances.GetInstance(collectedBody.character.deadBodyInstanceId) as DeadBody;
+                DeadBody deadBody = instances.GetInstance(collectedBody.character.deadBodyInstanceId) as DeadBody;
 
                 RecvCharaBodySelfSalvageEnd recvCharaBodySelfSalvageEnd = new RecvCharaBodySelfSalvageEnd(3);
                 router.Send(collectedBody, recvCharaBodySelfSalvageEnd.ToPacket());
@@ -222,23 +211,19 @@ namespace Necromancy.Server
                 client.map.deadBodies.Add(deadBody.instanceId, deadBody);
                 RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
                 if (client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                {
                     router.Send(client.map, cBodyData.ToPacket());
-                }
 
                 //send your soul to all the other souls runnin around
                 RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(collectedBody.character, collectedBody.soul.name);
                 foreach (NecClient soulStateClient in client.map.clientLookup.GetAll())
-                {
-                    if (soulStateClient.character.state == CharacterState.SoulForm) this.router.Send(soulStateClient, cData.ToPacket());
-                }
+                    if (soulStateClient.character.state == CharacterState.SoulForm)
+                        router.Send(soulStateClient, cData.ToPacket());
             }
 
             Map map = client.map;
 
             //If i was dead, toggle my deadBody to a Rucksack
             if (map != null)
-            {
                 if (map.deadBodies.ContainsKey(client.character.deadBodyInstanceId))
                 {
                     map.deadBodies.TryGetValue(client.character.deadBodyInstanceId, out DeadBody deadBody);
@@ -258,17 +243,11 @@ namespace Necromancy.Server
                         }
                     );
                 }
-            }
-            if (map != null)
-            {
-                map.Leave(client);
-            }
+
+            if (map != null) map.Leave(client);
 
             Union union = client.union;
-            if (union != null)
-            {
-                union.Leave(client);
-            }
+            if (union != null) union.Leave(client);
 
             Character character = client.character;
             if (character != null)

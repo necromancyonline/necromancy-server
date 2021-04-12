@@ -13,9 +13,9 @@ namespace Necromancy.Server.Model.Skills
     public class ThiefSkill : IInstance
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ThiefSkill));
-        private readonly NecServer _server;
 
         private readonly NecClient _client;
+        private readonly NecServer _server;
         private readonly int _skillId;
         private readonly uint _targetInstanceId;
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapUpdateElapsedTime : PacketResponse
     {
         public RecvRoguemapUpdateElapsedTime()
-            : base((ushort) AreaPacketId.recv_roguemap_update_elapsed_time, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_update_elapsed_time, ServerType.Area)
         {
         }
 

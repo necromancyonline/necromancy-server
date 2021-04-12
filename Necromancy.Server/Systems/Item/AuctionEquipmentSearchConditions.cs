@@ -1,5 +1,3 @@
-using System;
-
 namespace Necromancy.Server.Systems.Item
 {
     public class AuctionEquipmentSearchConditions
@@ -44,22 +42,22 @@ namespace Necromancy.Server.Systems.Item
 
         public bool HasValidSoulRankMin()
         {
-            return (soulRankMin >= _MinSoulRank) && (soulRankMin <= _MaxSoulRank);
+            return soulRankMin >= _MinSoulRank && soulRankMin <= _MaxSoulRank;
         }
 
         public bool HasValidSoulRankMax()
         {
-            return (soulRankMax >= _MinSoulRank) && (soulRankMax <= _MaxSoulRank);
+            return soulRankMax >= _MinSoulRank && soulRankMax <= _MaxSoulRank;
         }
 
         public bool HasValidForgePriceMin()
         {
-            return (forgePriceMin >= _MinForgePrice) && (forgePriceMin <= _MinForgePrice);
+            return forgePriceMin >= _MinForgePrice && forgePriceMin <= _MinForgePrice;
         }
 
         public bool HasValidForgePriceMax()
         {
-            return (forgePriceMax >= _MaxForgePrice) && (forgePriceMax <= _MaxForgePrice);
+            return forgePriceMax >= _MaxForgePrice && forgePriceMax <= _MaxForgePrice;
         }
     }
 }

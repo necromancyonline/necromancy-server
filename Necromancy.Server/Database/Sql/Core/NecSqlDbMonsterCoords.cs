@@ -41,12 +41,9 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@y", monsterCoord.destination.Y);
                 AddParameter(command, "@z", monsterCoord.destination.Z);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
-            monsterCoord.id = (int) autoIncrement;
+            monsterCoord.id = (int)autoIncrement;
             return true;
         }
 
@@ -79,6 +76,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 });
             return monsterCoords;
         }
+
         public List<MonsterCoord> SelectMonsterCoordsByMonsterId(int mapId)
         {
             List<MonsterCoord> monsterCoords = new List<MonsterCoord>();
@@ -94,6 +92,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 });
             return monsterCoords;
         }
+
         public List<MonsterCoord> SelectMonsterCoordsByMapId(int mapId)
         {
             List<MonsterCoord> monsterCoords = new List<MonsterCoord>();
@@ -144,7 +143,7 @@ namespace Necromancy.Server.Database.Sql.Core
             coords.Y = GetFloat(reader, "y");
             coords.Z = GetFloat(reader, "z");
             monsterCoord.destination = coords;
-           return monsterCoord;
+            return monsterCoord;
         }
     }
 }

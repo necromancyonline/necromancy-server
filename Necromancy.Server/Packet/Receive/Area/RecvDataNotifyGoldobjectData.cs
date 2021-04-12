@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDataNotifyGoldobjectData : PacketResponse
     {
         public RecvDataNotifyGoldobjectData()
-            : base((ushort) AreaPacketId.recv_data_notify_goldobject_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_goldobject_data, ServerType.Area)
         {
         }
 

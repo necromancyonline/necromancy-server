@@ -6,7 +6,7 @@ using Necromancy.Server.Logging;
 namespace Necromancy.Server.Database.Sql.Core
 {
     /// <summary>
-    /// Implementation of Necromancy database operations.
+    ///     Implementation of Necromancy database operations.
     /// </summary>
     public abstract partial class NecSqlDb<TCon, TCom> : SqlDb<TCon, TCom>
         where TCon : DbConnection

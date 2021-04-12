@@ -21,18 +21,18 @@ namespace Necromancy.Server.Tasks
 
         private static readonly int[] _baseTraps = {14301, 14302};
         private static int[] _trapEnhancements = { };
-
-        private readonly object _trapLock = new object();
         private readonly int _detectHeight;
         private readonly int _detectRadius;
-        private DateTime _expireTime;
         private readonly Map _map;
         private readonly List<MonsterSpawn> _monsterList;
+        private readonly List<Trap> _trapList;
+
+        private readonly object _trapLock = new object();
+        private readonly int _triggerRadius;
+        private DateTime _expireTime;
         private int _tickTime;
         private bool _trapActive;
-        private readonly List<Trap> _trapList;
         private bool _triggered;
-        private readonly int _triggerRadius;
 
         public TrapTask(NecServer server, Map map, Vector3 trapPos, uint instanceId, Trap trap, uint stackId)
         {

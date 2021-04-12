@@ -1,46 +1,35 @@
-
 namespace Necromancy.Server.Systems.Item
 {
-    class Container
+    internal class Container
     {
         public const int NoOpenSlots = -1;
         public readonly ItemInstance[] slots;
-        public int size { get; }
-        public int count { get; private set; }
-        public bool isSorted { get; private set; }
 
-        public bool isFull
-        {
-            get
-            {
-                return (size - count) <= 0;
-            }
-        }
-
-        public int totalFreeSlots
-        {
-            get
-            {
-                return size - count;
-            }
-        }
         public Container(int size)
         {
             slots = new ItemInstance[size];
             this.size = size;
         }
 
+        public int size { get; }
+        public int count { get; private set; }
+        public bool isSorted { get; private set; }
+
+        public bool isFull => size - count <= 0;
+
+        public int totalFreeSlots => size - count;
+
         public int nextOpenSlot
         {
             get
             {
                 for (int i = 0; i < size; i++)
-                {
-                    if (slots[i] is null) return i;
-                }
+                    if (slots[i] is null)
+                        return i;
                 return NoOpenSlots;
             }
         }
+
         public void PutItem(int slot, ItemInstance item)
         {
             if (slots[slot] != null)
@@ -49,10 +38,12 @@ namespace Necromancy.Server.Systems.Item
             count++;
             isSorted = false;
         }
+
         public ItemInstance GetItem(int slot)
         {
             return slots[slot];
         }
+
         public void RemoveItem(int slot)
         {
             if (slots[slot] != null)
@@ -61,6 +52,7 @@ namespace Necromancy.Server.Systems.Item
             count--;
             isSorted = false;
         }
+
         public bool HasItem(int slot)
         {
             return slots[slot] != null;
@@ -69,9 +61,8 @@ namespace Necromancy.Server.Systems.Item
         public int GetNextOpenSlot(int startSlot)
         {
             for (int i = startSlot + 1; i < size; i++)
-            {
-                if (slots[i] is null) return i;
-            }
+                if (slots[i] is null)
+                    return i;
             return NoOpenSlots;
         }
     }

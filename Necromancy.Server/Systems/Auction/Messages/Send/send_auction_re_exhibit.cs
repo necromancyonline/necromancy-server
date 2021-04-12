@@ -13,7 +13,7 @@ namespace Necromancy.Server.Systems.Auction
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_re_exhibit;
+        public override ushort id => (ushort)AreaPacketId.send_auction_re_exhibit;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -21,7 +21,7 @@ namespace Necromancy.Server.Systems.Auction
             res.WriteInt32(0);
 
             res.WriteInt32(0);
-            router.Send(client.map, (ushort) AreaPacketId.recv_auction_re_exhibit_r, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_auction_re_exhibit_r, res, ServerType.Area);
         }
     }
 }

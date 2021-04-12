@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Auth
     public class RecvBaseCheckVersion : PacketResponse
     {
         public RecvBaseCheckVersion()
-            : base((ushort) AuthPacketId.recv_base_check_version_r, ServerType.Auth)
+            : base((ushort)AuthPacketId.recv_base_check_version_r, ServerType.Auth)
         {
         }
 

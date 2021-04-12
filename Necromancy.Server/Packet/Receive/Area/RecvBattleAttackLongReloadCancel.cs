@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleAttackLongReloadCancel : PacketResponse
     {
         public RecvBattleAttackLongReloadCancel()
-            : base((ushort) AreaPacketId.recv_battle_attack_long_reload_cancel, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_attack_long_reload_cancel, ServerType.Area)
         {
         }
 

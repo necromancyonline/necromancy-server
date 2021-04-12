@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerNurtureMenuSelectR : PacketResponse
     {
         public RecvSoulPartnerNurtureMenuSelectR()
-            : base((ushort) AreaPacketId.recv_soul_partner_nurture_menu_select_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_nurture_menu_select_r, ServerType.Area)
         {
         }
 

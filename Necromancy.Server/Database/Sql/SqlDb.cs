@@ -6,20 +6,15 @@ using Arrowgene.Logging;
 namespace Necromancy.Server.Database.Sql
 {
     /// <summary>
-    /// Operations for SQL type databases.
+    ///     Operations for SQL type databases.
     /// </summary>
     public abstract class SqlDb<TCon, TCom>
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private static readonly ILogger _Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
-
         public const int NoRowsAffected = 0;
         public const long NoAutoIncrement = 0;
-
-        public SqlDb()
-        {
-        }
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
 
         protected abstract TCon Connection();
         protected abstract TCom Command(string query, TCon connection);
@@ -207,7 +202,7 @@ namespace Necromancy.Server.Database.Sql
 
         protected void AddParameterEnumInt32<T>(TCom command, string name, T value) where T : Enum
         {
-            AddParameter(command, name, (Int32) (object) value, DbType.Int32);
+            AddParameter(command, name, (Int32)(object)value, DbType.Int32);
         }
 
         protected void AddParameter(TCom command, string name, DateTime? value)
@@ -227,20 +222,14 @@ namespace Necromancy.Server.Database.Sql
 
         protected DateTime? GetDateTimeNullable(DbDataReader reader, int ordinal)
         {
-            if (reader.IsDBNull(ordinal))
-            {
-                return null;
-            }
+            if (reader.IsDBNull(ordinal)) return null;
 
             return reader.GetDateTime(ordinal);
         }
 
         protected string GetStringNullable(DbDataReader reader, int ordinal)
         {
-            if (reader.IsDBNull(ordinal))
-            {
-                return null;
-            }
+            if (reader.IsDBNull(ordinal)) return null;
 
             return reader.GetString(ordinal);
         }
@@ -252,7 +241,7 @@ namespace Necromancy.Server.Database.Sql
 
         protected uint GetUInt32(DbDataReader reader, string column)
         {
-            return (uint) GetInt32(reader, column);
+            return (uint)GetInt32(reader, column);
         }
 
         protected long GetInt64(DbDataReader reader, string column)

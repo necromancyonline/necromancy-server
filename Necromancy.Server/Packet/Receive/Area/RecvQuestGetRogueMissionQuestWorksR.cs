@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestGetRogueMissionQuestWorksR : PacketResponse
     {
         public RecvQuestGetRogueMissionQuestWorksR()
-            : base((ushort) AreaPacketId.recv_quest_get_rogue_mission_quest_works_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_get_rogue_mission_quest_works_r, ServerType.Area)
         {
         }
 
@@ -40,7 +40,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0); //sub_491980
                 res.WriteInt32(0); //sub_491980
                 res.WriteInt32(0); //sub_491980
-                                   //suspicious Ret
+                //suspicious Ret
                 for (int j = 0; j < 0xA; j++)
                 {
                     //sub_493640
@@ -51,6 +51,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteByte(0);
                     res.WriteInt16(0);
                 }
+
                 res.WriteByte(0);
                 for (int j = 0; j < 0xc; j++)
                 {
@@ -62,6 +63,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteByte(0);
                     res.WriteInt16(0);
                 }
+
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 //end>sub_4936D0
@@ -76,10 +78,11 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteInt32(0);
                     res.WriteInt32(0);
                     res.WriteInt32(0);
-                    res.WriteInt32(0);//sub_491980
-                    res.WriteInt32(0);//sub_491980
+                    res.WriteInt32(0); //sub_491980
+                    res.WriteInt32(0); //sub_491980
                     //end_sub_493910
                 }
+
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 res.WriteFloat(0);
@@ -89,8 +92,8 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(0);
                 res.WriteInt32(0);
                 //end_sub_493990
-
             }
+
             return res;
         }
     }

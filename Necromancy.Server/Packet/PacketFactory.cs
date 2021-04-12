@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -13,24 +12,23 @@ namespace Necromancy.Server.Packet
 {
     public class PacketFactory
     {
-        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(PacketFactory));
-
         public const int PacketIdSize = 2;
         public const int PacketLengthTypeSize = 1;
         public const int HeartbeatPacketBodySize = 8;
         public const int Unknown1PacketBodySize = 8;
         public const int DisconnectPacketBodySize = 4;
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(PacketFactory));
+        private readonly NecSetting _setting;
+        private IBuffer _buffer;
+        private uint _dataSize;
+        private byte[] _header;
+        private byte _headerSize;
+        private ushort _id;
+        private PacketType _packetType;
+        private int _position;
 
         private bool _readHeader;
         private bool _readPacketLengthType;
-        private uint _dataSize;
-        private ushort _id;
-        private int _position;
-        private IBuffer _buffer;
-        private readonly NecSetting _setting;
-        private byte[] _header;
-        private PacketType _packetType;
-        private byte _headerSize;
 
         public PacketFactory(NecSetting setting)
         {
@@ -48,38 +46,38 @@ namespace Necromancy.Server.Packet
             {
                 case PacketType.HeartBeat:
                     packetType = PacketType.HeartBeat;
-                    buffer.WriteByte((byte) packetType);
+                    buffer.WriteByte((byte)packetType);
                     buffer.WriteBytes(data);
                     break;
                 case PacketType.Unknown1:
                     packetType = PacketType.Unknown1;
-                    buffer.WriteByte((byte) packetType);
+                    buffer.WriteByte((byte)packetType);
                     buffer.WriteBytes(data);
                     break;
                 case PacketType.Disconnect:
                     packetType = PacketType.Disconnect;
-                    buffer.WriteByte((byte) packetType);
+                    buffer.WriteByte((byte)packetType);
                     buffer.WriteBytes(data);
                     break;
                 default:
-                    ulong dataSize = (ulong) (data.Length + PacketIdSize);
+                    ulong dataSize = (ulong)(data.Length + PacketIdSize);
                     if (dataSize < byte.MaxValue)
                     {
                         packetType = PacketType.Byte;
-                        buffer.WriteByte((byte) packetType);
-                        buffer.WriteByte((byte) dataSize);
+                        buffer.WriteByte((byte)packetType);
+                        buffer.WriteByte((byte)dataSize);
                     }
                     else if (dataSize < ushort.MaxValue)
                     {
                         packetType = PacketType.UInt16;
-                        buffer.WriteByte((byte) packetType);
-                        buffer.WriteUInt16((ushort) dataSize);
+                        buffer.WriteByte((byte)packetType);
+                        buffer.WriteUInt16((ushort)dataSize);
                     }
                     else if (dataSize < uint.MaxValue)
                     {
                         packetType = PacketType.UInt32;
-                        buffer.WriteByte((byte) packetType);
-                        buffer.WriteUInt32((uint) dataSize);
+                        buffer.WriteByte((byte)packetType);
+                        buffer.WriteUInt32((uint)dataSize);
                     }
                     else
                     {
@@ -130,7 +128,7 @@ namespace Necromancy.Server.Packet
                     }
 
                     _readPacketLengthType = true;
-                    _packetType = (PacketType) lengthType;
+                    _packetType = (PacketType)lengthType;
                     _headerSize = CalculateHeaderSize(_packetType);
                 }
 
@@ -170,21 +168,21 @@ namespace Necromancy.Server.Packet
                         case PacketType.HeartBeat:
                         {
                             _dataSize = HeartbeatPacketBodySize;
-                            _id = (ushort) CustomPacketId.SendHeartbeat;
+                            _id = (ushort)CustomPacketId.SendHeartbeat;
                             _readHeader = true;
                             break;
                         }
                         case PacketType.Unknown1:
                         {
                             _dataSize = Unknown1PacketBodySize;
-                            _id = (ushort) CustomPacketId.SendUnknown1;
+                            _id = (ushort)CustomPacketId.SendUnknown1;
                             _readHeader = true;
                             break;
                         }
                         case PacketType.Disconnect:
                         {
                             _dataSize = DisconnectPacketBodySize;
-                            _id = (ushort) CustomPacketId.SendDisconnect;
+                            _id = (ushort)CustomPacketId.SendDisconnect;
                             _readHeader = true;
                             break;
                         }
@@ -203,7 +201,7 @@ namespace Necromancy.Server.Packet
                     && _buffer.Size - _buffer.Position >= _dataSize)
                 {
                     // TODO update arrowgene service to read uint
-                    byte[] packetData = _buffer.ReadBytes((int) _dataSize);
+                    byte[] packetData = _buffer.ReadBytes((int)_dataSize);
                     IBuffer buffer = BufferProvider.Provide(packetData);
                     NecPacket packet = new NecPacket(_id, buffer, serverType);
                     packet.header = _header;
@@ -215,13 +213,9 @@ namespace Necromancy.Server.Packet
             }
 
             if (_buffer.Position == _buffer.Size)
-            {
                 Reset();
-            }
             else
-            {
                 _position = _buffer.Position;
-            }
 
             return packets;
         }
@@ -255,7 +249,7 @@ namespace Necromancy.Server.Packet
                 }
                 default:
                 {
-                    return (byte) (PacketLengthTypeSize + (packetType + 1) + PacketIdSize);
+                    return (byte)(PacketLengthTypeSize + (packetType + 1) + PacketIdSize);
                 }
             }
         }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattkeReportActionRemovetrapSuccess : PacketResponse
     {
         public RecvBattkeReportActionRemovetrapSuccess()
-            : base((ushort) AreaPacketId.recv_battle_report_action_removetrap_success, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_removetrap_success, ServerType.Area)
         {
         }
 

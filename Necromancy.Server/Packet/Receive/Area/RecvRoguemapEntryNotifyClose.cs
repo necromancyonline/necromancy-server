@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapEntryNotifyClose : PacketResponse
     {
         public RecvRoguemapEntryNotifyClose()
-            : base((ushort) AreaPacketId.recv_roguemap_entry_notify_close, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_entry_notify_close, ServerType.Area)
         {
         }
 

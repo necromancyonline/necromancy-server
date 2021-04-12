@@ -1,14 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Necromancy.Server.Systems.Item
 {
     /// <summary>
-    /// Holds item cache in memory.<br/> <br/>
-    /// Stores information about published items, and their locations. <b>Does not validate any actions.</b>
-    /// Do not access from other clients, does not function.
+    ///     Holds item cache in memory.<br /> <br />
+    ///     Stores information about published items, and their locations. <b>Does not validate any actions.</b>
+    ///     Do not access from other clients, does not function.
     /// </summary>
     public class ItemLocationVerifier
     {
@@ -36,13 +34,13 @@ namespace Necromancy.Server.Systems.Item
         private const int _MaxContainersAuctionLots = 1;
         private const int _MaxContainerSizeAuctionLots = 15;
 
-        private const int _MaxContainersAuctionBids = 1;          //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
-        private const int _MaxContainerSizeAuctionBids = 15;     //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int _MaxContainersAuctionBids = 1; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int _MaxContainerSizeAuctionBids = 15; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
 
-        private const int _MaxContainersAuctionSearch = 1;        //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
+        private const int _MaxContainersAuctionSearch = 1; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
         private const int _MaxContainerSizeAuctionSearch = 1000; //DO NOT POPULATE IN ITEM MANAGER, ZONE IS FOR CLIENT DISPLAY ONLY
 
-        private Dictionary<ItemZoneType, ItemZone> _zoneMap = new Dictionary<ItemZoneType, ItemZone>();
+        private readonly Dictionary<ItemZoneType, ItemZone> _zoneMap = new Dictionary<ItemZoneType, ItemZone>();
 
         public ItemLocationVerifier()
         {
@@ -96,19 +94,19 @@ namespace Necromancy.Server.Systems.Item
             switch (loc.zoneType)
             {
                 case ItemZoneType.BagSlot:
-                    {
-                        _zoneMap[ItemZoneType.EquippedBags].PutContainer(loc.slot, item.bagSize);
-                        _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
-                        break;
-                    }
+                {
+                    _zoneMap[ItemZoneType.EquippedBags].PutContainer(loc.slot, item.bagSize);
+                    _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
+                    break;
+                }
                 default:
-                    {
-                        _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
-                        break;
-                    }
+                {
+                    _zoneMap[loc.zoneType].GetContainer(loc.container).PutItem(loc.slot, item);
+                    break;
+                }
             }
-
         }
+
         public void RemoveItem(ItemInstance item)
         {
             if (item.location.Equals(ItemLocation.InvalidLocation)) return;
@@ -116,16 +114,16 @@ namespace Necromancy.Server.Systems.Item
             switch (item.location.zoneType)
             {
                 case ItemZoneType.BagSlot:
-                    {
-                        _zoneMap[ItemZoneType.EquippedBags].RemoveContainer(item.location.slot);
-                        _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
-                        break;
-                    }
+                {
+                    _zoneMap[ItemZoneType.EquippedBags].RemoveContainer(item.location.slot);
+                    _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
+                    break;
+                }
                 default:
-                    {
-                        _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
-                        break;
-                    }
+                {
+                    _zoneMap[item.location.zoneType]?.GetContainer(item.location.container)?.RemoveItem(item.location.slot);
+                    break;
+                }
             }
 
             item.location = ItemLocation.InvalidLocation;
@@ -147,7 +145,7 @@ namespace Necromancy.Server.Systems.Item
         }
 
         /// <summary>
-        /// Finds the next open slot in adventure bag, equipped bags, and premium bag, in that order.
+        ///     Finds the next open slot in adventure bag, equipped bags, and premium bag, in that order.
         /// </summary>
         /// <returns></returns>
         public ItemLocation NextOpenSlotInInventory()
@@ -168,14 +166,16 @@ namespace Necromancy.Server.Systems.Item
             if (nextContainerWithSpace != ItemZone.NoContainersWithSpace)
             {
                 int nextOpenSlot = _zoneMap[itemZoneType].GetContainer(nextContainerWithSpace).nextOpenSlot;
-                if(nextOpenSlot != Container.NoOpenSlots)
+                if (nextOpenSlot != Container.NoOpenSlots)
                 {
-                    ItemLocation itemLocation = new ItemLocation(itemZoneType, (byte)nextContainerWithSpace, (short) nextOpenSlot);
+                    ItemLocation itemLocation = new ItemLocation(itemZoneType, (byte)nextContainerWithSpace, (short)nextOpenSlot);
                     return itemLocation;
                 }
             }
+
             return ItemLocation.InvalidLocation;
         }
+
         public ItemLocation[] NextOpenSlots(ItemZoneType itemZoneType, int amount)
         {
             if (amount > _zoneMap[itemZoneType].totalFreeSpace) throw new ArgumentOutOfRangeException("Not enough open slots");
@@ -192,20 +192,19 @@ namespace Necromancy.Server.Systems.Item
             return _zoneMap[itemZoneType].GetContainer(container).count == 0;
         }
 
-        public ItemInstance GetItemByInstanceId (ulong instanceId)
+        public ItemInstance GetItemByInstanceId(ulong instanceId)
         {
             foreach (ItemZone itemZone in _zoneMap.Values)
+            foreach (Container container in itemZone.containers)
             {
-                foreach (Container container in itemZone.containers)
+                if (container == null) continue;
+                foreach (ItemInstance itemInstance in container.slots)
                 {
-                    if (container == null) continue;
-                    foreach (ItemInstance itemInstance in container.slots)
-                    {
-                        if (itemInstance == null) continue;
-                        if (itemInstance.instanceId == instanceId) return itemInstance;
-                    }
+                    if (itemInstance == null) continue;
+                    if (itemInstance.instanceId == instanceId) return itemInstance;
                 }
             }
+
             return null;
         }
     }

@@ -52,10 +52,10 @@ namespace Necromancy.Server.Common
 /// </summary>
 public class CryptoRandom : Random
     {
+        private readonly RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
         private byte[] _buffer;
 
         private int _bufferPosition;
-        private readonly RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="CryptoRandom" /> class with.

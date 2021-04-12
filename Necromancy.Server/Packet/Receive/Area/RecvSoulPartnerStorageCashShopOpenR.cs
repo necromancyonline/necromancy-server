@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerStorageCashShopOpenR : PacketResponse
     {
         public RecvSoulPartnerStorageCashShopOpenR()
-            : base((ushort) AreaPacketId.recv_soul_partner_storage_cash_shop_open_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_storage_cash_shop_open_r, ServerType.Area)
         {
         }
 

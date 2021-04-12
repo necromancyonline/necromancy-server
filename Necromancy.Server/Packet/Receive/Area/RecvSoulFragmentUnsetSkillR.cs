@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulFragmentUnsetSkillR : PacketResponse
     {
         public RecvSoulFragmentUnsetSkillR()
-            : base((ushort) AreaPacketId.recv_soul_fragment_unset_skill_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_fragment_unset_skill_r, ServerType.Area)
         {
         }
 

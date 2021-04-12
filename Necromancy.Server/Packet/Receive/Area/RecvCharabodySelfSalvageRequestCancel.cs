@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharabodySelfSalvageRequestCancel : PacketResponse
     {
-        private uint _id;
+        private readonly uint _id;
+
         public RecvCharabodySelfSalvageRequestCancel(uint id)
-            : base((ushort) AreaPacketId.recv_charabody_self_salvage_request_cancel, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_self_salvage_request_cancel, ServerType.Area)
         {
             _id = id;
         }

@@ -4,7 +4,6 @@ namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionService
     {
-
         public const int MaxBids = 8;
         public const int MaxBidsNoDimento = 5;
         public const int MaxLots = 5;
@@ -82,6 +81,5 @@ namespace Necromancy.Server.Systems.Auction
         //{
         //    throw new NotImplementedException();
         //}
-
     }
 }

@@ -35,10 +35,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@char_id", skillTreeItem.charId);
                 AddParameter(command, "@level", skillTreeItem.level);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
             skillTreeItem.id = (int)autoIncrement;
             return true;
         }
@@ -49,10 +46,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectSkillTreeItemById,
                 command => { AddParameter(command, "@id", id); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        skillTreeItem = ReadSkillTreeItem(reader);
-                    }
+                    if (reader.Read()) skillTreeItem = ReadSkillTreeItem(reader);
                 });
             return skillTreeItem;
         }
@@ -76,18 +70,17 @@ namespace Necromancy.Server.Database.Sql.Core
         {
             SkillTreeItem skillTreeItem = null;
             ExecuteReader(_SqlSelectSkillTreeItemByCharSkillId,
-                command => {
+                command =>
+                {
                     AddParameter(command, "@char_id", charId);
                     AddParameter(command, "@skill_id", skillId);
                 }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        skillTreeItem = ReadSkillTreeItem(reader);
-                    }
+                    if (reader.Read()) skillTreeItem = ReadSkillTreeItem(reader);
                 });
             return skillTreeItem;
         }
+
         public bool UpdateSkillTreeItem(SkillTreeItem skillTreeItem)
         {
             int rowsAffected = ExecuteNonQuery(_SqlUpdateSkillTreeItem, command =>

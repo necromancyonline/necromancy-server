@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateActionProhibit : PacketResponse
     {
         public RecvCharaUpdateActionProhibit()
-            : base((ushort) AreaPacketId.recv_chara_update_action_prohibit, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_action_prohibit, ServerType.Area)
         {
         }
 

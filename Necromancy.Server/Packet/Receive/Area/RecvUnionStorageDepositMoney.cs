@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionStorageDepositMoney : PacketResponse
     {
         public RecvUnionStorageDepositMoney()
-            : base((ushort) AreaPacketId.recv_union_storage_deposit_money_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_storage_deposit_money_r, ServerType.Area)
         {
         }
 

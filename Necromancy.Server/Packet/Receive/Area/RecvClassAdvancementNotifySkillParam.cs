@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvClassAdvancementNotifySkillParam : PacketResponse
     {
         public RecvClassAdvancementNotifySkillParam()
-            : base((ushort) AreaPacketId.recv_class_advancement_notify_skill_param, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_class_advancement_notify_skill_param, ServerType.Area)
         {
         }
 
@@ -31,9 +31,8 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteByte(0);
-
-
             }
+
             return res;
         }
     }

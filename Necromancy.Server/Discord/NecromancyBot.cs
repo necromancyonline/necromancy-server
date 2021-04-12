@@ -17,16 +17,16 @@ namespace Necromancy.Server.Discord
     public class NecromancyBot
     {
         private static readonly ILogger _Logger = LogProvider.Logger(typeof(NecromancyBot));
+        private readonly List<Assembly> _assemblies;
 
         private readonly IServiceCollection _collection;
-        private readonly List<Assembly> _assemblies;
-        private readonly NecSetting _setting;
         private readonly BlockingCollection<DiscordEvent> _events;
+        private readonly NecSetting _setting;
 
         private CancellationTokenSource _cancellationTokenSource;
+        private bool _ready;
         private IServiceProvider _service;
         private Task _task;
-        private bool _ready;
 
         public NecromancyBot(NecSetting setting)
         {
@@ -66,10 +66,7 @@ namespace Necromancy.Server.Discord
 
         public void Stop()
         {
-            if (_cancellationTokenSource != null)
-            {
-                _cancellationTokenSource.Cancel();
-            }
+            if (_cancellationTokenSource != null) _cancellationTokenSource.Cancel();
 
             _ready = false;
             _task = null;
@@ -88,10 +85,7 @@ namespace Necromancy.Server.Discord
 
         public async Task<bool> SendAsync(DiscordEvent discordEvent)
         {
-            if (!_ready)
-            {
-                return false;
-            }
+            if (!_ready) return false;
 
             if (discordEvent == null)
             {
@@ -103,16 +97,10 @@ namespace Necromancy.Server.Discord
             {
                 DiscordSocketClient client = _service.GetRequiredService<DiscordSocketClient>();
                 SocketGuild guild = client.GetGuild(_setting.discordGuild);
-                if (guild == null)
-                {
-                    return false;
-                }
+                if (guild == null) return false;
 
                 SocketTextChannel textChannel = guild.GetTextChannel(discordEvent.textChannelId);
-                if (textChannel == null)
-                {
-                    return false;
-                }
+                if (textChannel == null) return false;
 
                 await textChannel.SendMessageAsync(discordEvent.text);
                 return true;
@@ -126,7 +114,7 @@ namespace Necromancy.Server.Discord
         }
 
         /// <summary>
-        /// send a message to the #server-status channel
+        ///     send a message to the #server-status channel
         /// </summary>
         public void EnqueueEvent_ServerStatus(string text)
         {
@@ -137,17 +125,14 @@ namespace Necromancy.Server.Discord
         }
 
         /// <summary>
-        /// send a message to the #server-status channel
+        ///     send a message to the #server-status channel
         /// </summary>
         public void Send_ServerStatus(string text)
         {
             DiscordEvent discordEvent = new DiscordEvent();
             discordEvent.textChannelId = _setting.discordBotChannelServerStatus;
             discordEvent.text = text;
-            if (!Send(discordEvent))
-            {
-                _Logger.Debug($"Discord event not send: {text}");
-            }
+            if (!Send(discordEvent)) _Logger.Debug($"Discord event not send: {text}");
         }
 
         private async void Run()
@@ -162,10 +147,7 @@ namespace Necromancy.Server.Discord
                 await client.StartAsync();
                 CommandService commands = _service.GetRequiredService<CommandService>();
                 commands.Log += ClientOnLog;
-                foreach (var assembly in _assemblies)
-                {
-                    await commands.AddModulesAsync(assembly, _service);
-                }
+                foreach (Assembly assembly in _assemblies) await commands.AddModulesAsync(assembly, _service);
 
                 // required to start the services
                 _service.GetRequiredService<CommandHandlingService>();
@@ -173,10 +155,7 @@ namespace Necromancy.Server.Discord
                 //
 
                 _Logger.Info("DiscordBot getting ready...");
-                while (!_ready)
-                {
-                    await Task.Delay(1000, _cancellationTokenSource.Token);
-                }
+                while (!_ready) await Task.Delay(1000, _cancellationTokenSource.Token);
 
                 _Logger.Info("DiscordBot ready!");
                 while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -193,10 +172,7 @@ namespace Necromancy.Server.Discord
                     }
 
                     bool success = await SendAsync(discordEvent);
-                    if (!success)
-                    {
-                        _Logger.Error($"Failed to deliver discord message: '{discordEvent.text}'");
-                    }
+                    if (!success) _Logger.Error($"Failed to deliver discord message: '{discordEvent.text}'");
                 }
             }
             catch (Exception ex)
@@ -215,10 +191,7 @@ namespace Necromancy.Server.Discord
 
         private Task ClientOnLog(LogMessage arg)
         {
-            if (arg.Exception != null)
-            {
-                _Logger.Exception(arg.Exception);
-            }
+            if (arg.Exception != null) _Logger.Exception(arg.Exception);
 
             LogLevel level;
             switch (arg.Severity)

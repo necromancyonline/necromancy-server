@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionAmenityNotifyDetach : PacketResponse
     {
         public RecvUnionAmenityNotifyDetach()
-            : base((ushort) AreaPacketId.recv_union_amenity_notify_detach, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_amenity_notify_detach, ServerType.Area)
         {
         }
 

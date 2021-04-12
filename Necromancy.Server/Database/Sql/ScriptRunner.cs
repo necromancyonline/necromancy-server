@@ -32,10 +32,7 @@ namespace Necromancy.Server.Database.Sql
                 for (; index < file.Length; index++)
                 {
                     string line = file[index];
-                    if (command == null)
-                    {
-                        command = new StringBuilder();
-                    }
+                    if (command == null) command = new StringBuilder();
 
                     string trimmedLine = line.Trim();
 

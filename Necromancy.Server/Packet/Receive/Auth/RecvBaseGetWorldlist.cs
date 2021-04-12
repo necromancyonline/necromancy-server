@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Auth
         private readonly uint _numOfWorlds;
 
         public RecvBaseGetWorldlist(uint numOfWorlds)
-            : base((ushort) AuthPacketId.recv_base_get_worldlist_r, ServerType.Auth)
+            : base((ushort)AuthPacketId.recv_base_get_worldlist_r, ServerType.Auth)
         {
             _numOfWorlds = numOfWorlds;
         }

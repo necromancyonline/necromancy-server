@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerExpeditionResultR : PacketResponse
     {
         public RecvSoulPartnerExpeditionResultR()
-            : base((ushort) AreaPacketId.recv_soul_partner_expedition_result_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_expedition_result_r, ServerType.Area)
         {
         }
 
@@ -27,6 +27,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteFixedString("Xeno", 0x10);
             }
+
             //end sub
             return res;
         }

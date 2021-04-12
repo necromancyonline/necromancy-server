@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvForgeNotifyExecuteResult : PacketResponse
     {
-        private uint _id;
-        private int _result;
+        private readonly uint _id;
+        private readonly int _result;
+
         public RecvForgeNotifyExecuteResult(uint id, int result)
-            : base((ushort) AreaPacketId.recv_forge_notify_execute_result, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_forge_notify_execute_result, ServerType.Area)
         {
             _id = id;
             _result = result;

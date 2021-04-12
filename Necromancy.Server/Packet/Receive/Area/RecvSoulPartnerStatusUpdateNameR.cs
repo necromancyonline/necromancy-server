@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerStatusUpdateNameR : PacketResponse
     {
         public RecvSoulPartnerStatusUpdateNameR()
-            : base((ushort) AreaPacketId.recv_soul_partner_status_update_name_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_status_update_name_r, ServerType.Area)
         {
         }
 

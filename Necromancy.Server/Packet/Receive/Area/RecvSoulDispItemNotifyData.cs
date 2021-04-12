@@ -8,11 +8,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulDispItemNotifyData : PacketResponse
     {
         /// <summary>
-        /// Adds Items to your 'Valulables' tab under Quest Mission.  
+        ///     Adds Items to your 'Valulables' tab under Quest Mission.
         /// </summary>
-        private int _serialId;
+        private readonly int _serialId;
+
         public RecvSoulDispItemNotifyData(int serialId)
-            : base((ushort) AreaPacketId.recv_soul_dispitem_notify_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_dispitem_notify_data, ServerType.Area)
         {
             _serialId = serialId;
         }

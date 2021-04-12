@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapUpdateGateClearCount : PacketResponse
     {
         public RecvRoguemapUpdateGateClearCount()
-            : base((ushort) AreaPacketId.recv_roguemap_update_gate_clear_count, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_update_gate_clear_count, ServerType.Area)
         {
         }
 

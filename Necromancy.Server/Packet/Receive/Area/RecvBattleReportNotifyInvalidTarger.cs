@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNotifyInvalidTarger : PacketResponse
     {
         public RecvBattleReportNotifyInvalidTarger()
-            : base((ushort) AreaPacketId.recv_battle_report_notify_invalid_target, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_notify_invalid_target, ServerType.Area)
         {
         }
 

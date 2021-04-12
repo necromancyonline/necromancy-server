@@ -213,14 +213,10 @@ namespace Necromancy.Server.Chat.Command.Commands
                     myGGateSpawn = server.instances.GetInstance((uint)x) as GGateSpawn;
                     myGGateSpawn.updated = DateTime.Now;
                     if (!server.database.UpdateGGateSpawn(myGGateSpawn))
-                    {
                         responses.Add(ChatResponse.CommandError(client, "myGGateSpawn could not be saved to database"));
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
                             $"Updated GGateSpawn {myGGateSpawn.id} in the database"));
-                    }
 
                     break;
                 case "remove": //removes a GGateSpawn from the database

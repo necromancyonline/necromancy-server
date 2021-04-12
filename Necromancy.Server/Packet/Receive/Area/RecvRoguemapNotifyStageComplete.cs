@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapNotifyStageComplete : PacketResponse
     {
         public RecvRoguemapNotifyStageComplete()
-            : base((ushort) AreaPacketId.recv_roguemap_notify_stage_complete, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_notify_stage_complete, ServerType.Area)
         {
         }
 
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
             res.WriteInt32(0);
             res.WriteByte(0);
-            res.WriteInt32(numEntries);//less than 0xE
+            res.WriteInt32(numEntries); //less than 0xE
             for (int j = 0; j < numEntries; j++)
             {
                 //sub_496710
@@ -28,18 +28,13 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
 
-                for (int i = 0; i < 0x4; i++)
-                {
-                    res.WriteInt32(0);
-                }
-                for (int i = 0; i < 0x4; i++)
-                {
-                    res.WriteInt32(0);
-                }
+                for (int i = 0; i < 0x4; i++) res.WriteInt32(0);
+                for (int i = 0; i < 0x4; i++) res.WriteInt32(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
                 res.WriteByte(0);
             }
+
             return res;
         }
     }

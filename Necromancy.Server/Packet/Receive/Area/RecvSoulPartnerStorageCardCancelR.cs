@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerStorageCardCancelR : PacketResponse
     {
         public RecvSoulPartnerStorageCardCancelR()
-            : base((ushort) AreaPacketId.recv_soul_partner_storage_card_cancel_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_storage_card_cancel_r, ServerType.Area)
         {
         }
 

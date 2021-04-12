@@ -14,9 +14,9 @@ namespace Necromancy.Server.Model.Skills
     public class Stealth : IInstance
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(Stealth));
-        private readonly NecServer _server;
 
         private readonly NecClient _client;
+        private readonly NecServer _server;
         private readonly int _skillid;
         private readonly SkillBaseSetting _skillSetting;
 

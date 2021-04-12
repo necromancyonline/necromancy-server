@@ -7,18 +7,18 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvBattleReportNoactDead : PacketResponse
     {
-        private readonly uint _instancedId;
         private readonly int _deadType;
-        private readonly int _lossRegion;
         private readonly int _deathType;
+        private readonly uint _instancedId;
+        private readonly int _lossRegion;
 
 
         public RecvBattleReportNoactDead(uint instancedId, int deadType)
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_dead, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_notify_dead, ServerType.Area)
         {
             _instancedId = instancedId;
-            _deadType = Util.GetRandomNumber(1,3);
-            _lossRegion = Util.GetRandomNumber(1,6); 
+            _deadType = Util.GetRandomNumber(1, 3);
+            _lossRegion = Util.GetRandomNumber(1, 6);
             _deathType = deadType;
         }
 
@@ -31,6 +31,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(_deathType); //Death message notify in chat. Changes based on death message popup.  "DeadType"
             return res;
         }
+
         /*
          * SELF_DEAD	1	%s died! 	 SELF_DEAD
             ENEMY_DEAD	1	%s died! 	 ENEMY_DEAD

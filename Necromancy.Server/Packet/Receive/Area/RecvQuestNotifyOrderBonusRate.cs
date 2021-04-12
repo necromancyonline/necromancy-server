@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestNotifyOrderBonusRate : PacketResponse
     {
         public RecvQuestNotifyOrderBonusRate()
-            : base((ushort) AreaPacketId.recv_quest_notify_order_bonus_rate, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_notify_order_bonus_rate, ServerType.Area)
         {
         }
 

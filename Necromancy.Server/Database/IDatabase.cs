@@ -14,7 +14,7 @@ namespace Necromancy.Server.Database
         void Execute(string sql);
 
         /// <summary>
-        /// Return true if database was created, or false if not.
+        ///     Return true if database was created, or false if not.
         /// </summary>
         bool CreateDatabase();
 

@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -11,12 +10,87 @@ namespace Necromancy.Server.Setting
     public class NecSetting
     {
         /// <summary>
-        /// Warning:
-        /// Changing while having existing accounts requires to rehash all passwords.
-        /// The number is log2, so adding +1 doubles the time it takes.
-        /// https://wildlyinaccurate.com/bcrypt-choosing-a-work-factor/
+        ///     Warning:
+        ///     Changing while having existing accounts requires to rehash all passwords.
+        ///     The number is log2, so adding +1 doubles the time it takes.
+        ///     https://wildlyinaccurate.com/bcrypt-choosing-a-work-factor/
         /// </summary>
         public const int BCryptWorkFactor = 10;
+
+        public NecSetting()
+        {
+            listenIpAddress = IPAddress.Any;
+            authIpAddress = IPAddress.Loopback;
+            authPort = 60000;
+            msgIpAddress = IPAddress.Loopback;
+            msgPort = 60001;
+            areaIpAddress = IPAddress.Loopback;
+            areaPort = 60002;
+            requireRegistration = false;
+            requirePin = false;
+            poolDynamicIdLowerBound = 1;
+            poolDynamicIdSize = 1000000;
+            poolCharacterIdLowerBound = 200000000;
+            poolCharacterIdSize = 100000000;
+            poolNpcLowerBound = 400000000;
+            poolNpcIdSize = 100000000;
+            poolMonsterIdLowerBound = 600000000;
+            poolMonsterIdSize = 100000000;
+            poolDeadBodyIdLowerBound = 800000000;
+            poolDeadBodyIdSize = 100000000;
+            logLevel = 0;
+            logUnknownIncomingPackets = true;
+            logOutgoingPackets = true;
+            logIncomingPackets = true;
+            discordBotToken = "";
+            discordGuild = 541789394873352203;
+            discordBotChannelServerStatus = 710367511824171019;
+            repositoryFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Client/Data/Settings");
+            secretsFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Client/Data/Secrets");
+            databaseSettings = new DatabaseSettings();
+            authSocketSettings = new AsyncEventSettings();
+            authSocketSettings.MaxUnitOfOrder = 2;
+            msgSocketSettings = new AsyncEventSettings();
+            msgSocketSettings.MaxUnitOfOrder = 2;
+            areaSocketSettings = new AsyncEventSettings();
+            areaSocketSettings.MaxUnitOfOrder = 2;
+        }
+
+        public NecSetting(NecSetting setting)
+        {
+            listenIpAddress = setting.listenIpAddress;
+            authIpAddress = setting.authIpAddress;
+            authPort = setting.authPort;
+            msgIpAddress = setting.msgIpAddress;
+            msgPort = setting.msgPort;
+            areaIpAddress = setting.areaIpAddress;
+            areaPort = setting.areaPort;
+            requireRegistration = setting.requireRegistration;
+            requirePin = setting.requirePin;
+            poolCharacterIdLowerBound = setting.poolCharacterIdLowerBound;
+            poolCharacterIdSize = setting.poolCharacterIdSize;
+            poolNpcLowerBound = setting.poolNpcLowerBound;
+            poolNpcIdSize = setting.poolNpcIdSize;
+            poolMonsterIdLowerBound = setting.poolMonsterIdLowerBound;
+            poolMonsterIdSize = setting.poolMonsterIdSize;
+            poolDeadBodyIdLowerBound = setting.poolDeadBodyIdLowerBound;
+            poolDeadBodyIdSize = setting.poolDeadBodyIdSize;
+            poolDynamicIdLowerBound = setting.poolDynamicIdLowerBound;
+            poolDynamicIdSize = setting.poolDynamicIdSize;
+            logLevel = setting.logLevel;
+            logUnknownIncomingPackets = setting.logUnknownIncomingPackets;
+            logOutgoingPackets = setting.logOutgoingPackets;
+            logIncomingPackets = setting.logIncomingPackets;
+            discordBotToken = setting.discordBotToken;
+            discordGuild = setting.discordGuild;
+            discordBotChannelServerStatus = setting.discordBotChannelServerStatus;
+            repositoryFolder = setting.repositoryFolder;
+            secretsFolder = setting.secretsFolder;
+            databaseSettings = new DatabaseSettings(setting.databaseSettings);
+            authSocketSettings = new AsyncEventSettings(setting.authSocketSettings);
+            msgSocketSettings = new AsyncEventSettings(setting.msgSocketSettings);
+            areaSocketSettings = new AsyncEventSettings(setting.areaSocketSettings);
+        }
 
         // Connection Info
         [IgnoreDataMember] public IPAddress listenIpAddress { get; set; }
@@ -97,80 +171,5 @@ namespace Necromancy.Server.Setting
         [DataMember(Order = 100)] public AsyncEventSettings authSocketSettings { get; set; }
         [DataMember(Order = 101)] public AsyncEventSettings msgSocketSettings { get; set; }
         [DataMember(Order = 102)] public AsyncEventSettings areaSocketSettings { get; set; }
-
-        public NecSetting()
-        {
-            listenIpAddress = IPAddress.Any;
-            authIpAddress = IPAddress.Loopback;
-            authPort = 60000;
-            msgIpAddress = IPAddress.Loopback;
-            msgPort = 60001;
-            areaIpAddress = IPAddress.Loopback;
-            areaPort = 60002;
-            requireRegistration = false;
-            requirePin = false;
-            poolDynamicIdLowerBound = 1;
-            poolDynamicIdSize = 1000000;
-            poolCharacterIdLowerBound = 200000000;
-            poolCharacterIdSize = 100000000;
-            poolNpcLowerBound = 400000000;
-            poolNpcIdSize = 100000000;
-            poolMonsterIdLowerBound = 600000000;
-            poolMonsterIdSize = 100000000;
-            poolDeadBodyIdLowerBound = 800000000;
-            poolDeadBodyIdSize = 100000000;
-            logLevel = 0;
-            logUnknownIncomingPackets = true;
-            logOutgoingPackets = true;
-            logIncomingPackets = true;
-            discordBotToken = "";
-            discordGuild = 541789394873352203;
-            discordBotChannelServerStatus = 710367511824171019;
-            repositoryFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Client/Data/Settings");
-            secretsFolder = Path.Combine(Util.RelativeExecutingDirectory(), "Client/Data/Secrets");
-            databaseSettings = new DatabaseSettings();
-            authSocketSettings = new AsyncEventSettings();
-            authSocketSettings.MaxUnitOfOrder = 2;
-            msgSocketSettings = new AsyncEventSettings();
-            msgSocketSettings.MaxUnitOfOrder = 2;
-            areaSocketSettings = new AsyncEventSettings();
-            areaSocketSettings.MaxUnitOfOrder = 2;
-        }
-
-        public NecSetting(NecSetting setting)
-        {
-            listenIpAddress = setting.listenIpAddress;
-            authIpAddress = setting.authIpAddress;
-            authPort = setting.authPort;
-            msgIpAddress = setting.msgIpAddress;
-            msgPort = setting.msgPort;
-            areaIpAddress = setting.areaIpAddress;
-            areaPort = setting.areaPort;
-            requireRegistration = setting.requireRegistration;
-            requirePin = setting.requirePin;
-            poolCharacterIdLowerBound = setting.poolCharacterIdLowerBound;
-            poolCharacterIdSize = setting.poolCharacterIdSize;
-            poolNpcLowerBound = setting.poolNpcLowerBound;
-            poolNpcIdSize = setting.poolNpcIdSize;
-            poolMonsterIdLowerBound = setting.poolMonsterIdLowerBound;
-            poolMonsterIdSize = setting.poolMonsterIdSize;
-            poolDeadBodyIdLowerBound = setting.poolDeadBodyIdLowerBound;
-            poolDeadBodyIdSize = setting.poolDeadBodyIdSize;
-            poolDynamicIdLowerBound = setting.poolDynamicIdLowerBound;
-            poolDynamicIdSize = setting.poolDynamicIdSize;
-            logLevel = setting.logLevel;
-            logUnknownIncomingPackets = setting.logUnknownIncomingPackets;
-            logOutgoingPackets = setting.logOutgoingPackets;
-            logIncomingPackets = setting.logIncomingPackets;
-            discordBotToken = setting.discordBotToken;
-            discordGuild = setting.discordGuild;
-            discordBotChannelServerStatus = setting.discordBotChannelServerStatus;
-            repositoryFolder = setting.repositoryFolder;
-            secretsFolder = setting.secretsFolder;
-            databaseSettings = new DatabaseSettings(setting.databaseSettings);
-            authSocketSettings = new AsyncEventSettings(setting.authSocketSettings);
-            msgSocketSettings = new AsyncEventSettings(setting.msgSocketSettings);
-            areaSocketSettings = new AsyncEventSettings(setting.areaSocketSettings);
-        }
     }
 }

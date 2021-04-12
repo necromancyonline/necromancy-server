@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNotifyActionBonus : PacketResponse
     {
         public RecvBattleReportNotifyActionBonus()
-            : base((ushort) AreaPacketId.recv_battle_report_notify_action_bonus, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_notify_action_bonus, ServerType.Area)
         {
         }
 

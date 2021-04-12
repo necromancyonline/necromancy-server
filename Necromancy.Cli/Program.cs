@@ -162,10 +162,7 @@ namespace Necromancy.Cli
 
                 if (result == CommandResultType.Continue) continue;
 
-                if (result == CommandResultType.Completed)
-                {
-                    Logger.Info("Command Completed");
-                }
+                if (result == CommandResultType.Completed) Logger.Info("Command Completed");
             }
 
             StopReadConsoleThread();

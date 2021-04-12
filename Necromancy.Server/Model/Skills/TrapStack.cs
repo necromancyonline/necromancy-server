@@ -13,11 +13,11 @@ namespace Necromancy.Server.Model.Skills
     public class TrapStack : IInstance
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(TrapStack));
-        private readonly NecServer _server;
 
         private readonly NecClient _client;
         private readonly Map _map;
         private readonly uint _ownerInstanceId;
+        private readonly NecServer _server;
         private readonly Vector3 _trapPos;
         public TrapTask trapTask;
 

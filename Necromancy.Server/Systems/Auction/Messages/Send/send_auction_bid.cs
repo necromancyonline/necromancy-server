@@ -3,7 +3,6 @@ using Necromancy.Server.Common;
 using Necromancy.Server.Model;
 using Necromancy.Server.Packet;
 using Necromancy.Server.Packet.Id;
-using Newtonsoft.Json.Serialization;
 
 namespace Necromancy.Server.Systems.Item
 {
@@ -14,7 +13,7 @@ namespace Necromancy.Server.Systems.Item
             //TODO find out why this is here and if its needed.
         }
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_bid;
+        public override ushort id => (ushort)AreaPacketId.send_auction_bid;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -23,10 +22,12 @@ namespace Necromancy.Server.Systems.Item
             try
             {
                 //auctionService.Bid(); //TODO find data
-            } catch(AuctionException e)
-            {
-                error = (int) e.type;
             }
+            catch (AuctionException e)
+            {
+                error = (int)e.type;
+            }
+
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(error);
             router.Send(client.map, (ushort)AreaPacketId.recv_auction_bid_r, res, ServerType.Area);

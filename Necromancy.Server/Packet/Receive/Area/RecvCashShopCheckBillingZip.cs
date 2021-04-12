@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCashShopCheckBillingZip : PacketResponse
     {
         public RecvCashShopCheckBillingZip()
-            : base((ushort) AreaPacketId.recv_cash_shop_check_billing_zip_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cash_shop_check_billing_zip_r, ServerType.Area)
         {
         }
 

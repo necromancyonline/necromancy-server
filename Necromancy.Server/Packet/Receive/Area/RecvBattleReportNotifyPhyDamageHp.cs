@@ -7,11 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvBattleReportPhyDamageHp : PacketResponse
     {
-        private readonly uint _instanceId;
         private readonly int _damage;
+        private readonly uint _instanceId;
 
         public RecvBattleReportPhyDamageHp(uint instanceId, int damage)
-            : base((ushort) AreaPacketId.recv_battle_report_notify_phy_damage_hp, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_notify_phy_damage_hp, ServerType.Area)
         {
             _instanceId = instanceId;
             _damage = damage;

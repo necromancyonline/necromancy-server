@@ -7,11 +7,12 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyNotifyDeadState : PacketResponse
     {
-        private uint _id;
-        private int _deadState;
-        private int _changeType;
+        private readonly int _changeType;
+        private readonly int _deadState;
+        private readonly uint _id;
+
         public RecvCharaBodyNotifyDeadState(uint id, int deadState, int changeType)
-            : base((ushort) AreaPacketId.recv_charabody_notify_deadstate, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_notify_deadstate, ServerType.Area)
         {
             _id = id;
             _deadState = deadState;

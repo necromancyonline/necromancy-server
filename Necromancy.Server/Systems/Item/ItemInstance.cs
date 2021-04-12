@@ -1,35 +1,34 @@
-using System;
-
 namespace Necromancy.Server.Systems.Item
 {
     public class ItemInstance : ItemBase
     {
         public const int MaxGemSlots = 3;
 
+        public string talkRingName = "";
+
         /// <summary>
-        /// An instance of a base item. Holds mostly changable values.
+        ///     An instance of a base item. Holds mostly changable values.
         /// </summary>
         /// <param name="instanceId">Item's generated ID from the database.</param>
         public ItemInstance(ulong instanceId)
         {
             this.instanceId = instanceId;
         }
+
         /// <summary>
-        /// ID Generated when item is created from a base item template.
+        ///     ID Generated when item is created from a base item template.
         /// </summary>
-        public ulong instanceId { get; private set; }
+        public ulong instanceId { get; }
+
         /// <summary>
-        /// Owner's character ID.
+        ///     Owner's character ID.
         /// </summary>
         public int ownerId { get; internal set; }
+
         /// <summary>
-        /// Item's displayed name when unidentified. Always "? <c>ItemType</c>".
+        ///     Item's displayed name when unidentified. Always "? <c>ItemType</c>".
         /// </summary>
-        public string unidentifiedName {
-            get {
-                return "? " + type.ToString();
-            }
-        }
+        public string unidentifiedName => "? " + type;
 
         public byte quantity { get; set; } = 1;
 
@@ -38,16 +37,15 @@ namespace Necromancy.Server.Systems.Item
         public ItemLocation location { get; set; } = ItemLocation.InvalidLocation;
 
         public ItemEquipSlots currentEquipSlot { get; internal set; }
+
         /// <summary>
-        /// Current durability remaining of the item.
+        ///     Current durability remaining of the item.
         /// </summary>
         public int currentDurability { get; internal set; }
 
         public byte enhancementLevel { get; internal set; }
 
         public byte specialForgeLevel { get; internal set; }
-
-        public string talkRingName = "";
 
         public short physical { get; internal set; }
 
@@ -58,7 +56,7 @@ namespace Necromancy.Server.Systems.Item
         public byte hardness { get; internal set; }
 
         /// <summary>
-        /// Weight in thousandths.
+        ///     Weight in thousandths.
         /// </summary>
         public int weight { get; internal set; }
 
@@ -67,9 +65,10 @@ namespace Necromancy.Server.Systems.Item
         public int enchantId { get; internal set; }
 
         public short gp { get; internal set; }
+
         /// <summary>
-        /// Item is provided with 'Protect' status until this date in seconds.
-        /// Maximum year is 2038 because it is an integer.
+        ///     Item is provided with 'Protect' status until this date in seconds.
+        ///     Maximum year is 2038 because it is an integer.
         /// </summary>
         public int protectUntil { get; internal set; }
 
@@ -102,14 +101,8 @@ namespace Necromancy.Server.Systems.Item
 
 
         /// <summary>
-        /// Helper function to check if the item is identified or not.
+        ///     Helper function to check if the item is identified or not.
         /// </summary>
-        public bool isIdentified {
-            get
-            {
-                return ((ItemStatuses.Identified & statuses) != 0) && ((ItemStatuses.Unidentified & statuses) == 0);
-            }
-        }
-
+        public bool isIdentified => (ItemStatuses.Identified & statuses) != 0 && (ItemStatuses.Unidentified & statuses) == 0;
     }
 }

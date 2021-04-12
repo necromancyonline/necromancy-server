@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestNotifyResetRewardFlag : PacketResponse
     {
         public RecvQuestNotifyResetRewardFlag()
-            : base((ushort) AreaPacketId.recv_quest_notify_reset_reward_flag, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_notify_reset_reward_flag, ServerType.Area)
         {
         }
 

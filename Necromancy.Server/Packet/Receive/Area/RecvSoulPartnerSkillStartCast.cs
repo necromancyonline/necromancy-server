@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerSkillStartCast : PacketResponse
     {
         public RecvSoulPartnerSkillStartCast()
-            : base((ushort) AreaPacketId.recv_soul_partner_skill_start_cast, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_skill_start_cast, ServerType.Area)
         {
         }
 

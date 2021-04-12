@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemRequirementUnequipNotify : PacketResponse
     {
         public RecvItemRequirementUnequipNotify()
-            : base((ushort) AreaPacketId.recv_item_requirement_unequip_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_requirement_unequip_notify, ServerType.Area)
         {
         }
 

@@ -16,13 +16,14 @@ namespace Necromancy.Server.Packet
             clients = server.clients;
         }
 
-        public abstract ushort id { get; }
-        public virtual int expectedSize => NecQueueConsumer.NoExpectedSize;
         protected NecServer server { get; }
         protected NecSetting settings { get; }
         protected PacketRouter router { get; }
         protected MapLookup maps { get; }
         protected ClientLookup clients { get; }
         protected IDatabase database { get; }
+
+        public abstract ushort id { get; }
+        public virtual int expectedSize => NecQueueConsumer.NoExpectedSize;
     }
 }

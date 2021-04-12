@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventChallengeScriptPlay : PacketResponse
     {
         public RecvEventChallengeScriptPlay()
-            : base((ushort) AreaPacketId.recv_event_challenge_script_play, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_challenge_script_play, ServerType.Area)
         {
         }
 

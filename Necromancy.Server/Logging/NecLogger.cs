@@ -15,10 +15,7 @@ namespace Necromancy.Server.Logging
         {
             base.Initialize(identity, name, write, configuration);
             _setting = configuration as NecSetting;
-            if (_setting == null)
-            {
-                Error("Couldn't apply NecLogger configuration");
-            }
+            if (_setting == null) Error("Couldn't apply NecLogger configuration");
         }
 
         public void Info(NecClient client, string message)
@@ -63,13 +60,9 @@ namespace Necromancy.Server.Logging
         public void Exception(NecClient client, Exception exception)
         {
             if (exception == null)
-            {
                 Write(LogLevel.Error, $"{client.identity} Exception was null.", null);
-            }
             else
-            {
                 Write(LogLevel.Error, $"{client.identity} {exception}", exception);
-            }
         }
 
         public void Exception(NecConnection connection, Exception exception)
@@ -82,13 +75,9 @@ namespace Necromancy.Server.Logging
             }
 
             if (exception == null)
-            {
                 Write(LogLevel.Error, $"{connection.identity} Exception was null.", null);
-            }
             else
-            {
                 Write(LogLevel.Error, $"{connection.identity} {exception}", exception);
-            }
         }
 
         public void Info(ITcpSocket socket, string message)
@@ -109,13 +98,9 @@ namespace Necromancy.Server.Logging
         public void Exception(ITcpSocket socket, Exception exception)
         {
             if (exception == null)
-            {
                 Write(LogLevel.Error, $"{socket.Identity} Exception was null.", null);
-            }
             else
-            {
                 Write(LogLevel.Error, $"{socket.Identity} {exception}", exception);
-            }
         }
 
         public void LogIncomingPacket(NecClient client, NecPacket packet, ServerType serverType)
@@ -136,10 +121,7 @@ namespace Necromancy.Server.Logging
                 return;
             }
 
-            if (!_setting.logIncomingPackets)
-            {
-                return;
-            }
+            if (!_setting.logIncomingPackets) return;
 
             NecLogPacket logPacket = new NecLogPacket(connection.identity, packet, NecLogType.PacketIn, serverType);
             WritePacket(logPacket);
@@ -164,10 +146,7 @@ namespace Necromancy.Server.Logging
                 return;
             }
 
-            if (!_setting.logIncomingPackets)
-            {
-                return;
-            }
+            if (!_setting.logIncomingPackets) return;
 
             NecLogPacket logPacket =
                 new NecLogPacket(connection.identity, packet, NecLogType.PacketUnhandled, serverType);
@@ -192,10 +171,7 @@ namespace Necromancy.Server.Logging
                 return;
             }
 
-            if (!_setting.logIncomingPackets)
-            {
-                return;
-            }
+            if (!_setting.logIncomingPackets) return;
 
             NecLogPacket logPacket = new NecLogPacket(connection.identity, packet, NecLogType.PacketOut, serverType);
             WritePacket(logPacket);

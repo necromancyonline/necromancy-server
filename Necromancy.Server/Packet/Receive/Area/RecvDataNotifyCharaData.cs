@@ -18,8 +18,8 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(RecvDataNotifyCharaData));
         private readonly Character _character;
-        private readonly string _soulName;
         private readonly ItemInstance[] _equippedItems;
+        private readonly string _soulName;
 
         public RecvDataNotifyCharaData(Character character, string soulName)
             : base((ushort)AreaPacketId.recv_data_notify_chara_data, ServerType.Area)

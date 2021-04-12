@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvClassAdvancementNotifyCntReset : PacketResponse
     {
         public RecvClassAdvancementNotifyCntReset()
-            : base((ushort) AreaPacketId.recv_class_advancement_notify_cnt_reset, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_class_advancement_notify_cnt_reset, ServerType.Area)
         {
         }
 

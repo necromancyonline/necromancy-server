@@ -13,7 +13,7 @@ namespace Necromancy.Server.Systems.Auction
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_receive_item;
+        public override ushort id => (ushort)AreaPacketId.send_auction_receive_item;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -27,7 +27,7 @@ namespace Necromancy.Server.Systems.Auction
             1. This item may not be listed.
             2. You may not list the equiped items
             */
-            router.Send(client.map, (ushort) AreaPacketId.recv_auction_receive_item_r, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_auction_receive_item_r, res, ServerType.Area);
         }
     }
 }

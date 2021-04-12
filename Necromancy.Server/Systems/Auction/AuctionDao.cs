@@ -1,7 +1,5 @@
-using Necromancy.Server.Model;
 using System;
-using System.Data;
-using System.Data.Common;
+using Necromancy.Server.Model;
 
 namespace Necromancy.Server.Systems.Auction
 {
@@ -225,7 +223,7 @@ namespace Necromancy.Server.Systems.Auction
         {
             DateTime dNow = DateTime.Now;
             DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
-            return ((int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds()));
+            return (int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds());
         }
 
         private long CalcExpiryTime(int secondsToExpiry)

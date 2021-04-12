@@ -13,7 +13,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
         public RecvBattleReportNotifyKnockback(uint instanceId, float targetFreezeDuration,
             float targetKnockbackAnimationDuration)
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_knockback, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_notify_knockback, ServerType.Area)
         {
             _instanceId = instanceId;
             _targetFreezeDuration = targetFreezeDuration;

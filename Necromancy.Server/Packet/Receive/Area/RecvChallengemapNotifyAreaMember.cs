@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvChallengemapNotifyAreaMember : PacketResponse
     {
         public RecvChallengemapNotifyAreaMember()
-            : base((ushort) AreaPacketId.recv_challengemap_notify_area_member, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_challengemap_notify_area_member, ServerType.Area)
         {
         }
 

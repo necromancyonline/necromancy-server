@@ -36,10 +36,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@z", map.z);
                 AddParameter(command, "@orientation", map.orientation);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected) return false;
 
             return true;
         }
@@ -50,10 +47,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectMapById,
                 command => { AddParameter(command, "@id", mapId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        map = ReadMap(reader);
-                    }
+                    if (reader.Read()) map = ReadMap(reader);
                 });
             return map;
         }

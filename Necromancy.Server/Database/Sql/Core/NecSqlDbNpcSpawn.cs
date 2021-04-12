@@ -47,12 +47,8 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@status_x", npcSpawn.statusX);
                 AddParameter(command, "@status_y", npcSpawn.statusY);
                 AddParameter(command, "@status_z", npcSpawn.statusZ);
-
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
             npcSpawn.id = (int)autoIncrement;
             return true;

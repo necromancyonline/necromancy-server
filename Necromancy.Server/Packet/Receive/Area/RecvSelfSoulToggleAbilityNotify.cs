@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfSoulToggleAbilityNotify : PacketResponse
     {
         public RecvSelfSoulToggleAbilityNotify()
-            : base((ushort) AreaPacketId.recv_self_soul_toggle_ability_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_soul_toggle_ability_notify, ServerType.Area)
         {
         }
 

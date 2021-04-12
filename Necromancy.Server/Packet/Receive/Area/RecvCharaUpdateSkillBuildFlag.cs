@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateSkillBuildFlag : PacketResponse
     {
         public RecvCharaUpdateSkillBuildFlag()
-            : base((ushort) AreaPacketId.recv_chara_update_skill_build_flag, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_skill_build_flag, ServerType.Area)
         {
         }
 
@@ -17,10 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             int numEntries = 0x2;
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(numEntries); //less than 0x4
-            for (int k = 0; k < numEntries; k++)
-            {
-                res.WriteInt64(0);
-            }
+            for (int k = 0; k < numEntries; k++) res.WriteInt64(0);
             return res;
         }
     }

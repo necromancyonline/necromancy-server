@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvVenturerMedalShopNotifyItem : PacketResponse
     {
         public RecvVenturerMedalShopNotifyItem()
-            : base((ushort) AreaPacketId.recv_venturer_medal_shop_notify_item, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_venturer_medal_shop_notify_item, ServerType.Area)
         {
         }
 
@@ -22,10 +22,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
 
             numEntries = 0x5; //must be 5
-            for (int j = 0; j < numEntries; j++)
-            {
-                res.WriteInt32(0);
-            }
+            for (int j = 0; j < numEntries; j++) res.WriteInt32(0);
 
             res.WriteInt64(0);
             res.WriteInt64(0);

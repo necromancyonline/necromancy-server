@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallShoppingNotifyAborted : PacketResponse
     {
         public RecvStallShoppingNotifyAborted()
-            : base((ushort) AreaPacketId.recv_stall_shopping_notify_aborted, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_shopping_notify_aborted, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSoulPartnerUpdateUseActiveSkillR : PacketResponse
     {
         public RecvSoulPartnerUpdateUseActiveSkillR()
-            : base((ushort) AreaPacketId.recv_soul_partner_update_use_active_skill_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_soul_partner_update_use_active_skill_r, ServerType.Area)
         {
         }
 

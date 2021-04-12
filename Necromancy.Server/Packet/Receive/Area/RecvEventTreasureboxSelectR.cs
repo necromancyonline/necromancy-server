@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventTreasureboxSelectR : PacketResponse
     {
         public RecvEventTreasureboxSelectR()
-            : base((ushort) AreaPacketId.recv_event_treasurebox_select_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_treasurebox_select_r, ServerType.Area)
         {
         }
 

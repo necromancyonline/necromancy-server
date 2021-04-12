@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDataNotifyNpcUpdateMinimapIcon : PacketResponse
     {
         public RecvDataNotifyNpcUpdateMinimapIcon()
-            : base((ushort) AreaPacketId.recv_data_notify_npc_update_minimap_icon, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_npc_update_minimap_icon, ServerType.Area)
         {
         }
 

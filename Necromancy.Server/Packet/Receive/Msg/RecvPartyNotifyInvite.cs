@@ -8,8 +8,8 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyInvite : PacketResponse
     {
         private readonly NecClient _client;
-        private int _i;
         private readonly Party _party;
+        private int _i;
 
         public RecvPartyNotifyInvite(NecClient client, Party party)
             : base((ushort)MsgPacketId.recv_party_notify_invite, ServerType.Msg)

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string _SqlInsertUnionMember=
+        private const string _SqlInsertUnionMember =
             "INSERT INTO `nec_union_member` (`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined`)VALUES(@union_id,@character_id,@member_priviledge_bitmask,@rank,@joined);";
 
         private const string _SqlSelectUnionMemberByCharacterId =
@@ -37,10 +37,7 @@ namespace Necromancy.Server.Database.Sql.Core
                 AddParameter(command, "@rank", unionMember.rank);
                 AddParameter(command, "@joined", unionMember.joined);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement) return false;
 
             unionMember.id = (int)autoIncrement;
             return true;
@@ -52,10 +49,7 @@ namespace Necromancy.Server.Database.Sql.Core
             ExecuteReader(_SqlSelectUnionMemberByCharacterId,
                 command => { AddParameter(command, "@character_id", characterDatabaseId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        unionMember = ReadUnionMember(reader);
-                    }
+                    if (reader.Read()) unionMember = ReadUnionMember(reader);
                 });
             return unionMember;
         }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRoguemapSetMapFragmentChipiconR : PacketResponse
     {
         public RecvRoguemapSetMapFragmentChipiconR()
-            : base((ushort) AreaPacketId.recv_roguemap_set_map_fragment_chipicon_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_roguemap_set_map_fragment_chipicon_r, ServerType.Area)
         {
         }
 

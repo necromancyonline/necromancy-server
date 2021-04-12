@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfNotifyDeadNextTime : PacketResponse
     {
-        int _deadNextTime;
+        private readonly int _deadNextTime;
+
         public RecvCharaBodySelfNotifyDeadNextTime(int deadNextTime)
-            : base((ushort) AreaPacketId.recv_charabody_self_notify_deadnext_time, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_self_notify_deadnext_time, ServerType.Area)
         {
             _deadNextTime = deadNextTime;
         }

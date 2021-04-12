@@ -13,7 +13,7 @@ namespace Necromancy.Server.Systems.Item
         }
 
 
-        public override ushort id => (ushort) AreaPacketId.send_auction_cancel_bid;
+        public override ushort id => (ushort)AreaPacketId.send_auction_cancel_bid;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -27,9 +27,10 @@ namespace Necromancy.Server.Systems.Item
             {
                 error = (int)e.type;
             }
+
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            router.Send(client.map, (ushort) AreaPacketId.recv_auction_cancel_bid_r, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_auction_cancel_bid_r, res, ServerType.Area);
         }
     }
 }
