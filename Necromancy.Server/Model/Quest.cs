@@ -1,23 +1,16 @@
-﻿using System;
-
-namespace Necromancy.Server.Model
+﻿namespace Necromancy.Server.Model
 {
     public class Quest
     {
-        public int QuestID { get; set; }
-        public Byte SoulLevelMission { get; set; }
-        public string QuestName { get; set; }
-        public int QuestLevel { get; set; }
-        public int TimeLimit { get; set; }
-        public string QuestGiverName { get; set; }
-        public int RewardEXP { get; set; }
-        public int RewardGold { get; set; }
-        public Int16 NumbersOfItems { get; set; }
-        public int ItemsType { get; set; }
-        public Quest()
-        {
-
-        }
+        public int questId { get; set; }
+        public byte soulLevelMission { get; set; }
+        public string questName { get; set; }
+        public int questLevel { get; set; }
+        public int timeLimit { get; set; }
+        public string questGiverName { get; set; }
+        public int rewardExp { get; set; }
+        public int rewardGold { get; set; }
+        public short numbersOfItems { get; set; }
+        public int itemsType { get; set; }
     }
-
 }

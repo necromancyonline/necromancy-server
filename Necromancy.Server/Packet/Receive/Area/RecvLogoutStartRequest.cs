@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvLogoutStartRequest : PacketResponse
     {
         public RecvLogoutStartRequest()
-            : base((ushort) AreaPacketId.recv_logout_start_request_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_logout_start_request_r, ServerType.Area)
         {
         }
 

@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartySearchRecruitedParty : PacketResponse
     {
         public RecvPartySearchRecruitedParty()
-            : base((ushort) AreaPacketId.recv_party_search_recruited_party_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_search_recruited_party_r, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0/*client.Character.InstanceId + 1000*/);
+            res.WriteInt32(0 /*client.Character.InstanceId + 1000*/);
 
             res.WriteInt32(0x14); // cmp to 0x14
 
@@ -58,6 +58,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
                 res.WriteFixedString($"PartyLoop{i}", 0xB5);
             }
+
             return res;
         }
     }

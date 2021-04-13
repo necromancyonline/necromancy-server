@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartyNotifyFailedDrawAll : PacketResponse
     {
         public RecvPartyNotifyFailedDrawAll()
-            : base((ushort) AreaPacketId.recv_party_notify_failed_draw_all, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_notify_failed_draw_all, ServerType.Area)
         {
         }
 

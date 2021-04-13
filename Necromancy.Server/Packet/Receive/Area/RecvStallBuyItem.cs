@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallBuyItem : PacketResponse
     {
         public RecvStallBuyItem()
-            : base((ushort) AreaPacketId.recv_stall_buy_item_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_buy_item_r, ServerType.Area)
         {
         }
 

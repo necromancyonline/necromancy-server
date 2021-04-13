@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillCastCancel : PacketResponse
     {
         public RecvSkillCastCancel()
-            : base((ushort) AreaPacketId.recv_skill_cast_cancel, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_cast_cancel, ServerType.Area)
         {
         }
 

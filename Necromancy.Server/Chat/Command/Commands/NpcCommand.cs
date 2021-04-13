@@ -6,13 +6,17 @@ using Necromancy.Server.Packet.Receive.Area;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Spawns a npc
+    ///     Spawns a npc
     /// </summary>
     public class NpcCommand : ServerChatCommand
     {
         public NpcCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "npc";
+        public override string helpText => "usage: `/npc [npcId] [modelId]` - Spawns an NPC";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -23,7 +27,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            if (!Server.SettingRepository.Npc.TryGetValue(npcId, out NpcSetting npcSetting))
+            if (!server.settingRepository.npc.TryGetValue(npcId, out NpcSetting npcSetting))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid NpcId: {npcId}"));
                 return;
@@ -35,40 +39,36 @@ namespace Necromancy.Server.Chat.Command.Commands
                 return;
             }
 
-            if (!Server.SettingRepository.ModelCommon.TryGetValue(modelId, out ModelCommonSetting modelSetting))
+            if (!server.settingRepository.modelCommon.TryGetValue(modelId, out ModelCommonSetting modelSetting))
             {
                 responses.Add(ChatResponse.CommandError(client, $"Invalid ModelId: {modelId}"));
                 return;
             }
 
             NpcSpawn npcSpawn = new NpcSpawn();
-            Server.Instances.AssignInstance(npcSpawn);
-            npcSpawn.NpcId = npcSetting.Id;
-            npcSpawn.Name = npcSetting.Name;
-            npcSpawn.Title = npcSetting.Title;
-            npcSpawn.Level = (byte) npcSetting.Level;
+            server.instances.AssignInstance(npcSpawn);
+            npcSpawn.npcId = npcSetting.id;
+            npcSpawn.name = npcSetting.name;
+            npcSpawn.title = npcSetting.title;
+            npcSpawn.level = (byte)npcSetting.level;
 
-            npcSpawn.ModelId = modelSetting.Id;
-            npcSpawn.Size = (byte) modelSetting.Height;
+            npcSpawn.modelId = modelSetting.id;
+            npcSpawn.size = (byte)modelSetting.height;
 
-            npcSpawn.MapId = client.Character.MapId;
-            npcSpawn.X = client.Character.X;
-            npcSpawn.Y = client.Character.Y;
-            npcSpawn.Z = client.Character.Z;
-            npcSpawn.Heading = client.Character.Heading;
+            npcSpawn.mapId = client.character.mapId;
+            npcSpawn.x = client.character.x;
+            npcSpawn.y = client.character.y;
+            npcSpawn.z = client.character.z;
+            npcSpawn.heading = client.character.heading;
 
-            if (!Server.Database.InsertNpcSpawn(npcSpawn))
+            if (!server.database.InsertNpcSpawn(npcSpawn))
             {
-                responses.Add(ChatResponse.CommandError(client, $"NpcSpawn could not be saved to database"));
+                responses.Add(ChatResponse.CommandError(client, "NpcSpawn could not be saved to database"));
                 return;
             }
 
             RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
-            Router.Send(client.Map, npcData);
+            router.Send(client.map, npcData);
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "npc";
-        public override string HelpText => "usage: `/npc [npcId] [modelId]` - Spawns an NPC";
     }
 }

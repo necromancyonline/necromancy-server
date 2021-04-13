@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvFriendRequestLoad : PacketResponse
     {
         public RecvFriendRequestLoad()
-            : base((ushort) MsgPacketId.recv_friend_request_load_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_friend_request_load_r, ServerType.Msg)
         {
         }
 

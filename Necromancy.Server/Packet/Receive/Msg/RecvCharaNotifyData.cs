@@ -8,9 +8,10 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaNotifyData : PacketResponse
     {
         public RecvCharaNotifyData()
-            : base((ushort) MsgPacketId.recv_chara_notify_data, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_notify_data, ServerType.Msg)
         {
         }
+
         //ToDo,  figure out why this is in Msg.  could be a big deal actually
         protected override IBuffer ToBuffer()
         {

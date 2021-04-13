@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestHintRemove : PacketResponse
     {
         public RecvQuestHintRemove()
-            : base((ushort) AreaPacketId.recv_quest_hint_remove, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_hint_remove, ServerType.Area)
         {
         }
 

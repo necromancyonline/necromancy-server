@@ -1,7 +1,6 @@
-using Xunit;
-
 using Necromancy.Server.Database;
 using Necromancy.Server.Setting;
+using Xunit;
 
 namespace Necromancy.Test.Database
 {

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvJobChange : PacketResponse
     {
         public RecvJobChange()
-            : base((ushort) AreaPacketId.recv_job_change_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_job_change_r, ServerType.Area)
         {
         }
 

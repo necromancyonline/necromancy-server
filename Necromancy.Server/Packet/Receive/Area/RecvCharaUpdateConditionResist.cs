@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateConditionResist : PacketResponse
     {
         public RecvCharaUpdateConditionResist()
-            : base((ushort) AreaPacketId.recv_chara_update_condition_resist, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_condition_resist, ServerType.Area)
         {
         }
 

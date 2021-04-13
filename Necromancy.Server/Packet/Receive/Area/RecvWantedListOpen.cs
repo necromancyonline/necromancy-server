@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedListOpen : PacketResponse
     {
         public RecvWantedListOpen()
-            : base((ushort) AreaPacketId.recv_wanted_list_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_list_open, ServerType.Area)
         {
         }
 

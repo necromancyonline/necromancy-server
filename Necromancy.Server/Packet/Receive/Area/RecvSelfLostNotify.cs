@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfLostNotify : PacketResponse
     {
         public RecvSelfLostNotify()
-            : base((ushort) AreaPacketId.recv_self_lost_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_lost_notify, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

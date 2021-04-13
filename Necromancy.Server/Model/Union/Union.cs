@@ -1,64 +1,66 @@
-using Necromancy.Server.Common.Instance;
-using System.Collections.Generic;
 using System;
-
+using System.Collections.Generic;
+using Necromancy.Server.Common.Instance;
 
 namespace Necromancy.Server.Model.Union
 {
     public class Union : IInstance
     {
-        public uint InstanceId { get; set; }
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int LeaderId { get; set; }
-        public int SubLeader1Id { get; set; }
-        public int SubLeader2Id { get; set; }
-        public uint Level { get; set; }
-        public uint CurrentExp { get; set; }
-        public uint NextLevelExp { get; set; }
-        public byte MemberLimitIncrease { get; set; }
-        public short CapeDesignID { get; set; }
-        public string UnionNews { get; set; }
-        public DateTime Created { get; set; }
-
-        public List<NecClient> UnionMembers { get; set; }
-        public List<UnionNewsEntry> UnionNewsEntries { get; set; }
         public Union()
         {
-            UnionMembers = new List<NecClient>();
-            Id = -1;
-            Name = "";
-            LeaderId = 0;
-            Level = 0;
-            CurrentExp = 0;
-            NextLevelExp = 100;
-            MemberLimitIncrease = 0;
-            CapeDesignID = 0;
-            Created = DateTime.Now;
-
+            unionMembers = new List<NecClient>();
+            id = -1;
+            name = "";
+            leaderId = 0;
+            level = 0;
+            currentExp = 0;
+            nextLevelExp = 100;
+            memberLimitIncrease = 0;
+            capeDesignId = 0;
+            created = DateTime.Now;
         }
+
+        public int id { get; set; }
+        public string name { get; set; }
+        public int leaderId { get; set; }
+        public int subLeader1Id { get; set; }
+        public int subLeader2Id { get; set; }
+        public uint level { get; set; }
+        public uint currentExp { get; set; }
+        public uint nextLevelExp { get; set; }
+        public byte memberLimitIncrease { get; set; }
+        public short capeDesignId { get; set; }
+        public string unionNews { get; set; }
+        public DateTime created { get; set; }
+
+        public List<NecClient> unionMembers { get; set; }
+        public List<UnionNewsEntry> unionNewsEntries { get; set; }
+        public uint instanceId { get; set; }
 
         public void Join(NecClient client) //for establish and join
         {
-            UnionMembers.Add(client);
-        }
-        public void Leave(NecClient client) //for Kick and succeed
-        {
-            UnionMembers.Remove(client); //to-do  try/catch
-        }
-        public void Leave(List<NecClient> UnionMembers) //for disband
-        {
-            foreach (NecClient client in UnionMembers)
-                UnionMembers.Remove(client); //to-do  try/catch
-        }
-        public void AddNews(UnionNewsEntry addEntry) //for adding news
-        {
-            UnionNewsEntries.Add(addEntry);
-        }
-        public void RemoveNews(UnionNewsEntry removeEntry) //for adding news
-        {
-            UnionNewsEntries.Remove(removeEntry);
+            unionMembers.Add(client);
         }
 
+        public void Leave(NecClient client) //for Kick and succeed
+        {
+            unionMembers.Remove(client); //to-do  try/catch
+        }
+
+        public void Leave(List<NecClient> unionMembers) //for disband
+        {
+            foreach (NecClient client in unionMembers)
+                unionMembers.Remove(client); //to-do  try/catch
+        }
+
+        public void AddNews(UnionNewsEntry addEntry) //for adding news
+        {
+            unionNewsEntries.Add(addEntry);
+        }
+
+        public void RemoveNews(UnionNewsEntry removeEntry) //for adding news
+        {
+            unionNewsEntries.Remove(removeEntry);
+        }
     }
 }

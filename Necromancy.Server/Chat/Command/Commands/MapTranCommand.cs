@@ -12,15 +12,21 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// MapTranCommand related commands.
+    ///     MapTranCommand related commands.
     /// </summary>
     public class MapTranCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(MapTranCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MapTranCommand));
 
         public MapTranCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "maptran";
+
+        public override string helpText =>
+            "usage: `/maptran [argument] [RowId] [parameter]` - spawns or updates a map transition";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -34,14 +40,11 @@ namespace Necromancy.Server.Chat.Command.Commands
             if (!int.TryParse(command[1], out int x))
             {
                 responses.Add(ChatResponse.CommandError(client,
-                    $"Please provide a value.  Destination Map from Map.csv, or a table ID for updating"));
+                    "Please provide a value.  Destination Map from Map.csv, or a table ID for updating"));
                 return;
             }
 
-            if (!int.TryParse(command[2], out int y))
-            {
-                responses.Add(ChatResponse.CommandError(client, $"Good Job!"));
-            }
+            if (!int.TryParse(command[2], out int y)) responses.Add(ChatResponse.CommandError(client, "Good Job!"));
 
             MapTransition myMapTransition = new MapTransition();
             IBuffer res = BufferProvider.Provide();
@@ -51,224 +54,194 @@ namespace Necromancy.Server.Chat.Command.Commands
                 case "spawn"
                     : //spawns a new object on the map at your position.  makes a sign above it.  and jumps over it
                     myMapTransition = new MapTransition();
-                    Server.Instances.AssignInstance(myMapTransition);
+                    server.instances.AssignInstance(myMapTransition);
 
                     IBuffer res1 = BufferProvider.Provide(); // it's the aura portal for map
-                    res1.WriteUInt32(myMapTransition.InstanceId); // Unique ID
-                    res1.WriteFloat(client.Character.X); //x
-                    res1.WriteFloat(client.Character.Y); //y
-                    res1.WriteFloat(client.Character.Z + 2); //z
-                    res1.WriteByte(client.Character.Heading); // offset
-                    res1.WriteFloat(myMapTransition.MaplinkOffset); // Height
-                    res1.WriteFloat(myMapTransition.MaplinkWidth); // Width
+                    res1.WriteUInt32(myMapTransition.instanceId); // Unique ID
+                    res1.WriteFloat(client.character.x); //x
+                    res1.WriteFloat(client.character.y); //y
+                    res1.WriteFloat(client.character.z + 2); //z
+                    res1.WriteByte(client.character.heading); // offset
+                    res1.WriteFloat(myMapTransition.maplinkOffset); // Height
+                    res1.WriteFloat(myMapTransition.maplinkWidth); // Width
                     res1.WriteInt32(Util.GetRandomNumber(0,
                         6)); // Aura color 0=blue 1=gold 2=white 3=red 4=purple 5=black  0 to 5, crash above 5
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_data_notify_maplink, res1, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_maplink, res1, ServerType.Area);
 
 
-                    myMapTransition.MapId = client.Character.MapId;
-                    myMapTransition.TransitionMapId = x;
-                    myMapTransition.ReferencePos.X = client.Character.X;
-                    myMapTransition.ReferencePos.Y = client.Character.Y;
-                    myMapTransition.ReferencePos.Z = client.Character.Z;
-                    myMapTransition.MaplinkHeading = client.Character.Heading;
-                    myMapTransition.MaplinkColor =
+                    myMapTransition.mapId = client.character.mapId;
+                    myMapTransition.transitionMapId = x;
+                    myMapTransition.referencePos.X = client.character.x;
+                    myMapTransition.referencePos.Y = client.character.y;
+                    myMapTransition.referencePos.Z = client.character.z;
+                    myMapTransition.maplinkHeading = client.character.heading;
+                    myMapTransition.maplinkColor =
                         0; //  Aura color 0=blue (safe, town) 1=gold (locked) 2=white (open) 3=red (occupied) 4=purple (special) 5=black (Boss Exit)  0 to 5, crash above 5
-                    myMapTransition.MaplinkOffset = 200;
-                    myMapTransition.MaplinkWidth = 1000;
-                    myMapTransition.RefDistance = 400;
-                    myMapTransition.LeftPos.X = client.Character.X + 50;
-                    myMapTransition.LeftPos.Y = client.Character.Y + 50;
-                    myMapTransition.LeftPos.Z = client.Character.Z + 10;
-                    myMapTransition.RightPos.X = client.Character.X - 50;
-                    myMapTransition.RightPos.Y = client.Character.Y - 50;
-                    myMapTransition.RightPos.Z = client.Character.Z - 10;
-                    myMapTransition.InvertedTransition = false;
-                    Server.SettingRepository.Map.TryGetValue(x, out MapSetting targetMap);
-                    myMapTransition.ToPos.X = targetMap.X;
-                    myMapTransition.ToPos.Y = targetMap.Y;
-                    myMapTransition.ToPos.Z = targetMap.Z;
-                    myMapTransition.ToPos.Heading = (byte) targetMap.Orientation;
-                    myMapTransition.State = true;
-                    myMapTransition.Created = DateTime.Now;
-                    myMapTransition.Updated = DateTime.Now;
+                    myMapTransition.maplinkOffset = 200;
+                    myMapTransition.maplinkWidth = 1000;
+                    myMapTransition.refDistance = 400;
+                    myMapTransition.leftPos.X = client.character.x + 50;
+                    myMapTransition.leftPos.Y = client.character.y + 50;
+                    myMapTransition.leftPos.Z = client.character.z + 10;
+                    myMapTransition.rightPos.X = client.character.x - 50;
+                    myMapTransition.rightPos.Y = client.character.y - 50;
+                    myMapTransition.rightPos.Z = client.character.z - 10;
+                    myMapTransition.invertedTransition = false;
+                    server.settingRepository.map.TryGetValue(x, out MapSetting targetMap);
+                    myMapTransition.toPos.x = targetMap.x;
+                    myMapTransition.toPos.y = targetMap.y;
+                    myMapTransition.toPos.z = targetMap.z;
+                    myMapTransition.toPos.heading = (byte)targetMap.orientation;
+                    myMapTransition.state = true;
+                    myMapTransition.created = DateTime.Now;
+                    myMapTransition.updated = DateTime.Now;
 
-                    myMapTransition.MaplinkHeading = (byte) (client.Character.Heading + 90);
-                    myMapTransition.MaplinkHeading = (byte) (myMapTransition.MaplinkHeading % 180);
-                    if (myMapTransition.MaplinkHeading < 0)
-                    {
-                        myMapTransition.MaplinkHeading += 180;
-                    }
+                    myMapTransition.maplinkHeading = (byte)(client.character.heading + 90);
+                    myMapTransition.maplinkHeading = (byte)(myMapTransition.maplinkHeading % 180);
+                    if (myMapTransition.maplinkHeading < 0) myMapTransition.maplinkHeading += 180;
 
                     responses.Add(ChatResponse.CommandError(client,
-                        $"Spawned MapTransition {myMapTransition.InstanceId}"));
+                        $"Spawned MapTransition {myMapTransition.instanceId}"));
 
                     if (command[2] == "add"
-                    ) //if you want to send your MapTransition straight to the DB.  type Add at the end of the spawn command. 
+                    ) //if you want to send your MapTransition straight to the DB.  type Add at the end of the spawn command.
                     {
-                        if (!Server.Database.InsertMapTransition(myMapTransition))
+                        if (!server.database.InsertMapTransition(myMapTransition))
                         {
                             responses.Add(ChatResponse.CommandError(client,
                                 "myMapTransition could not be saved to database"));
                             return;
                         }
-                        else
-                        {
-                            responses.Add(ChatResponse.CommandError(client,
-                                $"Added MapTransition {myMapTransition.Id} to the database"));
-                        }
+
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"Added MapTransition {myMapTransition.id} to the database"));
                     }
 
                     //so you dont map transition immediatly
-                    client.Character.mapChange = true;
+                    client.character.mapChange = true;
                     Task.Delay(TimeSpan.FromSeconds(5)).ContinueWith
                     (t1 =>
                         {
-                            myMapTransition.Start(Server, client.Map);
-                            client.Character.mapChange = false;
+                            myMapTransition.Start(server, client.map);
+                            client.character.mapChange = false;
                         }
                     );
 
 
-                    client.Map.MapTransitions.Add(myMapTransition.InstanceId, myMapTransition);
+                    client.map.mapTransitions.Add(myMapTransition.instanceId, myMapTransition);
 
 
                     break;
 
                 case "add": //Adds a new entry to the database
-                    myMapTransition = Server.Instances.GetInstance((uint) x) as MapTransition;
-                    myMapTransition.Updated = DateTime.Now;
-                    if (!Server.Database.InsertMapTransition(myMapTransition))
-                    {
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
+                    myMapTransition.updated = DateTime.Now;
+                    if (!server.database.InsertMapTransition(myMapTransition))
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
-                            $"Added MapTransition {myMapTransition.Id} to the database"));
-                    }
+                            $"Added MapTransition {myMapTransition.id} to the database"));
 
                     break;
                 case "update": //Updates an existing entry in the database
 
-                    myMapTransition = Server.Instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     //myMapTransition = Server.Database.SelectMapTransitionsById(x);
-                    myMapTransition.Updated = DateTime.Now;
-                    if (!Server.Database.UpdateMapTransition(myMapTransition))
-                    {
+                    myMapTransition.updated = DateTime.Now;
+                    if (!server.database.UpdateMapTransition(myMapTransition))
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
-                            $"Updated MapTransition {myMapTransition.Id} in the database"));
-                    }
+                            $"Updated MapTransition {myMapTransition.id} in the database"));
 
                     break;
                 case "setdestination"
-                    : //Updates the to Postion of a given maptrans row ID to the players current position on the destination map. 
+                    : //Updates the to Postion of a given maptrans row ID to the players current position on the destination map.
 
                     //myMapTransition = Server.Instances.GetInstance((uint)x) as MapTransition;
-                    myMapTransition = Server.Database.SelectMapTransitionsById(x);
-                    myMapTransition.ToPos.X = client.Character.X;
-                    myMapTransition.ToPos.Y = client.Character.Y;
-                    myMapTransition.ToPos.Z = client.Character.Z;
-                    myMapTransition.ToPos.Heading = client.Character.Heading;
-                    myMapTransition.TransitionMapId = client.Character.MapId;
+                    myMapTransition = server.database.SelectMapTransitionsById(x);
+                    myMapTransition.toPos.x = client.character.x;
+                    myMapTransition.toPos.y = client.character.y;
+                    myMapTransition.toPos.z = client.character.z;
+                    myMapTransition.toPos.heading = client.character.heading;
+                    myMapTransition.transitionMapId = client.character.mapId;
 
-                    myMapTransition.Updated = DateTime.Now;
-                    if (!Server.Database.UpdateMapTransition(myMapTransition))
-                    {
+                    myMapTransition.updated = DateTime.Now;
+                    if (!server.database.UpdateMapTransition(myMapTransition))
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
-                            $"Updated MapTransition {myMapTransition.Id} in the database"));
-                    }
+                            $"Updated MapTransition {myMapTransition.id} in the database"));
 
                     break;
                 case "setleft": //Updates the left position of the maptransition
 
                     //myMapTransition = Server.Instances.GetInstance((uint)x) as MapTransition;
-                    myMapTransition = Server.Database.SelectMapTransitionsById(x);
-                    myMapTransition.LeftPos.X = client.Character.X;
-                    myMapTransition.LeftPos.Y = client.Character.Y;
-                    myMapTransition.LeftPos.Z = client.Character.Z;
+                    myMapTransition = server.database.SelectMapTransitionsById(x);
+                    myMapTransition.leftPos.X = client.character.x;
+                    myMapTransition.leftPos.Y = client.character.y;
+                    myMapTransition.leftPos.Z = client.character.z;
 
-                    myMapTransition.Updated = DateTime.Now;
-                    if (!Server.Database.UpdateMapTransition(myMapTransition))
-                    {
+                    myMapTransition.updated = DateTime.Now;
+                    if (!server.database.UpdateMapTransition(myMapTransition))
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
-                            $"Updated MapTransition {myMapTransition.Id} in the database"));
-                    }
+                            $"Updated MapTransition {myMapTransition.id} in the database"));
 
                     break;
                 case "setright": //Updates the right position of the maptransition
 
                     //myMapTransition = Server.Instances.GetInstance((uint)x) as MapTransition;
-                    myMapTransition = Server.Database.SelectMapTransitionsById(x);
-                    myMapTransition.RightPos.X = client.Character.X;
-                    myMapTransition.RightPos.Y = client.Character.Y;
-                    myMapTransition.RightPos.Z = client.Character.Z;
+                    myMapTransition = server.database.SelectMapTransitionsById(x);
+                    myMapTransition.rightPos.X = client.character.x;
+                    myMapTransition.rightPos.Y = client.character.y;
+                    myMapTransition.rightPos.Z = client.character.z;
 
-                    myMapTransition.Updated = DateTime.Now;
-                    if (!Server.Database.UpdateMapTransition(myMapTransition))
-                    {
+                    myMapTransition.updated = DateTime.Now;
+                    if (!server.database.UpdateMapTransition(myMapTransition))
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be saved to database"));
-                        return;
-                    }
                     else
-                    {
                         responses.Add(ChatResponse.CommandError(client,
-                            $"Updated MapTransition {myMapTransition.Id} in the database"));
-                    }
+                            $"Updated MapTransition {myMapTransition.id} in the database"));
 
                     break;
                 case "stop"
                     : //stops the maptrans task so you can modify the maptran.  actually this didnt work, so i just set your transition state to 'true' so it doesnt transition you
 
-                    myMapTransition = Server.Instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     //myMapTransition = Server.Database.SelectMapTransitionsById(x);
                     myMapTransition.Stop();
-                    client.Character.mapChange = true;
+                    client.character.mapChange = true;
 
-                    myMapTransition.Updated = DateTime.Now;
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"Stoped {myMapTransition.InstanceId}.  Safe to edit"));
-                }
+                    myMapTransition.updated = DateTime.Now;
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"Stoped {myMapTransition.instanceId}.  Safe to edit"));
+                    }
                     break;
                 case "start": //starts the maptrans task so you can test the maptran
 
-                    myMapTransition = Server.Instances.GetInstance((uint) x) as MapTransition;
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
                     //myMapTransition = Server.Database.SelectMapTransitionsById(x);
-                    myMapTransition.Start(Server, client.Map);
-                    client.Character.mapChange = false;
+                    myMapTransition.Start(server, client.map);
+                    client.character.mapChange = false;
 
-                    myMapTransition.Updated = DateTime.Now;
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"Started {myMapTransition.InstanceId}.  Safe to Warp"));
-                }
+                    myMapTransition.updated = DateTime.Now;
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"Started {myMapTransition.instanceId}.  Safe to Warp"));
+                    }
                     break;
 
                 case "remove": //removes a MapTransition from the database
-                    myMapTransition = Server.Instances.GetInstance((uint) x) as MapTransition;
-                    if (!Server.Database.DeleteMapTransition(myMapTransition.Id))
+                    myMapTransition = server.instances.GetInstance((uint)x) as MapTransition;
+                    if (!server.database.DeleteMapTransition(myMapTransition.id))
                     {
                         responses.Add(ChatResponse.CommandError(client,
                             "myMapTransition could not be deleted from database"));
@@ -277,34 +250,28 @@ namespace Necromancy.Server.Chat.Command.Commands
                     else
                     {
                         responses.Add(ChatResponse.CommandError(client,
-                            $"Removed MapTransition {myMapTransition.Id} from the database"));
+                            $"Removed MapTransition {myMapTransition.id} from the database"));
                     }
 
-                    res.WriteUInt32(myMapTransition.InstanceId);
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
+                    res.WriteUInt32(myMapTransition.instanceId);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_object_disappear_notify, res, ServerType.Area);
                     break;
 
                 default: //you don't know what you're doing do you?
-                    Logger.Error($"There is no recv of type : {command[0]} ");
-                {
-                    responses.Add(ChatResponse.CommandError(client,
-                        $"{command[0]} is not a valid MapTransition command."));
-                }
+                    _Logger.Error($"There is no recv of type : {command[0]} ");
+                    {
+                        responses.Add(ChatResponse.CommandError(client,
+                            $"{command[0]} is not a valid MapTransition command."));
+                    }
                     break;
             }
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "maptran";
-
-        public override string HelpText =>
-            "usage: `/maptran [argument] [RowId] [parameter]` - spawns or updates a map transition";
     }
 }
 
 
 /*   MAP REFERENCE INFORMATION
- *   
+ *
  *   #MapID,exterior,minimap,Region,Map,SubMap,X,Y,Z,direction,BGM-ID / Sword,During extraction,,Same area judgment,Switching order,Image ID,Number of map divisions
 1001001,1001001,1001001,Kingdom of Dimento,Illfalo Port,Hero's Square,1608,-3958,-19,0,2,0,1,1,1,1001001,0
 1001002,1001002,1001002,Kingdom of Dimento,Illfalo Port,Deep Sea Port,23162,-219,-7,260,2,0,1,1,2,1001002,0

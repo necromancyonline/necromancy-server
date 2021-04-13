@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvItemUseNotify : PacketResponse
     {
-        private long _itemId; //Item instance ID
-        private float _coolTime;
+        private readonly float _coolTime;
+        private readonly long _itemId; //Item instance ID
+
         public RecvItemUseNotify(long itemId, float coolTime)
-            : base((ushort) AreaPacketId.recv_item_use_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_use_notify, ServerType.Area)
         {
             _itemId = itemId;
             _coolTime = coolTime;

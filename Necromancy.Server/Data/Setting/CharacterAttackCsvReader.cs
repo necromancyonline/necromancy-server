@@ -4,20 +4,15 @@ namespace Necromancy.Server.Data.Setting
 {
     public class CharacterAttackCsvReader : CsvReader<CharacterAttackSetting>
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(CharacterAttackCsvReader));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(CharacterAttackCsvReader));
 
-        public CharacterAttackCsvReader()
-        {
-
-        }
-
-        protected override int NumExpectedItems => 40;
+        protected override int numExpectedItems => 40;
 
         protected override CharacterAttackSetting CreateInstance(string[] properties)
         {
             if (!int.TryParse(properties[0], out int id))
             {
-                Logger.Debug($"First entry empty!!");
+                _Logger.Debug("First entry empty!!");
                 return null;
             }
 
@@ -50,34 +45,34 @@ namespace Necromancy.Server.Data.Setting
 
             return new CharacterAttackSetting
             {
-                Id = id,
-                MotionId = motionId,
-                Weapon = properties[2],
-                FirstShot = firstShot,
-                NextAttackId = nextAttackId,
-                Channel = channel,
-                MoveStart = moveStart,
-                MoveEnd = moveEnd,
-                MoveAmount = moveAmount,
-                SwordShadowStart = swordShadowStart,
-                SwordShadowEnd = swordShadowEnd,
-                Socket1Type = socket1Type,
-                Fx1Id = fx1Id,
-                Socket2Type = socket2Type,
-                Fx2Id = fx2Id,
-                InterruptStart = interruptStart,
-                InterruptEnd = interruptEnd,
-                RigidTime = rigidTime,
-                InputReception = inputReception,
-                Hit = hit,
-                GuardCanel = guardCanel,
-                AttackAtariStart = attackAtariStart,
-                AttackAtariEnd = attackAtariEnd,
-                ConsecutiveAttackStart = consecutiveAttackStart,
-                ContinuousAttackEnd = continuousAttackEnd,
-                Delay = delay,
-                Rigidity = rigidity,
-                Reuse = reuse
+                id = id,
+                motionId = motionId,
+                weapon = properties[2],
+                firstShot = firstShot,
+                nextAttackId = nextAttackId,
+                channel = channel,
+                moveStart = moveStart,
+                moveEnd = moveEnd,
+                moveAmount = moveAmount,
+                swordShadowStart = swordShadowStart,
+                swordShadowEnd = swordShadowEnd,
+                socket1Type = socket1Type,
+                fx1Id = fx1Id,
+                socket2Type = socket2Type,
+                fx2Id = fx2Id,
+                interruptStart = interruptStart,
+                interruptEnd = interruptEnd,
+                rigidTime = rigidTime,
+                inputReception = inputReception,
+                hit = hit,
+                guardCanel = guardCanel,
+                attackAtariStart = attackAtariStart,
+                attackAtariEnd = attackAtariEnd,
+                consecutiveAttackStart = consecutiveAttackStart,
+                continuousAttackEnd = continuousAttackEnd,
+                delay = delay,
+                rigidity = rigidity,
+                reuse = reuse
             };
         }
     }

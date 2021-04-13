@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive
         private readonly uint _targetInstanceId;
 
         public RecvTest(uint instanceId, uint targetInstanceId)
-            : base((ushort) AreaPacketId.recv_0x1489, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0x1489, ServerType.Area)
         {
             _instanceId = instanceId;
             _targetInstanceId = targetInstanceId;

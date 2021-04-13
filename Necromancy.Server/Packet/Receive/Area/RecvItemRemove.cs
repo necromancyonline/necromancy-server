@@ -9,16 +9,18 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemRemove : PacketResponse
     {
         private readonly ItemInstance _item;
+
         public RecvItemRemove(NecClient client, ItemInstance item)
-            : base((ushort) AreaPacketId.recv_item_remove, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_remove, ServerType.Area)
         {
             _item = item;
-            Clients.Add(client);
+            clients.Add(client);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt64(_item.InstanceID); 
+            res.WriteUInt64(_item.instanceId);
             return res;
         }
     }

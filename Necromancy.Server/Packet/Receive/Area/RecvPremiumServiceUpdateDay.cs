@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPremiumServiceUpdateDay : PacketResponse
     {
         public RecvPremiumServiceUpdateDay()
-            : base((ushort) AreaPacketId.recv_premium_service_update_day, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_premium_service_update_day, ServerType.Area)
         {
         }
 

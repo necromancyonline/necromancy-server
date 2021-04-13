@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvTradeNotifyFixed : PacketResponse
     {
-        private int _result;
+        private readonly int _result;
+
         public RecvTradeNotifyFixed(int result)
-            : base((ushort) AreaPacketId.recv_trade_notify_fixed, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_notify_fixed, ServerType.Area)
         {
             _result = result;
         }

@@ -15,66 +15,59 @@ namespace Necromancy.Server.Logging
         {
             base.Initialize(identity, name, write, configuration);
             _setting = configuration as NecSetting;
-            if (_setting == null)
-            {
-                Error("Couldn't apply NecLogger configuration");
-            }
+            if (_setting == null) Error("Couldn't apply NecLogger configuration");
         }
 
         public void Info(NecClient client, string message)
         {
-            Info($"{client.Identity} {message}");
+            Info($"{client.identity} {message}");
         }
 
         public void Info(NecConnection connection, string message)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client != null)
             {
                 Info(client, message);
                 return;
             }
 
-            Info($"{connection.Identity} {message}");
+            Info($"{connection.identity} {message}");
         }
 
         public void Debug(NecClient client, string message)
         {
-            Debug($"{client.Identity} {message}");
+            Debug($"{client.identity} {message}");
         }
 
         public void Error(NecClient client, string message)
         {
-            Error($"{client.Identity} {message}");
+            Error($"{client.identity} {message}");
         }
 
         public void Error(NecConnection connection, string message)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client != null)
             {
                 Error(client, message);
                 return;
             }
 
-            Error($"{connection.Identity} {message}");
+            Error($"{connection.identity} {message}");
         }
 
         public void Exception(NecClient client, Exception exception)
         {
             if (exception == null)
-            {
-                Write(LogLevel.Error, $"{client.Identity} Exception was null.", null);
-            }
+                Write(LogLevel.Error, $"{client.identity} Exception was null.", null);
             else
-            {
-                Write(LogLevel.Error, $"{client.Identity} {exception}", exception);
-            }
+                Write(LogLevel.Error, $"{client.identity} {exception}", exception);
         }
 
         public void Exception(NecConnection connection, Exception exception)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client != null)
             {
                 Exception(client, exception);
@@ -82,13 +75,9 @@ namespace Necromancy.Server.Logging
             }
 
             if (exception == null)
-            {
-                Write(LogLevel.Error, $"{connection.Identity} Exception was null.", null);
-            }
+                Write(LogLevel.Error, $"{connection.identity} Exception was null.", null);
             else
-            {
-                Write(LogLevel.Error, $"{connection.Identity} {exception}", exception);
-            }
+                Write(LogLevel.Error, $"{connection.identity} {exception}", exception);
         }
 
         public void Info(ITcpSocket socket, string message)
@@ -109,95 +98,82 @@ namespace Necromancy.Server.Logging
         public void Exception(ITcpSocket socket, Exception exception)
         {
             if (exception == null)
-            {
                 Write(LogLevel.Error, $"{socket.Identity} Exception was null.", null);
-            }
             else
-            {
                 Write(LogLevel.Error, $"{socket.Identity} {exception}", exception);
-            }
         }
 
         public void LogIncomingPacket(NecClient client, NecPacket packet, ServerType serverType)
         {
-            if (_setting.LogIncomingPackets)
+            if (_setting.logIncomingPackets)
             {
-                NecLogPacket logPacket = new NecLogPacket(client.Identity, packet, NecLogType.PacketIn, serverType);
+                NecLogPacket logPacket = new NecLogPacket(client.identity, packet, NecLogType.PacketIn, serverType);
                 WritePacket(logPacket);
             }
         }
 
         public void LogIncomingPacket(NecConnection connection, NecPacket packet, ServerType serverType)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client != null)
             {
                 LogIncomingPacket(client, packet, serverType);
                 return;
             }
 
-            if (!_setting.LogIncomingPackets)
-            {
-                return;
-            }
+            if (!_setting.logIncomingPackets) return;
 
-            NecLogPacket logPacket = new NecLogPacket(connection.Identity, packet, NecLogType.PacketIn, serverType);
+            NecLogPacket logPacket = new NecLogPacket(connection.identity, packet, NecLogType.PacketIn, serverType);
             WritePacket(logPacket);
         }
 
         public void LogUnknownIncomingPacket(NecClient client, NecPacket packet, ServerType serverType)
         {
-            if (_setting.LogUnknownIncomingPackets)
+            if (_setting.logUnknownIncomingPackets)
             {
                 NecLogPacket logPacket =
-                    new NecLogPacket(client.Identity, packet, NecLogType.PacketUnhandled, serverType);
+                    new NecLogPacket(client.identity, packet, NecLogType.PacketUnhandled, serverType);
                 WritePacket(logPacket);
             }
         }
 
         public void LogUnknownIncomingPacket(NecConnection connection, NecPacket packet, ServerType serverType)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client != null)
             {
                 LogUnknownIncomingPacket(client, packet, serverType);
                 return;
             }
 
-            if (!_setting.LogIncomingPackets)
-            {
-                return;
-            }
+            if (!_setting.logIncomingPackets) return;
 
             NecLogPacket logPacket =
-                new NecLogPacket(connection.Identity, packet, NecLogType.PacketUnhandled, serverType);
+                new NecLogPacket(connection.identity, packet, NecLogType.PacketUnhandled, serverType);
             WritePacket(logPacket);
         }
 
         public void LogOutgoingPacket(NecClient client, NecPacket packet, ServerType serverType)
         {
-            if (_setting.LogOutgoingPackets)
+            if (_setting.logOutgoingPackets)
             {
-                NecLogPacket logPacket = new NecLogPacket(client.Identity, packet, NecLogType.PacketOut, serverType);
+                NecLogPacket logPacket = new NecLogPacket(client.identity, packet, NecLogType.PacketOut, serverType);
                 WritePacket(logPacket);
             }
         }
 
         public void LogOutgoingPacket(NecConnection connection, NecPacket packet, ServerType serverType)
         {
-            NecClient client = connection.Client;
+            NecClient client = connection.client;
             if (client != null)
             {
                 LogOutgoingPacket(client, packet, serverType);
                 return;
             }
 
-            if (!_setting.LogIncomingPackets)
-            {
-                return;
-            }
+            if (!_setting.logIncomingPackets) return;
 
-            NecLogPacket logPacket = new NecLogPacket(connection.Identity, packet, NecLogType.PacketOut, serverType);
+            NecLogPacket logPacket = new NecLogPacket(connection.identity, packet, NecLogType.PacketOut, serverType);
             WritePacket(logPacket);
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedListClose : PacketResponse
     {
         public RecvWantedListClose()
-            : base((ushort) AreaPacketId.recv_wanted_list_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_list_close_r, ServerType.Area)
         {
         }
 

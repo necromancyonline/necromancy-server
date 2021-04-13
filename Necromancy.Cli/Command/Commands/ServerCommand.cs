@@ -11,36 +11,38 @@ namespace Necromancy.Cli.Command.Commands
 {
     public class ServerCommand : ConsoleCommand, ISwitchConsumer
     {
+        private const string SETTING_FILE = "server_setting.json";
+        private const string SECRET_FILE = "server_secret.json";
         public static readonly ILogger Logger = LogProvider.Logger(typeof(ServerCommand));
-
-        private const string SettingFile = "server_setting.json";
-        private const string SecretFile = "server_secret.json";
         private NecServer _server;
         private bool _service;
 
         public ServerCommand()
         {
             _service = false;
-            Switches = new List<ISwitchProperty>();
-            Switches.Add(
+            switches = new List<ISwitchProperty>();
+            switches.Add(
                 new SwitchProperty<bool>(
                     "--service",
                     "--service=true (true|false)",
                     "Run the server as a dedicated service",
                     bool.TryParse,
-                    (result => _service = result)
+                    result => _service = result
                 )
             );
         }
 
-        public List<ISwitchProperty> Switches { get; }
+        public override string key => "server";
+
+
+        public override string description =>
+            $"Wizardry Online Server. Ex.:{Environment.NewLine}server start{Environment.NewLine}server stop";
+
+        public List<ISwitchProperty> switches { get; }
 
         public override void Shutdown()
         {
-            if (_server != null)
-            {
-                _server.Stop();
-            }
+            if (_server != null) _server.Stop();
         }
 
         public override CommandResultType Handle(ConsoleParameter parameter)
@@ -48,47 +50,44 @@ namespace Necromancy.Cli.Command.Commands
             if (_server == null)
             {
                 SettingProvider settingProvider = new SettingProvider();
-                NecSetting setting = settingProvider.Load<NecSetting>(SettingFile);
+                NecSetting setting = settingProvider.Load<NecSetting>(SETTING_FILE);
                 if (setting == null)
                 {
-                    Logger.Info($"No `{SettingFile}` file found, creating new");
+                    Logger.Info($"No `{SETTING_FILE}` file found, creating new");
                     setting = new NecSetting();
-                    settingProvider.Save(setting, SettingFile);
+                    settingProvider.Save(setting, SETTING_FILE);
                 }
                 else
                 {
-                    Logger.Info($"Loaded Setting from: {settingProvider.GetSettingsPath(SettingFile)}");
+                    Logger.Info($"Loaded Setting from: {settingProvider.GetSettingsPath(SETTING_FILE)}");
                 }
 
-                SettingProvider secretsProvider = new SettingProvider(setting.SecretsFolder);
-                NecSecret secret = secretsProvider.Load<NecSecret>(SecretFile);
+                SettingProvider secretsProvider = new SettingProvider(setting.secretsFolder);
+                NecSecret secret = secretsProvider.Load<NecSecret>(SECRET_FILE);
                 if (secret == null)
                 {
-                    Logger.Info($"No `{SecretFile}` file found, creating new");
+                    Logger.Info($"No `{SECRET_FILE}` file found, creating new");
                     secret = new NecSecret();
-                    secretsProvider.Save(secret, SecretFile);
+                    secretsProvider.Save(secret, SECRET_FILE);
                 }
                 else
                 {
-                    Logger.Info($"Loaded Secrets from: {secretsProvider.GetSettingsPath(SecretFile)}");
+                    Logger.Info($"Loaded Secrets from: {secretsProvider.GetSettingsPath(SECRET_FILE)}");
                 }
 
-                setting.DiscordBotToken = secret.DiscordBotToken;
-                setting.DatabaseSettings.Password = secret.DatabasePassword;
+                setting.discordBotToken = secret.discordBotToken;
+                setting.databaseSettings.password = secret.databasePassword;
 
                 LogProvider.Configure<NecLogger>(setting);
                 _server = new NecServer(setting);
             }
 
-            if (parameter.Arguments.Contains("start"))
+            if (parameter.arguments.Contains("start"))
             {
                 _server.Start();
                 if (_service)
                 {
-                    while (_server.Running)
-                    {
-                        Thread.Sleep(TimeSpan.FromMinutes(5));
-                    }
+                    while (_server.running) Thread.Sleep(TimeSpan.FromMinutes(5));
 
                     return CommandResultType.Exit;
                 }
@@ -96,7 +95,7 @@ namespace Necromancy.Cli.Command.Commands
                 return CommandResultType.Completed;
             }
 
-            if (parameter.Arguments.Contains("stop"))
+            if (parameter.arguments.Contains("stop"))
             {
                 _server.Stop();
                 return CommandResultType.Completed;
@@ -104,11 +103,5 @@ namespace Necromancy.Cli.Command.Commands
 
             return CommandResultType.Continue;
         }
-
-        public override string Key => "server";
-
-
-        public override string Description =>
-            $"Wizardry Online Server. Ex.:{Environment.NewLine}server start{Environment.NewLine}server stop";
     }
 }

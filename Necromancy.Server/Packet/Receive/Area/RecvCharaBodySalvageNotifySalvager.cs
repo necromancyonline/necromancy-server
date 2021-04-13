@@ -8,11 +8,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     //this is for when your body is collected.  it turns your soul invisible and imovable.  You should be 'possessing' your salavager when this is called.
     public class RecvCharaBodySalvageNotifySalvager : PacketResponse
     {
-        private uint _id;
-        private string _charaName;
-        private string _soulName;
+        private readonly string _charaName;
+        private readonly uint _id;
+        private readonly string _soulName;
+
         public RecvCharaBodySalvageNotifySalvager(uint id, string charaName, string soulName)
-            : base((ushort) AreaPacketId.recv_charabody_salvage_notify_salvager, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_salvage_notify_salvager, ServerType.Area)
         {
             _id = id;
             _charaName = charaName;

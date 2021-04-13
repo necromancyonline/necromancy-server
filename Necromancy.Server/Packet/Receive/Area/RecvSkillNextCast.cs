@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillNextCast : PacketResponse
     {
         public RecvSkillNextCast()
-            : base((ushort) AreaPacketId.recv_skill_next_cast_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_next_cast_r, ServerType.Area)
         {
         }
 

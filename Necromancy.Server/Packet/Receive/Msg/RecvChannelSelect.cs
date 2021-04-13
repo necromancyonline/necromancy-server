@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvChannelSelect : PacketResponse
     {
         public RecvChannelSelect()
-            : base((ushort) MsgPacketId.recv_channel_select_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_channel_select_r, ServerType.Msg)
         {
         }
 

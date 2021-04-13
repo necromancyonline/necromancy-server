@@ -13,6 +13,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "stor";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -20,12 +23,12 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteInt32(0); //1 = cinematic
             res.WriteByte(0);
 
-            Router.Send(client, (ushort) AreaPacketId.recv_event_start, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_start, res, ServerType.Area);
 
 
             IBuffer res0 = BufferProvider.Provide();
-            res0.WriteUInt64(client.Soul.WarehouseGold); // Gold in the storage
-            int numEntries = 0x1A;//Less than or equal to 0z1A
+            res0.WriteUInt64(client.soul.warehouseGold); // Gold in the storage
+            int numEntries = 0x1A; //Less than or equal to 0z1A
             res0.WriteInt32(0x1A);
             for (int i = 0; i < numEntries; i++)
             {
@@ -35,15 +38,12 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             res0.WriteByte(1); //bool
 
-            Router.Send(client, (ushort) AreaPacketId.recv_event_soul_storage_open, res0, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_event_soul_storage_open, res0, ServerType.Area);
 
 
             /*  IBuffer res1 = BufferProvider.Provide();
               res1.WriteByte(1);
               Router.Send(client, (ushort)AreaPacketId.recv_event_end, res1); */
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "stor";
     }
 }

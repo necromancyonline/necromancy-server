@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRaisescaleAddItem : PacketResponse
     {
         public RecvRaisescaleAddItem()
-            : base((ushort) AreaPacketId.recv_raisescale_add_item_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_raisescale_add_item_r, ServerType.Area)
         {
         }
 

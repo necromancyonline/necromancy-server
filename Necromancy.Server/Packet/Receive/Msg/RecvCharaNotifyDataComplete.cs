@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaNotifyDataComplete : PacketResponse
     {
         public RecvCharaNotifyDataComplete()
-            : base((ushort) MsgPacketId.recv_chara_notify_data_complete, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_notify_data_complete, ServerType.Msg)
         {
         }
 

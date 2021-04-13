@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestHintOthermap : PacketResponse
     {
         public RecvQuestHintOthermap()
-            : base((ushort) AreaPacketId.recv_quest_hint_othermap, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_hint_othermap, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartyAcceptToApply : PacketResponse
     {
         public RecvPartyAcceptToApply()
-            : base((ushort) AreaPacketId.recv_party_accept_to_apply_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_accept_to_apply_r, ServerType.Area)
         {
         }
 

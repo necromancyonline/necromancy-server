@@ -8,8 +8,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTradeNotifyMoney : PacketResponse
     {
         private readonly ulong _gold;
+
         public RecvTradeNotifyMoney(ulong gold)
-            : base((ushort) AreaPacketId.recv_trade_notify_money, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_notify_money, ServerType.Area)
         {
             _gold = gold;
         }

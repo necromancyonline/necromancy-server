@@ -7,11 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSkillStartCastR : PacketResponse
     {
-        private readonly int _errorCode;
         private readonly float _castingTime;
+        private readonly int _errorCode;
 
         public RecvSkillStartCastR(int errorCode, float castingTime)
-            : base((ushort) AreaPacketId.recv_skill_start_cast_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_start_cast_r, ServerType.Area)
         {
             _errorCode = errorCode;
             _castingTime = castingTime;

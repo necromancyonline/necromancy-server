@@ -4,480 +4,8 @@ namespace Necromancy.Server.Common
 {
     public class Camellia
     {
-        /// <summary>
-        /// Dragons Dogma Online Network Encryption
-        /// </summary>
-        public void Encrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
-        {
-            // TODO - Modifies input value to apply XOR - make a copy
-            // TODO check if input length is dividable by 16
-            uint keyLength = (uint) key.Length * 8;
-            byte[][] subkey = new byte[34][];
-
-
-            KeySchedule(keyLength, key, subkey);
-            int length = input.Length;
-            if (output.Length < input.Length)
-            {
-                // error not enough space
-            }
-
-            int current = 0;
-            while (current < length)
-            {
-                int xorLen = current + 16 < length ? 16 : length - current;
-                for (int i = 0; i < xorLen; i++)
-                {
-                    input[current + i] = (byte) (input[current + i] ^ prv[i]);
-                }
-                CryptBlock(
-                    false,
-                    keyLength,
-                    input.Slice(current, 16),
-                    subkey,
-                    output.Slice(current, 16)
-                );
-                for (int i = 0; i < xorLen; i++)
-                {
-                    prv[i] = output[current + i];
-                }
-                current += xorLen;
-            }
-        }
-
-        /// <summary>
-        /// Dragons Dogma Online Network Decryption
-        /// </summary>
-        public void Decrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
-        {
-            // TODO check if input length is dividable by 16
-
-            uint keyLength = (uint) key.Length * 8;
-            byte[][] subkey = new byte[34][];
-            KeySchedule(keyLength, key, subkey);
-            int length = input.Length;
-            if (output.Length < input.Length)
-            {
-                // error not enough space
-            }
-
-            int current = 0;
-            while (current < length)
-            {
-                CryptBlock(
-                    true,
-                    keyLength,
-                    input.Slice(current, 16),
-                    subkey,
-                    output.Slice(current, 16)
-                );
-                int xorLen = current + 16 < length ? 16 : length - current;
-                for (int i = 0; i < xorLen; i++)
-                {
-                    output[current + i] = (byte) (output[current + i] ^ prv[i]);
-                }
-
-                for (int i = 0; i < xorLen; i++)
-                {
-                    prv[i] = input[current + i];
-                }
-
-                current += xorLen;
-            }
-        }
-
-        /*
-         * 	Camellia key schedule
-         * 	subkey[26] should be allocated for keyLen == 128.
-         * 	otherwise subkey[34] should be allocated.
-         */
-        public void KeySchedule(uint keyLen, byte[] key, byte[][] subkey)
-        {
-            /* 0...KL, 1...KR, 2...KA, 3...KB */
-            byte[][] ikey = new byte[4][]
-            {
-                new byte[16],
-                new byte[16],
-                new byte[16],
-                new byte[16],
-            };
-
-            // subkey
-            // todo calculate and initialize subkey size
-            for (int subKeyIndex = 0; subKeyIndex < subkey.Length; subKeyIndex++)
-            {
-                subkey[subKeyIndex] = new byte[8];
-            }
-
-            Span<byte> pl;
-            Span<byte> pr;
-            Span<byte> p;
-
-            int aki; /* all intermediate key index */
-            int dki; /* drop key index */
-            int ski; /* subkey index */
-            int maxikey;
-            int i;
-            int j;
-            int[] drop128 =
-            {
-                8, 9, 15, 16, 22, 23, 0
-            };
-            int[] drop256 =
-            {
-                2, 3, 4, 5, 8, 9, 14, 15, 16, 17, 20, 21, 26, 27, 30, 31,
-                36, 37, 42, 43, 46, 47, 48, 49, 54, 55, 58, 59, 60, 61, 0
-            };
-            int[] drop; /* pointer to drop128[] or drop256[] */
-
-            /* padding */
-            int bytes = (int) keyLen / 8;
-            int rounds = bytes / 16;
-            for (int round = 0; round < rounds; round++)
-            {
-                int currentBytes = round * 16;
-                int remainingBytes = bytes - currentBytes;
-                int count = remainingBytes > 16 ? 16 : remainingBytes;
-                Buffer.BlockCopy(key, round * 16, ikey[round], 0, count);
-            }
-
-            if (keyLen == 192)
-            {
-                for (i = 0; i < 8; i++)
-                {
-                    ikey[1][i + 8] = (byte) ~ikey[1][i];
-                }
-            }
-
-            /* generate intermediate keys KA, KB */
-            Span<byte> spanKey2 = new Span<byte>(ikey[2]);
-            pl = spanKey2.Slice(0, 8);
-            pr = spanKey2.Slice(8, 8);
-
-            for (i = 0; i < 4; i++)
-            {
-                if (i % 2 == 0)
-                {
-                    xorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
-                }
-
-                CamelliaRound(Sigma[i], pl, pr);
-                p = pl;
-                pl = pr;
-                pr = p;
-            }
-
-            if (keyLen != 128)
-            {
-                xorOctets(16, ikey[2], ikey[1], ikey[3]); /* KB <- KA ^ KR */
-                Span<byte> spanKey3 = new Span<byte>(ikey[3]);
-                Span<byte> spanKey3_0 = spanKey3.Slice(0, 8);
-                Span<byte> spanKey3_8 = spanKey3.Slice(8, 8);
-                CamelliaRound(Sigma[4], spanKey3_0, spanKey3_8);
-                CamelliaRound(Sigma[5], spanKey3_8, spanKey3_0);
-            }
-
-            /* subkey generation */
-            aki = dki = ski = 0;
-            if (keyLen == 128)
-            {
-                maxikey = 2;
-                drop = drop128;
-                // memcpy(ikey[1], ikey[2], 16); /* ikey[1] is KA for 128-bit key */
-                Buffer.BlockCopy(ikey[2], 0, ikey[1], 0, 16);
-            }
-            else
-            {
-                /* keyLen == 192 or 256 */
-                maxikey = 4;
-                drop = drop256;
-            }
-
-            for (i = 0; i < 8; i++)
-            {
-                for (j = 0; j < 2 * maxikey; j++)
-                {
-                    if (aki != drop[dki])
-                    {
-                        //  memcpy(subkey[ski++], &ikey[j / 2][(j % 2) * 8], 8);
-                        byte[] iKeySrc = ikey[j / 2];
-                        Span<byte> iKeySrcSpan = new Span<byte>(iKeySrc);
-                        Span<byte> src = iKeySrcSpan.Slice((j % 2) * 8, 8);
-                        // todo optimize copy
-                        Buffer.BlockCopy(src.ToArray(), 0, subkey[ski], 0, 8);
-                        ski++;
-                    }
-                    else
-                    {
-                        dki++;
-                    }
-
-                    aki++;
-                }
-
-                for (j = 0; j < maxikey; j++)
-                {
-                    if (i < 4)
-                    {
-                        rot15(ikey[j]);
-                    }
-                    else
-                    {
-                        rot17(ikey[j]);
-                    }
-                }
-            }
-        }
-
-        public void CryptBlock(bool decrypt, uint keyLen, Span<byte> pt, byte[][] subkey, Span<byte> ct)
-        {
-            int r; /* round */
-            int ski; /* subkey index */
-            int direction;
-
-            if (decrypt)
-            {
-                /* decryption */
-                direction = -1;
-                ski = keyLen == 128 ? 26 - 2 : 34 - 2;
-            }
-            else
-            {
-                /* encryption */
-                direction = 1;
-                ski = 0;
-            }
-
-            /* prewhitening */
-            //xorOctets(16, pt, subkey[ski], ct);
-            xorOctets(8, pt.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
-            xorOctets(8, pt.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
-
-            if (decrypt)
-            {
-                /* decryption */
-                ski--;
-            }
-            else
-            {
-                /* encryption */
-                ski += 2;
-            }
-
-            /* main iteration */
-            for (r = 0; r < 24; r += 2)
-            {
-                if (keyLen == 128 && r >= 18)
-                {
-                    break;
-                }
-
-                if (r == 6 || r == 12 || r == 18)
-                {
-                    CamelliaFL(subkey[ski], ct.Slice(0, 8));
-                    ski += direction;
-                    CamelliaFLinv(subkey[ski], ct.Slice(8, 8));
-                    ski += direction;
-                }
-
-                CamelliaRound(subkey[ski], ct.Slice(0, 8), ct.Slice(8, 8));
-                ski += direction;
-                CamelliaRound(subkey[ski], ct.Slice(8, 8), ct.Slice(0, 8));
-                ski += direction;
-            }
-
-            swapHalfBlock(ct.Slice(0, 8), ct.Slice(8, 8));
-
-            /* postwhitening */
-            if (decrypt)
-            {
-                ski--;
-            }
-
-            //xorOctets(16, ct, subkey[ski], ct);
-
-            xorOctets(8, ct.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
-            xorOctets(8, ct.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
-        }
-
-        private byte s1(int x)
-        {
-            return s[x];
-        }
-
-        private byte s2(int x)
-        {
-            return (byte) ((s[x] << 1) + (s[x] >> 7));
-        }
-
-        private byte s3(int x)
-        {
-            return (byte) ((s[x] << 7) + (s[x] >> 1));
-        }
-
-        private byte s4(int x)
-        {
-            return s[(byte) (x << 1) + (x >> 7)];
-        }
-
-        /* dst[] <- src1[] ^ src2[] */
-        private void xorOctets(uint nOctets, Span<byte> src1, Span<byte> src2, Span<byte> dst)
-        {
-            int i;
-
-            for (i = 0; i < nOctets; i++)
-            {
-                dst[i] = (byte) (src1[i] ^ src2[i]);
-            }
-        }
-
-        /* a[] <-> b[] */
-        private void swapHalfBlock(Span<byte> a, Span<byte> b)
-        {
-            byte t;
-            for (int i = 0; i < 8; i++)
-            {
-                t = a[i];
-                a[i] = b[i];
-                b[i] = t;
-            }
-        }
-
-        /* dst[] <- src1[] & src2[] */
-        private void and4octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
-        {
-            int i;
-
-            for (i = 0; i < 4; i++)
-            {
-                dst[i] = (byte) (src1[i] & src2[i]);
-            }
-        }
-
-        /* dst[] <- src1[] | src2[] */
-        private void or4octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
-        {
-            int i;
-
-            for (i = 0; i < 4; i++)
-            {
-                dst[i] = (byte) (src1[i] | src2[i]);
-            }
-        }
-
-        /* x[] <<<= 1 */
-        private void rot1(int nOctets, Span<byte> x)
-        {
-            byte x0 = x[0];
-            nOctets--;
-            for (int i = 0; i < nOctets; i++)
-            {
-                x[i] = (byte) ((x[i] << 1) ^ (x[i + 1] >> 7));
-            }
-
-            x[nOctets] = (byte) ((x[nOctets] << 1) ^ (x0 >> 7));
-        }
-
-        /* rotate 128-bit data to the left by 16 bits */
-        private void rot16(Span<byte> x)
-        {
-            byte x0 = x[0];
-            byte x1 = x[1];
-            int i;
-
-            for (i = 0; i < 14; i++)
-            {
-                x[i] = x[i + 2];
-            }
-
-            x[i++] = x0;
-            x[i] = x1;
-        }
-
-        /* rotate 128-bit data to the left by 15 bits */
-        private void rot15(Span<byte> x)
-        {
-            byte x15;
-            int i;
-
-            rot16(x);
-            x15 = x[15];
-            for (i = 15; i >= 1; i--)
-            {
-                x[i] = (byte) ((x[i] >> 1) ^ (x[i - 1] << 7));
-            }
-
-            x[0] = (byte) ((x[0] >> 1) ^ (x15 << 7));
-        }
-
-        /* rotate 128-bit data to the left by 17 bits */
-        private void rot17(Span<byte> x)
-        {
-            rot16(x);
-            rot1(16, x);
-        }
-
-        /* Camellia round function without swap */
-        private void CamelliaRound(byte[] subkey, Span<byte> l, Span<byte> r)
-        {
-            byte[] t = new byte[8];
-
-            /* key XOR */
-            xorOctets(8, subkey, l, t);
-
-            /* S-Function */
-            t[0] = s1(t[0]);
-            t[1] = s2(t[1]);
-            t[2] = s3(t[2]);
-            t[3] = s4(t[3]);
-            t[4] = s2(t[4]);
-            t[5] = s3(t[5]);
-            t[6] = s4(t[6]);
-            t[7] = s1(t[7]);
-
-            /* P-Function with Feistel XOR */
-            byte a = (byte) (t[0] ^ t[3] ^ t[4] ^ t[5] ^ t[6]);
-            r[7] ^= a;
-            a ^= (byte) (t[0] ^ t[1] ^ t[2]);
-            r[3] ^= a;
-            a ^= (byte) (t[1] ^ t[6] ^ t[7]);
-            r[6] ^= a;
-            a ^= (byte) (t[0] ^ t[1] ^ t[3]);
-            r[2] ^= a;
-            a ^= (byte) (t[0] ^ t[5] ^ t[6]);
-            r[5] ^= a;
-            a ^= (byte) (t[0] ^ t[2] ^ t[3]);
-            r[1] ^= a;
-            a ^= (byte) (t[3] ^ t[4] ^ t[5]);
-            r[4] ^= a;
-            a ^= (byte) (t[1] ^ t[2] ^ t[3]);
-            r[0] ^= a;
-        }
-
-        /* Camellia FL function */
-        private void CamelliaFL(Span<byte> subkey, Span<byte> x)
-        {
-            byte[] t = new byte[4];
-            and4octets(x.Slice(0, 4), subkey.Slice(0, 4), t);
-            rot1(4, t);
-            xorOctets(4, t, x.Slice(4, 4), x.Slice(4, 4));
-            or4octets(x.Slice(4, 4), subkey.Slice(4, 4), t);
-            xorOctets(4, x.Slice(0, 4), t, x.Slice(0, 4));
-        }
-
-        /* Camellia FL^{-1} function */
-        private void CamelliaFLinv(Span<byte> subkey, Span<byte> y)
-        {
-            byte[] t = new byte[4];
-            or4octets(y.Slice(4, 4), subkey.Slice(4, 4), t);
-            xorOctets(4, y.Slice(0, 4), t, y.Slice(0, 4));
-            and4octets(y.Slice(0, 4), subkey.Slice(0, 4), t);
-            rot1(4, t);
-            xorOctets(4, t, y.Slice(4, 4), y.Slice(4, 4));
-        }
-
         /* sbox */
-        private static byte[] s = new byte[256]
+        private static readonly byte[] _S = new byte[256]
         {
             0x70, 0x82, 0x2c, 0xec, 0xb3, 0x27, 0xc0, 0xe5,
             0xe4, 0x85, 0x57, 0x35, 0xea, 0x0c, 0xae, 0x41,
@@ -514,7 +42,7 @@ namespace Necromancy.Server.Common
         };
 
         /* key schedule constants */
-        private static byte[][] Sigma = new byte[6][]
+        private static readonly byte[][] _Sigma = new byte[6][]
         {
             new byte[8] {0xa0, 0x9e, 0x66, 0x7f, 0x3b, 0xcc, 0x90, 0x8b},
             new byte[8] {0xb6, 0x7a, 0xe8, 0x58, 0x4c, 0xaa, 0x73, 0xb2},
@@ -523,5 +51,421 @@ namespace Necromancy.Server.Common
             new byte[8] {0x10, 0xe5, 0x27, 0xfa, 0xde, 0x68, 0x2d, 0x1d},
             new byte[8] {0xb0, 0x56, 0x88, 0xc2, 0xb3, 0xe6, 0xc1, 0xfd}
         };
+
+        /// <summary>
+        ///     Dragons Dogma Online Network Encryption
+        /// </summary>
+        public void Encrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
+        {
+            // TODO - Modifies input value to apply XOR - make a copy
+            // TODO check if input length is dividable by 16
+            uint keyLength = (uint)key.Length * 8;
+            byte[][] subkey = new byte[34][];
+
+
+            KeySchedule(keyLength, key, subkey);
+            int length = input.Length;
+            if (output.Length < input.Length)
+            {
+                // error not enough space
+            }
+
+            int current = 0;
+            while (current < length)
+            {
+                int xorLen = current + 16 < length ? 16 : length - current;
+                for (int i = 0; i < xorLen; i++) input[current + i] = (byte)(input[current + i] ^ prv[i]);
+                CryptBlock(
+                    false,
+                    keyLength,
+                    input.Slice(current, 16),
+                    subkey,
+                    output.Slice(current, 16)
+                );
+                for (int i = 0; i < xorLen; i++) prv[i] = output[current + i];
+                current += xorLen;
+            }
+        }
+
+        /// <summary>
+        ///     Dragons Dogma Online Network Decryption
+        /// </summary>
+        public void Decrypt(Span<byte> input, Span<byte> output, byte[] key, Span<byte> prv)
+        {
+            // TODO check if input length is dividable by 16
+
+            uint keyLength = (uint)key.Length * 8;
+            byte[][] subkey = new byte[34][];
+            KeySchedule(keyLength, key, subkey);
+            int length = input.Length;
+            if (output.Length < input.Length)
+            {
+                // error not enough space
+            }
+
+            int current = 0;
+            while (current < length)
+            {
+                CryptBlock(
+                    true,
+                    keyLength,
+                    input.Slice(current, 16),
+                    subkey,
+                    output.Slice(current, 16)
+                );
+                int xorLen = current + 16 < length ? 16 : length - current;
+                for (int i = 0; i < xorLen; i++) output[current + i] = (byte)(output[current + i] ^ prv[i]);
+
+                for (int i = 0; i < xorLen; i++) prv[i] = input[current + i];
+
+                current += xorLen;
+            }
+        }
+
+        /*
+         * 	Camellia key schedule
+         * 	subkey[26] should be allocated for keyLen == 128.
+         * 	otherwise subkey[34] should be allocated.
+         */
+        public void KeySchedule(uint keyLen, byte[] key, byte[][] subkey)
+        {
+            /* 0...KL, 1...KR, 2...KA, 3...KB */
+            byte[][] ikey = new byte[4][]
+            {
+                new byte[16],
+                new byte[16],
+                new byte[16],
+                new byte[16]
+            };
+
+            // subkey
+            // todo calculate and initialize subkey size
+            for (int subKeyIndex = 0; subKeyIndex < subkey.Length; subKeyIndex++) subkey[subKeyIndex] = new byte[8];
+
+            Span<byte> pl;
+            Span<byte> pr;
+            Span<byte> p;
+
+            int aki; /* all intermediate key index */
+            int dki; /* drop key index */
+            int ski; /* subkey index */
+            int maxikey;
+            int i;
+            int j;
+            int[] drop128 =
+            {
+                8, 9, 15, 16, 22, 23, 0
+            };
+            int[] drop256 =
+            {
+                2, 3, 4, 5, 8, 9, 14, 15, 16, 17, 20, 21, 26, 27, 30, 31,
+                36, 37, 42, 43, 46, 47, 48, 49, 54, 55, 58, 59, 60, 61, 0
+            };
+            int[] drop; /* pointer to drop128[] or drop256[] */
+
+            /* padding */
+            int bytes = (int)keyLen / 8;
+            int rounds = bytes / 16;
+            for (int round = 0; round < rounds; round++)
+            {
+                int currentBytes = round * 16;
+                int remainingBytes = bytes - currentBytes;
+                int count = remainingBytes > 16 ? 16 : remainingBytes;
+                Buffer.BlockCopy(key, round * 16, ikey[round], 0, count);
+            }
+
+            if (keyLen == 192)
+                for (i = 0; i < 8; i++)
+                    ikey[1][i + 8] = (byte)~ikey[1][i];
+
+            /* generate intermediate keys KA, KB */
+            Span<byte> spanKey2 = new Span<byte>(ikey[2]);
+            pl = spanKey2.Slice(0, 8);
+            pr = spanKey2.Slice(8, 8);
+
+            for (i = 0; i < 4; i++)
+            {
+                if (i % 2 == 0) XorOctets(16, ikey[i / 2 + 1], ikey[0], ikey[2]);
+
+                CamelliaRound(_Sigma[i], pl, pr);
+                p = pl;
+                pl = pr;
+                pr = p;
+            }
+
+            if (keyLen != 128)
+            {
+                XorOctets(16, ikey[2], ikey[1], ikey[3]); /* KB <- KA ^ KR */
+                Span<byte> spanKey3 = new Span<byte>(ikey[3]);
+                Span<byte> spanKey30 = spanKey3.Slice(0, 8);
+                Span<byte> spanKey38 = spanKey3.Slice(8, 8);
+                CamelliaRound(_Sigma[4], spanKey30, spanKey38);
+                CamelliaRound(_Sigma[5], spanKey38, spanKey30);
+            }
+
+            /* subkey generation */
+            aki = dki = ski = 0;
+            if (keyLen == 128)
+            {
+                maxikey = 2;
+                drop = drop128;
+                // memcpy(ikey[1], ikey[2], 16); /* ikey[1] is KA for 128-bit key */
+                Buffer.BlockCopy(ikey[2], 0, ikey[1], 0, 16);
+            }
+            else
+            {
+                /* keyLen == 192 or 256 */
+                maxikey = 4;
+                drop = drop256;
+            }
+
+            for (i = 0; i < 8; i++)
+            {
+                for (j = 0; j < 2 * maxikey; j++)
+                {
+                    if (aki != drop[dki])
+                    {
+                        //  memcpy(subkey[ski++], &ikey[j / 2][(j % 2) * 8], 8);
+                        byte[] iKeySrc = ikey[j / 2];
+                        Span<byte> iKeySrcSpan = new Span<byte>(iKeySrc);
+                        Span<byte> src = iKeySrcSpan.Slice(j % 2 * 8, 8);
+                        // todo optimize copy
+                        Buffer.BlockCopy(src.ToArray(), 0, subkey[ski], 0, 8);
+                        ski++;
+                    }
+                    else
+                    {
+                        dki++;
+                    }
+
+                    aki++;
+                }
+
+                for (j = 0; j < maxikey; j++)
+                    if (i < 4)
+                        Rot15(ikey[j]);
+                    else
+                        Rot17(ikey[j]);
+            }
+        }
+
+        public void CryptBlock(bool decrypt, uint keyLen, Span<byte> pt, byte[][] subkey, Span<byte> ct)
+        {
+            int r; /* round */
+            int ski; /* subkey index */
+            int direction;
+
+            if (decrypt)
+            {
+                /* decryption */
+                direction = -1;
+                ski = keyLen == 128 ? 26 - 2 : 34 - 2;
+            }
+            else
+            {
+                /* encryption */
+                direction = 1;
+                ski = 0;
+            }
+
+            /* prewhitening */
+            //xorOctets(16, pt, subkey[ski], ct);
+            XorOctets(8, pt.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
+            XorOctets(8, pt.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
+
+            if (decrypt)
+                /* decryption */
+                ski--;
+            else
+                /* encryption */
+                ski += 2;
+
+            /* main iteration */
+            for (r = 0; r < 24; r += 2)
+            {
+                if (keyLen == 128 && r >= 18) break;
+
+                if (r == 6 || r == 12 || r == 18)
+                {
+                    CamelliaFl(subkey[ski], ct.Slice(0, 8));
+                    ski += direction;
+                    CamelliaFLinv(subkey[ski], ct.Slice(8, 8));
+                    ski += direction;
+                }
+
+                CamelliaRound(subkey[ski], ct.Slice(0, 8), ct.Slice(8, 8));
+                ski += direction;
+                CamelliaRound(subkey[ski], ct.Slice(8, 8), ct.Slice(0, 8));
+                ski += direction;
+            }
+
+            SwapHalfBlock(ct.Slice(0, 8), ct.Slice(8, 8));
+
+            /* postwhitening */
+            if (decrypt) ski--;
+
+            //xorOctets(16, ct, subkey[ski], ct);
+
+            XorOctets(8, ct.Slice(0, 8), subkey[ski], ct.Slice(0, 8));
+            XorOctets(8, ct.Slice(8, 8), subkey[ski + 1], ct.Slice(8, 8));
+        }
+
+        private byte S1(int x)
+        {
+            return _S[x];
+        }
+
+        private byte S2(int x)
+        {
+            return (byte)((_S[x] << 1) + (_S[x] >> 7));
+        }
+
+        private byte S3(int x)
+        {
+            return (byte)((_S[x] << 7) + (_S[x] >> 1));
+        }
+
+        private byte S4(int x)
+        {
+            return _S[(byte)(x << 1) + (x >> 7)];
+        }
+
+        /* dst[] <- src1[] ^ src2[] */
+        private void XorOctets(uint nOctets, Span<byte> src1, Span<byte> src2, Span<byte> dst)
+        {
+            int i;
+
+            for (i = 0; i < nOctets; i++) dst[i] = (byte)(src1[i] ^ src2[i]);
+        }
+
+        /* a[] <-> b[] */
+        private void SwapHalfBlock(Span<byte> a, Span<byte> b)
+        {
+            byte t;
+            for (int i = 0; i < 8; i++)
+            {
+                t = a[i];
+                a[i] = b[i];
+                b[i] = t;
+            }
+        }
+
+        /* dst[] <- src1[] & src2[] */
+        private void And4Octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
+        {
+            int i;
+
+            for (i = 0; i < 4; i++) dst[i] = (byte)(src1[i] & src2[i]);
+        }
+
+        /* dst[] <- src1[] | src2[] */
+        private void Or4Octets(Span<byte> src1, Span<byte> src2, Span<byte> dst)
+        {
+            int i;
+
+            for (i = 0; i < 4; i++) dst[i] = (byte)(src1[i] | src2[i]);
+        }
+
+        /* x[] <<<= 1 */
+        private void Rot1(int nOctets, Span<byte> x)
+        {
+            byte x0 = x[0];
+            nOctets--;
+            for (int i = 0; i < nOctets; i++) x[i] = (byte)((x[i] << 1) ^ (x[i + 1] >> 7));
+
+            x[nOctets] = (byte)((x[nOctets] << 1) ^ (x0 >> 7));
+        }
+
+        /* rotate 128-bit data to the left by 16 bits */
+        private void Rot16(Span<byte> x)
+        {
+            byte x0 = x[0];
+            byte x1 = x[1];
+            int i;
+
+            for (i = 0; i < 14; i++) x[i] = x[i + 2];
+
+            x[i++] = x0;
+            x[i] = x1;
+        }
+
+        /* rotate 128-bit data to the left by 15 bits */
+        private void Rot15(Span<byte> x)
+        {
+            byte x15;
+            int i;
+
+            Rot16(x);
+            x15 = x[15];
+            for (i = 15; i >= 1; i--) x[i] = (byte)((x[i] >> 1) ^ (x[i - 1] << 7));
+
+            x[0] = (byte)((x[0] >> 1) ^ (x15 << 7));
+        }
+
+        /* rotate 128-bit data to the left by 17 bits */
+        private void Rot17(Span<byte> x)
+        {
+            Rot16(x);
+            Rot1(16, x);
+        }
+
+        /* Camellia round function without swap */
+        private void CamelliaRound(byte[] subkey, Span<byte> l, Span<byte> r)
+        {
+            byte[] t = new byte[8];
+
+            /* key XOR */
+            XorOctets(8, subkey, l, t);
+
+            /* S-Function */
+            t[0] = S1(t[0]);
+            t[1] = S2(t[1]);
+            t[2] = S3(t[2]);
+            t[3] = S4(t[3]);
+            t[4] = S2(t[4]);
+            t[5] = S3(t[5]);
+            t[6] = S4(t[6]);
+            t[7] = S1(t[7]);
+
+            /* P-Function with Feistel XOR */
+            byte a = (byte)(t[0] ^ t[3] ^ t[4] ^ t[5] ^ t[6]);
+            r[7] ^= a;
+            a ^= (byte)(t[0] ^ t[1] ^ t[2]);
+            r[3] ^= a;
+            a ^= (byte)(t[1] ^ t[6] ^ t[7]);
+            r[6] ^= a;
+            a ^= (byte)(t[0] ^ t[1] ^ t[3]);
+            r[2] ^= a;
+            a ^= (byte)(t[0] ^ t[5] ^ t[6]);
+            r[5] ^= a;
+            a ^= (byte)(t[0] ^ t[2] ^ t[3]);
+            r[1] ^= a;
+            a ^= (byte)(t[3] ^ t[4] ^ t[5]);
+            r[4] ^= a;
+            a ^= (byte)(t[1] ^ t[2] ^ t[3]);
+            r[0] ^= a;
+        }
+
+        /* Camellia FL function */
+        private void CamelliaFl(Span<byte> subkey, Span<byte> x)
+        {
+            byte[] t = new byte[4];
+            And4Octets(x.Slice(0, 4), subkey.Slice(0, 4), t);
+            Rot1(4, t);
+            XorOctets(4, t, x.Slice(4, 4), x.Slice(4, 4));
+            Or4Octets(x.Slice(4, 4), subkey.Slice(4, 4), t);
+            XorOctets(4, x.Slice(0, 4), t, x.Slice(0, 4));
+        }
+
+        /* Camellia FL^{-1} function */
+        private void CamelliaFLinv(Span<byte> subkey, Span<byte> y)
+        {
+            byte[] t = new byte[4];
+            Or4Octets(y.Slice(4, 4), subkey.Slice(4, 4), t);
+            XorOctets(4, y.Slice(0, 4), t, y.Slice(0, 4));
+            And4Octets(y.Slice(0, 4), subkey.Slice(0, 4), t);
+            Rot1(4, t);
+            XorOctets(4, t, y.Slice(4, 4), y.Slice(4, 4));
+        }
     }
 }

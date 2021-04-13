@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCashShop2NotifyItem : PacketResponse
     {
         public RecvCashShop2NotifyItem()
-            : base((ushort) AreaPacketId.recv_cash_shop2_notify_item, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cash_shop2_notify_item, ServerType.Area)
         {
         }
 
@@ -17,17 +17,14 @@ namespace Necromancy.Server.Packet.Receive.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
             res.WriteInt32(0x10);
-            for (int i = 0; i < 0x10; i++)
-            {
-                res.WriteByte(0);
-            }
-            res.WriteCString("");//find max size
+            for (int i = 0; i < 0x10; i++) res.WriteByte(0);
+            res.WriteCString(""); //find max size
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
             res.WriteInt32(0);
-            res.WriteCString("");//find max size
+            res.WriteCString(""); //find max size
             return res;
         }
     }

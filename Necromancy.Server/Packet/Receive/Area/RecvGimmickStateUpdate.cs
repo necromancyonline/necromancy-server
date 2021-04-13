@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGimmickStateUpdate : PacketResponse
     {
         public RecvGimmickStateUpdate()
-            : base((ushort) AreaPacketId.recv_gimmick_state_update, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gimmick_state_update, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCashGetUrlCommonSteam : PacketResponse
     {
         public RecvCashGetUrlCommonSteam()
-            : base((ushort) MsgPacketId.recv_cash_get_url_common_steam_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_cash_get_url_common_steam_r, ServerType.Msg)
         {
         }
 
@@ -17,9 +17,9 @@ namespace Necromancy.Server.Packet.Receive.Msg
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteInt32(0);
-            res.WriteCString("");//max size is 0x801
-            res.WriteCString("");//max size is 0x801
-            res.WriteCString("");//max size 0x11
+            res.WriteCString(""); //max size is 0x801
+            res.WriteCString(""); //max size is 0x801
+            res.WriteCString(""); //max size 0x11
             return res;
         }
     }

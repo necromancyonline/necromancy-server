@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Necromancy.Server;
 
 namespace Necromancy.Server.Discord.Modules
 {
@@ -14,16 +13,18 @@ namespace Necromancy.Server.Discord.Modules
             _server = server;
         }
 
-        [Command("status"), Summary("Current Server Status")]
+        [Command("status")]
+        [Summary("Current Server Status")]
         public async Task Status([Remainder] string chan = null)
         {
             EmbedBuilder builder = new EmbedBuilder();
             builder.WithTitle("Server Status");
-            builder.AddField("Connections", _server.Clients.GetCount());
+            builder.AddField("Connections", _server.clients.GetCount());
             await Context.Channel.SendMessageAsync(null, false, builder.Build());
         }
 
-        [Command("me"), Summary("Personal Profile")]
+        [Command("me")]
+        [Summary("Personal Profile")]
         public async Task Me()
         {
             EmbedBuilder builder = new EmbedBuilder();

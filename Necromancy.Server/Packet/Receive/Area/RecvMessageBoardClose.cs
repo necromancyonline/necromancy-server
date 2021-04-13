@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMessageBoardClose : PacketResponse
     {
         public RecvMessageBoardClose()
-            : base((ushort) AreaPacketId.recv_message_board_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_message_board_close_r, ServerType.Area)
         {
         }
 

@@ -11,13 +11,9 @@ namespace Necromancy.Server.Setting
         public SettingProvider(string directory = null)
         {
             if (Directory.Exists(directory))
-            {
                 _directory = directory;
-            }
             else
-            {
                 _directory = Util.RelativeExecutingDirectory();
-            }
         }
 
         public string GetSettingsPath(string file)
@@ -43,7 +39,7 @@ namespace Necromancy.Server.Setting
             }
             else
             {
-                settings = default(T);
+                settings = default;
             }
 
             return settings;

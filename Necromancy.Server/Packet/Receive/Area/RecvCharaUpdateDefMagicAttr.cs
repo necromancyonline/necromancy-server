@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateDefMagicAttr : PacketResponse
     {
         public RecvCharaUpdateDefMagicAttr()
-            : base((ushort) AreaPacketId.recv_chara_update_def_magic_attr, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_def_magic_attr, ServerType.Area)
         {
         }
 

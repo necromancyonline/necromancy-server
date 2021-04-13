@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyMentorNotifyUpdateLevel : PacketResponse
     {
         public RecvPartyMentorNotifyUpdateLevel()
-            : base((ushort) MsgPacketId.recv_party_mentor_notify_update_level, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_mentor_notify_update_level, ServerType.Msg)
         {
         }
 

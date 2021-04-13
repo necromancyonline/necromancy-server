@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDataNotifyEventLink : PacketResponse
     {
         public RecvDataNotifyEventLink()
-            : base((ushort) AreaPacketId.recv_data_notify_eventlink, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_eventlink, ServerType.Area)
         {
         }
 

@@ -8,12 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStorageDepositItem2 : PacketResponse
     {
         private readonly int _error;
+
         public RecvStorageDepositItem2(NecClient client, int error)
-            : base((ushort) AreaPacketId.recv_storage_deposit_item2_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_storage_deposit_item2_r, ServerType.Area)
         {
             _error = error;
-            Clients.Add(client);
+            clients.Add(client);
         }
+
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();

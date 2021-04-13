@@ -8,12 +8,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventRequestInt : PacketResponse
     {
         private readonly string _displayText;
-        private readonly int _minAmount;
-        private readonly int _maxAmount;
         private readonly int _initialAmount;
+        private readonly int _maxAmount;
+        private readonly int _minAmount;
 
         public RecvEventRequestInt(string displayText, int minAmount, int maxAmount, int initialAmount)
-            : base((ushort) AreaPacketId.recv_event_request_int, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_request_int, ServerType.Area)
         {
             _displayText = displayText;
             _minAmount = minAmount;

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaDelete : PacketResponse
     {
         public RecvCharaDelete()
-            : base((ushort) MsgPacketId.recv_chara_delete_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_delete_r, ServerType.Msg)
         {
         }
 

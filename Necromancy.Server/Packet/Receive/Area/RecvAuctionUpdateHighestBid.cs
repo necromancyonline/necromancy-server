@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvAuctionUpdateHighestBid : PacketResponse
     {
         public RecvAuctionUpdateHighestBid()
-            : base((ushort) AreaPacketId.recv_auction_update_highest_bid, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_auction_update_highest_bid, ServerType.Area)
         {
         }
 

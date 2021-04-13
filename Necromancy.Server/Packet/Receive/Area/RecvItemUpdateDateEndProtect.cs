@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateDateEndProtect : PacketResponse
     {
         public RecvItemUpdateDateEndProtect()
-            : base((ushort) AreaPacketId.recv_item_update_date_end_protect, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_date_end_protect, ServerType.Area)
         {
         }
 

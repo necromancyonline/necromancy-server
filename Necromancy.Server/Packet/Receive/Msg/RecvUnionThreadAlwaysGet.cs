@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionThreadAlwaysGet : PacketResponse
     {
         public RecvUnionThreadAlwaysGet()
-            : base((ushort) MsgPacketId.recv_union_thread_always_get_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_thread_always_get_r, ServerType.Msg)
         {
         }
 
@@ -25,6 +25,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
                 res.WriteFixedString("", 0x25);
                 res.WriteFixedString("", 0xC1);
             }
+
             return res;
         }
     }

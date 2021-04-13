@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedJailClose : PacketResponse
     {
         public RecvWantedJailClose()
-            : base((ushort) AreaPacketId.recv_wanted_jail_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_jail_close_r, ServerType.Area)
         {
         }
 

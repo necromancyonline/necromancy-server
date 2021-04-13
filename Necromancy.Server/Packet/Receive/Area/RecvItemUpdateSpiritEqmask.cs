@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateSpiritEqmask : PacketResponse
     {
         public RecvItemUpdateSpiritEqmask()
-            : base((ushort) AreaPacketId.recv_item_update_spirit_eqmask, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_spirit_eqmask, ServerType.Area)
         {
         }
 

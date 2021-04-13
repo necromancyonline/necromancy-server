@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleAttackPoseSelf : PacketResponse
     {
         public RecvBattleAttackPoseSelf()
-            : base((ushort) AreaPacketId.recv_battle_attack_pose_self, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_attack_pose_self, ServerType.Area)
         {
         }
 

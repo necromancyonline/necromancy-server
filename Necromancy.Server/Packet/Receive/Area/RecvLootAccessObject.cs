@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvLootAccessObject : PacketResponse
     {
         public RecvLootAccessObject()
-            : base((ushort) AreaPacketId.recv_loot_access_object_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_loot_access_object_r, ServerType.Area)
         {
         }
 

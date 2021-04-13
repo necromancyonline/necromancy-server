@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvSoulSetPasswd : PacketResponse
     {
         public RecvSoulSetPasswd()
-            : base((ushort) MsgPacketId.recv_soul_set_passwd_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_soul_set_passwd_r, ServerType.Msg)
         {
         }
 

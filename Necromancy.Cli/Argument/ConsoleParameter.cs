@@ -6,25 +6,25 @@ namespace Necromancy.Cli.Argument
     {
         public ConsoleParameter(string key)
         {
-            Key = key;
-            Arguments = new List<string>();
-            Switches = new List<string>();
-            ArgumentMap = new Dictionary<string, string>();
-            SwitchMap = new Dictionary<string, string>();
+            this.key = key;
+            arguments = new List<string>();
+            switches = new List<string>();
+            argumentMap = new Dictionary<string, string>();
+            switchMap = new Dictionary<string, string>();
         }
 
-        public string Key { get; }
-        public List<string> Arguments { get; }
-        public List<string> Switches { get; }
-        public Dictionary<string, string> SwitchMap { get; }
-        public Dictionary<string, string> ArgumentMap { get; }
+        public string key { get; }
+        public List<string> arguments { get; }
+        public List<string> switches { get; }
+        public Dictionary<string, string> switchMap { get; }
+        public Dictionary<string, string> argumentMap { get; }
 
         public void Clear()
         {
-            Arguments.Clear();
-            Switches.Clear();
-            ArgumentMap.Clear();
-            SwitchMap.Clear();
+            arguments.Clear();
+            switches.Clear();
+            argumentMap.Clear();
+            switchMap.Clear();
         }
     }
 }

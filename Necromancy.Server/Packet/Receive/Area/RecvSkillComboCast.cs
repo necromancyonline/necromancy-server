@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillComboCast : PacketResponse
     {
         public RecvSkillComboCast()
-            : base((ushort) AreaPacketId.recv_skill_combo_cast_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_combo_cast_r, ServerType.Area)
         {
         }
 

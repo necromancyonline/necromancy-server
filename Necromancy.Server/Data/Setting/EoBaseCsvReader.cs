@@ -4,15 +4,15 @@ namespace Necromancy.Server.Data.Setting
 {
     public class EoBaseCsvReader : CsvReader<EoBaseSetting>
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(EoBaseCsvReader));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(EoBaseCsvReader));
 
-        protected override int NumExpectedItems => 9;
+        protected override int numExpectedItems => 9;
 
         protected override EoBaseSetting CreateInstance(string[] properties)
         {
             if (!int.TryParse(properties[0], out int id))
             {
-                Logger.Debug("First entry empty!!");
+                _Logger.Debug("First entry empty!!");
                 return null;
             }
 
@@ -24,15 +24,15 @@ namespace Necromancy.Server.Data.Setting
 
             return new EoBaseSetting
             {
-                Id = id,
-                Name = properties[1],
-                LogId = logId,
-                Faction = properties[3],
-                OnlyOwner = onlyOwner,
-                ShowActivationTime = showActivationTime,
-                ShowName = showName,
+                id = id,
+                name = properties[1],
+                logId = logId,
+                faction = properties[3],
+                onlyOwner = onlyOwner,
+                showActivationTime = showActivationTime,
+                showName = showName,
                 damageShape = properties[10],
-                EffectRadius = effectRadius
+                effectRadius = effectRadius
             };
         }
     }

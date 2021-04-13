@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventSoulRankUpOpen : PacketResponse
     {
         public RecvEventSoulRankUpOpen()
-            : base((ushort) AreaPacketId.recv_event_soul_rankup_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_soul_rankup_open, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSkillRequestBaseFromItem : PacketResponse
     {
         public RecvSkillRequestBaseFromItem()
-            : base((ushort) AreaPacketId.recv_skill_request_base_from_item_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_skill_request_base_from_item_r, ServerType.Area)
         {
         }
 

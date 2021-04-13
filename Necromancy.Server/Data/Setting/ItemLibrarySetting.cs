@@ -1,143 +1,126 @@
 namespace Necromancy.Server.Data.Setting
 {
     /// <summary>
-    /// Additional Item information, that was not provided or could not be extracted from the client.
+    ///     Additional Item information, that was not provided or could not be extracted from the client.
     /// </summary>
     public class ItemLibrarySetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public string name { get; set; }
+
         //Equipment Slot Settings
-        public string ItemType { get; set; }
-        public string EquipmentType { get; set; }
+        public string itemType { get; set; }
+        public string equipmentType { get; set; }
 
         //Core Attributes
-        public string Rarity { get; set; }
-        public int PhysicalAttack { get; set; }
-        public int MagicalAttack { get; set; }
-        public int RangeDistance { get; set; }
-        public int SpecialPerformance { get; set; }
-        public int Durability { get; set; }
-        public int Hardness { get; set; }
-        public float Weight { get; set; }
+        public string rarity { get; set; }
+        public int physicalAttack { get; set; }
+        public int magicalAttack { get; set; }
+        public int rangeDistance { get; set; }
+        public int specialPerformance { get; set; }
+        public int durability { get; set; }
+        public int hardness { get; set; }
+        public float weight { get; set; }
 
         //Attack type
-        public int Slash { get; set; }
-        public int Strike { get; set; }
-        public int Pierce { get; set; }
+        public int slash { get; set; }
+        public int strike { get; set; }
+        public int pierce { get; set; }
 
         //UnKnown
-        public int BonusTolerance { get; set; }
+        public int bonusTolerance { get; set; }
 
         //Equip Restrictions
-        public int FIG { get; set; }
-        public int THI { get; set; }
-        public int MAG { get; set; }
-        public int PRI { get; set; }
-        public int SAM { get; set; }
-        public int NIN { get; set; }
-        public int BIS { get; set; }
-        public int LOR { get; set; }
-        public int CLO { get; set; }
-        public int ALC { get; set; }
+        public int fig { get; set; }
+        public int thi { get; set; }
+        public int mag { get; set; }
+        public int pri { get; set; }
+        public int sam { get; set; }
+        public int nin { get; set; }
+        public int bis { get; set; }
+        public int lor { get; set; }
+        public int clo { get; set; }
+        public int alc { get; set; }
 
         //Bitmask of occupation restrictions
-        public int Occupation { get; set; }
+        public int occupation { get; set; }
 
         //Bonus Stat gains
-        public int HP { get; set; }
-        public int MP { get; set; }
-        public int STR { get; set; }
-        public int VIT { get; set; }
-        public int DEX { get; set; }
-        public int AGI { get; set; }
-        public int INT { get; set; }
-        public int PIE { get; set; }
-        public int LUK { get; set; }
+        public int hp { get; set; }
+        public int mp { get; set; }
+        public int str { get; set; }
+        public int vit { get; set; }
+        public int dex { get; set; }
+        public int agi { get; set; }
+        public int @int { get; set; }
+        public int pie { get; set; }
+        public int luk { get; set; }
 
         //Bonus Skills on Attack
-        public int Poison { get; set; }
-        public int Paralysis { get; set; }
-        public int Stone { get; set; }
-        public int Faint { get; set; }
-        public int Blind { get; set; }
-        public int Sleep { get; set; }
-        public int Charm { get; set; }
-        public int Confusion { get; set; }
-        public int Fear { get; set; }
+        public int poison { get; set; }
+        public int paralysis { get; set; }
+        public int stone { get; set; }
+        public int faint { get; set; }
+        public int blind { get; set; }
+        public int sleep { get; set; }
+        public int charm { get; set; }
+        public int confusion { get; set; }
+        public int fear { get; set; }
 
         //Bonus Elemental Defence
-        public int FireDef { get; set; }
-        public int WaterDef { get; set; }
-        public int WindDef { get; set; }
-        public int EarthDef { get; set; }
-        public int LightDef { get; set; }
-        public int DarkDef { get; set; }
+        public int fireDef { get; set; }
+        public int waterDef { get; set; }
+        public int windDef { get; set; }
+        public int earthDef { get; set; }
+        public int lightDef { get; set; }
+        public int darkDef { get; set; }
 
         //Bonus Elemental Attack
-        public int FireAtk { get; set; }
-        public int WaterAtk { get; set; }
-        public int WindAtk { get; set; }
-        public int EarthAtk { get; set; }
-        public int LightAtk { get; set; }
-        public int DarkAtk { get; set; }
+        public int fireAtk { get; set; }
+        public int waterAtk { get; set; }
+        public int windAtk { get; set; }
+        public int earthAtk { get; set; }
+        public int lightAtk { get; set; }
+        public int darkAtk { get; set; }
 
         //Transfer Restrictions
-        public bool Sellable { get; set; }
-        public bool Tradeable { get; set; }
-        public bool NewItem { get; set; }
-        public bool Lootable { get; set; }
-        public bool Blessable { get; set; }
-        public bool Curseable { get; set; }
+        public bool sellable { get; set; }
+        public bool tradeable { get; set; }
+        public bool newItem { get; set; }
+        public bool lootable { get; set; }
+        public bool blessable { get; set; }
+        public bool curseable { get; set; }
 
         //Character Level Restrictions
-        public int LowerLimit { get; set; }
-        public int UpperLimit { get; set; }
+        public int lowerLimit { get; set; }
+        public int upperLimit { get; set; }
 
         //Minimum Stat Requirements
-        public int RequiredStr { get; set; }
-        public int RequiredVit { get; set; }
-        public int RequiredDex { get; set; }
-        public int RequiredAgi { get; set; }
-        public int RequiredInt { get; set; }
-        public int RequiredPie { get; set; }
-        public int RequiredLuk { get; set; }
+        public int requiredStr { get; set; }
+        public int requiredVit { get; set; }
+        public int requiredDex { get; set; }
+        public int requiredAgi { get; set; }
+        public int requiredInt { get; set; }
+        public int requiredPie { get; set; }
+        public int requiredLuk { get; set; }
 
         //Soul Level Requirement
-        public int RequiredSoulLevel { get; set; }
-        
+        public int requiredSoulLevel { get; set; }
+
         //Allignment Requirement
-        public string RequiredAlignment { get; set; }
+        public string requiredAlignment { get; set; }
 
         //Race Requirement
-        public int RequiredHuman { get; set; }
-        public int RequiredElf { get; set; }
-        public int RequiredDwarf { get; set; }
-        public int RequiredGnome { get; set; }
-        public int RequiredPorkul { get; set; }
+        public int requiredHuman { get; set; }
+        public int requiredElf { get; set; }
+        public int requiredDwarf { get; set; }
+        public int requiredGnome { get; set; }
+        public int requiredPorkul { get; set; }
 
         //Gender Requirement
-        public string RequiredGender { get; set; }
-        
+        public string requiredGender { get; set; }
+
         //Special Description Text
-        public string WhenEquippedText { get; set; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        public string whenEquippedText { get; set; }
+        public int id { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvThreadEnter : PacketResponse
     {
         public RecvThreadEnter()
-            : base((ushort) AreaPacketId.recv_thread_enter_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_thread_enter_r, ServerType.Area)
         {
         }
 
@@ -26,6 +26,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteFixedString("", 0x25);
                 res.WriteFixedString("", 0x301);
             }
+
             return res;
         }
     }

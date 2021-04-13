@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvThreadExit : PacketResponse
     {
         public RecvThreadExit()
-            : base((ushort) AreaPacketId.recv_thread_exit_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_thread_exit_r, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCashBuyCharaRename : PacketResponse
     {
         public RecvCashBuyCharaRename()
-            : base((ushort) MsgPacketId.recv_cash_buy_chara_rename_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_cash_buy_chara_rename_r, ServerType.Msg)
         {
         }
 

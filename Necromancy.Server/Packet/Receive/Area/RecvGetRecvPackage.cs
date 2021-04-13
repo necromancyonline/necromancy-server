@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGetRecvPackage : PacketResponse
     {
         public RecvGetRecvPackage()
-            : base((ushort) AreaPacketId.recv_get_recv_package, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_get_recv_package, ServerType.Area)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            int numEntries = 0x27;//max is 0x64 but it is too high
+            int numEntries = 0x27; //max is 0x64 but it is too high
             res.WriteInt32(numEntries);
             for (int i = 0; i < numEntries; i++)
             {
@@ -40,17 +40,17 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
 
-                res.WriteByte(0);//bool
+                res.WriteByte(0); //bool
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
 
-                res.WriteByte(0);//bool
+                res.WriteByte(0); //bool
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
 
-                res.WriteByte(0);//bool
+                res.WriteByte(0); //bool
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);

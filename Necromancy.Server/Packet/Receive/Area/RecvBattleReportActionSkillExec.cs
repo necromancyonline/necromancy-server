@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly int _skillId;
 
         public RecvBattleReportActionSkillExec(int skillId)
-            : base((ushort) AreaPacketId.recv_battle_report_action_skill_exec, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_skill_exec, ServerType.Area)
         {
             _skillId = skillId;
         }

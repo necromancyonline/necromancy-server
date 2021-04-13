@@ -5,38 +5,35 @@ namespace Necromancy.Server.Common.Instance
 {
     public class InstanceIdPool : IInstanceIdPool
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(InstanceIdPool));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(InstanceIdPool));
 
         private readonly ConcurrentStack<uint> _idPool;
-        private readonly uint _lowerBound;
 
         public InstanceIdPool(string name, uint lowerBound, uint size)
         {
             _idPool = new ConcurrentStack<uint>();
-            _lowerBound = lowerBound;
-            Name = name;
-            Size = size;
-            UpperBound = _lowerBound + Size;
-            Logger.Debug($"Pool:{Name} Loading:{Size}");
-            for (uint i = _lowerBound; i < UpperBound; i++)
-            {
-                _idPool.Push(i);
-            }
+            this.lowerBound = lowerBound;
+            this.name = name;
+            this.size = size;
+            upperBound = this.lowerBound + this.size;
+            _Logger.Debug($"Pool:{this.name} Loading:{this.size}");
+            for (uint i = this.lowerBound; i < upperBound; i++) _idPool.Push(i);
 
-            Logger.Debug($"Pool:{Name} - Finished");
+            _Logger.Debug($"Pool:{this.name} - Finished");
         }
 
-        public uint Used => Size - (uint) _idPool.Count;
-        public uint LowerBound => _lowerBound;
-        public uint UpperBound { get; }
-        public uint Size { get; }
-        public string Name { get; }
+        public uint used => size - (uint)_idPool.Count;
+        public uint lowerBound { get; }
+
+        public uint upperBound { get; }
+        public uint size { get; }
+        public string name { get; }
 
         public void Push(uint id)
         {
-            if (id < LowerBound || id > UpperBound)
+            if (id < lowerBound || id > upperBound)
             {
-                Logger.Error($"Id: {id} does not belong to pool {Name} ({LowerBound}-{UpperBound})");
+                _Logger.Error($"Id: {id} does not belong to pool {name} ({lowerBound}-{upperBound})");
                 return;
             }
 

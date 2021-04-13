@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaMoveSpeedPer : PacketResponse
     {
         public RecvCharaMoveSpeedPer()
-            : base((ushort) AreaPacketId.recv_chara_move_speed_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_move_speed_per, ServerType.Area)
         {
         }
 

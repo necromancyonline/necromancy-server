@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyUpdateMaxAp : PacketResponse
     {
         public RecvPartyNotifyUpdateMaxAp()
-            : base((ushort) MsgPacketId.recv_party_notify_update_maxap, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_update_maxap, ServerType.Msg)
         {
         }
 

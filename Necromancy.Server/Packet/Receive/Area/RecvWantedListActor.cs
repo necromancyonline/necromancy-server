@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedListActor : PacketResponse
     {
         public RecvWantedListActor()
-            : base((ushort) AreaPacketId.recv_wanted_list_actor, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_list_actor, ServerType.Area)
         {
         }
 
@@ -29,6 +29,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
             }
+
             res.WriteInt32(0);
             return res;
         }

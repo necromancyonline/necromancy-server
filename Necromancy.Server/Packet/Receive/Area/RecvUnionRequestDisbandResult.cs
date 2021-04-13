@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionRequestDisbandResult : PacketResponse
     {
         public RecvUnionRequestDisbandResult()
-            : base((ushort) AreaPacketId.recv_union_request_disband_result, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_request_disband_result, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateJobAttrSkillCoolTimePer : PacketResponse
     {
         public RecvCharaUpdateJobAttrSkillCoolTimePer()
-            : base((ushort) AreaPacketId.recv_chara_update_job_attr_skill_cooltime_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_job_attr_skill_cooltime_per, ServerType.Area)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteInt16(0);//Percentage most likely
+            res.WriteInt16(0); //Percentage most likely
             return res;
         }
     }

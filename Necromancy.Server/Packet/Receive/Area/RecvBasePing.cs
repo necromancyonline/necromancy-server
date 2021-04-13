@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBasePing : PacketResponse
     {
         public RecvBasePing()
-            : base((ushort) AreaPacketId.recv_base_ping_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_base_ping_r, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

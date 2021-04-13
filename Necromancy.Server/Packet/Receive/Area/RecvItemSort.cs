@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemSort : PacketResponse
     {
         public RecvItemSort()
-            : base((ushort) AreaPacketId.recv_item_sort_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_sort_r, ServerType.Area)
         {
         }
 

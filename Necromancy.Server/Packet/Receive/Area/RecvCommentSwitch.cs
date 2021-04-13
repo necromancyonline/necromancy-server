@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCommentSwitch : PacketResponse
     {
         public RecvCommentSwitch()
-            : base((ushort) AreaPacketId.recv_comment_switch_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_comment_switch_r, ServerType.Area)
         {
         }
 

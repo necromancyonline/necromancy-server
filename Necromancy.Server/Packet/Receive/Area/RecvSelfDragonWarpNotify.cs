@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvSelfDragonWarpNotify : PacketResponse
     {
-        private int _objectId;
+        private readonly int _objectId;
+
         public RecvSelfDragonWarpNotify(int objectId)
-            : base((ushort) AreaPacketId.recv_self_dragon_warp_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_dragon_warp_notify, ServerType.Area)
         {
             _objectId = objectId;
         }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvSoulSelect : PacketResponse
     {
         public RecvSoulSelect()
-            : base((ushort) MsgPacketId.recv_soul_select_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_soul_select_r, ServerType.Msg)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteByte(0);//bool
+            res.WriteByte(0); //bool
             return res;
         }
     }

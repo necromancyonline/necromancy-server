@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestCheckTimeLimit : PacketResponse
     {
         public RecvQuestCheckTimeLimit()
-            : base((ushort) AreaPacketId.recv_quest_check_time_limit_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_check_time_limit_r, ServerType.Area)
         {
         }
 

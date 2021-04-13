@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionNotifyCancelInvitat : PacketResponse
     {
         public RecvUnionNotifyCancelInvitat()
-            : base((ushort) MsgPacketId.recv_union_notify_cancel_invitat, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_notify_cancel_invitat, ServerType.Msg)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteCString("");//max size 0x31
+            res.WriteCString(""); //max size 0x31
             return res;
         }
     }

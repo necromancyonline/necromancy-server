@@ -13,6 +13,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "list";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -20,10 +23,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteInt64(9999); // Bounty points.
             res.WriteInt32(0);
             res.WriteInt32(0); // When i change list doesn't open anymore, don't know what is it
-            Router.Send(client, (ushort) AreaPacketId.recv_wanted_list_open, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_wanted_list_open, res, ServerType.Area);
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "list";
     }
 }

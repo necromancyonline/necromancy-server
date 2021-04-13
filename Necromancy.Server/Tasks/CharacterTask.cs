@@ -18,50 +18,46 @@ namespace Necromancy.Server.Tasks
     public class CharacterTask : PeriodicTask
 
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(CharacterTask));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(CharacterTask));
+        private readonly NecClient _client;
 
-        private readonly object LogoutLock = new object();
-        private NecServer _server;
-        private NecClient _client;
-        private int tickTime;
+        private readonly object _logoutLock = new object();
+        private readonly NecServer _server;
+        private readonly int _tickTime;
+        private List<NecClient> _clients;
         private DateTime _logoutTime;
         private byte _logoutType;
-        private bool playerDied;
+        private bool _playerDied;
         private int _tickCounter;
-        private List<NecClient> _clients;
 
         public CharacterTask(NecServer server, NecClient client)
         {
             _server = server;
             _client = client;
-            tickTime = 500;
+            _tickTime = 500;
             _logoutTime = DateTime.MinValue;
-            playerDied = false;
+            _playerDied = false;
             _tickCounter = 0;
         }
 
-        public override string TaskName => $"CharacterTask : {_client.Soul.Name}";
-        public override TimeSpan TaskTimeSpan { get; }
-        protected override bool TaskRunAtStart => false;
+        public override string taskName => $"CharacterTask : {_client.soul.name}";
+        public override TimeSpan taskTimeSpan { get; }
+        protected override bool taskRunAtStart => false;
 
         protected override void Execute()
         {
-            Thread.Sleep(5000); //fix null ref on chara select. 
-            if(_client == null) this.Stop(); //crash/disconnect handling
-            while (_client.Character.characterActive)
+            Thread.Sleep(5000); //fix null ref on chara select.
+            if (_client == null) Stop(); //crash/disconnect handling
+            while (_client.character.characterActive)
             {
                 if (_logoutTime != DateTime.MinValue)
-                {
                     if (DateTime.Now >= _logoutTime)
-                    {
                         LogOutRequest();
-                    }
-                }
 
-                if (_client.Character.Hp.depleted && !playerDied)
+                if (_client.character.hp.depleted && !_playerDied)
                     PlayerDead();
-                else if (!_client.Character.Hp.depleted && playerDied)
-                    playerDied = false;
+                else if (!_client.character.hp.depleted && _playerDied)
+                    _playerDied = false;
 
                 StatRegen();
 
@@ -73,110 +69,113 @@ namespace Necromancy.Server.Tasks
                 }
 
                 _tickCounter++;
-                Thread.Sleep(tickTime);
+                Thread.Sleep(_tickTime);
             }
 
-            this.Stop();
+            Stop();
         }
 
         private void CriminalRepent()
         {
-            _client.Soul.CriminalLevel--;
-            if (_client.Soul.CriminalLevel <= 0) _client.Soul.CriminalLevel = 0;
+            _client.soul.criminalLevel--;
+            if (_client.soul.criminalLevel <= 0) _client.soul.criminalLevel = 0;
 
-            _client.Character.criminalState = _client.Soul.CriminalLevel;
-
+            _client.character.criminalState = _client.soul.criminalLevel;
         }
+
         private void SoulMaterialIncrease()
         {
-            _client.Soul.MaterialChaos += 10;
-            _client.Soul.MaterialLawful += 10;
-            _client.Soul.MaterialLife += 10;
-            _client.Soul.MaterialReincarnation += 10;
-            _client.Soul.PointsChaos += 10; //temporary. testing
+            _client.soul.materialChaos += 10;
+            _client.soul.materialLawful += 10;
+            _client.soul.materialLife += 10;
+            _client.soul.materialReincarnation += 10;
+            _client.soul.pointsChaos += 10; //temporary. testing
         }
+
         private void StatRegen()
         {
-            if (_client.Character.Gp.current < _client.Character.Gp.max) 
-            { 
-                _client.Character.Gp.setCurrent(_client.Character.Gp.current + 5/*_client.Character.GPRecoveryRate*/);
-                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(_client.Character.Gp.current);
-                _server.Router.Send(recvCharaUpdateAc, _client);
+            if (_client.character.gp.current < _client.character.gp.max)
+            {
+                _client.character.gp.SetCurrent(_client.character.gp.current + 5 /*_client.Character.GPRecoveryRate*/);
+                RecvCharaUpdateAc recvCharaUpdateAc = new RecvCharaUpdateAc(_client.character.gp.current);
+                _server.router.Send(recvCharaUpdateAc, _client);
             }
 
-            if(_client.Character.movementPose == 4/*running byte*/)
+            if (_client.character.movementPose == 4 /*running byte*/)
             {
-                _client.Character.Od.setCurrent(_client.Character.Od.current - 5/*_client.Character.APCostDiff*/);
-                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.Character.Od.current);
-                _server.Router.Send(recvCharaUpdateAp, _client);
+                _client.character.od.SetCurrent(_client.character.od.current - 5 /*_client.Character.APCostDiff*/);
+                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.od.current);
+                _server.router.Send(recvCharaUpdateAp, _client);
             }
-            else if (_client.Character.Od.current < _client.Character.Od.max)
+            else if (_client.character.od.current < _client.character.od.max)
             {
-                _client.Character.Od.setCurrent(_client.Character.Od.current + _client.Character.OdRecoveryRate/2);
-                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.Character.Od.current);
-                _server.Router.Send(recvCharaUpdateAp, _client);
+                _client.character.od.SetCurrent(_client.character.od.current + _client.character.odRecoveryRate / 2);
+                RecvCharaUpdateAp recvCharaUpdateAp = new RecvCharaUpdateAp(_client.character.od.current);
+                _server.router.Send(recvCharaUpdateAp, _client);
             }
         }
 
         private void PlayerDead()
         {
-            playerDied = true;
-            _client.Character.HasDied = true; 
-            _client.Character.State = CharacterState.SoulForm;
-            _client.Character.deadType = (short)Util.GetRandomNumber(1, 4);
-            Logger.Debug($"Death Animation Number : {_client.Character.deadType}");
+            _playerDied = true;
+            _client.character.hasDied = true;
+            _client.character.state = CharacterState.SoulForm;
+            _client.character.deadType = (short)Util.GetRandomNumber(1, 4);
+            _Logger.Debug($"Death Animation Number : {_client.character.deadType}");
 
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.Character.InstanceId);
-            RecvBattleReportNoactDead cDead1 = new RecvBattleReportNoactDead(_client.Character.InstanceId, _client.Character.deadType);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
+            RecvBattleReportNoactDead cDead1 = new RecvBattleReportNoactDead(_client.character.instanceId, _client.character.deadType);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
 
             brList.Add(brStart);
             brList.Add(cDead1); //animate the death of your living body
             brList.Add(brEnd);
-            _server.Router.Send(_client.Map, brList); // send death animation to all players
+            _server.router.Send(_client.map, brList); // send death animation to all players
 
-            DeadBody deadBody = _server.Instances.GetInstance((uint)_client.Character.DeadBodyInstanceId) as DeadBody;
-            deadBody.X = _client.Character.X;
-            deadBody.Y = _client.Character.Y;
-            deadBody.Z = _client.Character.Z;
-            deadBody.Heading = _client.Character.Heading;
-            deadBody.BeginnerProtection = (byte)_client.Character.beginnerProtection;
-            deadBody.CharaName = _client.Character.Name;
-            deadBody.SoulName = _client.Soul.Name;
-            deadBody.EquippedItems = _client.Character.EquippedItems;
-            deadBody.RaceId = _client.Character.RaceId;
-            deadBody.SexId = _client.Character.SexId;
-            deadBody.HairId = _client.Character.HairId;
-            deadBody.HairColorId = _client.Character.HairColorId;
-            deadBody.FaceId = _client.Character.FaceId;
-            deadBody.FaceArrangeId = _client.Character.FaceArrangeId;
-            deadBody.VoiceId = _client.Character.VoiceId;
-            deadBody.Level = _client.Character.Level;
-            deadBody.ClassId = _client.Character.ClassId;
-            deadBody.EquippedItems = _client.Character.EquippedItems;
-            deadBody.CriminalStatus = _client.Character.criminalState;
-            deadBody.ConnectionState = 1;
-            _clients = _client.Map.ClientLookup.GetAll();
-            _client.Map.DeadBodies.Add(deadBody.InstanceId, deadBody);
+            DeadBody deadBody = _server.instances.GetInstance(_client.character.deadBodyInstanceId) as DeadBody;
+            deadBody.x = _client.character.x;
+            deadBody.y = _client.character.y;
+            deadBody.z = _client.character.z;
+            deadBody.heading = _client.character.heading;
+            deadBody.beginnerProtection = (byte)_client.character.beginnerProtection;
+            deadBody.charaName = _client.character.name;
+            deadBody.soulName = _client.soul.name;
+            deadBody.equippedItems = _client.character.equippedItems;
+            deadBody.raceId = _client.character.raceId;
+            deadBody.sexId = _client.character.sexId;
+            deadBody.hairId = _client.character.hairId;
+            deadBody.hairColorId = _client.character.hairColorId;
+            deadBody.faceId = _client.character.faceId;
+            deadBody.faceArrangeId = _client.character.faceArrangeId;
+            deadBody.voiceId = _client.character.voiceId;
+            deadBody.level = _client.character.level;
+            deadBody.classId = _client.character.classId;
+            deadBody.equippedItems = _client.character.equippedItems;
+            deadBody.criminalStatus = _client.character.criminalState;
+            deadBody.connectionState = 1;
+            _clients = _client.map.clientLookup.GetAll();
+            _client.map.deadBodies.Add(deadBody.instanceId, deadBody);
             List<NecClient> soulStateClients = new List<NecClient>();
 
             //Disappear .. all the monsters, NPCs, and characters.  welcome to death! it's lonely
-            foreach (NpcSpawn npcSpawn in _client.Map.NpcSpawns.Values)
+            foreach (NpcSpawn npcSpawn in _client.map.npcSpawns.Values)
             {
-                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.InstanceId);
-                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(npcSpawn.instanceId);
+                _server.router.Send(_client, recvObjectDisappearNotify.ToPacket());
             }
-            foreach (MonsterSpawn monsterSpawn in _client.Map.MonsterSpawns.Values)
+
+            foreach (MonsterSpawn monsterSpawn in _client.map.monsterSpawns.Values)
             {
-                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.InstanceId);
-                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(monsterSpawn.instanceId);
+                _server.router.Send(_client, recvObjectDisappearNotify.ToPacket());
             }
+
             foreach (NecClient client in _clients)
             {
                 if (client == _client) continue; //Don't dissapear yourself ! that'd be bad news bears.
-                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.Character.InstanceId);
-                _server.Router.Send(_client, recvObjectDisappearNotify.ToPacket());
+                RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(client.character.instanceId);
+                _server.router.Send(_client, recvObjectDisappearNotify.ToPacket());
             }
 
             //load your dead body on the map for looting.  disappear your character model for everyone else besides you
@@ -184,19 +183,18 @@ namespace Necromancy.Server.Tasks
             (t1 =>
                 {
                     RecvDataNotifyCharaBodyData cBodyData = new RecvDataNotifyCharaBodyData(deadBody);
-                    if (_client.Map.Id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
-                    { _server.Router.Send(_client.Map, cBodyData.ToPacket(), _client); }
-                    _server.Router.Send(_client, cBodyData.ToPacket());
-                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.Character.InstanceId);
-                    _server.Router.Send(_client.Map, recvObjectDisappearNotify.ToPacket(),_client);
+                    if (_client.map.id.ToString()[0] != "1"[0]) //Don't Render dead bodies in town.  Town map ids all start with 1
+                        _server.router.Send(_client.map, cBodyData.ToPacket(), _client);
+                    _server.router.Send(_client, cBodyData.ToPacket());
+                    RecvObjectDisappearNotify recvObjectDisappearNotify = new RecvObjectDisappearNotify(_client.character.instanceId);
+                    _server.router.Send(_client.map, recvObjectDisappearNotify.ToPacket(), _client);
                     //send your soul to all the other souls runnin around
                     foreach (NecClient client in _clients)
-                    {
-                        if (client.Character.State == CharacterState.SoulForm) { soulStateClients.Add(client); }
-                    }
+                        if (client.character.state == CharacterState.SoulForm)
+                            soulStateClients.Add(client);
                     //re-render your soulstate character to your client with out gear on it, and any other soul state clients on map.
-                    RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.Character, _client.Soul.Name);
-                    _server.Router.Send(soulStateClients, cData.ToPacket());
+                    RecvDataNotifyCharaData cData = new RecvDataNotifyCharaData(_client.character, _client.soul.name);
+                    _server.router.Send(soulStateClients, cData.ToPacket());
                 }
             );
             //Re-render all the NPCs and Monsters, and character objects
@@ -206,59 +204,55 @@ namespace Necromancy.Server.Tasks
                     foreach (NecClient otherClient in _clients)
                     {
                         if (otherClient == _client)
-                        {
                             // skip myself
                             continue;
-                        }
                         //Render all the souls if you are in soul form yourself
-                        if (otherClient.Character.State == CharacterState.SoulForm)
+                        if (otherClient.character.state == CharacterState.SoulForm)
                         {
-                            RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.Character, otherClient.Soul.Name);
-                            _server.Router.Send(otherCharacterData, _client);
+                            RecvDataNotifyCharaData otherCharacterData = new RecvDataNotifyCharaData(otherClient.character, otherClient.soul.name);
+                            _server.router.Send(otherCharacterData, _client);
                         }
 
-                        if (otherClient.Union != null)
+                        if (otherClient.union != null)
                         {
-                            RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.Character, otherClient.Union.Name);
-                            _server.Router.Send(otherUnionData, _client);
+                            RecvDataNotifyUnionData otherUnionData = new RecvDataNotifyUnionData(otherClient.character, otherClient.union.name);
+                            _server.router.Send(otherUnionData, _client);
                         }
                     }
-                    foreach (NpcSpawn npcSpawn in _client.Map.NpcSpawns.Values)
-                    {
-                        if (npcSpawn.Visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
+
+                    foreach (NpcSpawn npcSpawn in _client.map.npcSpawns.Values)
+                        if (npcSpawn.visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
                         {
                             RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
-                            _server.Router.Send(npcData, _client);
+                            _server.router.Send(npcData, _client);
                         }
-                    }
                 }
             );
-
         }
 
         public void Logout(DateTime logoutTime, byte logoutType)
         {
-            lock (LogoutLock)
+            lock (_logoutLock)
             {
                 _logoutTime = logoutTime;
                 _logoutType = logoutType;
             }
 
-            Logger.Debug($"logoutTime [{logoutTime}] _logoutType [{_logoutType}]");
+            _Logger.Debug($"logoutTime [{logoutTime}] _logoutType [{_logoutType}]");
         }
 
         private void LogOutRequest()
         {
             _logoutTime = DateTime.MinValue;
             IBuffer res = BufferProvider.Provide();
-            Logger.Debug($"_logoutType [{_logoutType}]");
+            _Logger.Debug($"_logoutType [{_logoutType}]");
             if (_logoutType == 0x00) // Return to Title   also   Exit Game
             {
                 res = null;
                 res = BufferProvider.Provide();
                 //res.WriteInt64(1);
                 //res.WriteInt16(1);
-                _server.Router.Send(_client, (ushort) AreaPacketId.recv_escape_start, res, ServerType.Area);
+                _server.router.Send(_client, (ushort)AreaPacketId.recv_escape_start, res, ServerType.Area);
 
 
                 //IBuffer buffer = BufferProvider.Provide();
@@ -271,7 +265,7 @@ namespace Necromancy.Server.Tasks
             if (_logoutType == 0x01) // Return to Character Select
             {
                 res.WriteInt32(0);
-                _server.Router.Send(_client, (ushort) MsgPacketId.recv_chara_select_back_soul_select_r, res,
+                _server.router.Send(_client, (ushort)MsgPacketId.recv_chara_select_back_soul_select_r, res,
                     ServerType.Msg);
 
                 Thread.Sleep(4100);
@@ -280,13 +274,13 @@ namespace Necromancy.Server.Tasks
                 res = BufferProvider.Provide();
                 res.WriteInt32(0);
                 res.WriteByte(0);
-                _server.Router.Send(_client, (ushort) MsgPacketId.recv_soul_authenticate_passwd_r, res, ServerType.Msg);
+                _server.router.Send(_client, (ushort)MsgPacketId.recv_soul_authenticate_passwd_r, res, ServerType.Msg);
             }
 
             if (_logoutType == 0x02)
             {
                 res.WriteInt32(0);
-                _server.Router.Send(_client, (ushort) MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);
+                _server.router.Send(_client, (ushort)MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);
             }
         }
     }

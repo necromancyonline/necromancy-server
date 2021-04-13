@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly int _objectId;
 
         public RecvBattleReportActionItemUse(int objectId)
-            : base((ushort) AreaPacketId.recv_battle_report_action_item_use, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_item_use, ServerType.Area)
         {
             _objectId = objectId;
         }

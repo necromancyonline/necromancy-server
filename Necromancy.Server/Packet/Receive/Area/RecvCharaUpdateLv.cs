@@ -7,13 +7,14 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateLv : PacketResponse
     {
-        uint _instanceId;
-        short _level;
+        private readonly uint _instanceId;
+        private readonly short _level;
+
         public RecvCharaUpdateLv(Character character)
-            : base((ushort) AreaPacketId.recv_chara_update_lv, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_lv, ServerType.Area)
         {
-            _instanceId = character.InstanceId;
-            _level = character.Level;
+            _instanceId = character.instanceId;
+            _level = character.level;
         }
 
         protected override IBuffer ToBuffer()

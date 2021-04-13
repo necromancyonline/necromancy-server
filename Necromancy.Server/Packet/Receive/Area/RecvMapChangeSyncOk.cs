@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMapChangeSyncOk : PacketResponse
     {
         public RecvMapChangeSyncOk()
-            : base((ushort) AreaPacketId.recv_map_change_sync_ok, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_map_change_sync_ok, ServerType.Area)
         {
         }
 

@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionOpenWindow : PacketResponse
     {
         public RecvUnionOpenWindow()
-            : base((ushort) AreaPacketId.recv_union_open_window, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_open_window, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionRequestSetInfo : PacketResponse
     {
         public RecvUnionRequestSetInfo()
-            : base((ushort) MsgPacketId.recv_union_request_set_info_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_request_set_info_r, ServerType.Msg)
         {
         }
 

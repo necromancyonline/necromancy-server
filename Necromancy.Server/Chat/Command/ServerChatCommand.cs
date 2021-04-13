@@ -6,11 +6,11 @@ namespace Necromancy.Server.Chat.Command
     {
         protected ServerChatCommand(NecServer server)
         {
-            Server = server;
-            Router = Server.Router;
+            this.server = server;
+            router = this.server.router;
         }
 
-        protected NecServer Server { get; }
-        protected PacketRouter Router { get; }
+        protected NecServer server { get; }
+        protected PacketRouter router { get; }
     }
 }

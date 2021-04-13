@@ -8,40 +8,40 @@ namespace Necromancy.Server.Logging
     public class NecLogPacket : NecPacket
     {
         public NecLogPacket(string clientIdentity, NecPacket packet, NecLogType logType, ServerType serverType)
-            : base(packet.Id, packet.Data.Clone(), serverType)
+            : base(packet.id, packet.data.Clone(), serverType)
         {
-            Header = packet.Header;
-            LogType = logType;
-            TimeStamp = DateTime.Now;
-            ClientIdentity = clientIdentity;
+            header = packet.header;
+            this.logType = logType;
+            timeStamp = DateTime.Now;
+            this.clientIdentity = clientIdentity;
         }
 
-        public string ClientIdentity { get; }
-        public NecLogType LogType { get; }
-        public DateTime TimeStamp { get; }
-        public string Hex => Data.ToHexString(" ");
-        public string Ascii => Data.ToAsciiString("  ");
-        public string HeaderHex => Util.ToHexString(Header, '-');
+        public string clientIdentity { get; }
+        public NecLogType logType { get; }
+        public DateTime timeStamp { get; }
+        public string hex => data.ToHexString(" ");
+        public string ascii => data.ToAsciiString("  ");
+        public string headerHex => Util.ToHexString(header, '-');
 
         public string ToLogText()
         {
-            String log = $"{ClientIdentity} Packet Log";
+            string log = $"{clientIdentity} Packet Log";
             log += Environment.NewLine;
             log += "----------";
             log += Environment.NewLine;
-            log += $"[{TimeStamp:HH:mm:ss}][Typ:{LogType}]";
-            log += $"[{ServerType}]";
+            log += $"[{timeStamp:HH:mm:ss}][Typ:{logType}]";
+            log += $"[{serverType}]";
             log += Environment.NewLine;
-            log += $"[Id:0x{Id:X2}|{Id}][Len(Data/Total):{Data.Size}/{Data.Size + Header.Length}][Header:{HeaderHex}]";
-            log += $"[{PacketIdName}]";
+            log += $"[Id:0x{id:X2}|{id}][Len(Data/Total):{data.Size}/{data.Size + header.Length}][Header:{headerHex}]";
+            log += $"[{packetIdName}]";
             log += Environment.NewLine;
             log += "ASCII:";
             log += Environment.NewLine;
-            log += Ascii;
+            log += ascii;
             log += Environment.NewLine;
             log += "HEX:";
             log += Environment.NewLine;
-            log += Hex;
+            log += hex;
             log += Environment.NewLine;
             log += "----------";
             return log;

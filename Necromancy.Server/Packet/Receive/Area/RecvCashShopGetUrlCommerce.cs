@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCashShopGetUrlCommerce : PacketResponse
     {
         public RecvCashShopGetUrlCommerce()
-            : base((ushort) AreaPacketId.recv_cash_shop_get_url_commerce_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cash_shop_get_url_commerce_r, ServerType.Area)
         {
         }
 
@@ -16,9 +16,9 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteCString("");//"0x801"
-            res.WriteCString("");//"0x801"
-            res.WriteCString("");//"0x11"
+            res.WriteCString(""); //"0x801"
+            res.WriteCString(""); //"0x801"
+            res.WriteCString(""); //"0x11"
             return res;
         }
     }

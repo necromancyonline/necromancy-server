@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateMagCastTimePer : PacketResponse
     {
         public RecvCharaUpdateMagCastTimePer()
-            : base((ushort) AreaPacketId.recv_chara_update_mag_cast_time_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_mag_cast_time_per, ServerType.Area)
         {
         }
 

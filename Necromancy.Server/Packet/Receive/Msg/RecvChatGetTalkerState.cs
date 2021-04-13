@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvChatGetTalkerState : PacketResponse
     {
         public RecvChatGetTalkerState()
-            : base((ushort) MsgPacketId.recv_chat_get_talker_state_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chat_get_talker_state_r, ServerType.Msg)
         {
         }
 

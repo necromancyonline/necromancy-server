@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvBasePingMsg : PacketResponse
     {
         public RecvBasePingMsg()
-            : base((ushort) MsgPacketId.recv_base_ping_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_base_ping_r, ServerType.Msg)
         {
         }
 

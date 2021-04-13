@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallUpdateFeatureItem : PacketResponse
     {
         public RecvStallUpdateFeatureItem()
-            : base((ushort) AreaPacketId.recv_stall_update_feature_item, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_update_feature_item, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestGetStoryQuestWorks : PacketResponse
     {
         public RecvQuestGetStoryQuestWorks()
-            : base((ushort) AreaPacketId.recv_quest_get_story_quest_works_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_get_story_quest_works_r, ServerType.Area)
         {
         }
 
@@ -39,6 +39,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(1);
                 res.WriteInt32(1);
             }
+
             res.WriteByte(1);
 
             //loop x 12
@@ -49,6 +50,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(1);
                 res.WriteInt32(1);
             }
+
             res.WriteByte(1);
             res.WriteFixedString("idk", 385);
             res.WriteInt64(1);
@@ -64,6 +66,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(1);
                 res.WriteInt32(1);
             }
+
             res.WriteByte(1);
             res.WriteInt32(1);
             res.WriteFloat(1);

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTradeSetMoney : PacketResponse
     {
         public RecvTradeSetMoney()
-            : base((ushort) AreaPacketId.recv_trade_set_money_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_set_money_r, ServerType.Area)
         {
         }
 

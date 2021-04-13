@@ -9,8 +9,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     {
         private readonly ulong _instanceId;
         private readonly int _level;
+
         public RecvItemUpdateWeight(ulong instanceId, int level)
-            : base((ushort) AreaPacketId.recv_item_update_weight, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_weight, ServerType.Area)
         {
             _instanceId = instanceId;
             _level = level;

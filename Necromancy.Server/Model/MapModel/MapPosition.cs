@@ -1,19 +1,18 @@
-
 namespace Necromancy.Server.Model
 {
     public class MapPosition
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-        public byte Heading { get; set; }
-
-        public MapPosition(float Xpos = 0, float Ypos = 0, float Zpos = 0, byte heading = 0)
+        public MapPosition(float xpos = 0, float ypos = 0, float zpos = 0, byte heading = 0)
         {
-            X = Xpos;
-            Y = Ypos;
-            Z = Zpos;
-            Heading = heading;
+            x = xpos;
+            y = ypos;
+            z = zpos;
+            this.heading = heading;
         }
+
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+        public byte heading { get; set; }
     }
 }

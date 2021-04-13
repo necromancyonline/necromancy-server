@@ -8,21 +8,22 @@ namespace Necromancy.Server.Packet
     {
         protected Handler(NecServer server)
         {
-            Server = server;
-            Router = server.Router;
-            Database = server.Database;
-            Settings = server.Setting;
-            Maps = server.Maps;
-            Clients = server.Clients;
+            this.server = server;
+            router = server.router;
+            database = server.database;
+            settings = server.setting;
+            maps = server.maps;
+            clients = server.clients;
         }
 
-        public abstract ushort Id { get; }
-        public virtual int ExpectedSize => NecQueueConsumer.NoExpectedSize;
-        protected NecServer Server { get; }
-        protected NecSetting Settings { get; }
-        protected PacketRouter Router { get; }
-        protected MapLookup Maps { get; }
-        protected ClientLookup Clients { get; }
-        protected IDatabase Database { get; }
+        protected NecServer server { get; }
+        protected NecSetting settings { get; }
+        protected PacketRouter router { get; }
+        protected MapLookup maps { get; }
+        protected ClientLookup clients { get; }
+        protected IDatabase database { get; }
+
+        public abstract ushort id { get; }
+        public virtual int expectedSize => NecQueueConsumer.NO_EXPECTED_SIZE;
     }
 }

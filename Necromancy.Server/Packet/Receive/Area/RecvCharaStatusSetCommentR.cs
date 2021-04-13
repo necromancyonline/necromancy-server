@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaStatusSetCommentR : PacketResponse
     {
         public RecvCharaStatusSetCommentR()
-            : base((ushort) AreaPacketId.recv_chara_status_set_comment_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_status_set_comment_r, ServerType.Area)
         {
         }
 

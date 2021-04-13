@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGetHonorNotify : PacketResponse
     {
         public RecvGetHonorNotify()
-            : base((ushort) AreaPacketId.recv_get_honor_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_get_honor_notify, ServerType.Area)
         {
         }
 
@@ -24,6 +24,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteByte(0); // bool		
             }
+
             return res;
         }
     }

@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleGuardStartSelf : PacketResponse
     {
         public RecvBattleGuardStartSelf()
-            : base((ushort) AreaPacketId.recv_battle_guard_start_self, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_guard_start_self, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

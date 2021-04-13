@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBlackListLock : PacketResponse
     {
         public RecvBlackListLock()
-            : base((ushort) AreaPacketId.recv_blacklist_lock_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_blacklist_lock_r, ServerType.Area)
         {
         }
 

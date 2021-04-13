@@ -8,8 +8,9 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportActionStealUnidentified : PacketResponse
     {
         private readonly int _objectId;
+
         public RecvBattleReportActionStealUnidentified(int objectId)
-            : base((ushort) AreaPacketId.recv_battle_report_action_steal_unidentified, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_steal_unidentified, ServerType.Area)
         {
             _objectId = objectId;
         }

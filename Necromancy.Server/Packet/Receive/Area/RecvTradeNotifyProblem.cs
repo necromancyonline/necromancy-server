@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvTradeNotifyProblem : PacketResponse
     {
-        private uint _objectId;
-        private byte _systemMessage;
+        private readonly uint _objectId;
+        private readonly byte _systemMessage;
+
         public RecvTradeNotifyProblem(uint objectId, byte systemMessage)
-            : base((ushort) AreaPacketId.recv_trade_notify_problem, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_notify_problem, ServerType.Area)
         {
             _objectId = objectId;
             _systemMessage = systemMessage;

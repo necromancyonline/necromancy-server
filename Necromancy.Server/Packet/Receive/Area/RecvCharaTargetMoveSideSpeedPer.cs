@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaTargetMoveSideSpeedPer : PacketResponse
     {
         public RecvCharaTargetMoveSideSpeedPer()
-            : base((ushort) AreaPacketId.recv_chara_target_move_side_speed_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_target_move_side_speed_per, ServerType.Area)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteByte(0);
-            res.WriteInt16(0);//Percent most likely
+            res.WriteInt16(0); //Percent most likely
             return res;
         }
     }

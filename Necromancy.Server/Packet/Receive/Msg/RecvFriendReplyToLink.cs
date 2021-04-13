@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvFriendReplyToLink : PacketResponse
     {
         public RecvFriendReplyToLink()
-            : base((ushort) MsgPacketId.recv_friend_reply_to_link_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_friend_reply_to_link_r, ServerType.Msg)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionNotifyInfo : PacketResponse
     {
         public RecvUnionNotifyInfo()
-            : base((ushort) MsgPacketId.recv_union_notify_info, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_notify_info, ServerType.Msg)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteCString("");//max size 0x196
+            res.WriteCString(""); //max size 0x196
             return res;
         }
     }

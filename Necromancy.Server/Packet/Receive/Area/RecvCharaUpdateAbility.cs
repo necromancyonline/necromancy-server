@@ -7,21 +7,23 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateAbility : PacketResponse
     {
-        public enum ability : int
+        public enum Ability
         {
-            _str = 0,
-            _vit = 1,
-            _dex = 2,
-            _agi = 3,
-            _int = 4,
-            _pie = 5,
-            _luk = 6
+            Str = 0,
+            Vit = 1,
+            Dex = 2,
+            Agi = 3,
+            Int = 4,
+            Pie = 5,
+            Luk = 6
         }
-        int _abilityNumber;
-        ushort _abilityBase;
-        ushort _abilityTotal;
+
+        private readonly ushort _abilityBase;
+        private readonly int _abilityNumber;
+        private readonly ushort _abilityTotal;
+
         public RecvCharaUpdateAbility(int abilityNumber, ushort abilityBase, ushort abilityTotal)
-            : base((ushort) AreaPacketId.recv_chara_update_ability, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_ability, ServerType.Area)
         {
             _abilityNumber = abilityNumber;
             _abilityBase = abilityBase;

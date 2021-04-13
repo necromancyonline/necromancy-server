@@ -8,53 +8,50 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string SqlInsertMonsterSpawn =
+        private const string SQL_INSERT_MONSTER_SPAWN =
             "INSERT INTO `nec_monster_spawn` (`monster_id`, `model_id`, `level`,  `name`, `title`, `map_id`, `x`, `y`, `z`, `active`, `heading`, `size`, `created`, `updated`) VALUES (@monster_id, @model_id, @level, @name, @title, @map_id, @x, @y, @z, @active, @heading, @size, @created, @updated);";
 
-        private const string SqlSelectMonsterSpawns =
+        private const string SQL_SELECT_MONSTER_SPAWNS =
             "SELECT `id`, `monster_id`, `model_id`, `level`, `name`, `title`, `map_id`, `x`, `y`, `z`, `active`, `heading`, `size`, `created`, `updated` FROM `nec_monster_spawn`;";
 
-        private const string SqlSelectMonsterSpawnsByMapId =
+        private const string SQL_SELECT_MONSTER_SPAWNS_BY_MAP_ID =
             "SELECT `id`, `monster_id`, `model_id`, `level`, `name`, `title`, `map_id`, `x`, `y`, `z`, `active`, `heading`, `size`, `created`, `updated` FROM `nec_monster_spawn` WHERE `map_id`=@map_id;";
 
-        private const string SqlUpdateMonsterSpawn =
+        private const string SQL_UPDATE_MONSTER_SPAWN =
             "UPDATE `nec_monster_spawn` SET `monster_id`=@monster_id, `model_id`=@model_id, `level`=@level,  `name`=@name, `title`=@title, `map_id`=@map_id, `x`=@x, `y`=@y, `z`=@z, `active`=@active, `heading`=@heading, `size`=@size, `created`=@created, `updated`=@updated WHERE `id`=@id;";
 
-        private const string SqlDeleteMonsterSpawn =
+        private const string SQL_DELETE_MONSTER_SPAWN =
             "DELETE FROM `nec_monster_spawn` WHERE `id`=@id;";
 
         public bool InsertMonsterSpawn(MonsterSpawn monsterSpawn)
         {
-            int rowsAffected = ExecuteNonQuery(SqlInsertMonsterSpawn, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_MONSTER_SPAWN, command =>
             {
-                AddParameter(command, "@monster_id", monsterSpawn.MonsterId);
-                AddParameter(command, "@model_id", monsterSpawn.ModelId);
-                AddParameter(command, "@level", monsterSpawn.Level);
-                AddParameter(command, "@name", monsterSpawn.Name);
-                AddParameter(command, "@title", monsterSpawn.Title);
-                AddParameter(command, "@map_id", monsterSpawn.MapId);
-                AddParameter(command, "@x", monsterSpawn.X);
-                AddParameter(command, "@y", monsterSpawn.Y);
-                AddParameter(command, "@z", monsterSpawn.Z);
-                AddParameter(command, "@active", monsterSpawn.Active);
-                AddParameter(command, "@heading", monsterSpawn.Heading);
-                AddParameter(command, "@size", monsterSpawn.Size);
-                AddParameter(command, "@created", monsterSpawn.Created);
-                AddParameter(command, "@updated", monsterSpawn.Updated);
+                AddParameter(command, "@monster_id", monsterSpawn.monsterId);
+                AddParameter(command, "@model_id", monsterSpawn.modelId);
+                AddParameter(command, "@level", monsterSpawn.level);
+                AddParameter(command, "@name", monsterSpawn.name);
+                AddParameter(command, "@title", monsterSpawn.title);
+                AddParameter(command, "@map_id", monsterSpawn.mapId);
+                AddParameter(command, "@x", monsterSpawn.x);
+                AddParameter(command, "@y", monsterSpawn.y);
+                AddParameter(command, "@z", monsterSpawn.z);
+                AddParameter(command, "@active", monsterSpawn.active);
+                AddParameter(command, "@heading", monsterSpawn.heading);
+                AddParameter(command, "@size", monsterSpawn.size);
+                AddParameter(command, "@created", monsterSpawn.created);
+                AddParameter(command, "@updated", monsterSpawn.updated);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
-            monsterSpawn.Id = (int) autoIncrement;
+            monsterSpawn.id = (int)autoIncrement;
             return true;
         }
 
         public List<MonsterSpawn> SelectMonsterSpawns()
         {
             List<MonsterSpawn> monsterSpawns = new List<MonsterSpawn>();
-            ExecuteReader(SqlSelectMonsterSpawns, reader =>
+            ExecuteReader(SQL_SELECT_MONSTER_SPAWNS, reader =>
             {
                 while (reader.Read())
                 {
@@ -68,7 +65,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<MonsterSpawn> SelectMonsterSpawnsByMapId(int mapId)
         {
             List<MonsterSpawn> monsterSpawns = new List<MonsterSpawn>();
-            ExecuteReader(SqlSelectMonsterSpawnsByMapId,
+            ExecuteReader(SQL_SELECT_MONSTER_SPAWNS_BY_MAP_ID,
                 command => { AddParameter(command, "@map_id", mapId); },
                 reader =>
                 {
@@ -83,52 +80,52 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateMonsterSpawn(MonsterSpawn monsterSpawn)
         {
-            int rowsAffected = ExecuteNonQuery(SqlUpdateMonsterSpawn, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_MONSTER_SPAWN, command =>
             {
-                AddParameter(command, "@monster_id", monsterSpawn.MonsterId);
-                AddParameter(command, "@model_id", monsterSpawn.ModelId);
-                AddParameter(command, "@level", monsterSpawn.Level);
-                AddParameter(command, "@name", monsterSpawn.Name);
-                AddParameter(command, "@title", monsterSpawn.Title);
-                AddParameter(command, "@map_id", monsterSpawn.MapId);
-                AddParameter(command, "@x", monsterSpawn.X);
-                AddParameter(command, "@y", monsterSpawn.Y);
-                AddParameter(command, "@z", monsterSpawn.Z);
-                AddParameter(command, "@active", monsterSpawn.Active);
-                AddParameter(command, "@heading", monsterSpawn.Heading);
-                AddParameter(command, "@size", monsterSpawn.Size);
-                AddParameter(command, "@created", monsterSpawn.Created);
-                AddParameter(command, "@updated", monsterSpawn.Updated);
-                AddParameter(command, "@id", monsterSpawn.Id);
+                AddParameter(command, "@monster_id", monsterSpawn.monsterId);
+                AddParameter(command, "@model_id", monsterSpawn.modelId);
+                AddParameter(command, "@level", monsterSpawn.level);
+                AddParameter(command, "@name", monsterSpawn.name);
+                AddParameter(command, "@title", monsterSpawn.title);
+                AddParameter(command, "@map_id", monsterSpawn.mapId);
+                AddParameter(command, "@x", monsterSpawn.x);
+                AddParameter(command, "@y", monsterSpawn.y);
+                AddParameter(command, "@z", monsterSpawn.z);
+                AddParameter(command, "@active", monsterSpawn.active);
+                AddParameter(command, "@heading", monsterSpawn.heading);
+                AddParameter(command, "@size", monsterSpawn.size);
+                AddParameter(command, "@created", monsterSpawn.created);
+                AddParameter(command, "@updated", monsterSpawn.updated);
+                AddParameter(command, "@id", monsterSpawn.id);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteMonsterSpawn(int monsterSpawnId)
         {
-            int rowsAffected = ExecuteNonQuery(SqlDeleteMonsterSpawn,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_MONSTER_SPAWN,
                 command => { AddParameter(command, "@id", monsterSpawnId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private MonsterSpawn ReadMonsterSpawn(DbDataReader reader)
         {
             MonsterSpawn monsterSpawn = new MonsterSpawn();
-            monsterSpawn.Id = GetInt32(reader, "id");
-            monsterSpawn.ModelId = GetInt32(reader, "model_id");
-            monsterSpawn.MonsterId = GetInt32(reader, "monster_id");
-            monsterSpawn.Level = GetByte(reader, "level");
-            monsterSpawn.Name = GetString(reader, "name");
-            monsterSpawn.Title = GetString(reader, "title");
-            monsterSpawn.MapId = GetInt32(reader, "map_id");
-            monsterSpawn.X = GetFloat(reader, "x");
-            monsterSpawn.Y = GetFloat(reader, "y");
-            monsterSpawn.Z = GetFloat(reader, "z");
-            monsterSpawn.Active = GetBoolean(reader, "active");
-            monsterSpawn.Heading = GetByte(reader, "heading");
-            monsterSpawn.Size = GetInt16(reader, "size");
-            monsterSpawn.Created = GetDateTime(reader, "created");
-            monsterSpawn.Updated = GetDateTime(reader, "updated");
+            monsterSpawn.id = GetInt32(reader, "id");
+            monsterSpawn.modelId = GetInt32(reader, "model_id");
+            monsterSpawn.monsterId = GetInt32(reader, "monster_id");
+            monsterSpawn.level = GetByte(reader, "level");
+            monsterSpawn.name = GetString(reader, "name");
+            monsterSpawn.title = GetString(reader, "title");
+            monsterSpawn.mapId = GetInt32(reader, "map_id");
+            monsterSpawn.x = GetFloat(reader, "x");
+            monsterSpawn.y = GetFloat(reader, "y");
+            monsterSpawn.z = GetFloat(reader, "z");
+            monsterSpawn.active = GetBoolean(reader, "active");
+            monsterSpawn.heading = GetByte(reader, "heading");
+            monsterSpawn.size = GetInt16(reader, "size");
+            monsterSpawn.created = GetDateTime(reader, "created");
+            monsterSpawn.updated = GetDateTime(reader, "updated");
             return monsterSpawn;
         }
     }

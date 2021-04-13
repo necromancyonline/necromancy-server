@@ -5,16 +5,13 @@ namespace Necromancy.Server.Chat.Command
 {
     public abstract class ChatCommand
     {
+        public abstract AccountStateType accountState { get; }
+        public abstract string key { get; }
+        public string keyToLowerInvariant => key.ToLowerInvariant();
+
+        public virtual string helpText => null;
+
         public abstract void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses);
-
-        public abstract AccountStateType AccountState { get; }
-        public abstract string Key { get; }
-        public string KeyToLowerInvariant => Key.ToLowerInvariant();
-
-        public virtual string HelpText
-        {
-            get { return null; }
-        }
     }
 }

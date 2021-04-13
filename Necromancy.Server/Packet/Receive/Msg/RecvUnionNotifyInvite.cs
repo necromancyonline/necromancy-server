@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionNotifyInvite : PacketResponse
     {
         public RecvUnionNotifyInvite()
-            : base((ushort) MsgPacketId.recv_union_notify_invite, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_notify_invite, ServerType.Msg)
         {
         }
 
@@ -22,7 +22,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
             res.WriteInt32(0);
             res.WriteByte(0);
             res.WriteByte(0);
-            res.WriteCString("");//max size 0x31
+            res.WriteCString(""); //max size 0x31
             return res;
         }
     }

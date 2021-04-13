@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly string _unionName;
 
         public RecvDataNotifyUnionData(Character character, string unionName)
-            : base((ushort) AreaPacketId.recv_chara_notify_union_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_notify_union_data, ServerType.Area)
         {
             _character = character;
             _unionName = unionName;
@@ -20,7 +20,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_character.InstanceId);
+            res.WriteUInt32(_character.instanceId);
             res.WriteInt32(_character.unionId);
             res.WriteCString(_unionName);
             return res;

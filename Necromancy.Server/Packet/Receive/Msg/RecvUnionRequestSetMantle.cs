@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionRequestSetMantle : PacketResponse
     {
         public RecvUnionRequestSetMantle()
-            : base((ushort) MsgPacketId.recv_union_request_set_mantle_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_request_set_mantle_r, ServerType.Msg)
         {
         }
 

@@ -1,19 +1,19 @@
 namespace Necromancy.Server.Data.Setting
 {
-    public class MonsterSetting: ISettingRepositoryItem
+    public class MonsterSetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Title { get; set; }
-        public int CatalogId { get; set; }
-        public int? EffectId { get; set; }
-        public int? ActiveEffectId { get; set; }
-        public int? InactiveEffectId { get; set; }
-        public string NamePlateType { get; set; }
-        public int? ModelSwitching { get; set; }
-        public int AttackSkillId { get; set; }
-        public int Level { get; set; }
-        public bool CombatMode { get; set; }
-        public int TextureType { get; set; }
+        public string name { get; set; }
+        public string title { get; set; }
+        public int catalogId { get; set; }
+        public int? effectId { get; set; }
+        public int? activeEffectId { get; set; }
+        public int? inactiveEffectId { get; set; }
+        public string namePlateType { get; set; }
+        public int? modelSwitching { get; set; }
+        public int attackSkillId { get; set; }
+        public int level { get; set; }
+        public bool combatMode { get; set; }
+        public int textureType { get; set; }
+        public int id { get; set; }
     }
 }

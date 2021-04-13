@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDropObjectNotifyACcessPriority : PacketResponse
     {
         public RecvDropObjectNotifyACcessPriority()
-            : base((ushort) AreaPacketId.recv_dropobject_notify_access_priority, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_dropobject_notify_access_priority, ServerType.Area)
         {
         }
 

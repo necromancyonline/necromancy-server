@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvShopTitlePush : PacketResponse
     {
         public RecvShopTitlePush()
-            : base((ushort) AreaPacketId.recv_shop_title_push, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_shop_title_push, ServerType.Area)
         {
         }
 

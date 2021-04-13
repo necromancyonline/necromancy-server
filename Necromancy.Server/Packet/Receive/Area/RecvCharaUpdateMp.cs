@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateMp : PacketResponse
     {
-        private int _mp;
+        private readonly int _mp;
+
         public RecvCharaUpdateMp(int mp)
-            : base((ushort) AreaPacketId.recv_chara_update_mp, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_mp, ServerType.Area)
         {
             _mp = mp;
         }

@@ -1,7 +1,7 @@
 namespace Necromancy.Server.Packet.Id
 {
     /// <summary>
-    /// Necromancy Custom OP Codes
+    ///     Necromancy Custom OP Codes
     /// </summary>
     public enum CustomPacketId : ushort
     {

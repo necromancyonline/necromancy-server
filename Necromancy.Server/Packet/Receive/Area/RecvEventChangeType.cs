@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventChangeType : PacketResponse
     {
         public RecvEventChangeType()
-            : base((ushort) AreaPacketId.recv_event_change_type, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_change_type, ServerType.Area)
         {
         }
 

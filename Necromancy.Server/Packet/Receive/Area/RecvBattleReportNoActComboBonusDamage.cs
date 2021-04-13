@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNoActComboBonusDamage : PacketResponse
     {
         public RecvBattleReportNoActComboBonusDamage()
-            : base((ushort) AreaPacketId.recv_battle_report_noact_combo_bonus_damage, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_combo_bonus_damage, ServerType.Area)
         {
         }
 

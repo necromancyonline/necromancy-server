@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvQuestHistory : PacketResponse
     {
         public RecvQuestHistory()
-            : base((ushort) AreaPacketId.recv_quest_history, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_quest_history, ServerType.Area)
         {
         }
 
@@ -21,13 +21,13 @@ namespace Necromancy.Server.Packet.Receive.Area
             {
                 res.WriteInt32(0);
                 res.WriteByte(0);
-                res.WriteByte(0);//New
+                res.WriteByte(0); //New
                 res.WriteFixedString("", 0x61);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteFixedString("", 0x61);
-                res.WriteByte(0);//bool
-                res.WriteByte(0);//bool
+                res.WriteByte(0); //bool
+                res.WriteByte(0); //bool
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
@@ -45,6 +45,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteByte(0);
                     res.WriteInt16(0);
                 }
+
                 res.WriteByte(0);
                 for (int k = 0; k < 0xC; k++)
                 {
@@ -55,10 +56,12 @@ namespace Necromancy.Server.Packet.Receive.Area
                     res.WriteByte(0);
                     res.WriteInt16(0);
                 }
+
                 res.WriteByte(0);
                 res.WriteFixedString("", 0x181);
-                res.WriteInt32(0);//new
+                res.WriteInt32(0); //new
             }
+
             res.WriteInt32(0);
             return res;
         }

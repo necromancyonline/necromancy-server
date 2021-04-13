@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvTradeNotifyInterfaceStatus : PacketResponse
     {
-        private int _status;
+        private readonly int _status;
+
         public RecvTradeNotifyInterfaceStatus(int status)
-            : base((ushort) AreaPacketId.recv_trade_notify_interface_status, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_trade_notify_interface_status, ServerType.Area)
         {
             _status = status;
         }

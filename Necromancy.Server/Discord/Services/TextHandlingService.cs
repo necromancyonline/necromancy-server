@@ -17,15 +17,9 @@ namespace Necromancy.Server.Discord.Services
         public async Task MessageReceivedAsync(SocketMessage rawMessage)
         {
             // Ignore system messages, or messages from other bots
-            if (!(rawMessage is SocketUserMessage message))
-            {
-                return;
-            }
+            if (!(rawMessage is SocketUserMessage message)) return;
 
-            if (message.Source != MessageSource.User)
-            {
-                return;
-            }
+            if (message.Source != MessageSource.User) return;
 
             if (message.Content.Contains("server ready", StringComparison.InvariantCultureIgnoreCase))
             {

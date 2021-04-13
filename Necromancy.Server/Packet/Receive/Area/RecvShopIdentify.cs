@@ -8,11 +8,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvShopIdentify : PacketResponse
     {
         private readonly int _error;
+
         public RecvShopIdentify(NecClient client, int error)
-            : base((ushort) AreaPacketId.recv_shop_identify_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_shop_identify_r, ServerType.Area)
         {
             _error = error;
-            Clients.Add(client);
+            clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()

@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvBattleReportNotifyRaise : PacketResponse
     {
-        private uint _instanceId;
+        private readonly uint _instanceId;
+
         public RecvBattleReportNotifyRaise(uint instanceId)
-            : base((ushort) AreaPacketId.recv_battle_report_notify_raise, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_notify_raise, ServerType.Area)
         {
             _instanceId = instanceId;
         }

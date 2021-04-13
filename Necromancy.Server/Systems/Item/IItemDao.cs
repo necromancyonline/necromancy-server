@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Necromancy.Server.Systems.Item
 {
@@ -20,14 +18,16 @@ namespace Necromancy.Server.Systems.Item
         public void UpdateItemOwnerAndStatus(ulong instanceId, int ownerId, int statuses);
 
         /// <summary>
-        /// This selects only the items in the character's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and Avatar inventory.
+        ///     This selects only the items in the character's inventory: Adventure bag, Equipped bags, Royal bag, Bag Slots, and
+        ///     Avatar inventory.
         /// </summary>
         /// <param name="ownerId">Owner of items.</param>
         /// <returns>A list of all the items in the character's inventory.</returns>
         public List<ItemInstance> SelectOwnedInventoryItems(int ownerId);
 
         /// <summary>
-        /// This selects only the items in the character's inventory that are lootable: Adventure bag, Equipped bags, and Royal bag.
+        ///     This selects only the items in the character's inventory that are lootable: Adventure bag, Equipped bags, and Royal
+        ///     bag.
         /// </summary>
         /// <param name="ownerId">Owner of items.</param>
         /// <returns>A list of unidentified lootable items.</returns>

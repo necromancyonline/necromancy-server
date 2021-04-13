@@ -5,17 +5,17 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class Recv0xE983 : PacketResponse
+    public class Recv0Xe983 : PacketResponse
     {
-        public Recv0xE983()
-            : base((ushort) AreaPacketId.recv_0xE983, ServerType.Area)
+        public Recv0Xe983()
+            : base((ushort)AreaPacketId.recv_0xE983, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteCString("");//find max size
+            res.WriteCString(""); //find max size
             return res;
         }
     }

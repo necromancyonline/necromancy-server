@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfWarpDragonPenalty : PacketResponse
     {
-        private uint _time;
+        private readonly uint _time;
+
         public RecvCharaBodySelfWarpDragonPenalty(uint time)
-            : base((ushort) AreaPacketId.recv_charabody_self_warpdragon_penalty, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_self_warpdragon_penalty, ServerType.Area)
         {
             _time = time;
         }

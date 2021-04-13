@@ -5,66 +5,65 @@ namespace Necromancy.Server.Chat
 {
     public class ChatResponse
     {
-        public static ChatResponse CommandError(NecClient client, string message)
-        {
-            return new ChatResponse()
-            {
-                Deliver = true,
-                SoulName = "System",
-                CharacterName = "",
-                ErrorType = ChatErrorType.GenericUnknownStatement,
-                Message = message,
-                MessageType = ChatMessageType.TextCommandLog,
-                Recipients = {client}
-            };
-        }
-        
-        public static ChatResponse CommandInfo(NecClient client, string message)
-        {
-            return new ChatResponse()
-            {
-                Deliver = true,
-                SoulName = "System",
-                CharacterName = "",
-                ErrorType = ChatErrorType.Success,
-                Message = message,
-                MessageType = ChatMessageType.TextCommandLog,
-                Recipients = {client}
-            };
-        }
-
-
         public ChatResponse()
         {
-            Recipients = new List<NecClient>();
-            Deliver = true;
-            ErrorType = ChatErrorType.Success;
-            MessageType = ChatMessageType.Area;
+            recipients = new List<NecClient>();
+            deliver = true;
+            errorType = ChatErrorType.Success;
+            messageType = ChatMessageType.Area;
         }
 
         public ChatResponse(NecClient sender, string message, ChatMessageType messageType,
             string recipientSoulName = null) : this()
         {
-            Message = message;
-            CharacterId = sender.Character.Id;
-            CharacterInstanceId = sender.Character.InstanceId;
-            CharacterName = sender.Character.Name;
-            SoulName = sender.Soul.Name;
-            Deliver = true;
-            ErrorType = ChatErrorType.Success;
-            MessageType = messageType;
-            RecipientSoulName = recipientSoulName;
+            this.message = message;
+            characterId = sender.character.id;
+            characterInstanceId = sender.character.instanceId;
+            characterName = sender.character.name;
+            soulName = sender.soul.name;
+            deliver = true;
+            errorType = ChatErrorType.Success;
+            this.messageType = messageType;
+            this.recipientSoulName = recipientSoulName;
         }
 
-        public List<NecClient> Recipients { get; }
-        public bool Deliver { get; set; }
-        public ChatErrorType ErrorType { get; set; }
-        public ChatMessageType MessageType { get; set; }
-        public string SoulName { get; set; }
-        public string CharacterName { get; set; }
-        public string Message { get; set; }
-        public int CharacterId { get; set; }
-        public uint CharacterInstanceId { get; set; }
-        public string RecipientSoulName { get; set; }
+        public List<NecClient> recipients { get; }
+        public bool deliver { get; set; }
+        public ChatErrorType errorType { get; set; }
+        public ChatMessageType messageType { get; set; }
+        public string soulName { get; set; }
+        public string characterName { get; set; }
+        public string message { get; set; }
+        public int characterId { get; set; }
+        public uint characterInstanceId { get; set; }
+        public string recipientSoulName { get; set; }
+
+        public static ChatResponse CommandError(NecClient client, string message)
+        {
+            return new ChatResponse
+            {
+                deliver = true,
+                soulName = "System",
+                characterName = "",
+                errorType = ChatErrorType.GenericUnknownStatement,
+                message = message,
+                messageType = ChatMessageType.TextCommandLog,
+                recipients = { client }
+            };
+        }
+
+        public static ChatResponse CommandInfo(NecClient client, string message)
+        {
+            return new ChatResponse
+            {
+                deliver = true,
+                soulName = "System",
+                characterName = "",
+                errorType = ChatErrorType.Success,
+                message = message,
+                messageType = ChatMessageType.TextCommandLog,
+                recipients = { client }
+            };
+        }
     }
 }

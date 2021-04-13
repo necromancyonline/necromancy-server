@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvSoulRename : PacketResponse
     {
         public RecvSoulRename()
-            : base((ushort) MsgPacketId.recv_soul_rename_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_soul_rename_r, ServerType.Msg)
         {
         }
 

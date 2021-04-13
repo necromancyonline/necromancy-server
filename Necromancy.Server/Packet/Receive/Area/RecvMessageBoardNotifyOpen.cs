@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvMessageBoardNotifyOpen : PacketResponse
     {
         public RecvMessageBoardNotifyOpen()
-            : base((ushort) AreaPacketId.recv_message_board_notify_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_message_board_notify_open, ServerType.Area)
         {
         }
 

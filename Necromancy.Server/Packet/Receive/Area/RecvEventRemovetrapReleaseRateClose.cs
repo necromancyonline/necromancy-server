@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventRemovetrapReleaseRateClose : PacketResponse
     {
         public RecvEventRemovetrapReleaseRateClose()
-            : base((ushort) AreaPacketId.recv_event_removetrap_release_rate_close, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_removetrap_release_rate_close, ServerType.Area)
         {
         }
 

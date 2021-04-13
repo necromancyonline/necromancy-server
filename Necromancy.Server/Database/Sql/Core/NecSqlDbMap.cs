@@ -8,38 +8,35 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string SqlCreateMap =
+        private const string SQL_CREATE_MAP =
             "INSERT INTO `nec_map` (`id`, `country`, `area`, `place`, `x`, `y`, `z`, `orientation`) VALUES (@id, @country, @area, @place, @x, @y, @z, @orientation);";
 
-        private const string SqlSelectMapById =
+        private const string SQL_SELECT_MAP_BY_ID =
             "SELECT `id`, `country`, `area`, `place`, `x`, `y`, `z`, `orientation` FROM `nec_map` WHERE `id`=@id; ";
 
-        private const string SqlSelectMaps =
+        private const string SQL_SELECT_MAPS =
             "SELECT `id`, `country`, `area`, `place`, `x`, `y`, `z`, `orientation` FROM `nec_map`; ";
 
-        private const string SqlUpdateMap =
+        private const string SQL_UPDATE_MAP =
             "UPDATE `nec_map` SET `country`=@country, `area`=@area, `place`=@place, `x`=@x, `y`=@y, `z`=@z `orientation`=@orientation WHERE `id`=@id;";
 
-        private const string SqlDeleteMap =
+        private const string SQL_DELETE_MAP =
             "DELETE FROM `nec_map` WHERE `id`=@id;";
 
         public bool InsertMap(MapData map)
         {
-            int rowsAffected = ExecuteNonQuery(SqlCreateMap, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_CREATE_MAP, command =>
             {
-                AddParameter(command, "@id", map.Id);
-                AddParameter(command, "@country", map.Country);
-                AddParameter(command, "@area", map.Area);
-                AddParameter(command, "@place", map.Place);
-                AddParameter(command, "@x", map.X);
-                AddParameter(command, "@y", map.Y);
-                AddParameter(command, "@z", map.Z);
-                AddParameter(command, "@orientation", map.Orientation);
+                AddParameter(command, "@id", map.id);
+                AddParameter(command, "@country", map.country);
+                AddParameter(command, "@area", map.area);
+                AddParameter(command, "@place", map.place);
+                AddParameter(command, "@x", map.x);
+                AddParameter(command, "@y", map.y);
+                AddParameter(command, "@z", map.z);
+                AddParameter(command, "@orientation", map.orientation);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected)
-            {
-                return false;
-            }
+            if (rowsAffected <= NO_ROWS_AFFECTED) return false;
 
             return true;
         }
@@ -47,13 +44,10 @@ namespace Necromancy.Server.Database.Sql.Core
         public MapData SelectItemMapId(int mapId)
         {
             MapData map = null;
-            ExecuteReader(SqlSelectMapById,
+            ExecuteReader(SQL_SELECT_MAP_BY_ID,
                 command => { AddParameter(command, "@id", mapId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        map = ReadMap(reader);
-                    }
+                    if (reader.Read()) map = ReadMap(reader);
                 });
             return map;
         }
@@ -61,7 +55,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<MapData> SelectMaps()
         {
             List<MapData> maps = new List<MapData>();
-            ExecuteReader(SqlSelectMaps, reader =>
+            ExecuteReader(SQL_SELECT_MAPS, reader =>
             {
                 while (reader.Read())
                 {
@@ -74,38 +68,38 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateMap(MapData map)
         {
-            int rowsAffected = ExecuteNonQuery(SqlUpdateMap, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_MAP, command =>
             {
-                AddParameter(command, "@id", map.Id);
-                AddParameter(command, "@country", map.Country);
-                AddParameter(command, "@area", map.Area);
-                AddParameter(command, "@place", map.Place);
-                AddParameter(command, "@x", map.X);
-                AddParameter(command, "@y", map.Y);
-                AddParameter(command, "@z", map.Z);
-                AddParameter(command, "@orientation", map.Orientation);
+                AddParameter(command, "@id", map.id);
+                AddParameter(command, "@country", map.country);
+                AddParameter(command, "@area", map.area);
+                AddParameter(command, "@place", map.place);
+                AddParameter(command, "@x", map.x);
+                AddParameter(command, "@y", map.y);
+                AddParameter(command, "@z", map.z);
+                AddParameter(command, "@orientation", map.orientation);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteMap(int mapId)
         {
-            int rowsAffected = ExecuteNonQuery(SqlDeleteMap,
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_MAP,
                 command => { AddParameter(command, "@id", mapId); });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private MapData ReadMap(DbDataReader reader)
         {
             MapData map = new MapData();
-            map.Id = GetInt32(reader, "id");
-            map.Country = GetString(reader, "country");
-            map.Area = GetString(reader, "area");
-            map.Place = GetString(reader, "place");
-            map.X = GetInt32(reader, "x");
-            map.Y = GetInt32(reader, "y");
-            map.Z = GetInt32(reader, "z");
-            map.Orientation = GetInt32(reader, "orientation");
+            map.id = GetInt32(reader, "id");
+            map.country = GetString(reader, "country");
+            map.area = GetString(reader, "area");
+            map.place = GetString(reader, "place");
+            map.x = GetInt32(reader, "x");
+            map.y = GetInt32(reader, "y");
+            map.z = GetInt32(reader, "z");
+            map.orientation = GetInt32(reader, "orientation");
             return map;
         }
     }

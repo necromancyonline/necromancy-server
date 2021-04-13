@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvBaseLogin : PacketResponse
     {
         public RecvBaseLogin()
-            : base((ushort) MsgPacketId.recv_base_login_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_base_login_r, ServerType.Msg)
         {
         }
 
@@ -23,6 +23,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
                 res.WriteByte(0);
                 res.WriteByte(0); //bool
             }
+
             res.WriteInt32(0);
             res.WriteByte(0); //bool
             res.WriteByte(0);

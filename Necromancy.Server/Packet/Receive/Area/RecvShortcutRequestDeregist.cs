@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvShortcutRequestDeregist : PacketResponse
     {
         public RecvShortcutRequestDeregist()
-            : base((ushort) AreaPacketId.recv_shortcut_request_deregist_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_shortcut_request_deregist_r, ServerType.Area)
         {
         }
 

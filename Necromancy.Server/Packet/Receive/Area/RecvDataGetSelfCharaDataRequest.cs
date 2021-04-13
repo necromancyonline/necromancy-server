@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDataGetSelfCharaDataRequest : PacketResponse
     {
         public RecvDataGetSelfCharaDataRequest()
-            : base((ushort) AreaPacketId.recv_data_get_self_chara_data_request_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_get_self_chara_data_request_r, ServerType.Area)
         {
         }
 

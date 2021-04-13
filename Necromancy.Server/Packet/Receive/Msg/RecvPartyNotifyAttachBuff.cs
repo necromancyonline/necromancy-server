@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyAttachBuff : PacketResponse
     {
         public RecvPartyNotifyAttachBuff()
-            : base((ushort) MsgPacketId.recv_party_notify_attach_buff, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_attach_buff, ServerType.Msg)
         {
         }
 

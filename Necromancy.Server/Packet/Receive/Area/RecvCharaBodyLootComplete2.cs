@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyLootComplete2 : PacketResponse
     {
-        private int _result;
-        private int _remainLootTime;
+        private readonly int _remainLootTime;
+        private readonly int _result;
+
         public RecvCharaBodyLootComplete2(int result, int remainLootTime)
-            : base((ushort) AreaPacketId.recv_charabody_loot_complete2_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_loot_complete2_r, ServerType.Area)
         {
             _result = result;
             _remainLootTime = remainLootTime;

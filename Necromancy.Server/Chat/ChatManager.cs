@@ -9,8 +9,8 @@ namespace Necromancy.Server.Chat
 {
     public class ChatManager
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(ChatManager));
-        
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(ChatManager));
+
         private readonly List<IChatHandler> _handler;
         private readonly NecServer _server;
 
@@ -18,11 +18,11 @@ namespace Necromancy.Server.Chat
         {
             _server = server;
             _handler = new List<IChatHandler>();
-            CommandHandler = new ChatCommandHandler(server);
-            AddHandler(CommandHandler);
+            commandHandler = new ChatCommandHandler(server);
+            AddHandler(commandHandler);
         }
 
-        public ChatCommandHandler CommandHandler { get; }
+        public ChatCommandHandler commandHandler { get; }
 
         public void AddHandler(IChatHandler handler)
         {
@@ -33,25 +33,22 @@ namespace Necromancy.Server.Chat
         {
             if (client == null)
             {
-                Logger.Debug("Client is Null");
+                _Logger.Debug("Client is Null");
                 return;
             }
 
             if (message == null)
             {
-                Logger.Debug(client, "Chat Message is Null");
+                _Logger.Debug(client, "Chat Message is Null");
                 return;
             }
 
             ChatResponse response =
-                new ChatResponse(client, message.Message, message.MessageType, message.RecipientSoulName);
+                new ChatResponse(client, message.message, message.messageType, message.recipientSoulName);
             List<ChatResponse> responses = new List<ChatResponse>();
-            foreach (IChatHandler handler in _handler)
-            {
-                handler.Handle(client, message, response, responses);
-            }
+            foreach (IChatHandler handler in _handler) handler.Handle(client, message, response, responses);
 
-            if (!response.Deliver)
+            if (!response.deliver)
             {
                 RespondPostMessage(client, ChatErrorType.GenericUnknownStatement);
                 return;
@@ -61,52 +58,49 @@ namespace Necromancy.Server.Chat
             RespondPostMessage(client, ChatErrorType.Success);
 
 
-            foreach (ChatResponse chatResponse in responses)
-            {
-                Deliver(client, chatResponse);
-            }
+            foreach (ChatResponse chatResponse in responses) Deliver(client, chatResponse);
         }
 
         private void Deliver(NecClient sender, ChatResponse chatResponse)
         {
-            switch (chatResponse.MessageType)
+            switch (chatResponse.messageType)
             {
                 case ChatMessageType.ChatCommand:
-                    chatResponse.Recipients.Add(sender);
+                    chatResponse.recipients.Add(sender);
                     break;
                 case ChatMessageType.All:
-                    chatResponse.Recipients.AddRange(sender.Map.ClientLookup.GetAll());
+                    chatResponse.recipients.AddRange(sender.map.clientLookup.GetAll());
                     break;
                 case ChatMessageType.Area:
-                    chatResponse.Recipients.AddRange(sender.Map.ClientLookup.GetAll());
+                    chatResponse.recipients.AddRange(sender.map.clientLookup.GetAll());
                     break;
                 case ChatMessageType.Shout:
-                    chatResponse.Recipients.AddRange(sender.Map.ClientLookup.GetAll());
+                    chatResponse.recipients.AddRange(sender.map.clientLookup.GetAll());
                     break;
                 case ChatMessageType.Whisper:
-                    NecClient recipient = _server.Clients.GetBySoulName(chatResponse.RecipientSoulName);
+                    NecClient recipient = _server.clients.GetBySoulName(chatResponse.recipientSoulName);
                     if (recipient == null)
                     {
-                        Logger.Error($"SoulName: {chatResponse.RecipientSoulName} not found");
+                        _Logger.Error($"SoulName: {chatResponse.recipientSoulName} not found");
                         return;
                     }
 
-                    chatResponse.Recipients.Add(sender);
-                    chatResponse.Recipients.Add(recipient);
+                    chatResponse.recipients.Add(sender);
+                    chatResponse.recipients.Add(recipient);
                     break;
                 default:
-                    chatResponse.Recipients.Add(sender);
+                    chatResponse.recipients.Add(sender);
                     break;
             }
 
-            _server.Router.Send(chatResponse);
+            _server.router.Send(chatResponse);
         }
 
         private void RespondPostMessage(NecClient client, ChatErrorType chatErrorType)
         {
             RecvChatPostMessageR postMessageResponse = new RecvChatPostMessageR(chatErrorType);
-            postMessageResponse.Clients.Add(client);
-            _server.Router.Send(postMessageResponse);
+            postMessageResponse.clients.Add(client);
+            _server.router.Send(postMessageResponse);
         }
     }
 }
