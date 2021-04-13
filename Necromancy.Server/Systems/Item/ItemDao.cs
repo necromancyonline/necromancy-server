@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using Necromancy.Server.Data.Setting;
 
 namespace Necromancy.Server.Systems.Item
 {
@@ -805,6 +806,9 @@ namespace Necromancy.Server.Systems.Item
             itemInstance.buyoutPrice = reader.IsDBNull("buyout_price") ? 0 : (ulong)reader.GetInt64("buyout_price");
             itemInstance.comment = reader.IsDBNull("comment") ? "" : reader.GetString("comment");
 
+            //enhancement
+            itemInstance = CalcEnhancement(itemInstance);
+
             return itemInstance;
         }
 
@@ -821,5 +825,106 @@ namespace Necromancy.Server.Systems.Item
             DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
             return dOffsetNow.ToUnixTimeSeconds() + secondsToExpiry;
         }
+
+        private ItemInstance CalcEnhancement(ItemInstance itemInstance)
+        {
+            //Temporary ItemLibrary.CSV lookup until Item_decrypted.csv and Table are fully mapped/ populated
+            //server.settingRepository.itemLibrary.TryGetValue(itemInstance.baseId, out ItemLibrarySetting itemLibrarySetting);
+            //if (itemLibrarySetting != null)
+            {
+                //itemInstance.maximumDurability = itemLibrarySetting.durability; //Temporary until we get durability in itemLibrary
+                if (itemInstance.currentDurability > itemInstance.maximumDurability) itemInstance.currentDurability = itemInstance.maximumDurability;
+                if (itemInstance.weight == 0) itemInstance.weight += 1234;
+                if (itemInstance.type == ItemType.SHIELD_LARGE || itemInstance.type == ItemType.SHIELD_MEDIUM || itemInstance.type == ItemType.SHIELD_SMALL)
+                {
+                    if (itemInstance.gp == 0) itemInstance.gp += 50;
+                    if (itemInstance.maximumDurability <= 0) itemInstance.maximumDurability = 55;
+                }
+            }
+
+            //update items base stats per enchantment level.
+            ForgeMultiplier forgeMultiplier = LoginLoadMultiplier(itemInstance.enhancementLevel);
+            itemInstance.physical = (short)(itemInstance.physical * forgeMultiplier.factor);
+            itemInstance.magical = (short)(itemInstance.magical * forgeMultiplier.factor);
+            itemInstance.maximumDurability = (short)(itemInstance.maximumDurability * forgeMultiplier.durability);
+            itemInstance.hardness = (byte)(itemInstance.hardness + forgeMultiplier.hardness);
+            itemInstance.weight = (short)(itemInstance.weight - forgeMultiplier.weight);
+            if (itemInstance.weight < 0) itemInstance.weight = 0;
+            return itemInstance;
+        }
+
+        public ForgeMultiplier LoginLoadMultiplier(int level)
+        {
+            double factor = 1;
+            double durability = 1;
+            int hardness = 0;
+            switch (level)
+            {
+                case 0:
+                    factor = 1.00;
+                    durability = 1.0;
+                    hardness = 0;
+                    break;
+                case 1:
+                    factor = 1.05;
+                    durability = 1.1;
+                    hardness = 0;
+                    break;
+                case 2:
+                    factor = 1.15;
+                    durability = 1.2;
+                    hardness = 0;
+                    break;
+                case 3:
+                    factor = 1.27;
+                    durability = 1.3;
+                    hardness = 0;
+                    break;
+                case 4:
+                    factor = 1.39;
+                    durability = 1.4;
+                    hardness = 0;
+                    break;
+                case 5:
+                    factor = 1.54;
+                    durability = 1.5;
+                    hardness = 1;
+                    break;
+                case 6:
+                    factor = 1.69;
+                    durability = 1.6;
+                    hardness = 0;
+                    break;
+                case 7:
+                    factor = 1.84;
+                    durability = 1.7;
+                    hardness = 0;
+                    break;
+                case 8:
+                    factor = 1.99;
+                    durability = 1.8;
+                    hardness = 0;
+                    break;
+                case 9:
+                    factor = 2.14;
+                    durability = 1.9;
+                    hardness = 0;
+                    break;
+                case 10:
+                    factor = 2.29;
+                    durability = 2.0;
+                    hardness = 2;
+                    break;
+            }
+
+            ForgeMultiplier forgeMultiplier = new ForgeMultiplier();
+            forgeMultiplier.factor = factor;
+            forgeMultiplier.durability = durability;
+            forgeMultiplier.hardness = hardness;
+            forgeMultiplier.weight = 100; //toDo
+            return forgeMultiplier;
+        }
+
+
     }
 }
