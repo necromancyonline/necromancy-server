@@ -1196,7 +1196,7 @@ namespace Necromancy.Server.Packet.Id
         send_refusallist_remove_user = 0xCEAC,
         send_return_home_request_exec = 0x09F4,
         send_revive_execute = 0x170, //opcode not found TODO
-        send_revive_init = 0x171, //opcode not found  TODO
+        send_revive_init = 0x7350,
         send_select_package_update = 0x2A64,
         send_shop_buy = 0xADB6,
         send_shop_close = 0x2469,
