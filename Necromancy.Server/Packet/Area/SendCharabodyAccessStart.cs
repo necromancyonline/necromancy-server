@@ -28,11 +28,9 @@ namespace Necromancy.Server.Packet.Area
             _Logger.Debug($"Accessing Body ID {instanceId}");
             client.character.eventSelectReadyCode = instanceId; // store the Instance of the body you are looting on your character.
 
-            //DeadBody deadBody = Server.Instances.GetInstance(instanceId) as DeadBody; //add case logic to detect different instance types.  monster, deadbody, other
-
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0); //Insert logic gate here. should not always succeed
-            router.Send(client.map, (ushort)AreaPacketId.recv_charabody_access_start_r, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_charabody_access_start_r, res, ServerType.Area);
             //SALVAGE_DEADBODY,-510,It is protected by a mysterious power., SYSTEM_IMPORTANCE,
             //SALVAGE_DEADBODY,-513, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
             // SALVAGE_DEADBODY,-514, It is protected by a mysterious power., SYSTEM_IMPORTANCE,
@@ -64,8 +62,13 @@ namespace Necromancy.Server.Packet.Area
                     List<ItemInstance> lootableItems = itemService.GetLootableItems(deadBody1.characterInstanceId);
                     foreach (ItemInstance itemInstance in lootableItems)
                     {
+                        ItemLocation originalLocation = itemInstance.location;
+                        if (itemInstance.location.zoneType == ItemZoneType.AdventureBag) itemInstance.location = new ItemLocation(ItemZoneType.CorpseAdventureBag, originalLocation.container, originalLocation.slot); ;
+                        if (itemInstance.location.zoneType == ItemZoneType.EquippedBags) itemInstance.location = new ItemLocation(ItemZoneType.CorpseEquippedBags, originalLocation.container, originalLocation.slot); ;
+                        if (itemInstance.location.zoneType == ItemZoneType.PremiumBag) itemInstance.location = new ItemLocation(ItemZoneType.CorpsePremiumBag, originalLocation.container, originalLocation.slot); ;
                         RecvItemInstanceUnidentified recvItemInstanceUnidentified = new RecvItemInstanceUnidentified(client, itemInstance);
                         router.Send(client, recvItemInstanceUnidentified.ToPacket());
+                        itemInstance.location = originalLocation;
                     }
 
                     break;
