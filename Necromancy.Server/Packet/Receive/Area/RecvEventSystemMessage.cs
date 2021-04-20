@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly string _message;
 
         public RecvEventSystemMessage(string message)
-            : base((ushort) AreaPacketId.recv_event_system_message, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_system_message, ServerType.Area)
         {
             _message = message;
         }

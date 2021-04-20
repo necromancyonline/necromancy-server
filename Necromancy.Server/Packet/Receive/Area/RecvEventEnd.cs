@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly byte _unknown;
 
         public RecvEventEnd(byte unknown)
-            : base((ushort) AreaPacketId.recv_event_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_end, ServerType.Area)
         {
             _unknown = unknown;
         }

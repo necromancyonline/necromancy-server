@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemUpdateAc : PacketResponse
     {
         public RecvItemUpdateAc()
-            : base((ushort) AreaPacketId.recv_item_update_ac, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_update_ac, ServerType.Area)
         {
         }
 

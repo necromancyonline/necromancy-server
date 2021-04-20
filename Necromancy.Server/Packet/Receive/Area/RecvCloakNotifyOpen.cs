@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCloakNotifyOpen : PacketResponse
     {
         public RecvCloakNotifyOpen()
-            : base((ushort) AreaPacketId.recv_cloak_notify_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cloak_notify_open, ServerType.Area)
         {
         }
 

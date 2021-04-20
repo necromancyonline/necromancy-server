@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDropObjectNotifyStateFlag : PacketResponse
     {
         public RecvDropObjectNotifyStateFlag()
-            : base((ushort) AreaPacketId.recv_dropobject_notify_stateflag, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_dropobject_notify_stateflag, ServerType.Area)
         {
         }
 

@@ -23,18 +23,12 @@ namespace Necromancy.Server.Tasks.Core
 
         public void Start()
         {
-            foreach (PeriodicTask task in _tasks)
-            {
-                task.Start();
-            }
+            foreach (PeriodicTask task in _tasks) task.Start();
         }
 
         public void Stop()
         {
-            foreach (PeriodicTask task in _tasks)
-            {
-                task.Stop();
-            }
+            foreach (PeriodicTask task in _tasks) task.Stop();
         }
 
         public void Clear()

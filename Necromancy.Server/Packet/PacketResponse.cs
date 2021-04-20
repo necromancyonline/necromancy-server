@@ -6,27 +6,24 @@ namespace Necromancy.Server.Packet
 {
     public abstract class PacketResponse
     {
+        public readonly List<NecClient> clients;
         private NecPacket _packet;
 
         public PacketResponse(ushort id, ServerType serverType)
         {
-            Clients = new List<NecClient>();
-            Id = id;
-            ServerType = serverType;
+            clients = new List<NecClient>();
+            this.id = id;
+            this.serverType = serverType;
         }
 
-        public readonly List<NecClient> Clients;
-        public ServerType ServerType { get; }
-        public ushort Id { get; }
+        public ServerType serverType { get; }
+        public ushort id { get; }
 
         protected abstract IBuffer ToBuffer();
 
         public NecPacket ToPacket()
         {
-            if (_packet == null)
-            {
-                _packet = new NecPacket(Id, ToBuffer(), ServerType);
-            }
+            if (_packet == null) _packet = new NecPacket(id, ToBuffer(), serverType);
 
             return _packet;
         }

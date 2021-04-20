@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedJailDrawPoint : PacketResponse
     {
         public RecvWantedJailDrawPoint()
-            : base((ushort) AreaPacketId.recv_wanted_jail_draw_point_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_jail_draw_point_r, ServerType.Area)
         {
         }
 
@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteInt32(0);
-            res.WriteByte(0);//bool
+            res.WriteByte(0); //bool
             return res;
         }
     }

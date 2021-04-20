@@ -7,11 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvEoNotifyDisappearSchedule : PacketResponse
     {
-        private readonly uint _instanceId;
         private readonly float _disappearTime;
+        private readonly uint _instanceId;
 
         public RecvEoNotifyDisappearSchedule(uint instanceId, float disappearTime)
-            : base((ushort) AreaPacketId.recv_eo_notify_disappear_schedule, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_eo_notify_disappear_schedule, ServerType.Area)
         {
             _instanceId = instanceId;
             _disappearTime = disappearTime;

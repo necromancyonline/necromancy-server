@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly byte _unknown;
 
         public RecvEventStart(uint type, byte unknown)
-            : base((ushort) AreaPacketId.recv_event_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_start, ServerType.Area)
         {
             _type = type;
             _unknown = unknown;

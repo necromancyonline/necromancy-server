@@ -7,12 +7,12 @@ namespace Necromancy.Server.Packet.Receive
 {
     public class RecvPartyNotifyGetItem : PacketResponse
     {
+        private readonly byte _count;
         private readonly int _itemId;
         private readonly string _message;
-        private readonly byte _count;
 
         public RecvPartyNotifyGetItem(int itemId, string message, byte count)
-            : base((ushort) MsgPacketId.recv_party_notify_get_item, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_get_item, ServerType.Msg)
         {
             _itemId = itemId;
             _message = message;

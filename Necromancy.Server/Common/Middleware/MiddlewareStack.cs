@@ -3,7 +3,7 @@ using System;
 namespace Necromancy.Server.Common.Middleware
 {
     /// <summary>
-    /// Implementation of a middleware
+    ///     Implementation of a middleware
     /// </summary>
     public class MiddlewareStack<T, TReq, TRes>
     {

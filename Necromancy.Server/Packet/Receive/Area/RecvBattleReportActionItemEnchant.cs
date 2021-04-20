@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportActionItemEnchant : PacketResponse
     {
         public RecvBattleReportActionItemEnchant()
-            : base((ushort) AreaPacketId.recv_battle_report_action_item_enchant, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_item_enchant, ServerType.Area)
         {
         }
 

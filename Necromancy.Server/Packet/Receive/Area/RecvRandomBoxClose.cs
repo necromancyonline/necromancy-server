@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRandomBoxClose : PacketResponse
     {
         public RecvRandomBoxClose()
-            : base((ushort) AreaPacketId.recv_random_box_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_random_box_close_r, ServerType.Area)
         {
         }
 

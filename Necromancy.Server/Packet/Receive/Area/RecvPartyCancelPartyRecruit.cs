@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartyCancelPartyRecruit : PacketResponse
     {
         public RecvPartyCancelPartyRecruit()
-            : base((ushort) AreaPacketId.recv_party_cancel_party_recruit_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_cancel_party_recruit_r, ServerType.Area)
         {
         }
 

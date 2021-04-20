@@ -7,17 +7,17 @@ namespace Necromancy.Server.Packet.Area.SendCmdExec
     {
         public SendCmdExecRequest(string command)
         {
-            Command = command;
-            Parameter = new List<string>();
+            this.command = command;
+            parameter = new List<string>();
         }
 
-        public string Command { get; set; }
-        public List<string> Parameter { get; }
+        public string command { get; set; }
+        public List<string> parameter { get; }
 
         public string CommandString()
         {
             return
-                $"{ChatCommandHandler.ChatCommandStart}{Command} {string.Join(ChatCommandHandler.ChatCommandSeparator, Parameter)}";
+                $"{ChatCommandHandler.CHAT_COMMAND_START}{command} {string.Join(ChatCommandHandler.CHAT_COMMAND_SEPARATOR, parameter)}";
         }
     }
 }

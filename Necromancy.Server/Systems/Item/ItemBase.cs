@@ -1,88 +1,84 @@
-using Necromancy.Server.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Necromancy.Server.Systems.Item
 {
     public class ItemBase
-    {        
-        public int BaseID { get; set; }
-        public ItemType Type { get; set; }
-        public ItemQualities Quality { get; set; }
-        public byte MaxStackSize { get; set; } = 1;
-        public ItemEquipSlots EquipAllowedSlots { get; set; }    
-        public Races RequiredRaces { get; set; }
-        public Classes RequiredClasses { get; set; }
-        public Alignments RequiredAlignments { get; set; }
+    {
+        public string equipSlot2 = "WhoKnows"; //TODO
+        public string lore = "";
 
-        public short RequiredStrength { get; set; }
-        public short RequiredVitality { get; set; }
-        public short RequiredDexterity { get; set; }
-        public short RequiredAgility { get; set; }
-        public short RequiredIntelligence { get; set; }
-        public short RequiredPiety { get; set; }
-        public short RequiredLuck { get; set; }
+        public string objectType = "NONE"; //TODO
+        public int baseId { get; set; }
+        public ItemType type { get; set; }
+        public ItemQualities quality { get; set; }
+        public byte maxStackSize { get; set; } = 1;
+        public ItemEquipSlots equipAllowedSlots { get; set; }
+        public Races requiredRaces { get; set; }
+        public Classes requiredClasses { get; set; }
+        public Alignments requiredAlignments { get; set; }
 
-        public byte RequiredSoulRank { get; set; }
-        public byte RequiredLevel { get; set; }
+        public short requiredStrength { get; set; }
+        public short requiredVitality { get; set; }
+        public short requiredDexterity { get; set; }
+        public short requiredAgility { get; set; }
+        public short requiredIntelligence { get; set; }
+        public short requiredPiety { get; set; }
+        public short requiredLuck { get; set; }
 
-        public byte PhysicalSlash {get; set;}
-        public byte PhysicalStrike { get; set; }
-        public byte PhysicalPierce { get; set; }
+        public byte requiredSoulRank { get; set; }
+        public byte requiredLevel { get; set; }
 
-        public byte PhysicalDefenseFire { get; set; }
-        public byte PhysicalDefenseWater { get; set; }
-        public byte PhysicalDefenseWind { get; set; }
-        public byte PhysicalDefenseEarth { get; set; }
-        public byte PhysicalDefenseLight { get; set; }
-        public byte PhysicalDefenseDark { get; set; }
+        public byte physicalSlash { get; set; }
+        public byte physicalStrike { get; set; }
+        public byte physicalPierce { get; set; }
 
-        public byte MagicalAttackFire { get; set; }
-        public byte MagicalAttackWater { get; set; }
-        public byte MagicalAttackWind { get; set; }
-        public byte MagicalAttackEarth { get; set; }
-        public byte MagicalAttackLight { get; set; }
-        public byte MagicalAttackDark { get; set; }
+        public byte physicalDefenseFire { get; set; }
+        public byte physicalDefenseWater { get; set; }
+        public byte physicalDefenseWind { get; set; }
+        public byte physicalDefenseEarth { get; set; }
+        public byte physicalDefenseLight { get; set; }
+        public byte physicalDefenseDark { get; set; }
 
-        public byte Hp { get; set; }
-        public byte Mp { get; set; }
-        public byte Str { get; set; }
-        public byte Vit { get; set; }
-        public byte Dex { get; set; }
-        public byte Agi { get; set; }
-        public byte Int { get; set; }
-        public byte Pie { get; set; }
-        public byte Luk { get; set; }
+        public byte magicalAttackFire { get; set; }
+        public byte magicalAttackWater { get; set; }
+        public byte magicalAttackWind { get; set; }
+        public byte magicalAttackEarth { get; set; }
+        public byte magicalAttackLight { get; set; }
+        public byte magicalAttackDark { get; set; }
 
-        public byte ResistPoison { get; set; }
-        public byte ResistParalyze { get; set; }
-        public byte ResistPetrified { get; set; }
-        public byte ResistFaint { get; set; }
-        public byte ResistBlind { get; set; }
-        public byte ResistSleep { get; set; }
-        public byte ResistSilence { get; set; }
-        public byte ResistCharm { get; set; }
-        public byte ResistConfusion { get; set; }
-        public byte ResistFear { get; set; }
+        public byte hp { get; set; }
+        public byte mp { get; set; }
+        public byte str { get; set; }
+        public byte vit { get; set; }
+        public byte dex { get; set; }
+        public byte agi { get; set; }
+        public byte @int { get; set; }
+        public byte pie { get; set; }
+        public byte luk { get; set; }
 
-        public ItemStatusEffect StatusMalus {get; set; }
-        public int StatusMalusPercent { get; set; }
+        public byte resistPoison { get; set; }
+        public byte resistParalyze { get; set; }
+        public byte resistPetrified { get; set; }
+        public byte resistFaint { get; set; }
+        public byte resistBlind { get; set; }
+        public byte resistSleep { get; set; }
+        public byte resistSilence { get; set; }
+        public byte resistCharm { get; set; }
+        public byte resistConfusion { get; set; }
+        public byte resistFear { get; set; }
 
-        public string ObjectType = "NONE"; //TODO
-        public string EquipSlot2 = "WhoKnows"; //TODO
+        public ItemStatusEffect statusMalus { get; set; }
+
+        public int statusMalusPercent { get; set; }
+
         //public string IconType = "eh"; //TODO
-        public byte BagSize { get; set; }
-        public bool IsUseableInTown { get; set; }
-        public bool IsStorable { get; set; }
-        public bool IsDiscardable { get; set; }
-        public bool IsSellable { get; set; }
-        public bool IsTradeable { get; set; }
-        public bool IsTradableAfterUse { get; set; }
-        public bool IsStealable { get; set; }
-        public bool IsGoldBorder { get; set; }
-        public string Lore = "";
-        public int IconId { get; set; }
-
+        public byte bagSize { get; set; }
+        public bool isUseableInTown { get; set; }
+        public bool isStorable { get; set; }
+        public bool isDiscardable { get; set; }
+        public bool isSellable { get; set; }
+        public bool isTradeable { get; set; }
+        public bool isTradableAfterUse { get; set; }
+        public bool isStealable { get; set; }
+        public bool isGoldBorder { get; set; }
+        public int iconId { get; set; }
     }
 }

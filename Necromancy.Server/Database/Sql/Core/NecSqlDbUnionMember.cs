@@ -8,54 +8,48 @@ namespace Necromancy.Server.Database.Sql.Core
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private const string SqlInsertUnionMember=
+        private const string SQL_INSERT_UNION_MEMBER =
             "INSERT INTO `nec_union_member` (`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined`)VALUES(@union_id,@character_id,@member_priviledge_bitmask,@rank,@joined);";
-        
-        private const string SqlSelectUnionMemberByCharacterId =
+
+        private const string SQL_SELECT_UNION_MEMBER_BY_CHARACTER_ID =
             "SELECT `id`,`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined` FROM `nec_union_member` WHERE `character_id`=@character_id;";
 
-        private const string SqlSelectUnionMembersByUnionId =
+        private const string SQL_SELECT_UNION_MEMBERS_BY_UNION_ID =
             "SELECT `id`,`union_id`,`character_id`,`member_priviledge_bitmask`,`rank`,`joined` FROM `nec_union_member` WHERE `union_id`=@union_id;";
 
-        private const string SqlUpdateUnionMember =
+        private const string SQL_UPDATE_UNION_MEMBER =
             "UPDATE `nec_union_member` SET `union_id`=@union_id,`character_id`=@character_id,`member_priviledge_bitmask`=@member_priviledge_bitmask,`rank`=@rank,`joined`=@joined  WHERE `character_id`=@character_id;";
 
-        private const string SqlDeleteUnionMember =
+        private const string SQL_DELETE_UNION_MEMBER =
             "DELETE FROM `nec_union_member` WHERE `character_id`=@character_id;";
 
-        private const string SqlDeleteAllUnionMember =
+        private const string SQL_DELETE_ALL_UNION_MEMBER =
             "DELETE FROM `nec_union_member` WHERE `union_id`=@union_id;";
 
         public bool InsertUnionMember(UnionMember unionMember)
         {
-            int rowsAffected = ExecuteNonQuery(SqlInsertUnionMember, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_INSERT_UNION_MEMBER, command =>
             {
                 //AddParameter(command, "@id", unionMember.Id);
-                AddParameter(command, "@union_id", unionMember.UnionId);
-                AddParameter(command, "@character_id", unionMember.CharacterDatabaseId);
-                AddParameter(command, "@member_priviledge_bitmask", unionMember.MemberPriviledgeBitMask);
-                AddParameter(command, "@rank", unionMember.Rank);
-                AddParameter(command, "@joined", unionMember.Joined);
+                AddParameter(command, "@union_id", unionMember.unionId);
+                AddParameter(command, "@character_id", unionMember.characterDatabaseId);
+                AddParameter(command, "@member_priviledge_bitmask", unionMember.memberPriviledgeBitMask);
+                AddParameter(command, "@rank", unionMember.rank);
+                AddParameter(command, "@joined", unionMember.joined);
             }, out long autoIncrement);
-            if (rowsAffected <= NoRowsAffected || autoIncrement <= NoAutoIncrement)
-            {
-                return false;
-            }
+            if (rowsAffected <= NO_ROWS_AFFECTED || autoIncrement <= NO_AUTO_INCREMENT) return false;
 
-            unionMember.Id = (int)autoIncrement;
+            unionMember.id = (int)autoIncrement;
             return true;
         }
-        
-        public UnionMember SelectUnionMemberByCharacterId(int CharacterDatabaseId)
+
+        public UnionMember SelectUnionMemberByCharacterId(int characterDatabaseId)
         {
             UnionMember unionMember = null;
-            ExecuteReader(SqlSelectUnionMemberByCharacterId,
-                command => { AddParameter(command, "@character_id", CharacterDatabaseId); }, reader =>
+            ExecuteReader(SQL_SELECT_UNION_MEMBER_BY_CHARACTER_ID,
+                command => { AddParameter(command, "@character_id", characterDatabaseId); }, reader =>
                 {
-                    if (reader.Read())
-                    {
-                        unionMember = ReadUnionMember(reader);
-                    }
+                    if (reader.Read()) unionMember = ReadUnionMember(reader);
                 });
             return unionMember;
         }
@@ -63,7 +57,7 @@ namespace Necromancy.Server.Database.Sql.Core
         public List<UnionMember> SelectUnionMembersByUnionId(int unionId)
         {
             List<UnionMember> unionMembers = new List<UnionMember>();
-            ExecuteReader(SqlSelectUnionMembersByUnionId,
+            ExecuteReader(SQL_SELECT_UNION_MEMBERS_BY_UNION_ID,
                 command => { AddParameter(command, "@union_id", unionId); }, reader =>
                 {
                     while (reader.Read())
@@ -77,40 +71,40 @@ namespace Necromancy.Server.Database.Sql.Core
 
         public bool UpdateUnionMember(UnionMember unionMember)
         {
-            int rowsAffected = ExecuteNonQuery(SqlUpdateUnionMember, command =>
+            int rowsAffected = ExecuteNonQuery(SQL_UPDATE_UNION_MEMBER, command =>
             {
-                AddParameter(command, "@id", unionMember.Id);
-                AddParameter(command, "@union_id", unionMember.UnionId);
-                AddParameter(command, "@character_id", unionMember.CharacterDatabaseId);
-                AddParameter(command, "@member_priviledge_bitmask", unionMember.MemberPriviledgeBitMask);
-                AddParameter(command, "@rank", unionMember.Rank);
-                AddParameter(command, "@joined", unionMember.Joined);
+                AddParameter(command, "@id", unionMember.id);
+                AddParameter(command, "@union_id", unionMember.unionId);
+                AddParameter(command, "@character_id", unionMember.characterDatabaseId);
+                AddParameter(command, "@member_priviledge_bitmask", unionMember.memberPriviledgeBitMask);
+                AddParameter(command, "@rank", unionMember.rank);
+                AddParameter(command, "@joined", unionMember.joined);
             });
-            return rowsAffected > NoRowsAffected;
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteUnionMember(int characterDatabaseId)
         {
-            int rowsAffected = ExecuteNonQuery(SqlDeleteUnionMember, command => { AddParameter(command, "@character_id", characterDatabaseId); });
-            return rowsAffected > NoRowsAffected;
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_UNION_MEMBER, command => { AddParameter(command, "@character_id", characterDatabaseId); });
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         public bool DeleteAllUnionMembers(int unionId)
         {
-            int rowsAffected = ExecuteNonQuery(SqlDeleteAllUnionMember, command => { AddParameter(command, "@union_id", unionId); });
-            return rowsAffected > NoRowsAffected;
+            int rowsAffected = ExecuteNonQuery(SQL_DELETE_ALL_UNION_MEMBER, command => { AddParameter(command, "@union_id", unionId); });
+            return rowsAffected > NO_ROWS_AFFECTED;
         }
 
         private UnionMember ReadUnionMember(DbDataReader reader)
         {
             {
                 UnionMember unionMember = new UnionMember();
-                unionMember.Id = GetInt32(reader, "id");
-                unionMember.UnionId = GetInt32(reader, "union_id");
-                unionMember.CharacterDatabaseId = GetInt32(reader, "character_id");
-                unionMember.MemberPriviledgeBitMask = (uint)GetInt32(reader, "member_priviledge_bitmask");
-                unionMember.Rank = (uint)GetInt32(reader, "rank");
-                unionMember.Joined = GetDateTime(reader, "joined");
+                unionMember.id = GetInt32(reader, "id");
+                unionMember.unionId = GetInt32(reader, "union_id");
+                unionMember.characterDatabaseId = GetInt32(reader, "character_id");
+                unionMember.memberPriviledgeBitMask = (uint)GetInt32(reader, "member_priviledge_bitmask");
+                unionMember.rank = (uint)GetInt32(reader, "rank");
+                unionMember.joined = GetDateTime(reader, "joined");
                 return unionMember;
             }
         }

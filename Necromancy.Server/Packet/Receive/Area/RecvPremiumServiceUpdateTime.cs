@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPremiumServiceUpdateTime : PacketResponse
     {
         public RecvPremiumServiceUpdateTime()
-            : base((ushort) AreaPacketId.recv_premium_service_update_time, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_premium_service_update_time, ServerType.Area)
         {
         }
 

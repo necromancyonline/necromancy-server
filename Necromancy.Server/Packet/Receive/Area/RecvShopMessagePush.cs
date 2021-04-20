@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvShopMessagePush : PacketResponse
     {
         public RecvShopMessagePush()
-            : base((ushort) AreaPacketId.recv_shop_message_push, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_shop_message_push, ServerType.Area)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            res.WriteCString("");//Length is 31-01=30=DEC48
+            res.WriteCString(""); //Length is 31-01=30=DEC48
             return res;
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvObjectRegionDisappearUpdateNotify : PacketResponse
     {
         public RecvObjectRegionDisappearUpdateNotify()
-            : base((ushort) AreaPacketId.recv_object_region_disappear_update_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_object_region_disappear_update_notify, ServerType.Area)
         {
         }
 

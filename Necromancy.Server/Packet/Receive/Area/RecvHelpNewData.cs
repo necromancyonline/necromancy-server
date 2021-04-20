@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvHelpNewData : PacketResponse
     {
         public RecvHelpNewData()
-            : base((ushort) AreaPacketId.recv_help_new_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_help_new_data, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);//<=0xA
+            res.WriteInt32(0); //<=0xA
             return res;
         }
     }

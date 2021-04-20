@@ -1,112 +1,110 @@
-using Necromancy.Server.Model;
 using System;
-using System.Data;
-using System.Data.Common;
+using Necromancy.Server.Model;
 
 namespace Necromancy.Server.Systems.Auction
 {
     public class AuctionDao : DatabaseAccessObject
     {
-        private const string SqlCreateItemsUpForAuctionView = @"
+        private const string SQL_CREATE_ITEMS_UP_FOR_AUCTION_VIEW = @"
             DROP VIEW IF EXISTS items_up_for_auction;
             CREATE VIEW IF NOT EXISTS items_up_for_auction
 	            (
-		            id, 
-                    consigner_id, 
-		            consigner_name, 
-		            instance_id, 
-		            quantity, 
-		            expiry_datetime, 
-		            min_bid, 
-		            buyout_price, 
-		            current_bid, 
-		            bidder_id, 
+		            id,
+                    consigner_id,
+		            consigner_name,
+		            instance_id,
+		            quantity,
+		            expiry_datetime,
+		            min_bid,
+		            buyout_price,
+		            current_bid,
+		            bidder_id,
 		            comment,
                     is_cancellable
 	            )
             AS
-            SELECT 			
+            SELECT
                 nec_auction.id,
                 consigner.id,
                 consigner.name,
-                nec_auction.instance_id, 
+                nec_auction.instance_id,
                 nec_auction.quantity,
-                nec_auction.expiry_datetime, 
+                nec_auction.expiry_datetime,
                 nec_auction.min_bid,
-                nec_auction.buyout_price, 
-                nec_auction.current_bid, 
+                nec_auction.buyout_price,
+                nec_auction.current_bid,
                 nec_auction.bidder_id,
                 nec_auction.comment,
                 nec_auction.is_cancellable
-            FROM 
+            FROM
                 nec_auction
 			INNER JOIN
 				nec_item_instance item_instance
 			ON
 				nec_auction.instance_id = item_instance.id
-            INNER JOIN 
+            INNER JOIN
                 nec_character consigner
-            ON 
+            ON
                 item_instance.owner_id = consigner.id";
 
-        private const string SqlInsertLot = @"
-            INSERT INTO 
-                nec_auction 
-                ( 
+        private const string SQL_INSERT_LOT = @"
+            INSERT INTO
+                nec_auction
+                (
                     slot
-                    instance_id, 
-                    quantity, 
-                    expiry_datetime, 
-                    min_bid, 
-                    buyout_price, 
+                    instance_id,
+                    quantity,
+                    expiry_datetime,
+                    min_bid,
+                    buyout_price,
                     comment
-                ) 
-            VALUES 
+                )
+            VALUES
                 (
                     @slot
-                    @instance_id, 
-                    @quantity, 
-                    @expiry_datetime, 
-                    @min_bid, 
-                    @buyout_price, 
+                    @instance_id,
+                    @quantity,
+                    @expiry_datetime,
+                    @min_bid,
+                    @buyout_price,
                     @comment
                 )";
 
-        private const string SqlUpdateBid = @"
-            UPDATE 
-                nec_auction_item 
-            SET 
-                bidder_id = @bidder_id, 
-                current_bid = @current_bid, 
-                is_cancellable = (bidder_id IS NULL) 
-            WHERE 
+        private const string SQL_UPDATE_BID = @"
+            UPDATE
+                nec_auction_item
+            SET
+                bidder_id = @bidder_id,
+                current_bid = @current_bid,
+                is_cancellable = (bidder_id IS NULL)
+            WHERE
                 id = @id";
 
-        private const string SqlSelectBids = @"
-            SELECT 			
+        private const string SQL_SELECT_BIDS = @"
+            SELECT
                 *
             FROM
                 items_up_for_auction
             WHERE
                 bidder_id = @character_id";
 
-        private const string SqlSelectLots = @"
-            SELECT 			
-                *
-            FROM 
-                items_up_for_auction			
-            WHERE 
-                consigner_id = @character_id";
-
-        private const string SqlSelectItem = @"
-            SELECT 			
+        private const string SQL_SELECT_LOTS = @"
+            SELECT
                 *
             FROM
                 items_up_for_auction
-            WHERE 
+            WHERE
+                consigner_id = @character_id";
+
+        private const string SQL_SELECT_ITEM = @"
+            SELECT
+                *
+            FROM
+                items_up_for_auction
+            WHERE
                 id = @id";
 
-        private const string SqlSelectItemsByCriteria = @"";
+        private const string SQL_SELECT_ITEMS_BY_CRITERIA = @"";
 
 
         public AuctionDao()
@@ -116,11 +114,11 @@ namespace Necromancy.Server.Systems.Auction
 
         private void CreateView()
         {
-            ExecuteNonQuery(SqlCreateItemsUpForAuctionView, command => { });
+            ExecuteNonQuery(SQL_CREATE_ITEMS_UP_FOR_AUCTION_VIEW, command => { });
         }
 
         //public bool InsertLot(ItemInstance auctionLot)
-        //{           
+        //{
         //      int rowsAffected = ExecuteNonQuery(SqlInsertLot, command =>
         //        {
         //            AddParameter(command, "@slot", auctionLot.Slot);
@@ -190,7 +188,7 @@ namespace Necromancy.Server.Systems.Auction
         //        {
         //            AddParameter(command, "@character_id", character.Id);
         //        }, reader =>
-        //        {                    
+        //        {
         //            while (reader.Read())
         //            {
         //                if (i >= AuctionService.MAX_LOTS) break;
@@ -225,7 +223,7 @@ namespace Necromancy.Server.Systems.Auction
         {
             DateTime dNow = DateTime.Now;
             DateTimeOffset dOffsetNow = new DateTimeOffset(dNow);
-            return ((int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds()));
+            return (int)(unixTimeSecondsExpiry - dOffsetNow.ToUnixTimeSeconds());
         }
 
         private long CalcExpiryTime(int secondsToExpiry)
@@ -256,10 +254,10 @@ namespace Necromancy.Server.Systems.Auction
         //    ExecuteReader(SqlSelectItemsByCriteria,
         //        command =>
         //        {
-                    
+
         //        }, reader =>
         //        {
-        //            while (reader.Read()) { 
+        //            while (reader.Read()) {
         //            //TODO do something
         //            }
         //        });

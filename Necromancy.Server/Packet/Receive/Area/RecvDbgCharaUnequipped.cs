@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDbgCharaUnequipped : PacketResponse
     {
         public RecvDbgCharaUnequipped()
-            : base((ushort) AreaPacketId.recv_dbg_chara_unequipped, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_dbg_chara_unequipped, ServerType.Area)
         {
         }
 

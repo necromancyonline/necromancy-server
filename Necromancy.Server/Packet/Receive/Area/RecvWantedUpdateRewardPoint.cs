@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedUpdateRewardPoint : PacketResponse
     {
         public RecvWantedUpdateRewardPoint()
-            : base((ushort) AreaPacketId.recv_wanted_update_reward_point, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_update_reward_point, ServerType.Area)
         {
         }
 

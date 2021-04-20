@@ -8,11 +8,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvItemMove : PacketResponse
     {
         private readonly int _error;
+
         public RecvItemMove(NecClient client, int error)
-            : base((ushort) AreaPacketId.recv_item_move_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_item_move_r, ServerType.Area)
         {
             _error = error;
-            Clients.Add(client);
+            clients.Add(client);
         }
 
         protected override IBuffer ToBuffer()

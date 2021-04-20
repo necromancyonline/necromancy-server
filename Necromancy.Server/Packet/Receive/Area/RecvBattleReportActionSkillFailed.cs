@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportActionSkillFailed : PacketResponse
     {
         public RecvBattleReportActionSkillFailed()
-            : base((ushort) AreaPacketId.recv_battle_report_action_skill_failed, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_skill_failed, ServerType.Area)
         {
         }
 

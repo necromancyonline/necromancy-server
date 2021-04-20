@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportActionRemoveTrapOnTrap : PacketResponse
     {
         public RecvBattleReportActionRemoveTrapOnTrap()
-            : base((ushort) AreaPacketId.recv_battle_report_action_removetrap_ontrap, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_action_removetrap_ontrap, ServerType.Area)
         {
         }
 

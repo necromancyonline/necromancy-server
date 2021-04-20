@@ -1,77 +1,68 @@
-
 namespace Necromancy.Server.Systems.Item
 {
-    class Container
+    internal class Container
     {
         public const int NO_OPEN_SLOTS = -1;
-        public readonly ItemInstance[] _slots;
-        public int Size { get; }
-        public int Count { get; private set; }
-        public bool IsSorted { get; private set; }
+        public readonly ItemInstance[] slots;
 
-        public bool IsFull
-        {
-            get
-            {
-                return (Size - Count) <= 0;
-            }
-        }
-
-        public int TotalFreeSlots
-        {
-            get
-            {
-                return Size - Count;
-            }
-        }
         public Container(int size)
         {
-            _slots = new ItemInstance[size];
-            Size = size;
+            slots = new ItemInstance[size];
+            this.size = size;
         }
 
-        public int NextOpenSlot
+        public int size { get; }
+        public int count { get; private set; }
+        public bool isSorted { get; private set; }
+
+        public bool isFull => size - count <= 0;
+
+        public int totalFreeSlots => size - count;
+
+        public int nextOpenSlot
         {
             get
             {
-                for (int i = 0; i < Size; i++)
-                {
-                    if (_slots[i] is null) return i;
-                }
+                for (int i = 0; i < size; i++)
+                    if (slots[i] is null)
+                        return i;
                 return NO_OPEN_SLOTS;
             }
         }
+
         public void PutItem(int slot, ItemInstance item)
         {
-            if (_slots[slot] != null)
-                _slots[slot].Location = ItemLocation.InvalidLocation;
-            _slots[slot] = item;
-            Count++;
-            IsSorted = false;
+            if (slots[slot] != null)
+                slots[slot].location = ItemLocation.InvalidLocation;
+            slots[slot] = item;
+            count++;
+            isSorted = false;
         }
+
         public ItemInstance GetItem(int slot)
         {
-            return _slots[slot];
+            return slots[slot];
         }
+
         public void RemoveItem(int slot)
         {
-            if (_slots[slot] != null)
-                _slots[slot].Location = ItemLocation.InvalidLocation;
-            _slots[slot] = null;
-            Count--;
-            IsSorted = false;
+            if (slots[slot] != null)
+                slots[slot].location = ItemLocation.InvalidLocation;
+            slots[slot] = null;
+            count--;
+            isSorted = false;
         }
+
         public bool HasItem(int slot)
         {
-            return _slots[slot] != null;
+            return slots[slot] != null;
         }
 
         public int GetNextOpenSlot(int startSlot)
         {
-            for (int i = startSlot + 1; i < Size; i++)
-            {
-                if (_slots[i] is null) return i;
-            }
+            for (int i = startSlot + 1; i < size; i++)
+                if (slots[i] is null)
+                    return i;
             return NO_OPEN_SLOTS;
         }
     }

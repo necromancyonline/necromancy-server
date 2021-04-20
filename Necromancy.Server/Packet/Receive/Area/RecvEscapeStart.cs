@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEscapeStart : PacketResponse
     {
         public RecvEscapeStart()
-            : base((ushort) AreaPacketId.recv_escape_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_escape_start, ServerType.Area)
         {
         }
 

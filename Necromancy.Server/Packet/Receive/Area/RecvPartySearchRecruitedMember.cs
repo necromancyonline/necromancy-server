@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartySearchRecruitedMember : PacketResponse
     {
         public RecvPartySearchRecruitedMember()
-            : base((ushort) AreaPacketId.recv_party_search_recruited_member_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_search_recruited_member_r, ServerType.Area)
         {
         }
 
@@ -39,8 +39,8 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteFixedString("ToBeFound", 181);
-
             }
+
             return res;
         }
     }

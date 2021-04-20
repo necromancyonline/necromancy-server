@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaUpdateLvDetail : PacketResponse
     {
-        Character _character;
-        Experience _experience;
+        private readonly Character _character;
+        private readonly Experience _experience;
+
         public RecvCharaUpdateLvDetail(Character character, Experience experience)
-            : base((ushort) AreaPacketId.recv_chara_update_lv_detail, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_lv_detail, ServerType.Area)
         {
             _character = character;
             _experience = experience;
@@ -19,10 +20,10 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt16(_character.Level); // new level
+            res.WriteInt16(_character.level); // new level
 
-            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level - 1).CumulativeExperience); // exp start
-            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.Level - 0).CumulativeExperience); // exp next
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.level - 1).cumulativeExperience); // exp start
+            res.WriteUInt64(_experience.CalculateLevelUp((uint)_character.level - 0).cumulativeExperience); // exp next
             return res;
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNotifyHitEffectName : PacketResponse
     {
         public RecvBattleReportNotifyHitEffectName()
-            : base((ushort) AreaPacketId.recv_battle_report_notify_hit_effect_name, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_notify_hit_effect_name, ServerType.Area)
         {
         }
 

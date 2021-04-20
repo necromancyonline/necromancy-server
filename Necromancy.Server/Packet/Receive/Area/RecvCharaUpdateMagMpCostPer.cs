@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateMagMpCostPer : PacketResponse
     {
         public RecvCharaUpdateMagMpCostPer()
-            : base((ushort) AreaPacketId.recv_chara_update_mag_mp_cost_per, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_mag_mp_cost_per, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt16(0);//Percentage most likely
+            res.WriteInt16(0); //Percentage most likely
             return res;
         }
     }

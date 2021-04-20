@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyAccessEnd : PacketResponse
     {
-        private int _result;
+        private readonly int _result;
+
         public RecvCharaBodyAccessEnd(int result)
-            : base((ushort) AreaPacketId.recv_charabody_access_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_access_end, ServerType.Area)
         {
             _result = result;
         }

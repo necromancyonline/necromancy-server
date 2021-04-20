@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCashShopGetUrlCommonSteam : PacketResponse
     {
         public RecvCashShopGetUrlCommonSteam()
-            : base((ushort) AreaPacketId.recv_cash_shop_get_url_common_steam_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cash_shop_get_url_common_steam_r, ServerType.Area)
         {
         }
 

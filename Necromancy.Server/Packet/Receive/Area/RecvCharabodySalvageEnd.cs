@@ -7,10 +7,11 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySalvageEnd : PacketResponse
     {
-        private int _code;
-        private uint _id;
+        private readonly int _code;
+        private readonly uint _id;
+
         public RecvCharaBodySalvageEnd(uint id, int code)
-            : base((ushort) AreaPacketId.recv_charabody_salvage_end, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_salvage_end, ServerType.Area)
         {
             _code = code;
             _id = id;
@@ -30,6 +31,5 @@ namespace Necromancy.Server.Packet.Receive.Area
         //3	As %s logged out"," the corpse fell into place and returned to the soul.
         //4	
         //5	The corpse fell on the spot because the %s line was disconnected.
-
     }
 }

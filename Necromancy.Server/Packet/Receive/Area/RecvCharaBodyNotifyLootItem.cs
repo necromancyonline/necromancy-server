@@ -7,21 +7,22 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyNotifyLootItem : PacketResponse
     {
-        private byte _fromZone;
-        private byte _fromContainer;
-        private short _fromSlot;
-        private short _itemCount;
-        private string _soulName;
-        private string _charaName;
+        private readonly string _charaName;
+        private readonly byte _fromContainer;
+        private readonly short _fromSlot;
+        private readonly byte _fromZone;
+        private readonly short _itemCount;
+        private readonly string _soulName;
+
         public RecvCharaBodyNotifyLootItem(byte fromZone, byte fromContainer, short fromSlot, short itemCount, string soulName, string charaName)
             : base((ushort)AreaPacketId.recv_charabody_notify_loot_item, ServerType.Area)
-        {            
+        {
             _fromZone = fromZone;
             _fromContainer = fromContainer;
             _fromSlot = fromSlot;
             _itemCount = itemCount;
             _soulName = soulName;
-            _charaName = charaName;            
+            _charaName = charaName;
         }
 
         protected override IBuffer ToBuffer()

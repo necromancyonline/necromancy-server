@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNoActNotifyBuffDetach : PacketResponse
     {
         public RecvBattleReportNoActNotifyBuffDetach()
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_buff_detach, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_notify_buff_detach, ServerType.Area)
         {
         }
 
@@ -17,7 +17,7 @@ namespace Necromancy.Server.Packet.Receive.Area
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
             res.WriteInt32(0);
-            res.WriteByte(0);//bool
+            res.WriteByte(0); //bool
             return res;
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPackageNotifyAdd : PacketResponse
     {
         public RecvPackageNotifyAdd()
-            : base((ushort) AreaPacketId.recv_package_notify_add, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_package_notify_add, ServerType.Area)
         {
         }
 
@@ -37,11 +37,12 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteInt32(0);
             for (int i = 0; i < 3; i++)
             {
-                res.WriteByte(0);//bool
+                res.WriteByte(0); //bool
                 res.WriteInt32(0);
                 res.WriteInt32(0);
                 res.WriteInt32(0);
             }
+
             res.WriteInt64(0);
             return res;
         }

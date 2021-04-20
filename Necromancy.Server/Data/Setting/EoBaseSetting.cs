@@ -2,14 +2,14 @@ namespace Necromancy.Server.Data.Setting
 {
     public class EoBaseSetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int LogId { get; set; }
-        public string Faction { get; set; }
-        public bool OnlyOwner { get; set; }
-        public bool ShowActivationTime { get; set; }
-        public bool ShowName { get; set; }
+        public string name { get; set; }
+        public int logId { get; set; }
+        public string faction { get; set; }
+        public bool onlyOwner { get; set; }
+        public bool showActivationTime { get; set; }
+        public bool showName { get; set; }
         public string damageShape { get; set; }
-        public int EffectRadius { get; set; }
+        public int effectRadius { get; set; }
+        public int id { get; set; }
     }
 }

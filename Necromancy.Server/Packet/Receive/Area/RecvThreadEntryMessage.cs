@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvThreadEntryMessage : PacketResponse
     {
         public RecvThreadEntryMessage()
-            : base((ushort) AreaPacketId.recv_thread_entry_message, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_thread_entry_message, ServerType.Area)
         {
         }
 

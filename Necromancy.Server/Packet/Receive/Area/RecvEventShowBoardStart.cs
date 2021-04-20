@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventShowBoardStart : PacketResponse
     {
         public RecvEventShowBoardStart()
-            : base((ushort) AreaPacketId.recv_event_show_board_start, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_show_board_start, ServerType.Area)
         {
         }
 

@@ -1,15 +1,15 @@
-using Necromancy.Server.Common;
-using Necromancy.Server.Model;
-using Necromancy.Server.Packet;
-using Necromancy.Server.Packet.Id;
-using Necromancy.Server.Packet.Receive.Area;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
+using Necromancy.Server.Common;
 using Necromancy.Server.Logging;
+using Necromancy.Server.Model;
+using Necromancy.Server.Packet;
+using Necromancy.Server.Packet.Id;
+using Necromancy.Server.Packet.Receive.Area;
 using Necromancy.Server.Tasks.Core;
 
 namespace Necromancy.Server.Tasks
@@ -21,95 +21,94 @@ namespace Necromancy.Server.Tasks
 
     public class MonsterTask : PeriodicTask
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(MonsterTask));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MonsterTask));
 
-        protected NecServer _server { get; }
-        public MonsterSpawn _monster { get; set; }
-        public bool monsterFreeze { get; set; }
-        public bool monsterActive { get; set; }
-        public bool monsterMoving { get; set; }
-        private bool casting;
-        private bool monsterWaiting;
-        private bool spawnMonster;
-        public int agroRange { get; set; }
+        private static readonly int[] _SkillList = { 200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417 };
+
+        private static readonly int[] _effectList = { 301411, 301412, 301413, 301414, 301415, 301416, 301417 };
+        private readonly float _agroDetectAngle;
+        private readonly float _agroMoveAngle;
+
+        private readonly int _agroTick;
+        private readonly MonsterTick _agroTickMove;
+        private readonly Map _map;
+        private readonly int _pathingTick;
+        private readonly uint _skillInstanceId;
+        private int _agroCheckTime;
+        private int _agroMoveTime;
+        private bool _casting;
+        private int _castState;
+        private Vector3 _currentDest;
+        private int _currentSkill;
+        private int _currentWait;
+        private bool _monsterWaiting;
 
         //private int currentDest;
-        private int moveTime;
-        private int updateTime;
-        private int waitTime;
-        private int pathingTick;
-
-        private int agroTick;
+        private int _moveTime;
 
         //private int monsterVelocity;
-        private int respawnTime;
-        private int agroCheckTime;
-        private int agroMoveTime;
-        private int currentWait;
-        private float agroDetectAngle;
-        private float agroMoveAngle;
-        private Map Map;
-        private int CastState;
-
-        private static int[] skillList = new[]
-            {200301411, 200301412, 200301413, 200301414, 200301415, 200301416, 200301417};
-
-        private static int[] effectList = new[] {301411, 301412, 301413, 301414, 301415, 301416, 301417};
-        private int currentSkill;
-        private uint skillInstanceId;
-        private Vector3 currentDest;
-        private MonsterTick agroTickMove;
+        private int _respawnTime;
+        private bool _spawnMonster;
+        private int _updateTime;
+        private int _waitTime;
         public MonsterCoord monsterHome;
 
         public MonsterTask(NecServer server, MonsterSpawn monster)
         {
-            _monster = monster;
-            _server = server;
+            this.monster = monster;
+            this.server = server;
             monsterFreeze = false;
             monsterActive = true;
             monsterMoving = false;
-            casting = false;
-            spawnMonster = true;
+            _casting = false;
+            _spawnMonster = true;
             monsterHome = null;
-            _monster.CurrentCoordIndex = 1;
-            pathingTick = 100;
-            agroTick = 200;
-            updateTime = pathingTick;
-            agroMoveTime = 0;
-            agroTickMove = new MonsterTick();
-            waitTime = 2000;
-            currentWait = 0;
-            moveTime = updateTime;
-            monsterWaiting = true;
+            this.monster.currentCoordIndex = 1;
+            _pathingTick = 100;
+            _agroTick = 200;
+            _updateTime = _pathingTick;
+            _agroMoveTime = 0;
+            _agroTickMove = new MonsterTick();
+            _waitTime = 2000;
+            _currentWait = 0;
+            _moveTime = _updateTime;
+            _monsterWaiting = true;
             agroRange = 1000;
-            agroCheckTime = -1;
-            agroDetectAngle = (float) Math.Cos(Math.PI / 1.9);
-            agroMoveAngle = (float) Math.Cos(Math.PI / 4);
-            CastState = 0;
-            respawnTime = 10000;
-            currentSkill = 0;
-            skillInstanceId = 0;
-            Map = _server.Maps.Get(_monster.MapId);
-            currentDest = new Vector3();
+            _agroCheckTime = -1;
+            _agroDetectAngle = (float)Math.Cos(Math.PI / 1.9);
+            _agroMoveAngle = (float)Math.Cos(Math.PI / 4);
+            _castState = 0;
+            _respawnTime = 10000;
+            _currentSkill = 0;
+            _skillInstanceId = 0;
+            _map = this.server.maps.Get(this.monster.mapId);
+            _currentDest = new Vector3();
         }
 
-        public override string TaskName => $"MonsterTask : {_monster.InstanceId} - {_monster.Name}";
-        public override TimeSpan TaskTimeSpan { get; }
-        protected override bool TaskRunAtStart => false;
+        protected NecServer server { get; }
+        public MonsterSpawn monster { get; set; }
+        public bool monsterFreeze { get; set; }
+        public bool monsterActive { get; set; }
+        public bool monsterMoving { get; set; }
+        public int agroRange { get; set; }
+
+        public override string taskName => $"MonsterTask : {monster.instanceId} - {monster.name}";
+        public override TimeSpan taskTimeSpan { get; }
+        protected override bool taskRunAtStart => false;
 
 
         protected override void Execute()
         {
-            _monster.TaskActive = true;
-            while (monsterActive && _monster.SpawnActive)
+            monster.taskActive = true;
+            while (monsterActive && monster.spawnActive)
             {
-                if (spawnMonster)
+                if (_spawnMonster)
                 {
-                    _monster.loot = new Loot(_monster.Level, _monster.Id); //reload loot table
-                    Thread.Sleep(respawnTime / 2);
-                    updateTime = pathingTick;
-                    _monster.CurrentCoordIndex = 1;
-                    moveTime = updateTime;
+                    monster.loot = new Loot(monster.level, monster.id); //reload loot table
+                    Thread.Sleep(_respawnTime / 2);
+                    _updateTime = _pathingTick;
+                    monster.currentCoordIndex = 1;
+                    _moveTime = _updateTime;
                     MonsterSpawn();
                     Thread.Sleep(2000);
                 }
@@ -117,7 +116,7 @@ namespace Necromancy.Server.Tasks
                 //MonsterCoord nextCoord = _monster.monsterCoords.Find(x => x.CoordIdx == _monster.CurrentCoordIndex);
                 //Vector3 monster = new Vector3(_monster.X, _monster.Y, _monster.Z);
                 //float distance = GetDistance(nextCoord.destination, monster);
-                if (_monster.GetAgro())
+                if (monster.GetAgro())
                 {
                     if (MonsterAgro())
                         continue;
@@ -127,192 +126,185 @@ namespace Necromancy.Server.Tasks
                     MonsterPath();
                 }
 
-                Thread.Sleep(moveTime);
-                if (monsterWaiting)
+                Thread.Sleep(_moveTime);
+                if (_monsterWaiting)
                 {
-                    currentWait += updateTime;
-                    if (currentWait >= waitTime)
+                    _currentWait += _updateTime;
+                    if (_currentWait >= _waitTime)
                     {
-                        monsterWaiting = false;
-                        currentWait = 0;
+                        _monsterWaiting = false;
+                        _currentWait = 0;
                     }
                 }
             }
 
-            this.Stop();
-            _monster.TaskActive = false;
+            Stop();
+            monster.taskActive = false;
         }
 
         private void MonsterPath()
         {
-            MonsterCoord nextCoord = _monster.monsterCoords.Find(x => x.CoordIdx == _monster.CurrentCoordIndex);
-            Vector3 monster = new Vector3(_monster.X, _monster.Y, _monster.Z);
+            MonsterCoord nextCoord = this.monster.monsterCoords.Find(x => x.coordIdx == this.monster.currentCoordIndex);
+            Vector3 monster = new Vector3(this.monster.x, this.monster.y, this.monster.z);
             float distance = GetDistance(nextCoord.destination, monster);
-            if (distance > _monster.GetGotoDistance() && !monsterFreeze && !monsterWaiting && !_monster.GetAgro())
+            if (distance > this.monster.GetGotoDistance() && !monsterFreeze && !_monsterWaiting && !this.monster.GetAgro())
             {
                 MonsterMove(nextCoord);
             }
             else if (monsterMoving)
             {
                 //Thread.Sleep(updateTime/2); //Allow for cases where the remaining distance is less than the gotoDistance
-                _monster.MonsterStop(_server, 1, 0, .1F);
+                this.monster.MonsterStop(server, 1, 0, .1F);
                 monsterMoving = false;
-                if (!_monster.GetAgro())
+                if (!this.monster.GetAgro())
                 {
-                    monsterWaiting = true;
-                    currentWait = 0;
+                    _monsterWaiting = true;
+                    _currentWait = 0;
                     //                        Thread.Sleep(2000);
-                    if (_monster.CurrentCoordIndex < _monster.monsterCoords.Count - (_monster.defaultCoords ? 1 : 2))
-                        _monster.CurrentCoordIndex++;
+                    if (this.monster.currentCoordIndex < this.monster.monsterCoords.Count - (this.monster.defaultCoords ? 1 : 2))
+                        this.monster.currentCoordIndex++;
                     else
-                        _monster.CurrentCoordIndex = 0;
+                        this.monster.currentCoordIndex = 0;
 
-                    _monster.Heading = (byte) GetHeading(_monster.monsterCoords
-                        .Find(x => x.CoordIdx == _monster.CurrentCoordIndex).destination);
+                    this.monster.heading = (byte)GetHeading(this.monster.monsterCoords
+                        .Find(x => x.coordIdx == this.monster.currentCoordIndex).destination);
                 }
             }
 
             if (MonsterCheck())
             {
-                Logger.Debug($"MonsterCheck returned true");
+                _Logger.Debug("MonsterCheck returned true");
                 return;
             }
 
             if (MonsterAgroCheck())
-                _monster.SetAgro(true);
-            if (_monster.GetAgro())
+                this.monster.SetAgro(true);
+            if (this.monster.GetAgro())
             {
                 monsterMoving = false;
-                _monster.MonsterStop(_server, 1, 0, 0.1F);
-                _monster.MonsterHate(_server, true, _monster.GetCurrentTarget().InstanceId);
-                _monster.SendBattlePoseStartNotify(_server);
-                updateTime = agroTick;
-                if (_monster.MonsterId == 100201)
-                    _monster.SetGotoDistance(1000); //Caster Distance
+                this.monster.MonsterStop(server, 1, 0, 0.1F);
+                this.monster.MonsterHate(server, true, this.monster.GetCurrentTarget().instanceId);
+                this.monster.SendBattlePoseStartNotify(server);
+                _updateTime = _agroTick;
+                if (this.monster.monsterId == 100201)
+                    this.monster.SetGotoDistance(1000); //Caster Distance
                 else
-                    _monster.SetGotoDistance(200); //Melee Distance
+                    this.monster.SetGotoDistance(200); //Melee Distance
                 //monsterVelocity = 500;
-                moveTime = agroTick;
-                agroCheckTime = 0;
+                _moveTime = _agroTick;
+                _agroCheckTime = 0;
 
-                orientMonster();
+                OrientMonster();
                 MonsterAgroMove();
             }
         }
 
         private bool MonsterAgro()
         {
-            Vector3 monster = new Vector3(_monster.X, _monster.Y, _monster.Z);
-            Character currentTarget = _monster.GetCurrentTarget();
+            Vector3 monster = new Vector3(this.monster.x, this.monster.y, this.monster.z);
+            Character currentTarget = this.monster.GetCurrentTarget();
             if (currentTarget == null)
             {
-                Logger.Error($"No character target set for agroed monster");
+                _Logger.Error("No character target set for agroed monster");
                 return true;
             }
 
             if (MonsterCheck())
             {
-                Logger.Debug($"MonsterCheck returned true");
+                _Logger.Debug("MonsterCheck returned true");
                 return true;
             }
 
             float homeDistance = GetDistance(monsterHome.destination, monster);
-            if (homeDistance >= (agroRange * 4))
+            if (homeDistance >= agroRange * 4)
             {
-                foreach (uint instanceId in _monster.GetAgroInstanceList())
-                {
-                    _monster.MonsterHate(_server, false, instanceId);
-                }
+                foreach (uint instanceId in this.monster.GetAgroInstanceList()) this.monster.MonsterHate(server, false, instanceId);
 
-                RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(_monster.InstanceId);
-                _server.Router.Send(Map, objectDisappearData);
-                spawnMonster = true;
-                Logger.Debug($"Too far from home");
+                RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(this.monster.instanceId);
+                server.router.Send(_map, objectDisappearData);
+                _spawnMonster = true;
+                _Logger.Debug("Too far from home");
                 return true;
             }
 
             MonsterAgroAdjust();
-            Vector3 character = new Vector3(currentTarget.X, currentTarget.Y, currentTarget.Z);
+            Vector3 character = new Vector3(currentTarget.x, currentTarget.y, currentTarget.z);
             float distanceChar = GetDistance(character, monster);
-            if (distanceChar <= _monster.GetGotoDistance() + 50)
+            if (distanceChar <= this.monster.GetGotoDistance() + 50)
             {
                 if (monsterMoving)
                 {
-                    Thread.Sleep(updateTime / 2);
+                    Thread.Sleep(_updateTime / 2);
                     monsterMoving = false;
-                    _monster.MonsterStop(_server, 1, 0, 0.1F);
+                    this.monster.MonsterStop(server, 1, 0, 0.1F);
                     Thread.Sleep(100);
                 }
 
-                if (!monsterWaiting)
-                {
-                    switch (CastState)
+                if (!_monsterWaiting)
+                    switch (_castState)
                     {
                         case 0:
-                            orientMonster();
+                            OrientMonster();
                             //Casters
-                            if (_monster.MonsterId == 100201)
+                            if (this.monster.monsterId == 100201)
                             {
-                             //  skillInstanceId = _server.Instances.CreateInstance<Skill>().InstanceId;
-                             //  Logger.Debug($"attackId [200301411]");
-                             //  //_monster.MonsterStop(Server,8, 231, 2.0F);
-                             //  StartMonsterCastQueue(200301411, skillInstanceId);
-                             //  PlayerDamage();
-                             //  waitTime = 2000;
-                             //  CastState = 1;
+                                //  skillInstanceId = _server.Instances.CreateInstance<Skill>().InstanceId;
+                                //  Logger.Debug($"attackId [200301411]");
+                                //  //_monster.MonsterStop(Server,8, 231, 2.0F);
+                                //  StartMonsterCastQueue(200301411, skillInstanceId);
+                                //  PlayerDamage();
+                                //  waitTime = 2000;
+                                //  CastState = 1;
                             }
                             //Melee Attackers
                             else
                             {
-                                int attackId = (_monster.AttackSkillId * 100) + Util.GetRandomNumber(1, 4);
+                                int attackId = this.monster.attackSkillId * 100 + Util.GetRandomNumber(1, 4);
                                 //Logger.Debug($"_monster.AttackSkillId [{_monster.AttackSkillId}]  attackId[{attackId}]");
                                 MonsterAttackQueue(attackId);
                                 PlayerDamage();
-                                waitTime = 5000;
-                                CastState = 0;
+                                _waitTime = 5000;
+                                _castState = 0;
                             }
 
-                            monsterWaiting = true;
-                            currentWait = 0;
+                            _monsterWaiting = true;
+                            _currentWait = 0;
                             break;
                         case 1:
                             //int skillInstanceID = (int)Server.Instances.CreateInstance<Skill>().InstanceId;
                             MonsterCastQueue(200301411);
-                            monsterWaiting = true;
-                            waitTime = 1000;
-                            currentWait = 0;
-                            CastState = 3;
+                            _monsterWaiting = true;
+                            _waitTime = 1000;
+                            _currentWait = 0;
+                            _castState = 3;
                             break;
                         case 2:
-                            monsterWaiting = true;
-                            waitTime = 1000;
-                            currentWait = 0;
-                            CastState = 3;
+                            _monsterWaiting = true;
+                            _waitTime = 1000;
+                            _currentWait = 0;
+                            _castState = 3;
                             break;
                         case 3:
                             //int effectObjectInstanceId = (int)Server.Instances.CreateInstance<Skill>().InstanceId;
-                            SendDataNotifyEoData(skillInstanceId, 301411);
-                            SendEoNotifyDisappearSchedule(skillInstanceId);
-                            MonsterCastMove(skillInstanceId, 3000, 2, 2);
-                            monsterWaiting = true;
-                            waitTime = 5000;
-                            currentWait = 0;
-                            CastState = 0;
-                            if (currentSkill < skillList.Length - 1)
-                                currentSkill++;
+                            SendDataNotifyEoData(_skillInstanceId, 301411);
+                            SendEoNotifyDisappearSchedule(_skillInstanceId);
+                            MonsterCastMove(_skillInstanceId, 3000, 2, 2);
+                            _monsterWaiting = true;
+                            _waitTime = 5000;
+                            _currentWait = 0;
+                            _castState = 0;
+                            if (_currentSkill < _SkillList.Length - 1)
+                                _currentSkill++;
                             else
-                                currentSkill = 0;
+                                _currentSkill = 0;
                             break;
                         case 4:
-                            monsterWaiting = true;
-                            waitTime = 5000;
-                            currentWait = 0;
-                            CastState = 0;
-                            break;
-                        default:
+                            _monsterWaiting = true;
+                            _waitTime = 5000;
+                            _currentWait = 0;
+                            _castState = 0;
                             break;
                     }
-                }
             }
             else
             {
@@ -324,58 +316,58 @@ namespace Necromancy.Server.Tasks
 
         private void StartMonsterCastQueue(int skillId, uint instanceId)
         {
-            casting = true;
-            Character currentTarget = _monster.GetCurrentTarget();
+            _casting = true;
+            Character currentTarget = monster.GetCurrentTarget();
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_monster.InstanceId);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(monster.instanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
             RecvBattleReportActionMonsterSkillStartCast brStartCast =
-                new RecvBattleReportActionMonsterSkillStartCast(currentTarget.InstanceId, skillId);
+                new RecvBattleReportActionMonsterSkillStartCast(currentTarget.instanceId, skillId);
             brList.Add(brStart);
             brList.Add(brStartCast);
             brList.Add(brEnd);
-            _server.Router.Send(Map, brList);
+            server.router.Send(_map, brList);
         }
 
         private void MonsterAttackQueue(int skillId)
         {
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_monster.InstanceId);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(monster.instanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
             RecvBattleReportActionAttackExec brAttack = new RecvBattleReportActionAttackExec(skillId);
 
             brList.Add(brStart);
             brList.Add(brAttack);
             brList.Add(brEnd);
-            _server.Router.Send(Map, brList);
+            server.router.Send(_map, brList);
         }
 
         private void PlayerDamage()
         {
-            int damage = (int) Util.GetRandomNumber(8, 43);
-            Character currentTarget = _monster.GetCurrentTarget();
-            currentTarget.Hp.Modify(-damage, _monster.InstanceId);
+            int damage = Util.GetRandomNumber(8, 43);
+            Character currentTarget = monster.GetCurrentTarget();
+            currentTarget.hp.Modify(-damage, monster.instanceId);
 
-            Logger.Debug($"Monster {_monster.InstanceId} is attacking {currentTarget.Name}");
+            _Logger.Debug($"Monster {monster.instanceId} is attacking {currentTarget.name}");
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(currentTarget.InstanceId);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(currentTarget.instanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
-            RecvBattleReportNotifyHitEffect brHit = new RecvBattleReportNotifyHitEffect(currentTarget.InstanceId);
-            RecvBattleReportDamageHp brHp = new RecvBattleReportDamageHp(currentTarget.InstanceId, damage);
-            RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(currentTarget.Hp.current);
+            RecvBattleReportNotifyHitEffect brHit = new RecvBattleReportNotifyHitEffect(currentTarget.instanceId);
+            RecvBattleReportDamageHp brHp = new RecvBattleReportDamageHp(currentTarget.instanceId, damage);
+            RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(currentTarget.hp.current);
 
             brList.Add(brStart);
             brList.Add(brHit);
             brList.Add(brHp);
             brList.Add(brEnd);
-            _server.Router.Send(Map, brList);
-            _server.Router.Send(Map.ClientLookup.GetByCharacterInstanceId(currentTarget.InstanceId),
+            server.router.Send(_map, brList);
+            server.router.Send(_map.clientLookup.GetByCharacterInstanceId(currentTarget.instanceId),
                 cHpUpdate.ToPacket());
 
-            if (currentTarget.Hp.depleted)
+            if (currentTarget.hp.depleted)
             {
-                _monster.SetAgro(false);
-                _monster.MonsterAgroList.Remove(currentTarget.InstanceId);
+                monster.SetAgro(false);
+                monster.monsterAgroList.Remove(currentTarget.instanceId);
             }
 
             //PlayerDeadCheck(currentTarget);
@@ -383,20 +375,20 @@ namespace Necromancy.Server.Tasks
 
         private void MonsterCastQueue(int skillId)
         {
-            casting = true;
+            _casting = true;
             List<PacketResponse> brList = new List<PacketResponse>();
-            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_monster.InstanceId);
+            RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(monster.instanceId);
             RecvBattleReportActionMonsterSkillExec brExec = new RecvBattleReportActionMonsterSkillExec(skillId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
             brList.Add(brStart);
             brList.Add(brExec);
             brList.Add(brEnd);
-            _server.Router.Send(Map, brList);
+            server.router.Send(_map, brList);
         }
 
         private void SendDataNotifyEoData(uint instanceId, int effectId)
         {
-            Character currentTarget = _monster.GetCurrentTarget();
+            Character currentTarget = monster.GetCurrentTarget();
             IBuffer res6 = BufferProvider.Provide();
             res6.WriteUInt32(instanceId);
             res6.WriteFloat(2.0F);
@@ -405,9 +397,9 @@ namespace Necromancy.Server.Tasks
             IBuffer res2 = BufferProvider.Provide();
             //Logger.Debug($"Skill instance {instanceId} was just cast");
             res2.WriteUInt32(instanceId); // Unique Instance ID of Skill Cast
-            res2.WriteFloat(currentTarget.X); //Effect Object X
-            res2.WriteFloat(currentTarget.Y); //Effect Object y
-            res2.WriteFloat(currentTarget.Z); //Effect Object z    (+100 just so i can see it better for now)
+            res2.WriteFloat(currentTarget.x); //Effect Object X
+            res2.WriteFloat(currentTarget.y); //Effect Object y
+            res2.WriteFloat(currentTarget.z); //Effect Object z    (+100 just so i can see it better for now)
 
             //orientation related  (Note,  i believe at least 1 of these values must be above 0 for "arrows" to render"
             res2.WriteFloat(1); //Rotation Along X Axis if above 0
@@ -416,22 +408,22 @@ namespace Necromancy.Server.Tasks
 
             res2.WriteInt32(effectId); // effect id
             res2.WriteUInt32(currentTarget
-                .InstanceId); //must be set to int32 contents. int myTargetID = packet.Data.ReadInt32();
+                .instanceId); //must be set to int32 contents. int myTargetID = packet.Data.ReadInt32();
             res2.WriteInt32(1); //unknown
             res2.WriteInt32(1);
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_data_notify_eo_data, res2, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_data_notify_eo_data, res2, ServerType.Area);
         }
 
         private void SendDataNotifyEoData2(uint instanceId, int effectId)
         {
-            Character currentTarget = _monster.GetCurrentTarget();
+            Character currentTarget = monster.GetCurrentTarget();
             IBuffer res2 = BufferProvider.Provide();
-            Logger.Debug($"Skill instance {instanceId} was just cast");
+            _Logger.Debug($"Skill instance {instanceId} was just cast");
             res2.WriteUInt32(instanceId); // Unique Instance ID of Skill Cast
             res2.WriteInt32(effectId);
-            res2.WriteFloat(currentTarget.X); //Effect Object X
-            res2.WriteFloat(currentTarget.Y); //Effect Object y
-            res2.WriteFloat(currentTarget.Z); //Effect Object z
+            res2.WriteFloat(currentTarget.x); //Effect Object X
+            res2.WriteFloat(currentTarget.y); //Effect Object y
+            res2.WriteFloat(currentTarget.z); //Effect Object z
 
             //orientation related
             res2.WriteFloat(0); //Rotation Along X Axis if above 0
@@ -446,34 +438,34 @@ namespace Necromancy.Server.Tasks
             res2.WriteInt32(0);
             res2.WriteInt32(0);
             res2.WriteInt32(0);
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_data_notify_eo_data2, res2, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_data_notify_eo_data2, res2, ServerType.Area);
         }
 
         public void MonsterCastMove(uint instanceId, int castVelocity, byte pose, byte animation)
         {
-            Character currentTarget = _monster.GetCurrentTarget();
-            Vector3 destPos = new Vector3(currentTarget.X, currentTarget.Y, currentTarget.Z);
-            Vector3 monsterPos = new Vector3(_monster.X, _monster.Y, _monster.Z);
+            Character currentTarget = monster.GetCurrentTarget();
+            Vector3 destPos = new Vector3(currentTarget.x, currentTarget.y, currentTarget.z);
+            Vector3 monsterPos = new Vector3(monster.x, monster.y, monster.z);
             Vector3 moveTo = Vector3.Subtract(destPos, monsterPos);
             float distance = Vector3.Distance(monsterPos, destPos);
             float travelTime = distance / castVelocity;
 
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(instanceId); //Monster ID
-            res.WriteFloat(_monster.X);
-            res.WriteFloat(_monster.Y);
-            res.WriteFloat(_monster.Z + 75);
+            res.WriteFloat(monster.x);
+            res.WriteFloat(monster.y);
+            res.WriteFloat(monster.z + 75);
             res.WriteFloat(moveTo.X); //X per tick
             res.WriteFloat(moveTo.Y); //Y Per tick
             res.WriteFloat(moveTo.Z); //verticalMovementSpeedMultiplier
 
-            res.WriteFloat((float) 1 / travelTime); //movementMultiplier
-            res.WriteFloat((float) travelTime); //Seconds to move
+            res.WriteFloat(1 / travelTime); //movementMultiplier
+            res.WriteFloat(travelTime); //Seconds to move
 
             res.WriteByte(pose); //MOVEMENT ANIM
             res.WriteByte(animation); //JUMP & FALLING ANIM
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_0x8D92, res,
-                ServerType.Area); //recv_0xE8B9  recv_0x1FC1 
+            server.router.Send(_map, (ushort)AreaPacketId.recv_0x8D92, res,
+                ServerType.Area); //recv_0xE8B9  recv_0x1FC1
         }
 
         private void SendEoNotifyDisappearSchedule(uint instanceId)
@@ -483,7 +475,7 @@ namespace Necromancy.Server.Tasks
 
             res.WriteUInt32(instanceId);
             res.WriteFloat(3.0F);
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_eo_notify_disappear_schedule, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_eo_notify_disappear_schedule, res, ServerType.Area);
         }
 
         private void SendBattleAttackPose()
@@ -491,104 +483,100 @@ namespace Necromancy.Server.Tasks
             IBuffer res = BufferProvider.Provide();
             res = BufferProvider.Provide();
             res.WriteInt32(1410101);
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_battle_attack_pose_r, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_attack_pose_r, res, ServerType.Area);
         }
 
         private void SendBattleAttackStart()
         {
-            Character currentTarget = _monster.GetCurrentTarget();
+            Character currentTarget = monster.GetCurrentTarget();
             IBuffer res = BufferProvider.Provide();
             res = BufferProvider.Provide();
-            res.WriteUInt32(currentTarget.InstanceId);
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_battle_attack_start_r, res, ServerType.Area);
+            res.WriteUInt32(currentTarget.instanceId);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_attack_start_r, res, ServerType.Area);
         }
 
         public void MonsterSpawn()
         {
-            Logger.Debug($"Monster {_monster.Name} instanceId [{_monster.InstanceId}]");
-            _monster.SetAgro(false);
+            _Logger.Debug($"Monster {monster.name} instanceId [{monster.instanceId}]");
+            monster.SetAgro(false);
             monsterMoving = false;
-            casting = false;
-            monsterWaiting = false;
-            _monster.SetGotoDistance(10);
+            _casting = false;
+            _monsterWaiting = false;
+            monster.SetGotoDistance(10);
             //monsterVelocity = 200;
-            MonsterCoord spawnCoords = _monster.monsterCoords.Find(x => x.CoordIdx == 0);
-            _monster.X = spawnCoords.destination.X;
-            _monster.Y = spawnCoords.destination.Y;
-            _monster.Z = spawnCoords.destination.Z;
-            _monster.Heading = (byte) GetHeading(_monster.monsterCoords.Find(x => x.CoordIdx == 1).destination);
-            _monster.Hp.toMax();
-            respawnTime = _monster.RespawnTime;
-            RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(_monster);
-            foreach (NecClient client in Map.ClientLookup.GetAll())
-            {
-                if (client.Character.HasDied == false)
-                {
-                    _server.Router.Send(client, monsterData.ToPacket());
-                }
-            }
-            spawnMonster = false;
-            _monster.MonsterVisible = true;
-            _monster.ClearAgroList();
+            MonsterCoord spawnCoords = monster.monsterCoords.Find(x => x.coordIdx == 0);
+            monster.x = spawnCoords.destination.X;
+            monster.y = spawnCoords.destination.Y;
+            monster.z = spawnCoords.destination.Z;
+            monster.heading = (byte)GetHeading(monster.monsterCoords.Find(x => x.coordIdx == 1).destination);
+            monster.hp.ToMax();
+            _respawnTime = monster.respawnTime;
+            RecvDataNotifyMonsterData monsterData = new RecvDataNotifyMonsterData(monster);
+            foreach (NecClient client in _map.clientLookup.GetAll())
+                if (client.character.hasDied == false)
+                    server.router.Send(client, monsterData.ToPacket());
+            _spawnMonster = false;
+            monster.monsterVisible = true;
+            monster.ClearAgroList();
             //MonsterBattlePose(false);
         }
 
         public bool MonsterCheck()
         {
             // Logger.Debug($"Monster HP [{_monster.GetHP()}]");
-            if (_monster.Hp.current <= 0)
+            if (monster.hp.current <= 0)
             {
-                foreach (uint instanceId in _monster.GetAgroInstanceList())
+                foreach (uint instanceId in monster.GetAgroInstanceList())
                 {
-                    _monster.MonsterHate(_server, false, instanceId);
+                    monster.MonsterHate(server, false, instanceId);
 
-                    NecClient client = _server.Clients.GetByCharacterInstanceId(instanceId);
-                    client.Character.ExperienceCurrent += _monster.loot.Experience;
+                    NecClient client = server.clients.GetByCharacterInstanceId(instanceId);
+                    client.character.experienceCurrent += monster.loot.experience;
 
                     IBuffer res = BufferProvider.Provide();
-                    res.WriteUInt64(client.Character.ExperienceCurrent);
-                    res.WriteByte(0);//bool
-                    _server.Router.Send(client, (ushort)AreaPacketId.recv_self_exp_notify, res, ServerType.Area); //This should go to the party of whomever did the most damage.  TODO
+                    res.WriteUInt64(client.character.experienceCurrent);
+                    res.WriteByte(0); //bool
+                    server.router.Send(client, (ushort)AreaPacketId.recv_self_exp_notify, res, ServerType.Area); //This should go to the party of whomever did the most damage.  TODO
 
                     //To-Do,  make a variable to track union gold
-                    client.Character.AdventureBagGold += _monster.loot.Gold; //Updates your Character.AdventureBagGold
+                    client.character.adventureBagGold += monster.loot.gold; //Updates your Character.AdventureBagGold
 
                     res = BufferProvider.Provide();
-                    res.WriteUInt64(client.Character.AdventureBagGold); // Sets your Adventure Bag Gold
-                    _server.Router.Send(client, (ushort)AreaPacketId.recv_self_money_notify, res, ServerType.Area);
+                    res.WriteUInt64(client.character.adventureBagGold); // Sets your Adventure Bag Gold
+                    server.router.Send(client, (ushort)AreaPacketId.recv_self_money_notify, res, ServerType.Area);
                 }
 
-                Logger.Debug($"Monster is dead InstanceId [{_monster.InstanceId}]");
+                _Logger.Debug($"Monster is dead InstanceId [{monster.instanceId}]");
                 //Death Animation
                 List<PacketResponse> brList = new List<PacketResponse>();
-                RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_monster.InstanceId);
+                RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(monster.instanceId);
                 RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
-                RecvBattleReportNoactDead brDead = new RecvBattleReportNoactDead(_monster.InstanceId, 1);
+                RecvBattleReportNoactDead brDead = new RecvBattleReportNoactDead(monster.instanceId, 1);
                 brList.Add(brStart);
                 brList.Add(brDead);
                 brList.Add(brEnd);
-                _server.Router.Send(Map, brList);
+                server.router.Send(_map, brList);
 
                 //Make the monster a lootable state
                 IBuffer res10 = BufferProvider.Provide();
-                res10.WriteUInt32(_monster.InstanceId);
-                res10.WriteInt32(2); //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing). 
-                _server.Router.Send(Map, (ushort) AreaPacketId.recv_monster_state_update_notify, res10,
+                res10.WriteUInt32(monster.instanceId);
+                res10.WriteInt32(2); //Toggles state between Alive(attackable),  Dead(lootable), or Inactive(nothing).
+                server.router.Send(_map, (ushort)AreaPacketId.recv_monster_state_update_notify, res10,
                     ServerType.Area);
 
-                Thread.Sleep(_monster.RespawnTime);
+                Thread.Sleep(monster.respawnTime);
                 //decompose the body
                 IBuffer res7 = BufferProvider.Provide();
-                res7.WriteUInt32(_monster.InstanceId);
-                res7.WriteInt32(Util.GetRandomNumber(1,5)); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
+                res7.WriteUInt32(monster.instanceId);
+                res7.WriteInt32(Util.GetRandomNumber(1, 5)); //4 here causes a cloud and the model to disappear, 5 causes a mist to happen and disappear
                 res7.WriteInt32(1);
-                _server.Router.Send(Map, (ushort) AreaPacketId.recv_charabody_notify_deadstate, res7, ServerType.Area);
+                server.router.Send(_map, (ushort)AreaPacketId.recv_charabody_notify_deadstate, res7, ServerType.Area);
                 Thread.Sleep(2000);
-                RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(_monster.InstanceId);
-                _server.Router.Send(Map, objectDisappearData);
-                _monster.MonsterVisible = false;
+                RecvObjectDisappearNotify objectDisappearData = new RecvObjectDisappearNotify(monster.instanceId);
+                server.router.Send(_map, objectDisappearData);
+                monster.monsterVisible = false;
 
-                spawnMonster = true;
+                _spawnMonster = true;
                 return true;
             }
 
@@ -602,30 +590,30 @@ namespace Necromancy.Server.Tasks
             if (!monsterMoving)
             {
                 monsterMoving = true;
-                orientMonster();
-                _monster.MonsterMove(_server, _monster.MonsterWalkVelocity, (byte) 2, (byte) 0);
+                OrientMonster();
+                monster.MonsterMove(server, monster.monsterWalkVelocity, 2, 0);
             }
             else
             {
                 Vector3 destPos = new Vector3(monsterCoord.destination.X, monsterCoord.destination.Y,
                     monsterCoord.destination.Z);
-                Vector3 monsterPos = new Vector3(_monster.X, _monster.Y, _monster.Z);
+                Vector3 monsterPos = new Vector3(monster.x, monster.y, monster.z);
                 Vector3 moveTo = Vector3.Subtract(destPos, monsterPos);
                 float distance = GetDistance(monsterPos, destPos);
-                float travelTime = distance / _monster.MonsterWalkVelocity;
-                int tickDivisor = 1000 / updateTime;
+                float travelTime = distance / monster.monsterWalkVelocity;
+                int tickDivisor = 1000 / _updateTime;
 
-                if (distance >= _monster.MonsterWalkVelocity / tickDivisor)
+                if (distance >= monster.monsterWalkVelocity / tickDivisor)
                 {
-                    _monster.X = _monster.X + (moveTo.X / travelTime) / tickDivisor;
-                    _monster.Y = _monster.Y + (moveTo.Y / travelTime) / tickDivisor;
+                    monster.x = monster.x + moveTo.X / travelTime / tickDivisor;
+                    monster.y = monster.y + moveTo.Y / travelTime / tickDivisor;
                     //_monster.Z = _monster.Z + (moveTo.Z / travelTime) / tickDivisor;
                 }
                 else
                 {
-                    _monster.X = destPos.X;
-                    _monster.Y = destPos.Y;
-                    _monster.Z = destPos.Z;
+                    monster.x = destPos.X;
+                    monster.y = destPos.Y;
+                    monster.z = destPos.Z;
                 }
 
                 //Logger.Debug($"distance [{distance}] travelTime[{travelTime}] moveTo.X [{moveTo.X}] moveTo.Y [{moveTo.Y}] moveTo.Z [{moveTo.Z}]");
@@ -638,149 +626,137 @@ namespace Necromancy.Server.Tasks
         private void MonsterAgroMove()
         {
             float distance = 0;
-            int tickDivisor = 1000 / moveTime;
-            Vector3 monsterPos = new Vector3(_monster.X, _monster.Y, _monster.Z);
+            int tickDivisor = 1000 / _moveTime;
+            Vector3 monsterPos = new Vector3(monster.x, monster.y, monster.z);
 
             //ShowVectorInfo(_monster.X, _monster.Y, _monster.Z, currentDest.X, currentDest.Y, currentDest.Z);
-            distance = GetDistance(monsterPos, currentDest);
-            Character currentTarget = _monster.GetCurrentTarget();
-            Vector3 targetPos = new Vector3(currentTarget.X, currentTarget.Y, currentTarget.Z);
-            if (distance < (_monster.MonsterRunVelocity / tickDivisor) || agroMoveTime >= 1000 || !monsterMoving)
+            distance = GetDistance(monsterPos, _currentDest);
+            Character currentTarget = monster.GetCurrentTarget();
+            Vector3 targetPos = new Vector3(currentTarget.x, currentTarget.y, currentTarget.z);
+            if (distance < monster.monsterRunVelocity / tickDivisor || _agroMoveTime >= 1000 || !monsterMoving)
             {
-                agroMoveTime = agroTick;
+                _agroMoveTime = _agroTick;
                 monsterMoving = true;
-                if (!casting && CheckHeading() == false)
-                    orientMonster();
+                if (!_casting && CheckHeading() == false)
+                    OrientMonster();
 
                 // Set destination to a position monsterGoto away from target
-                float monsterGoto = _monster.GetGotoDistance();
+                float monsterGoto = monster.GetGotoDistance();
                 Vector3 moveTo = Vector3.Subtract(targetPos, monsterPos);
                 distance = GetDistance(monsterPos, targetPos);
                 //Logger.Debug($"Target distance [{distance}] targetPos.X [{targetPos.X}] targetPos.Y [{targetPos.Y}] targetPos.Z [{targetPos.Z}]");
-                float factor = (float) Math.Sqrt(((monsterPos.X - targetPos.X) * (monsterPos.X - targetPos.X)) +
-                                                 ((monsterPos.Y - targetPos.Y) * (monsterPos.Y - targetPos.Y))) /
+                float factor = (float)Math.Sqrt((monsterPos.X - targetPos.X) * (monsterPos.X - targetPos.X) +
+                                                (monsterPos.Y - targetPos.Y) * (monsterPos.Y - targetPos.Y)) /
                                monsterGoto;
-                currentDest.Z = targetPos.Z;
-                currentDest.X = targetPos.X - (moveTo.X / factor);
-                currentDest.Y = targetPos.Y - (moveTo.Y / factor);
-                moveTo = Vector3.Subtract(currentDest, monsterPos);
+                _currentDest.Z = targetPos.Z;
+                _currentDest.X = targetPos.X - moveTo.X / factor;
+                _currentDest.Y = targetPos.Y - moveTo.Y / factor;
+                moveTo = Vector3.Subtract(_currentDest, monsterPos);
 
                 // Now do the move
-                distance = GetDistance(monsterPos, currentDest);
+                distance = GetDistance(monsterPos, _currentDest);
                 //Logger.Debug($"Moving distance [{distance}] currentDest.X [{currentDest.X}] currentDest.Y [{currentDest.Y}] currentDest.Z [{currentDest.Z}]");
-                if (distance <= _monster.GetGotoDistance())
+                if (distance <= monster.GetGotoDistance())
                     return;
-                float travelTime = distance / _monster.MonsterRunVelocity;
+                float travelTime = distance / monster.monsterRunVelocity;
                 MonsterTick tick = new MonsterTick();
                 tick.xTick = moveTo.X;
                 tick.yTick = moveTo.Y;
                 tick.zTick = moveTo.Z;
-                agroTickMove.xTick = (moveTo.X / travelTime) / tickDivisor;
-                agroTickMove.yTick = (moveTo.Y / travelTime) / tickDivisor;
-                agroTickMove.zTick = 0;
+                _agroTickMove.xTick = moveTo.X / travelTime / tickDivisor;
+                _agroTickMove.yTick = moveTo.Y / travelTime / tickDivisor;
+                _agroTickMove.zTick = 0;
                 //Logger.Debug($"Moving distance [{distance}] monsterVelocity [{_monster.MonsterRunVelocity}]  travelTime[{travelTime}] xTick [{tick.xTick}] yTick [{tick.yTick}] moveTo.X [{moveTo.X}] moveTo.Y [{moveTo.Y}] moveTo.Z [{moveTo.Z}]");
-                _monster.MonsterMove(_server, (byte) 3, (byte) 0, tick, travelTime);
+                monster.MonsterMove(server, 3, 0, tick, travelTime);
             }
             else
             {
                 //float travelTime = (float)distance / _monster.MonsterRunVelocity;
                 //Vector3 moveTo = Vector3.Subtract(currentDest, monsterPos);
-                distance = GetDistance(monsterPos, currentDest);
-                if (distance >= _monster.MonsterRunVelocity / tickDivisor)
+                distance = GetDistance(monsterPos, _currentDest);
+                if (distance >= monster.monsterRunVelocity / tickDivisor)
                 {
-                    _monster.X = _monster.X + agroTickMove.xTick;
-                    _monster.Y = _monster.Y + agroTickMove.yTick;
+                    monster.x = monster.x + _agroTickMove.xTick;
+                    monster.y = monster.y + _agroTickMove.yTick;
                     //_monster.Z = _monster.Z + (moveTo.Z / travelTime) / tickDivisor;
                 }
                 else
                 {
-                    _monster.X = currentDest.X;
-                    _monster.Y = currentDest.Y;
-                    _monster.Z = currentDest.Z;
+                    monster.x = _currentDest.X;
+                    monster.y = _currentDest.Y;
+                    monster.z = _currentDest.Z;
                 }
 
-                bool inMovePOV = checkFOV(targetPos, agroMoveAngle);
-                if (!inMovePOV && monsterMoving)
+                bool inMovePov = CheckFov(targetPos, _agroMoveAngle);
+                if (!inMovePov && monsterMoving)
                 {
-                    Thread.Sleep(updateTime);
+                    Thread.Sleep(_updateTime);
                     monsterMoving = false;
-                    _monster.MonsterStop(_server, 1, 0, 0.1F);
+                    monster.MonsterStop(server, 1, 0, 0.1F);
                     Thread.Sleep(100);
                     return;
                 }
 
-                agroMoveTime += agroTick;
+                _agroMoveTime += _agroTick;
             }
         }
 
         private bool MonsterAgroCheck()
         {
-            List<NecClient> mapsClients = Map.ClientLookup.GetAll();
+            List<NecClient> mapsClients = _map.clientLookup.GetAll();
 
-            Vector3 monster = new Vector3(_monster.X, _monster.Y, _monster.Z);
+            Vector3 monster = new Vector3(this.monster.x, this.monster.y, this.monster.z);
             foreach (NecClient client in mapsClients)
-            {
-                if (client.Character.Hp.depleted == false)
+                if (client.character.hp.depleted == false)
                 {
-                    Vector3 character = new Vector3(client.Character.X, client.Character.Y, client.Character.Z);
+                    Vector3 character = new Vector3(client.character.x, client.character.y, client.character.z);
                     float distanceChar = GetDistance(character, monster);
-                    if ((distanceChar <= agroRange) && !StealthCheck(client))
+                    if (distanceChar <= agroRange && !StealthCheck(client))
                     {
                         Vector3 characterPos = new Vector3(character.X, character.Y, character.Z);
-                        if (checkFOV(characterPos, agroDetectAngle))
+                        if (CheckFov(characterPos, _agroDetectAngle))
                         {
-                            _monster.SetCurrentTarget(client.Character);
-                            currentDest = new Vector3(client.Character.X, client.Character.Y, client.Character.Z);
-                            _monster.SetAgro(true);
-                            _monster.AddAgroList(client.Character.InstanceId, 0);
+                            this.monster.SetCurrentTarget(client.character);
+                            _currentDest = new Vector3(client.character.x, client.character.y, client.character.z);
+                            this.monster.SetAgro(true);
+                            this.monster.AddAgroList(client.character.instanceId, 0);
                         }
                     }
                 }
-                else
-                {
-                    //Logger.Debug($"character {client.Soul.Name} is dead. Looking for Living Targets.");
-                }
-            }
 
-            return _monster.GetAgro();
+            return this.monster.GetAgro();
         }
 
         private bool StealthCheck(NecClient client)
         {
-            // Needs to be expanded to consider skill, distance and orientation 
-            if (((uint)client.Character.State & 0x100) > 0)
-            {
-                return true;
-            }
+            // Needs to be expanded to consider skill, distance and orientation
+            if (((uint)client.character.state & 0x100) > 0) return true;
 
             return false;
         }
 
         private void MonsterAgroAdjust()
         {
-            Character currentTarget = _monster.GetCurrentTarget();
-            if (agroCheckTime != -1 && agroCheckTime < 3000)
+            Character currentTarget = monster.GetCurrentTarget();
+            if (_agroCheckTime != -1 && _agroCheckTime < 3000)
             {
-                agroCheckTime += updateTime;
+                _agroCheckTime += _updateTime;
                 return;
             }
 
-            uint currentInstance = _monster.GetAgroHigh();
-            if (currentTarget.InstanceId != currentInstance)
-            {
-                currentTarget = Map.ClientLookup.GetByCharacterInstanceId((uint) currentInstance).Character;
-            }
+            uint currentInstance = monster.GetAgroHigh();
+            if (currentTarget.instanceId != currentInstance) currentTarget = _map.clientLookup.GetByCharacterInstanceId(currentInstance).character;
 
-            agroCheckTime = 0;
+            _agroCheckTime = 0;
         }
 
-        private bool checkFOV(Vector3 target, float angle)
+        private bool CheckFov(Vector3 target, float angle)
         {
             //Vector3 target = new Vector3(client.Character.X, client.Character.Y, client.Character.Z);
-            Vector3 source = new Vector3(_monster.X, _monster.Y, _monster.Z);
+            Vector3 source = new Vector3(monster.x, monster.y, monster.z);
             Vector3 targetVector = Vector3.Normalize(source - target);
-            double sourceRadian = ConvertToRadians(_monster.Heading, true);
-            Vector3 sourceVector = new Vector3((float) Math.Cos(sourceRadian), (float) Math.Sin(sourceRadian), 0);
+            double sourceRadian = ConvertToRadians(monster.heading, true);
+            Vector3 sourceVector = new Vector3((float)Math.Cos(sourceRadian), (float)Math.Sin(sourceRadian), 0);
             sourceVector = Vector3.Normalize(sourceVector);
             float dotProduct = Vector3.Dot(sourceVector, targetVector);
             //Logger.Debug($"sourceVector.X[{sourceVector.X}] sourceVector.Y[{sourceVector.Y}]");
@@ -796,17 +772,17 @@ namespace Necromancy.Server.Tasks
         {
             angle = angle * 2;
             if (adjust)
-                angle = (angle <= 90 ? angle + 270 : angle - 90);
+                angle = angle <= 90 ? angle + 270 : angle - 90;
             //direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
-            return (Math.PI / 180) * angle;
+            return Math.PI / 180 * angle;
         }
 
-        private void orientMonster()
+        private void OrientMonster()
         {
-            if (_monster.GetAgro())
+            if (monster.GetAgro())
                 AdjustHeading();
 
-            _monster.MonsterOrient(_server);
+            monster.MonsterOrient(server);
         }
 
         private float GetDistance(Vector3 target, Vector3 source)
@@ -817,28 +793,28 @@ namespace Necromancy.Server.Tasks
         private void ShowVectorInfo(double targetX, double targetY, double targetZ, double objectX, double objectY,
             double objectZ)
         {
-            Vector3 target = new Vector3((float) targetX, (float) targetY, (float) targetZ);
-            Vector3 source = new Vector3((float) objectX, (float) objectY, (float) objectZ);
+            Vector3 target = new Vector3((float)targetX, (float)targetY, (float)targetZ);
+            Vector3 source = new Vector3((float)objectX, (float)objectY, (float)objectZ);
             Vector3 moveTo = Vector3.Subtract(target, source);
             float distance = Vector3.Distance(target, source);
             double dx = objectX - targetX;
             double dy = objectY - targetY;
             double dz = objectZ - targetZ;
-            Logger.Debug(
+            _Logger.Debug(
                 $"dx [{dx}]   dy[{dy}]  dz[{dz}] distance [{distance}] moveTo.X [{moveTo.X}]  moveTo.Y [{moveTo.Y}]  moveTo.Z [{moveTo.Z}]");
         }
 
         private void ShowMonsterInfo()
         {
-            Logger.Debug(
-                $"monster [{_monster.Name}]    X[{_monster.X}]   Y [{_monster.Y}] monster.Z [{_monster.Z}]  Heading [{_monster.Heading}]");
+            _Logger.Debug(
+                $"monster [{monster.name}]    X[{monster.x}]   Y [{monster.y}] monster.Z [{monster.z}]  Heading [{monster.heading}]");
         }
 
         private double GetHeading(Vector3 destination) // Will return heading for x2/y2 object to look at x1/y1 object
         {
-            double dx = _monster.X - destination.X;
-            double dy = _monster.Y - destination.Y;
-            double direction = (Math.Atan2(dy, dx) / System.Math.PI) * 180f;
+            double dx = monster.x - destination.X;
+            double dy = monster.y - destination.Y;
+            double direction = Math.Atan2(dy, dx) / Math.PI * 180f;
             ;
             if (direction < 0) direction += 360f;
             direction = direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
@@ -847,41 +823,41 @@ namespace Necromancy.Server.Tasks
 
         private void AdjustHeading()
         {
-            Character currentTarget = _monster.GetCurrentTarget();
-            double dx = _monster.X - currentTarget.X;
-            double dy = _monster.Y - currentTarget.Y;
-            double direction = (Math.Atan2(dy, dx) / System.Math.PI) * 180f;
+            Character currentTarget = monster.GetCurrentTarget();
+            double dx = monster.x - currentTarget.x;
+            double dy = monster.y - currentTarget.y;
+            double direction = Math.Atan2(dy, dx) / Math.PI * 180f;
             ;
             if (direction < 0) direction += 360f;
             direction = direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
             //Logger.Debug($"New direction [{direction}]");
-            _monster.Heading = (byte) direction;
+            monster.heading = (byte)direction;
         }
 
         private bool CheckHeading() // Will return heading for x2/y2 object to look at x1/y1 object
         {
-            Character currentTarget = _monster.GetCurrentTarget();
-            double dx = _monster.X - currentTarget.X;
-            double dy = _monster.Y - currentTarget.Y;
-            double direction = (Math.Atan2(dy, dx) / System.Math.PI) * 180f;
+            Character currentTarget = monster.GetCurrentTarget();
+            double dx = monster.x - currentTarget.x;
+            double dy = monster.y - currentTarget.y;
+            double direction = Math.Atan2(dy, dx) / Math.PI * 180f;
             ;
             if (direction < 0) direction += 360f;
             direction = direction < 270 ? (direction + 90) / 2 : (direction - 270) / 2;
             //Logger.Debug($"direction after [{direction}]");
-            return _monster.Heading == (byte) direction;
+            return monster.heading == (byte)direction;
         }
 
         private void SendBattleReportStartNotify()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(_monster.InstanceId);
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_battle_report_start_notify, res, ServerType.Area);
+            res.WriteUInt32(monster.instanceId);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_report_start_notify, res, ServerType.Area);
         }
 
         private void SendBattleReportEndNotify()
         {
             IBuffer res = BufferProvider.Provide();
-            _server.Router.Send(Map, (ushort) AreaPacketId.recv_battle_report_end_notify, res, ServerType.Area);
+            server.router.Send(_map, (ushort)AreaPacketId.recv_battle_report_end_notify, res, ServerType.Area);
         }
     }
 }

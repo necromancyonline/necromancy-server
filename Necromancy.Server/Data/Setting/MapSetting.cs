@@ -2,13 +2,13 @@ namespace Necromancy.Server.Data.Setting
 {
     public class MapSetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public string Country { get; set; }
-        public string Area { get; set; }
-        public string Place { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Z { get; set; }
-        public int Orientation { get; set; }
+        public string country { get; set; }
+        public string area { get; set; }
+        public string place { get; set; }
+        public int x { get; set; }
+        public int y { get; set; }
+        public int z { get; set; }
+        public int orientation { get; set; }
+        public int id { get; set; }
     }
 }

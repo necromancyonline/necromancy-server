@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNoActNotifyFreeze : PacketResponse
     {
         public RecvBattleReportNoActNotifyFreeze()
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_freeze, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_notify_freeze, ServerType.Area)
         {
         }
 

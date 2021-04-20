@@ -25,24 +25,15 @@ namespace Necromancy.Server.Discord.Services
         public async Task MessageReceivedAsync(SocketMessage rawMessage)
         {
             // Ignore system messages, or messages from other bots
-            if (!(rawMessage is SocketUserMessage message))
-            {
-                return;
-            }
+            if (!(rawMessage is SocketUserMessage message)) return;
 
-            if (message.Source != MessageSource.User)
-            {
-                return;
-            }
+            if (message.Source != MessageSource.User) return;
 
             // This value holds the offset where the prefix ends
-            var argPos = 0;
-            if (!message.HasMentionPrefix(_discord.CurrentUser, ref argPos))
-            {
-                return;
-            }
+            int argPos = 0;
+            if (!message.HasMentionPrefix(_discord.CurrentUser, ref argPos)) return;
 
-            var context = new SocketCommandContext(_discord, message);
+            SocketCommandContext context = new SocketCommandContext(_discord, message);
             // we will handle the result in CommandExecutedAsync
             await _commands.ExecuteAsync(context, argPos, _services);
         }

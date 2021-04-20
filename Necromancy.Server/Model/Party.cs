@@ -1,42 +1,41 @@
-using Necromancy.Server.Data.Setting;
-using Necromancy.Server.Common.Instance;
 using System.Collections.Generic;
+using Necromancy.Server.Common.Instance;
 
 namespace Necromancy.Server.Model
 {
     public class Party : IInstance
     {
-        public uint InstanceId { get; set; }
-        public int PartyType { get; set; }
-        public int NormalItemDist { get; set; }
-        public int RareItemDist { get; set; }
-        public uint TargetClientId { get; set; }
-        public uint PartyLeaderId { get; set; }
-        public List<NecClient> PartyMembers { get; set; }
         public Party()
         {
-            PartyMembers = new List<NecClient>();
-            PartyLeaderId = 0;
-            NormalItemDist = 1;
-            RareItemDist = 1;
-            TargetClientId = 0;
-
+            partyMembers = new List<NecClient>();
+            partyLeaderId = 0;
+            normalItemDist = 1;
+            rareItemDist = 1;
+            targetClientId = 0;
         }
+
+        public int partyType { get; set; }
+        public int normalItemDist { get; set; }
+        public int rareItemDist { get; set; }
+        public uint targetClientId { get; set; }
+        public uint partyLeaderId { get; set; }
+        public List<NecClient> partyMembers { get; set; }
+        public uint instanceId { get; set; }
 
         public void Join(NecClient client)
         {
-            PartyMembers.Add(client);
+            partyMembers.Add(client);
         }
+
         public void Leave(NecClient client)
         {
-            PartyMembers.Remove(client); //to-do  try/catch
+            partyMembers.Remove(client); //to-do  try/catch
         }
-        public void Leave(List<NecClient> PartyMembers)
+
+        public void Leave(List<NecClient> partyMembers)
         {
-            foreach (NecClient client in PartyMembers)
-                PartyMembers.Remove(client); //to-do  try/catch
+            foreach (NecClient client in partyMembers)
+                partyMembers.Remove(client); //to-do  try/catch
         }
-
     }
-
 }

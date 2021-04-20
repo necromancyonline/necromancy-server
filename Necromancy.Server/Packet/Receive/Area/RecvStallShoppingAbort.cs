@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallShoppingAbort : PacketResponse
     {
         public RecvStallShoppingAbort()
-            : base((ushort) AreaPacketId.recv_stall_shopping_abort_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_shopping_abort_r, ServerType.Area)
         {
         }
 

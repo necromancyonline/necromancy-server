@@ -5,37 +5,35 @@ namespace Necromancy.Server.Model
 {
     public class NpcSpawn : IInstance
     {
-        public uint InstanceId { get; set; }
-        public int Id { get; set; }
-        public int NpcId { get; set; }
-        public int ModelId { get; set; }
-        public byte Level { get; set; }
-        public string Name { get; set; }
-        public string Title { get; set; }
-        public int MapId { get; set; }
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-        public bool Active { get; set; }
-        public byte Heading { get; set; }
-        public short Size { get; set; }
-        public int Visibility { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Updated { get; set; }
-        public int Icon { get; set; }
-        public int Status { get; set; }
-        public int Status_X { get; set; }
-        public int Status_Y { get; set; }
-        public int Status_Z { get; set; }
-        public int Radius { get; set; }
-
-
-
         public NpcSpawn()
         {
-            Created = DateTime.Now;
-            Updated = DateTime.Now;
-            Radius = 100;
+            created = DateTime.Now;
+            updated = DateTime.Now;
+            radius = 100;
         }
+
+        public int id { get; set; }
+        public int npcId { get; set; }
+        public int modelId { get; set; }
+        public byte level { get; set; }
+        public string name { get; set; }
+        public string title { get; set; }
+        public int mapId { get; set; }
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+        public bool active { get; set; }
+        public byte heading { get; set; }
+        public short size { get; set; }
+        public int visibility { get; set; }
+        public DateTime created { get; set; }
+        public DateTime updated { get; set; }
+        public int icon { get; set; }
+        public int status { get; set; }
+        public int statusX { get; set; }
+        public int statusY { get; set; }
+        public int statusZ { get; set; }
+        public int radius { get; set; }
+        public uint instanceId { get; set; }
     }
 }

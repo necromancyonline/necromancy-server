@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvInheritStart : PacketResponse
     {
         public RecvInheritStart()
-            : base((ushort) AreaPacketId.recv_inherit_start_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_inherit_start_r, ServerType.Area)
         {
         }
 

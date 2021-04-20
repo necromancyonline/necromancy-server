@@ -27,10 +27,7 @@ namespace Necromancy.Server.Discord.Modules
             {
                 output.Title = "How can I serve you today?";
 
-                foreach (var mod in _commands.Modules.Where(m => m.Parent == null))
-                {
-                    AddHelp(mod, ref output);
-                }
+                foreach (ModuleInfo mod in _commands.Modules.Where(m => m.Parent == null)) AddHelp(mod, ref output);
 
                 output.Footer = new EmbedFooterBuilder
                 {
@@ -39,7 +36,7 @@ namespace Necromancy.Server.Discord.Modules
             }
             else
             {
-                var mod = _commands.Modules.FirstOrDefault(m =>
+                ModuleInfo mod = _commands.Modules.FirstOrDefault(m =>
                     m.Name.Replace("Module", "").ToLower() == path.ToLower());
                 if (mod == null)
                 {
@@ -62,19 +59,19 @@ namespace Necromancy.Server.Discord.Modules
 
         public void AddHelp(ModuleInfo module, ref EmbedBuilder builder)
         {
-            foreach (var sub in module.Submodules) AddHelp(sub, ref builder);
+            foreach (ModuleInfo sub in module.Submodules) AddHelp(sub, ref builder);
             builder.AddField(f =>
             {
                 f.Name = $"**{module.Name}**";
                 f.Value = $"Submodules: {string.Join(", ", module.Submodules.Select(m => m.Name))}" +
-                          $"\n" +
+                          "\n" +
                           $"Commands: {string.Join(", ", module.Commands.Select(x => $"`{x.Name}`"))}";
             });
         }
 
         public void AddCommands(ModuleInfo module, ref EmbedBuilder builder)
         {
-            foreach (var command in module.Commands)
+            foreach (CommandInfo command in module.Commands)
             {
                 command.CheckPreconditionsAsync(Context, _map).GetAwaiter().GetResult();
                 AddCommand(command, ref builder);
@@ -99,8 +96,7 @@ namespace Necromancy.Server.Discord.Modules
         {
             StringBuilder output = new StringBuilder();
             if (!command.Parameters.Any()) return output.ToString();
-            foreach (var param in command.Parameters)
-            {
+            foreach (ParameterInfo param in command.Parameters)
                 if (param.IsOptional)
                     output.Append($"[{param.Name} = {param.DefaultValue}] ");
                 else if (param.IsMultiple)
@@ -109,14 +105,13 @@ namespace Necromancy.Server.Discord.Modules
                     output.Append($"...{param.Name} ");
                 else
                     output.Append($"<{param.Name}> ");
-            }
 
             return output.ToString();
         }
 
         public string GetPrefix(CommandInfo command)
         {
-            var output = GetPrefix(command.Module);
+            string output = GetPrefix(command.Module);
             output += $"{command.Aliases.FirstOrDefault()} ";
             return output;
         }

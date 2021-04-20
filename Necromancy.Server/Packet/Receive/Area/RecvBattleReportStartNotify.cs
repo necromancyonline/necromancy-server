@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly uint _instanceId;
 
         public RecvBattleReportStartNotify(uint instanceId)
-            : base((ushort) AreaPacketId.recv_battle_report_start_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_start_notify, ServerType.Area)
         {
             _instanceId = instanceId;
         }

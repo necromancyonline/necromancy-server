@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfReturnHomeInterval : PacketResponse
     {
         public RecvSelfReturnHomeInterval()
-            : base((ushort) AreaPacketId.recv_self_returnhome_interval, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_returnhome_interval, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCpfNotifyErrorMsg : PacketResponse
     {
         public RecvCpfNotifyErrorMsg()
-            : base((ushort) MsgPacketId.recv_cpf_notify_error, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_cpf_notify_error, ServerType.Msg)
         {
         }
 

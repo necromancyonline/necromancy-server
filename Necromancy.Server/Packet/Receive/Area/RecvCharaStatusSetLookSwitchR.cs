@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaStatusSetLookSwitchR : PacketResponse
     {
         public RecvCharaStatusSetLookSwitchR()
-            : base((ushort) AreaPacketId.recv_chara_status_set_look_switch_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_status_set_look_switch_r, ServerType.Area)
         {
         }
 

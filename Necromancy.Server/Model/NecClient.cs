@@ -7,79 +7,76 @@ using Necromancy.Server.Packet;
 
 namespace Necromancy.Server.Model
 {
-    [DebuggerDisplay("{Identity,nq}")]
+    [DebuggerDisplay("{identity,nq}")]
     public class NecClient
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(NecClient));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(NecClient));
 
         public NecClient()
         {
-            Creation = DateTime.Now;
-            Identity = "";
-            Soul = new Soul();
-            Character = new Character();
-            BodyCollection = new Dictionary<uint,NecClient>();
+            creation = DateTime.Now;
+            identity = "";
+            soul = new Soul();
+            character = new Character();
+            bodyCollection = new Dictionary<uint, NecClient>();
         }
 
-        public DateTime Creation { get; }
-        public string Identity { get; private set; }
-        public Account Account { get; set; }
-        public Soul Soul { get; set; }
-        public Character Character { get; set; }
-        public Channel Channel { get; set; }
-        public Map Map { get; set; }
-        public Union.Union Union { get; set; }
-        public NecConnection AuthConnection { get; set; }
-        public NecConnection MsgConnection { get; set; }
-        public NecConnection AreaConnection { get; set; }
-        public Dictionary<uint, NecClient> BodyCollection { get; set; }
+        public DateTime creation { get; }
+        public string identity { get; private set; }
+        public Account account { get; set; }
+        public Soul soul { get; set; }
+        public Character character { get; set; }
+        public Channel channel { get; set; }
+        public Map map { get; set; }
+        public Union.Union union { get; set; }
+        public NecConnection authConnection { get; set; }
+        public NecConnection msgConnection { get; set; }
+        public NecConnection areaConnection { get; set; }
+        public Dictionary<uint, NecClient> bodyCollection { get; set; }
 
         public void Send(NecPacket packet)
         {
-            switch (packet.ServerType)
+            switch (packet.serverType)
             {
                 case ServerType.Area:
-                    AreaConnection.Send(packet);
+                    areaConnection.Send(packet);
                     break;
                 case ServerType.Msg:
-                    MsgConnection.Send(packet);
+                    msgConnection.Send(packet);
                     break;
                 case ServerType.Auth:
-                    AuthConnection.Send(packet);
+                    authConnection.Send(packet);
                     break;
                 default:
-                    Logger.Error(this, "Invalid ServerType");
+                    _Logger.Error(this, "Invalid ServerType");
                     break;
             }
         }
 
         public void UpdateIdentity()
         {
-            Identity = "";
+            identity = "";
 
-            if (Character != null)
+            if (character != null)
             {
-                Identity += $"[Char:{Character.Id}:{Character.Name}]";
+                identity += $"[Char:{character.id}:{character.name}]";
                 return;
             }
 
-            if (Account != null)
+            if (account != null)
             {
-                Identity += $"[Acc:{Account.Id}:{Account.Name}]";
+                identity += $"[Acc:{account.id}:{account.name}]";
                 return;
             }
 
-            if (AuthConnection != null)
-            {
-                Identity += $"[Con:{AuthConnection.Identity}]";
-            }
+            if (authConnection != null) identity += $"[Con:{authConnection.identity}]";
         }
 
         public void Close()
         {
-            AuthConnection?.Socket.Close();
-            MsgConnection?.Socket.Close();
-            AreaConnection?.Socket.Close();
+            authConnection?.socket.Close();
+            msgConnection?.socket.Close();
+            areaConnection?.socket.Close();
         }
     }
 }

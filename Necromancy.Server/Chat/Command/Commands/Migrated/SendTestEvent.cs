@@ -12,6 +12,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "test";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -21,20 +24,20 @@ namespace Necromancy.Server.Chat.Command.Commands
             // recv_data_notify_goldobject_data     permit to get item or gold?
             // recv_data_notify_eo_data             permit to get the effect, of spell, and other things
             // recv_data_notify_ggate_stone_data    permit to acess object  or display name of object (when you acess object, it's like npc, you can have discussion and take choice),
-            // recv_talkring_create_masterring_r    send a message in the shop that say you create a Master ring 
+            // recv_talkring_create_masterring_r    send a message in the shop that say you create a Master ring
             // recv_sixthsense_trap_notify          icon that avertise if a trap is around you
             // recv_event_system_message            Show system message on the middle of the screen
             // Recv event_message                   Permit to get dialogue message without name
             // Recv_event_message_no_object         permit to get the dialogue, with name, comment, and 1 other things that i don't know
             // recv_event_select_exec_winpos        open some windows with text, need recv_event_select_push to permit to get the choice like the other beelow ?
             // recv_event_select_exec               put it before the recv_event_select_push!! The recv_event_select_push, put the choice, the recv_event_select_exec take the choice in the window, and put a title
-            // recv_event_request_int               open a pin code ? 
+            // recv_event_request_int               open a pin code ?
 
             //recv_0xE8B9 = 0xE8B9,
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt32(client.Character.InstanceId);
+            res.WriteUInt32(client.character.instanceId);
             res.WriteFloat(4);
-            Router.Send(client, 0xE8B9, res, ServerType.Area);
+            router.Send(client, 0xE8B9, res, ServerType.Area);
 
             //--------------------------------------------------------------
             //recv_self_dragon_pos_notify = 0x6FB2;
@@ -181,7 +184,7 @@ namespace Necromancy.Server.Chat.Command.Commands
               res.WriteInt16(100);//  size of the object
 
 
-              res.WriteInt32(0);// 0 = collision, 1 = no collision ?(maybe), when you appear the things lool like object 
+              res.WriteInt32(0);// 0 = collision, 1 = no collision ?(maybe), when you appear the things lool like object
 
               res.WriteInt32(2);//0= no effect color appear, blue = cleared, yellow = puzzle, red = ready for fight
               Router.Send(client, (ushort)AreaPacketId.recv_data_notify_ggate_stone_data, res, ServerType.Area);
@@ -192,8 +195,8 @@ namespace Necromancy.Server.Chat.Command.Commands
               /* IBuffer res = BufferProvider.Provide();
            res.WriteInt32(client.Character.InstanceId);
            res.WriteInt32(2);
-           res.WriteCString("ToBeFound"); // find max size 
-           res.WriteCString("ToBeFound"); // find max size 
+           res.WriteCString("ToBeFound"); // find max size
+           res.WriteCString("ToBeFound"); // find max size
            res.WriteFloat(client.Character.X);
            res.WriteFloat(client.Character.Y);
            res.WriteFloat(client.Character.Z);
@@ -351,8 +354,5 @@ namespace Necromancy.Server.Chat.Command.Commands
               res3.WriteInt32(0);
               Router.Send(client, (ushort)AreaPacketId.recv_event_change_type, res3); */
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "test";
     }
 }

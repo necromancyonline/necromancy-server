@@ -8,17 +8,17 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class Recv8D92 : PacketResponse
     {
-        private readonly uint _instanceId;
-        private readonly int _skillId;
-        private readonly int _castVelocity;
-        private readonly byte _pose;
         private readonly byte _animation;
+        private readonly int _castVelocity;
+        private readonly uint _instanceId;
+        private readonly byte _pose;
+        private readonly int _skillId;
         private readonly Vector3 _srcCoord;
         private readonly Vector3 _trgCoord;
 
         public Recv8D92(Vector3 srcCoord, Vector3 trgCoord, uint instanceId, int skillId, int castVelocity, byte pose,
             byte animation)
-            : base((ushort) AreaPacketId.recv_0x8D92, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_0x8D92, ServerType.Area)
         {
             _instanceId = instanceId;
             _skillId = skillId;
@@ -44,8 +44,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteFloat(moveTo.Y); //Y Per tick
             res.WriteFloat(moveTo.Z); //verticalMovementSpeedMultiplier
 
-            res.WriteFloat((float) 1 / travelTime); //movementMultiplier
-            res.WriteFloat((float) travelTime); //Seconds to move
+            res.WriteFloat(1 / travelTime); //movementMultiplier
+            res.WriteFloat(travelTime); //Seconds to move
 
             res.WriteByte(_pose); //MOVEMENT ANIM
             res.WriteByte(_animation); //JUMP & FALLING ANIM

@@ -5,35 +5,31 @@ using Necromancy.Server.Database.Sql.Core;
 namespace Necromancy.Server.Database.Sql
 {
     /// <summary>
-    /// SQLite Necromancy database.
+    ///     SQLite Necromancy database.
     /// </summary>
     public class NecMariaDb : NecSqlDb<MySqlConnection, MySqlCommand>, IDatabase
     {
-        public const string MemoryDatabasePath = ":memory:";
+        public const string MEMORY_DATABASE_PATH = ":memory:";
 
-        private const string SelectAutoIncrement = "SELECT last_insert_rowid()";
+        private const string SELECT_AUTO_INCREMENT = "SELECT last_insert_rowid()";
 
 
-        private string _connectionString;
+        private readonly string _connectionString;
 
-        public long Version
+        public NecMariaDb(string host, short port, string user, string password, string database)
         {
-            get {
-                return (long)long.Parse(Command("SELECT @@GLOBAL.user_version;", Connection()).ExecuteScalar().ToString());
-            }
-            set {
-                Command(String.Format("SET GLOBAL user_version = {0};", value), Connection()).ExecuteNonQuery();
-            }
+            _connectionString = $"host={host};port={port};user id={user};password={password};database={database};";
+        }
+
+        public long version
+        {
+            get => long.Parse(Command("SELECT @@GLOBAL.user_version;", Connection()).ExecuteScalar().ToString());
+            set => Command(string.Format("SET GLOBAL user_version = {0};", value), Connection()).ExecuteNonQuery();
         }
 
         public bool CreateDatabase()
         {
             throw new NotImplementedException();
-        }
-
-        public NecMariaDb(string host, short port, string user, string password, string database)
-        {
-            _connectionString = $"host={host};port={port};user id={user};password={password};database={database};";
         }
 
         protected override MySqlConnection Connection()

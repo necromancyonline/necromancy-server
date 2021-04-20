@@ -4,8 +4,8 @@ namespace Necromancy.Server.Data.Setting
 {
     public class ModelCommonCsvReader : CsvReader<ModelCommonSetting>
     {
-        private Dictionary<int, MonsterSetting> _monsterSetting;
-        private Dictionary<int, ModelAtrSetting> _modelAtrSettings;
+        private readonly Dictionary<int, ModelAtrSetting> _modelAtrSettings;
+        private readonly Dictionary<int, MonsterSetting> _monsterSetting;
 
         public ModelCommonCsvReader(Dictionary<int, MonsterSetting> monsterSetting,
             Dictionary<int, ModelAtrSetting> modelAtrSettings)
@@ -14,56 +14,31 @@ namespace Necromancy.Server.Data.Setting
             _modelAtrSettings = modelAtrSettings;
         }
 
-        protected override int NumExpectedItems => 14;
+        protected override int numExpectedItems => 14;
 
         protected override ModelCommonSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
-            if (!int.TryParse(properties[1], out int radius))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[1], out int radius)) return null;
 
-            if (!int.TryParse(properties[2], out int height))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[2], out int height)) return null;
 
-            if (!int.TryParse(properties[3], out int crouchHeight))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[3], out int crouchHeight)) return null;
 
-            if (!int.TryParse(properties[4], out int nameHeight))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[4], out int nameHeight)) return null;
 
-            if (!int.TryParse(properties[5], out int modelAtrId))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[5], out int modelAtrId)) return null;
 
-            if (!int.TryParse(properties[6], out int zRadiusOffset))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[6], out int zRadiusOffset)) return null;
 
             if (!int.TryParse(properties[7], out int effectScaling))
-            {
                 //return null;
                 effectScaling = 0;
-            }
 
             if (!int.TryParse(properties[8], out int active))
-            {
                 //return null;
                 active = 0;
-            }
 
             //10 = damage sprite height
             //11 = bow firing position z offset
@@ -80,26 +55,23 @@ namespace Necromancy.Server.Data.Setting
             //        monster = _monsterSetting[monsterId];
             //    }
             //}
-            
+
             ModelAtrSetting atr = null;
-            if (_modelAtrSettings.ContainsKey(modelAtrId))
-            {
-                atr = _modelAtrSettings[modelAtrId];
-            }
+            if (_modelAtrSettings.ContainsKey(modelAtrId)) atr = _modelAtrSettings[modelAtrId];
 
             return new ModelCommonSetting
             {
-                Id = id,
-                Radius = radius,
-                Height = height,
-                CrouchHeight = crouchHeight,
-                NameHeight = nameHeight,
-                Atr = atr,
-                ZRadiusOffset = zRadiusOffset,
-                Effect = effectScaling,
-                Active = active,
-                Remarks = properties[14], //this is the name of the model
-                Monster = monster
+                id = id,
+                radius = radius,
+                height = height,
+                crouchHeight = crouchHeight,
+                nameHeight = nameHeight,
+                atr = atr,
+                zRadiusOffset = zRadiusOffset,
+                effect = effectScaling,
+                active = active,
+                remarks = properties[14], //this is the name of the model
+                monster = monster
             };
         }
     }

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvBattleReportNoactNotifyBuffEffect : PacketResponse
     {
         public RecvBattleReportNoactNotifyBuffEffect()
-            : base((ushort) AreaPacketId.recv_battle_report_noact_notify_buff_effect, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_battle_report_noact_notify_buff_effect, ServerType.Area)
         {
         }
 

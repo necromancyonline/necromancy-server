@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCloakClose : PacketResponse
     {
         public RecvCloakClose()
-            : base((ushort) AreaPacketId.recv_cloak_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cloak_close_r, ServerType.Area)
         {
         }
 

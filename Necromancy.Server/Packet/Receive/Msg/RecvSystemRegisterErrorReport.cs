@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvSystemRegisterErrorReport : PacketResponse
     {
         public RecvSystemRegisterErrorReport()
-            : base((ushort) MsgPacketId.recv_system_register_error_report_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_system_register_error_report_r, ServerType.Msg)
         {
         }
 

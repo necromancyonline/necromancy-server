@@ -8,12 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaBodyStateUpdateNotify : PacketResponse
     {
         /// <summary>
-        /// Use this to modify charabody state on disconnect / reconnect / and body collection.
+        ///     Use this to modify charabody state on disconnect / reconnect / and body collection.
         /// </summary>
-        private uint _id;
-        private int _stateFlag;
+        private readonly uint _id;
+
+        private readonly int _stateFlag;
+
         public RecvCharaBodyStateUpdateNotify(uint id, int stateFlag)
-            : base((ushort) AreaPacketId.recv_charabody_state_update_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_state_update_notify, ServerType.Area)
         {
             _stateFlag = stateFlag;
             _id = id;

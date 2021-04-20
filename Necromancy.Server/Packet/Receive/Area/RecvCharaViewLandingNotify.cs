@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaViewLandingNotify : PacketResponse
     {
         public RecvCharaViewLandingNotify()
-            : base((ushort) AreaPacketId.recv_chara_view_landing_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_view_landing_notify, ServerType.Area)
         {
         }
 

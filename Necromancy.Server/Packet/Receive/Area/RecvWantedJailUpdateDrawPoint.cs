@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvWantedJailUpdateDrawPoint : PacketResponse
     {
         public RecvWantedJailUpdateDrawPoint()
-            : base((ushort) AreaPacketId.recv_wanted_jail_update_draw_point, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_wanted_jail_update_draw_point, ServerType.Area)
         {
         }
 

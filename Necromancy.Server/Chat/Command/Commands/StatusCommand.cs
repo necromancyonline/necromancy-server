@@ -4,7 +4,7 @@ using Necromancy.Server.Model;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Prints current status to console
+    ///     Prints current status to console
     /// </summary>
     public class StatusCommand : ServerChatCommand
     {
@@ -12,18 +12,18 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.User;
+        public override string key => "status";
+        public override string helpText => "usage: `/status` - Display current values";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
             responses.Add(ChatResponse.CommandError(client, "-----Status-----"));
             responses.Add(ChatResponse.CommandError(client,
-                $"AccountId: {client.Account.Id} SoulId: {client.Soul.Id} CharacterId:{client.Character.Id} InstanceId: {client.Character.InstanceId} State: {client.Character.State}"));
+                $"AccountId: {client.account.id} SoulId: {client.soul.id} CharacterId:{client.character.id} InstanceId: {client.character.instanceId} State: {client.character.state}"));
             responses.Add(ChatResponse.CommandError(client,
-                $"MapId: {client.Character.MapId} X: {client.Character.X} Y:{client.Character.Y} Z:{client.Character.Z}  H:{client.Character.Heading}"));
+                $"MapId: {client.character.mapId} X: {client.character.x} Y:{client.character.y} Z:{client.character.z}  H:{client.character.heading}"));
         }
-
-        public override AccountStateType AccountState => AccountStateType.User;
-        public override string Key => "status";
-        public override string HelpText => "usage: `/status` - Display current values";
     }
 }

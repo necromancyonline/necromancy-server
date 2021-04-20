@@ -7,6 +7,44 @@ namespace Necromancy.Server.Packet
 {
     public class NecPacket
     {
+        private string _packetIdName;
+
+        public NecPacket(ushort id, IBuffer buffer, ServerType serverType)
+        {
+            data = buffer;
+            this.id = id;
+            this.serverType = serverType;
+            packetType = null;
+        }
+
+        public NecPacket(ushort id, IBuffer buffer, ServerType serverType, PacketType packetType)
+        {
+            data = buffer;
+            this.id = id;
+            this.serverType = serverType;
+            this.packetType = null;
+            this.packetType = packetType;
+        }
+
+        public IBuffer data { get; }
+        public ushort id { get; }
+        public byte[] header { get; set; }
+        public ServerType serverType { get; }
+        public PacketType? packetType { get; }
+
+        public string packetIdName
+        {
+            get
+            {
+                if (_packetIdName != null) return _packetIdName;
+
+                _packetIdName = GetPacketIdName(id, serverType);
+                if (_packetIdName == null) _packetIdName = $"ID_NOT_DEFINED_{serverType}_{id}";
+
+                return _packetIdName;
+            }
+        }
+
         public static string GetPacketIdName(ushort id, ServerType serverType)
         {
             switch (serverType)
@@ -14,7 +52,7 @@ namespace Necromancy.Server.Packet
                 case ServerType.Auth:
                     if (Enum.IsDefined(typeof(AuthPacketId), id))
                     {
-                        AuthPacketId authPacketId = (AuthPacketId) id;
+                        AuthPacketId authPacketId = (AuthPacketId)id;
                         return authPacketId.ToString();
                     }
 
@@ -22,7 +60,7 @@ namespace Necromancy.Server.Packet
                 case ServerType.Msg:
                     if (Enum.IsDefined(typeof(MsgPacketId), id))
                     {
-                        MsgPacketId msgPacketId = (MsgPacketId) id;
+                        MsgPacketId msgPacketId = (MsgPacketId)id;
                         return msgPacketId.ToString();
                     }
 
@@ -30,7 +68,7 @@ namespace Necromancy.Server.Packet
                 case ServerType.Area:
                     if (Enum.IsDefined(typeof(AreaPacketId), id))
                     {
-                        AreaPacketId areaPacketId = (AreaPacketId) id;
+                        AreaPacketId areaPacketId = (AreaPacketId)id;
                         return areaPacketId.ToString();
                     }
 
@@ -39,55 +77,11 @@ namespace Necromancy.Server.Packet
 
             if (Enum.IsDefined(typeof(CustomPacketId), id))
             {
-                CustomPacketId customPacketId = (CustomPacketId) id;
+                CustomPacketId customPacketId = (CustomPacketId)id;
                 return customPacketId.ToString();
             }
 
             return null;
-        }
-
-        private string _packetIdName;
-
-        public NecPacket(ushort id, IBuffer buffer, ServerType serverType)
-        {
-            Data = buffer;
-            Id = id;
-            ServerType = serverType;
-            PacketType = null;
-        }
-
-        public NecPacket(ushort id, IBuffer buffer, ServerType serverType, PacketType packetType)
-        {
-            Data = buffer;
-            Id = id;
-            ServerType = serverType;
-            PacketType = null;
-            PacketType = packetType;
-        }
-
-        public IBuffer Data { get; }
-        public ushort Id { get; }
-        public byte[] Header { get; set; }
-        public ServerType ServerType { get; }
-        public PacketType? PacketType { get; }
-
-        public string PacketIdName
-        {
-            get
-            {
-                if (_packetIdName != null)
-                {
-                    return _packetIdName;
-                }
-
-                _packetIdName = GetPacketIdName(Id, ServerType);
-                if (_packetIdName == null)
-                {
-                    _packetIdName = $"ID_NOT_DEFINED_{ServerType}_{Id}";
-                }
-
-                return _packetIdName;
-            }
         }
     }
 }

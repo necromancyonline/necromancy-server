@@ -1,44 +1,92 @@
-
-
 namespace Necromancy.Server.Model.Stats
 {
     public class Attribute
     {
-        public int Hp { get; set; }
-        public int Mp { get; set; }
-        public ushort Str { get; set; }
-        public ushort Vit { get; set; }
-        public ushort Dex { get; set; }
-        public ushort Agi { get; set; }
-        public ushort Int { get; set; }
-        public ushort Pie { get; set; }
-        public ushort Luck { get; set; }
-
         public Attribute()
         {
-            Hp = 0;
-            Mp = 0;
-            Str = 0;
-            Vit = 0;
-            Dex = 0;
-            Agi = 0;
-            Int = 0;
-            Pie = 0;
-            Luck = 0;
+            hp = 0;
+            mp = 0;
+            str = 0;
+            vit = 0;
+            dex = 0;
+            agi = 0;
+            @int = 0;
+            pie = 0;
+            luck = 0;
         }
 
-        public Attribute DefaultClassAtributes(uint Class)
+        public int hp { get; set; }
+        public int mp { get; set; }
+        public ushort str { get; set; }
+        public ushort vit { get; set; }
+        public ushort dex { get; set; }
+        public ushort agi { get; set; }
+        public ushort @int { get; set; }
+        public ushort pie { get; set; }
+        public ushort luck { get; set; }
+
+        public Attribute DefaultClassAtributes(uint @class)
         {
-            switch (Class)
+            switch (@class)
             {
-                case 0: this.Hp = 60; this.Mp = 20; this.Str = 8; this.Vit = 7; this.Dex = 7; this.Agi = 6; this.Int = 8; this.Pie = 5; this.Luck = 8; break;//human
-                case 1: this.Hp = 50; this.Mp = 30; this.Str = 6; this.Vit = 5; this.Dex = 8; this.Agi = 8; this.Int = 10; this.Pie = 0; this.Luck = 4; break;//elf
-                case 2: this.Hp = 80; this.Mp = 15; this.Str = 9; this.Vit = 8; this.Dex = 8; this.Agi = 4; this.Int = 5; this.Pie = 9; this.Luck = 5; break;//dwarf
-                case 3: this.Hp = 50; this.Mp = 20; this.Str = 5; this.Vit = 6; this.Dex = 9; this.Agi = 12; this.Int = 7; this.Pie = 7; this.Luck = 15; break;//porkul
-                case 4: this.Hp = 70; this.Mp = 25; this.Str = 7; this.Vit = 7; this.Dex = 4; this.Agi = 7; this.Int = 6; this.Pie = 10; this.Luck = 6; break;//gnome
+                case 0:
+                    hp = 60;
+                    mp = 20;
+                    str = 8;
+                    vit = 7;
+                    dex = 7;
+                    agi = 6;
+                    @int = 8;
+                    pie = 5;
+                    luck = 8;
+                    break; //human
+                case 1:
+                    hp = 50;
+                    mp = 30;
+                    str = 6;
+                    vit = 5;
+                    dex = 8;
+                    agi = 8;
+                    @int = 10;
+                    pie = 0;
+                    luck = 4;
+                    break; //elf
+                case 2:
+                    hp = 80;
+                    mp = 15;
+                    str = 9;
+                    vit = 8;
+                    dex = 8;
+                    agi = 4;
+                    @int = 5;
+                    pie = 9;
+                    luck = 5;
+                    break; //dwarf
+                case 3:
+                    hp = 50;
+                    mp = 20;
+                    str = 5;
+                    vit = 6;
+                    dex = 9;
+                    agi = 12;
+                    @int = 7;
+                    pie = 7;
+                    luck = 15;
+                    break; //porkul
+                case 4:
+                    hp = 70;
+                    mp = 25;
+                    str = 7;
+                    vit = 7;
+                    dex = 4;
+                    agi = 7;
+                    @int = 6;
+                    pie = 10;
+                    luck = 6;
+                    break; //gnome
             }
+
             return this;
         }
-
-}
+    }
 }

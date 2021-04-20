@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSelfActionCost : PacketResponse
     {
         public RecvSelfActionCost()
-            : base((ushort) AreaPacketId.recv_self_action_cost, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_self_action_cost, ServerType.Area)
         {
         }
 

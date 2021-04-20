@@ -7,13 +7,14 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodyNotifyLootStartCancel : PacketResponse
     {
-        private byte _fromZone;
-        private byte _fromContainer;
-        private short _fromSlot;
-        private string _soulName;
-        private string _charaName;
+        private readonly string _charaName;
+        private readonly byte _fromContainer;
+        private readonly short _fromSlot;
+        private readonly byte _fromZone;
+        private readonly string _soulName;
+
         public RecvCharaBodyNotifyLootStartCancel(byte fromZone, byte fromContainer, short fromSlot, string soulName, string charaName)
-            : base((ushort) AreaPacketId.recv_charabody_notify_loot_start_cancel, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_notify_loot_start_cancel, ServerType.Area)
         {
             _fromZone = fromZone;
             _fromContainer = fromContainer;
@@ -28,8 +29,8 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(_fromZone);
             res.WriteByte(_fromContainer);
             res.WriteInt16(_fromSlot);
-            res.WriteCString(_soulName);//Length 31-2=DEC47
-            res.WriteCString(_charaName);//Length 5B-1=DEC90
+            res.WriteCString(_soulName); //Length 31-2=DEC47
+            res.WriteCString(_charaName); //Length 5B-1=DEC90
             return res;
         }
     }

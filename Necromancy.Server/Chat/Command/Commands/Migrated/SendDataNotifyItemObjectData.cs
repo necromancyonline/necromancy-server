@@ -13,6 +13,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "itemobject";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -20,14 +23,14 @@ namespace Necromancy.Server.Chat.Command.Commands
             IBuffer res = BufferProvider.Provide();
 
             res.WriteInt32(251001); //sys_msg.csv call
-            res.WriteFloat(client.Character.X); //Initial X
-            res.WriteFloat(client.Character.Y); //Initial Y
-            res.WriteFloat(client.Character.Z); //Initial Z
+            res.WriteFloat(client.character.x); //Initial X
+            res.WriteFloat(client.character.y); //Initial Y
+            res.WriteFloat(client.character.z); //Initial Z
 
-            res.WriteFloat(client.Character.X); //Final X
-            res.WriteFloat(client.Character.Y); //Final Y
-            res.WriteFloat(client.Character.Z); //Final Z
-            res.WriteByte(client.Character.Heading); //View offset
+            res.WriteFloat(client.character.x); //Final X
+            res.WriteFloat(client.character.y); //Final Y
+            res.WriteFloat(client.character.z); //Final Z
+            res.WriteByte(client.character.heading); //View offset
 
             res.WriteInt32(0); // 0 here gives an indication (blue pillar thing) and makes it pickup-able
             res.WriteInt32(0);
@@ -38,10 +41,7 @@ namespace Necromancy.Server.Chat.Command.Commands
 
             res.WriteInt32(0);
 
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_data_notify_itemobject_data, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_data_notify_itemobject_data, res, ServerType.Area);
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "itemobject";
     }
 }

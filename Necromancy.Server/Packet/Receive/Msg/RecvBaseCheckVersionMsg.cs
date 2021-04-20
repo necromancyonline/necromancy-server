@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvBaseCheckVersionMsg : PacketResponse
     {
         public RecvBaseCheckVersionMsg()
-            : base((ushort) MsgPacketId.recv_base_check_version_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_base_check_version_r, ServerType.Msg)
         {
         }
 

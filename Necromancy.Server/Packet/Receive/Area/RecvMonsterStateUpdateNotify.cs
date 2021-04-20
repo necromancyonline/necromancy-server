@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly int _state;
 
         public RecvMonsterStateUpdateNotify(uint instanceId, int state)
-            : base((ushort) AreaPacketId.recv_monster_state_update_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_monster_state_update_notify, ServerType.Area)
         {
             _instanceId = instanceId;
             _state = state;

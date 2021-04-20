@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEmotionUpdateType : PacketResponse
     {
         public RecvEmotionUpdateType()
-            : base((ushort) AreaPacketId.recv_emotion_update_type_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_emotion_update_type_r, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyAcceptToApply : PacketResponse
     {
         public RecvPartyNotifyAcceptToApply()
-            : base((ushort) MsgPacketId.recv_party_notify_accept_to_apply, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_accept_to_apply, ServerType.Msg)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRaiseScaleViewOpen : PacketResponse
     {
         public RecvRaiseScaleViewOpen()
-            : base((ushort) AreaPacketId.recv_raisescale_view_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_raisescale_view_open, ServerType.Area)
         {
         }
 

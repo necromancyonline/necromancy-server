@@ -2,9 +2,9 @@ namespace Necromancy.Cli.Argument
 {
     public interface ISwitchProperty
     {
-        string Key { get; }
-        string Description { get; }
-        string ValueDescription { get; }
+        string key { get; }
+        string description { get; }
+        string valueDescription { get; }
         bool Assign(string value);
     }
 }

@@ -13,6 +13,9 @@ namespace Necromancy.Server.Chat.Command.Commands
         {
         }
 
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "ques";
+
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
         {
@@ -41,7 +44,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                 res.WriteInt32(0); // need to find
                 res.WriteFixedString("test", 0x10); // ?
                 res.WriteInt16(0);
-                res.WriteInt32(0); // need to find too 
+                res.WriteInt32(0); // need to find too
             }
 
             res.WriteByte(0);
@@ -58,7 +61,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteByte(4); // Item slots for Selected Prize   0 = no Selected prize.
 
             res.WriteFixedString(
-                "To be considered an adventurer, you'll need to pass a trial. talk to " + $"{client.Character.Name}" +
+                "To be considered an adventurer, you'll need to pass a trial. talk to " + $"{client.character.name}" +
                 " To take the test.", 0x181); // Quest comment
 
             res.WriteInt64(0); // ?
@@ -85,10 +88,7 @@ namespace Necromancy.Server.Chat.Command.Commands
             res.WriteInt32(0);
 
             res.WriteFloat(0);
-            Router.Send(client, (ushort) AreaPacketId.recv_quest_started, res, ServerType.Area);
+            router.Send(client, (ushort)AreaPacketId.recv_quest_started, res, ServerType.Area);
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "ques";
     }
 }

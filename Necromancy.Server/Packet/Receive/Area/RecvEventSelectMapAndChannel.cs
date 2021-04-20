@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventSelectMapAndChannel : PacketResponse
     {
         public RecvEventSelectMapAndChannel()
-            : base((ushort) AreaPacketId.recv_event_select_map_and_channel, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_select_map_and_channel, ServerType.Area)
         {
         }
 
@@ -28,14 +28,16 @@ namespace Necromancy.Server.Packet.Receive.Area
                 {
                     res.WriteInt32(0);
                     res.WriteFixedString("", 0x61);
-                    res.WriteByte(0);//bool
+                    res.WriteByte(0); //bool
                     res.WriteInt16(0);
                     res.WriteInt16(0);
                     res.WriteByte(0);
                     res.WriteByte(0);
                 }
+
                 res.WriteByte(0);
             }
+
             return res;
         }
     }

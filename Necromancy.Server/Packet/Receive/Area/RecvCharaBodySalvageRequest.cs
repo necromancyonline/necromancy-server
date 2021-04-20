@@ -6,9 +6,9 @@ using Necromancy.Server.Packet.Id;
 namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySalvageRequest : PacketResponse
-    { 
-    public enum ItemExceptionType
     {
+        public enum ItemExceptionType
+        {
             Cancelled = 0,
             Discarded = 1,
             Carried = 2,
@@ -22,11 +22,13 @@ namespace Necromancy.Server.Packet.Receive.Area
             Protected28 = -528,
             PartySteal = -526,
             SoulRevive = -519,
-            CorpseFull = -507,
+            CorpseFull = -507
         }
-        private int _code;
+
+        private readonly int _code;
+
         public RecvCharaBodySalvageRequest(int code)
-            : base((ushort) AreaPacketId.recv_charabody_salvage_request_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_salvage_request_r, ServerType.Area)
         {
             _code = code;
         }

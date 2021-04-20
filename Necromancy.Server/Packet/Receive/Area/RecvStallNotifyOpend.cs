@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvStallNotifyOpend : PacketResponse
     {
         public RecvStallNotifyOpend()
-            : base((ushort) AreaPacketId.recv_stall_notify_opend, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_stall_notify_opend, ServerType.Area)
         {
         }
 
@@ -32,6 +32,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
                 res.WriteByte(0); //Bool
             }
+
             return res;
         }
     }

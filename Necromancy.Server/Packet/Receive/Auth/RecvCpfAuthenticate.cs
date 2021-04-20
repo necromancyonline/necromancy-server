@@ -8,8 +8,9 @@ namespace Necromancy.Server.Packet.Receive.Auth
     public class RecvCpfAuthenticate : PacketResponse
     {
         private readonly string _cpfString;
+
         public RecvCpfAuthenticate(string cpfString)
-            : base((ushort) AuthPacketId.recv_cpf_authenticate, ServerType.Auth)
+            : base((ushort)AuthPacketId.recv_cpf_authenticate, ServerType.Auth)
         {
             _cpfString = cpfString;
         }

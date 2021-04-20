@@ -7,11 +7,12 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvCharaBodySelfNotifyAbyssSteadPos : PacketResponse
     {
-        private float _x;
-        private float _y;
-        private float _z;
+        private readonly float _x;
+        private readonly float _y;
+        private readonly float _z;
+
         public RecvCharaBodySelfNotifyAbyssSteadPos(float x, float y, float z)
-            : base((ushort) AreaPacketId.recv_charabody_self_notify_abyss_stead_pos, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_charabody_self_notify_abyss_stead_pos, ServerType.Area)
         {
             _x = x;
             _y = y;

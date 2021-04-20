@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTalkRingRenameMaterRing : PacketResponse
     {
         public RecvTalkRingRenameMaterRing()
-            : base((ushort) AreaPacketId.recv_talkring_rename_masterring_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_talkring_rename_masterring_r, ServerType.Area)
         {
         }
 

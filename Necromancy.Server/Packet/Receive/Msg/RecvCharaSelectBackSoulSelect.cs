@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaSelectBackSoulSelect : PacketResponse
     {
         public RecvCharaSelectBackSoulSelect()
-            : base((ushort) MsgPacketId.recv_chara_select_back_soul_select_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_select_back_soul_select_r, ServerType.Msg)
         {
         }
 

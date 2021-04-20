@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCpfNotifyError : PacketResponse
     {
         public RecvCpfNotifyError()
-            : base((ushort) AreaPacketId.recv_cpf_notify_error, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cpf_notify_error, ServerType.Area)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

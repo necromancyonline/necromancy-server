@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvSvConfOptionRequest : PacketResponse
     {
         public RecvSvConfOptionRequest()
-            : base((ushort) AreaPacketId.recv_sv_conf_option_request_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_sv_conf_option_request_r, ServerType.Area)
         {
         }
 

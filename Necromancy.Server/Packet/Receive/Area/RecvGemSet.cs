@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvGemSet : PacketResponse
     {
         public RecvGemSet()
-            : base((ushort) AreaPacketId.recv_gem_set_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_gem_set_r, ServerType.Area)
         {
         }
 

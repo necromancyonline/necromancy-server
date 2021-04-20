@@ -8,16 +8,16 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvDataNotifyEoData : PacketResponse
     {
-        private readonly uint _instanceId;
         private readonly int _effectId;
+        private readonly uint _instanceId;
+        private readonly Vector3 _target;
+        private readonly uint _targetInstanceId;
         private readonly int _unknown1;
         private readonly int _unknown2;
-        private readonly uint _targetInstanceId;
-        private readonly Vector3 _target;
 
         public RecvDataNotifyEoData(uint instanceId, uint targetInstanceId, int effectId, Vector3 target, int unknown1,
             int unknown2)
-            : base((ushort) AreaPacketId.recv_data_notify_eo_data, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_data_notify_eo_data, ServerType.Area)
         {
             _instanceId = instanceId;
             _targetInstanceId = targetInstanceId;

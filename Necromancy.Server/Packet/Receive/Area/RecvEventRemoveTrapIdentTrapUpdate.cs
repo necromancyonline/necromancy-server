@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventRemoveTrapIdentTrapUpdate : PacketResponse
     {
         public RecvEventRemoveTrapIdentTrapUpdate()
-            : base((ushort) AreaPacketId.recv_event_removetrap_ident_trap_update, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_removetrap_ident_trap_update, ServerType.Area)
         {
         }
 

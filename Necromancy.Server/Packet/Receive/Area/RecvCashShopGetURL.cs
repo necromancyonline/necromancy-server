@@ -5,10 +5,10 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Packet.Receive.Area
 {
-    public class RecvCashShopGetURL : PacketResponse
+    public class RecvCashShopGetUrl : PacketResponse
     {
-        public RecvCashShopGetURL()
-            : base((ushort) AreaPacketId.recv_cash_shop_get_url_r, ServerType.Area)
+        public RecvCashShopGetUrl()
+            : base((ushort)AreaPacketId.recv_cash_shop_get_url_r, ServerType.Area)
         {
         }
 

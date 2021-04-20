@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionRenameOpen : PacketResponse
     {
         public RecvUnionRenameOpen()
-            : base((ushort) AreaPacketId.recv_union_rename_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_rename_open, ServerType.Area)
         {
         }
 

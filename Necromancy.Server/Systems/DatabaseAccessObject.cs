@@ -1,13 +1,10 @@
-using Arrowgene.Logging;
-using Necromancy.Server.Setting;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
-using System.Text;
-
+using Arrowgene.Logging;
+using Necromancy.Server.Setting;
 
 namespace Necromancy.Server.Systems
 {
@@ -15,34 +12,33 @@ namespace Necromancy.Server.Systems
     //TODO MOVE UNDER /DATABASE
     public class DatabaseAccessObject
     {
+        protected const int NO_ROWS_AFFECTED = 0;
         protected static readonly ILogger Logger = LogProvider.Logger(typeof(DatabaseAccessObject));
 
-        protected const int NO_ROWS_AFFECTED = 0;
-        
         private readonly string _sqLiteConnectionString;
 
         public DatabaseAccessObject()
         {
-            _sqLiteConnectionString = makeSQLiteConnectionString();
+            _sqLiteConnectionString = MakeSqLiteConnectionString();
         }
 
-        private string makeSQLiteConnectionString()
+        private string MakeSqLiteConnectionString()
         {
             //TODO move info to resources
             SQLiteConnectionStringBuilder sqLiteConnStrBuilder = new SQLiteConnectionStringBuilder();
-            string SettingFile = "server_setting.json";
+            string settingFile = "server_setting.json";
             SettingProvider settingProvider = new SettingProvider();
-            NecSetting _setting = settingProvider.Load<NecSetting>(SettingFile);
-            string sqLitePath = Path.Combine(_setting.DatabaseSettings.SqLiteFolder, "db.sqlite");
-            sqLiteConnStrBuilder.DataSource = sqLitePath;            
-            sqLiteConnStrBuilder.Version = 3; 
+            NecSetting setting = settingProvider.Load<NecSetting>(settingFile);
+            string sqLitePath = Path.Combine(setting.databaseSettings.sqLiteFolder, "db.sqlite");
+            sqLiteConnStrBuilder.DataSource = sqLitePath;
+            sqLiteConnStrBuilder.Version = 3;
             sqLiteConnStrBuilder.Pooling = true;
             sqLiteConnStrBuilder.ForeignKeys = true;
             sqLiteConnStrBuilder.Flags = sqLiteConnStrBuilder.Flags & SQLiteConnectionFlags.StrictConformance;
             return sqLiteConnStrBuilder.ConnectionString;
         }
 
-        protected DbConnection GetSQLConnection()
+        protected DbConnection GetSqlConnection()
         {
             return new SQLiteConnection(_sqLiteConnectionString);
         }
@@ -78,7 +74,7 @@ namespace Necromancy.Server.Systems
                 command.CommandText = query;
                 nonQueryAction(command);
                 using DbDataReader reader = command.ExecuteReader();
-                readAction(reader);    
+                readAction(reader);
             }
             catch (Exception ex)
             {
@@ -94,7 +90,7 @@ namespace Necromancy.Server.Systems
                 using DbConnection conn = new SQLiteConnection(_sqLiteConnectionString);
                 conn.Open();
                 using DbCommand command = conn.CreateCommand();
-                command.ExecuteNonQuery();                    
+                command.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
@@ -133,7 +129,7 @@ namespace Necromancy.Server.Systems
             AddParameter(command, name, value, DbType.String);
         }
 
-        protected void AddParameter(DbCommand command, string name, Int32 value)
+        protected void AddParameter(DbCommand command, string name, int value)
         {
             AddParameter(command, name, value, DbType.Int32);
         }
@@ -148,14 +144,14 @@ namespace Necromancy.Server.Systems
             AddParameter(command, name, value, DbType.Byte);
         }
 
-        protected void AddParameter(DbCommand command, string name, UInt32 value)
+        protected void AddParameter(DbCommand command, string name, uint value)
         {
             AddParameter(command, name, value, DbType.UInt32);
         }
 
         protected void AddParameterEnumInt32<T>(DbCommand command, string name, T value) where T : Enum
         {
-            AddParameter(command, name, (Int32)(object)value, DbType.Int32);
+            AddParameter(command, name, (int)(object)value, DbType.Int32);
         }
 
         protected void AddParameter(DbCommand command, string name, DateTime? value)

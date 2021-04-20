@@ -4,21 +4,18 @@ namespace Necromancy.Server.Data.Setting
 {
     public class SkillBaseCsvReader : CsvReader<SkillBaseSetting>
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(SkillBaseCsvReader));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(SkillBaseCsvReader));
 
-        protected override int NumExpectedItems => 40;
+        protected override int numExpectedItems => 40;
 
         protected override SkillBaseSetting CreateInstance(string[] properties)
         {
             if (!int.TryParse(properties[0], out int id))
-            {
                 //Logger.Debug("First entry empty!!");
                 return null;
-            }
 
             int.TryParse(properties[2], out int logId);
-            bool logBlockEnemy = false;
-            bool.TryParse(properties[3], out logBlockEnemy);
+            bool.TryParse(properties[3], out bool logBlockEnemy);
 
             int.TryParse(properties[4], out int castLogId);
 
@@ -74,48 +71,48 @@ namespace Necromancy.Server.Data.Setting
 
             return new SkillBaseSetting
             {
-                Id = id,
-                Name = properties[1],
-                LogId = logId,
-                LogBlockEnemy = logBlockEnemy,
-                CastLogId = castLogId,
-                HitLogId = hitLogId,
-                EffectType = properties[6],
-                OccupationEffectType = occupationEffectType,
-                CastingTime = castingTime,
-                CastingCooldown = castingCooldown,
-                ChangeByMapId = changeByMapId,
-                RigidityTime = rigidityTime,
-                NoSword = noSword,
-                NecessaryLevel = necessaryLevel,
-                HpUsed = hpUsed,
-                MpUsed = mpUsed,
-                ApUsed = apUsed,
-                AcUsed = acUsed,
-                DurabilityUsed = durabilityUsed,
-                Item1Id = item1Id,
-                Item1Count = item1Count,
-                Item2Id = item2Id,
-                Item2Count = item2Count,
-                Item3Id = item3Id,
-                Item3Count = item3Count,
-                Item4Id = item4Id,
-                Item4Count = item4Count,
-                CastScriptId = castScriptId,
-                ActivatedScriptId = activatedScriptId,
-                ActivatedEffect1Id = activatedEffect1Id,
-                ActivatedEffect2Id = activatedEffect2Id,
-                EquipmentScriptChange = equipmentScriptChange,
-                EffectOnSelf = effectOnSelf,
-                ObjectFaction = properties[33],
-                AutomaticCombo = automaticCombo,
-                HitEffect2 = hitEffect2,
-                ScriptParameter1 = scriptParameter1,
-                ScriptParameter2 = scriptParameter2,
-                ScanType = properties[38],
-                Unknown2 = unknown2,
-                Unknown3 = unknown3,
-                EffectTime = effectTime
+                id = id,
+                name = properties[1],
+                logId = logId,
+                logBlockEnemy = logBlockEnemy,
+                castLogId = castLogId,
+                hitLogId = hitLogId,
+                effectType = properties[6],
+                occupationEffectType = occupationEffectType,
+                castingTime = castingTime,
+                castingCooldown = castingCooldown,
+                changeByMapId = changeByMapId,
+                rigidityTime = rigidityTime,
+                noSword = noSword,
+                necessaryLevel = necessaryLevel,
+                hpUsed = hpUsed,
+                mpUsed = mpUsed,
+                apUsed = apUsed,
+                acUsed = acUsed,
+                durabilityUsed = durabilityUsed,
+                item1Id = item1Id,
+                item1Count = item1Count,
+                item2Id = item2Id,
+                item2Count = item2Count,
+                item3Id = item3Id,
+                item3Count = item3Count,
+                item4Id = item4Id,
+                item4Count = item4Count,
+                castScriptId = castScriptId,
+                activatedScriptId = activatedScriptId,
+                activatedEffect1Id = activatedEffect1Id,
+                activatedEffect2Id = activatedEffect2Id,
+                equipmentScriptChange = equipmentScriptChange,
+                effectOnSelf = effectOnSelf,
+                objectFaction = properties[33],
+                automaticCombo = automaticCombo,
+                hitEffect2 = hitEffect2,
+                scriptParameter1 = scriptParameter1,
+                scriptParameter2 = scriptParameter2,
+                scanType = properties[38],
+                unknown2 = unknown2,
+                unknown3 = unknown3,
+                effectTime = effectTime
             };
         }
     }

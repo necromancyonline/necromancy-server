@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvRefusalListRemoveUser : PacketResponse
     {
         public RecvRefusalListRemoveUser()
-            : base((ushort) AreaPacketId.recv_refusallist_remove_user_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_refusallist_remove_user_r, ServerType.Area)
         {
         }
 

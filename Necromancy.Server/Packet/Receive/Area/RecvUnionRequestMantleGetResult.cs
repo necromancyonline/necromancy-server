@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionRequestMantleGetResult : PacketResponse
     {
         public RecvUnionRequestMantleGetResult()
-            : base((ushort) AreaPacketId.recv_union_request_mantle_get_result, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_request_mantle_get_result, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaNotifyMapFragment : PacketResponse
     {
         public RecvCharaNotifyMapFragment()
-            : base((ushort) AreaPacketId.recv_chara_notify_map_fragment, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_notify_map_fragment, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCashShopNotifyOpen : PacketResponse
     {
         public RecvCashShopNotifyOpen()
-            : base((ushort) AreaPacketId.recv_cash_shop_notify_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cash_shop_notify_open, ServerType.Area)
         {
         }
 
@@ -19,15 +19,16 @@ namespace Necromancy.Server.Packet.Receive.Area
             res.WriteByte(0);
             res.WriteInt32(0);
             int numEntries = 0xA;
-            res.WriteInt32(numEntries);// less than or equal to 0xA
+            res.WriteInt32(numEntries); // less than or equal to 0xA
             for (int i = 0; i < numEntries; i++)
             {
                 res.WriteByte(0);
                 res.WriteInt32(0);
                 res.WriteFixedString("", 0x19);
             }
+
             numEntries = 0x64;
-            res.WriteInt32(numEntries);//less than or equal to 0x64
+            res.WriteInt32(numEntries); //less than or equal to 0x64
             res.WriteByte(0);
             res.WriteFixedString("", 0x1F);
             return res;

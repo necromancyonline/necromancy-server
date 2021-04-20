@@ -6,14 +6,14 @@ using Necromancy.Server.Packet.Id;
 
 namespace Necromancy.Server.Systems.Auction
 {
-    public class send_auction_receive_gold : ClientHandler
+    public class SendAuctionReceiveGold : ClientHandler
     {
-        public send_auction_receive_gold(NecServer server) : base(server)
+        public SendAuctionReceiveGold(NecServer server) : base(server)
         {
         }
 
 
-        public override ushort Id => (ushort) AreaPacketId.send_auction_receive_gold;
+        public override ushort id => (ushort)AreaPacketId.send_auction_receive_gold;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
@@ -27,7 +27,7 @@ namespace Necromancy.Server.Systems.Auction
             1 The item may be listed
 
             */
-            Router.Send(client.Map, (ushort) AreaPacketId.recv_auction_receive_gold_r, res, ServerType.Area);
+            router.Send(client.map, (ushort)AreaPacketId.recv_auction_receive_gold_r, res, ServerType.Area);
         }
     }
 }

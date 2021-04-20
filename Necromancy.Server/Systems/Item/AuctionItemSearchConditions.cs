@@ -1,50 +1,47 @@
-using System;
-
 namespace Necromancy.Server.Systems.Item
 {
     public class AuctionItemSearchConditions
     {
-
         private const int MIN_SOUL_RANK = 0;
         private const int MAX_SOUL_RANK = 99;
         private const int MIN_FORGE_PRICE = 0;
         private const int MAX_FORGE_PRICE = 99;
 
-        public int SoulRankMin {get; set; }
-        public int SoulRankMax { get; set; }
-        public int ForgePriceMin { get; set; }
-        public int ForgePriceMax { get; set; }
-        public ItemQualities Quality { get; set; }
-        public Classes Class { get;set; }
+        public int soulRankMin { get; set; }
+        public int soulRankMax { get; set; }
+        public int forgePriceMin { get; set; }
+        public int forgePriceMax { get; set; }
+        public ItemQualities quality { get; set; }
+        public Classes @class { get; set; }
 
         public bool HasValidClass()
         {
-            return (Class & Classes.All) == Class;
+            return (@class & Classes.All) == @class;
         }
 
         public bool HasValidQuality()
         {
-            return (Quality & ItemQualities.All) == Quality;
+            return (quality & ItemQualities.All) == quality;
         }
 
         public bool HasValidSoulRankMin()
         {
-            return (SoulRankMin >= MIN_SOUL_RANK) && (SoulRankMin <= MAX_SOUL_RANK);
+            return soulRankMin >= MIN_SOUL_RANK && soulRankMin <= MAX_SOUL_RANK;
         }
 
         public bool HasValidSoulRankMax()
         {
-            return (SoulRankMax >= MIN_SOUL_RANK) && (SoulRankMax <= MAX_SOUL_RANK);
+            return soulRankMax >= MIN_SOUL_RANK && soulRankMax <= MAX_SOUL_RANK;
         }
 
         public bool HasValidForgePriceMin()
         {
-            return (ForgePriceMin >= MIN_FORGE_PRICE) && (ForgePriceMin <= MIN_FORGE_PRICE);
+            return forgePriceMin >= MIN_FORGE_PRICE && forgePriceMin <= MIN_FORGE_PRICE;
         }
 
         public bool HasValidForgePriceMax()
         {
-            return (ForgePriceMax >= MAX_FORGE_PRICE) && (ForgePriceMax <= MAX_FORGE_PRICE);
+            return forgePriceMax >= MAX_FORGE_PRICE && forgePriceMax <= MAX_FORGE_PRICE;
         }
     }
 }

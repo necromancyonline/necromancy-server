@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly ulong _state;
 
         public RecvCharaNotifyStateflag(uint instanceId, ulong state)
-            : base((ushort) AreaPacketId.recv_chara_notify_stateflag, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_notify_stateflag, ServerType.Area)
         {
             _instanceId = instanceId;
             _state = state;

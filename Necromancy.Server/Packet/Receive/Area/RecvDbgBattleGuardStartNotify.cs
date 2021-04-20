@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDbgBattleGuardStartNotify : PacketResponse
     {
         public RecvDbgBattleGuardStartNotify()
-            : base((ushort) AreaPacketId.recv_dbg_battle_guard_start_notify, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_dbg_battle_guard_start_notify, ServerType.Area)
         {
         }
 

@@ -11,7 +11,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly ChatErrorType _chatErrorType;
 
         public RecvChatPostMessageR(ChatErrorType chatErrorType)
-            : base((ushort) AreaPacketId.recv_chat_post_message_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chat_post_message_r, ServerType.Area)
         {
             _chatErrorType = chatErrorType;
         }
@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32((int) _chatErrorType);
+            res.WriteInt32((int)_chatErrorType);
             return res;
         }
     }

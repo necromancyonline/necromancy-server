@@ -61,6 +61,7 @@ namespace Necromancy.Server.Systems.Item
         MASTER_TALKRING = 62, //TOKRING Talk ring
         TALKRING = 63, //TOKRNG Talk
         FORGEGUARDSTONE = 64, //FG_GRD "blank"
+
         //FORGE_PARAMETER_SUPPORT = 56, //gem
         GEM = 65, //GEM
         GEM_PIECE = 66, //GEM debris
@@ -72,11 +73,12 @@ namespace Necromancy.Server.Systems.Item
         AVATAR = 70, //avatar
         ALLCHT = 71, // "blank
         BUFF = 72, //buff
-        BUFF_FOOD = 73,  //food
+        BUFF_FOOD = 73, //food
         LEATHER = 74, //leather shoes
         FORGETICKET = 75, //training ticket
         FORGE_SP_SUPPORT = 76, // special training
         FORGE_GEM_SUPPORT = 77, //Gem translpant material
+
         // =78, //arca ??
         ARRANGE_TICKET = 79, //arrange ticket
         PARTNER_CARD = 80, //partner card
@@ -97,6 +99,6 @@ namespace Necromancy.Server.Systems.Item
 
         SCROLL = 95, //scroll
         SCROLL_SUPPORT = 96, //enchantment support
-        WHOLECHAT = ALLCHT,
+        WHOLECHAT = ALLCHT
     }
 }

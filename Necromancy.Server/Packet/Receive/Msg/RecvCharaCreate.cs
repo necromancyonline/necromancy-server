@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCharaCreate : PacketResponse
     {
         public RecvCharaCreate()
-            : base((ushort) MsgPacketId.recv_chara_create_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_chara_create_r, ServerType.Msg)
         {
         }
 

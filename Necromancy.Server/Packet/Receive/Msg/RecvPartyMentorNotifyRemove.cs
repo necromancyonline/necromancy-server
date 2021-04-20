@@ -8,14 +8,14 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyMentorNotifyRemove : PacketResponse
     {
         public RecvPartyMentorNotifyRemove()
-            : base((ushort) MsgPacketId.recv_party_mentor_notify_remove, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_mentor_notify_remove, ServerType.Msg)
         {
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            
+
             return res;
         }
     }

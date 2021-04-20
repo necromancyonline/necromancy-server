@@ -12,15 +12,19 @@ using Necromancy.Server.Packet.Receive.Area;
 namespace Necromancy.Server.Chat.Command.Commands
 {
     /// <summary>
-    /// Does Union stuff
+    ///     Does Union stuff
     /// </summary>
     public class UnionCommand : ServerChatCommand
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(UnionCommand));
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(UnionCommand));
 
         public UnionCommand(NecServer server) : base(server)
         {
         }
+
+        public override AccountStateType accountState => AccountStateType.Admin;
+        public override string key => "union";
+        public override string helpText => "usage: `/union [command]` - Does something Union related.";
 
         public override void Execute(string[] command, NecClient client, ChatMessage message,
             List<ChatResponse> responses)
@@ -36,50 +40,47 @@ namespace Necromancy.Server.Chat.Command.Commands
             switch (command[0])
             {
                 case "union":
-                    res36.WriteUInt32(client.Character.InstanceId);
-                    res36.WriteInt32(client.Character.unionId);
+                    res36.WriteUInt32(client.character.instanceId);
+                    res36.WriteInt32(client.character.unionId);
                     res36.WriteCString("Trade_Union");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
                     break;
                 case "mant":
                     res36.WriteInt32(0);
-                    for (int i = 0; i < 0x10; i++)
-                    {
-                        res36.WriteByte(0);
-                    }
+                    for (int i = 0; i < 0x10; i++) res36.WriteByte(0);
 
-                    Router.Send(client, (ushort)AreaPacketId.recv_union_mantle_open, res36, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_union_mantle_open, res36, ServerType.Area);
                     break;
                 case "xunion":
-                    res36.WriteUInt32(client.Character.InstanceId);
+                    res36.WriteUInt32(client.character.instanceId);
                     res36.WriteInt32(0 /*client.Character.UnionId*/);
                     res36.WriteCString("");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_chara_notify_union_data, res36, ServerType.Area);
                     break;
 
                 case "disband":
-                    Router.Send(client, (ushort) MsgPacketId.recv_union_notify_disband, res36, ServerType.Msg);
+                    router.Send(client, (ushort)MsgPacketId.recv_union_notify_disband, res36, ServerType.Msg);
 
                     res36.WriteInt32(0); //error check
-                    Router.Send(client, (ushort) AreaPacketId.recv_union_request_disband_result, res36,
+                    router.Send(client, (ushort)AreaPacketId.recv_union_request_disband_result, res36,
                         ServerType.Area);
 
                     IBuffer res37 = BufferProvider.Provide();
-                    res37.WriteInt32(client.Character.unionId);
-                    Router.Send(client, (ushort) MsgPacketId.recv_union_request_disband_r, res37, ServerType.Msg);
+                    res37.WriteInt32(client.character.unionId);
+                    router.Send(client, (ushort)MsgPacketId.recv_union_request_disband_r, res37, ServerType.Msg);
 
                     IBuffer res40 = BufferProvider.Provide();
-                    res40.WriteUInt32(client.Character.InstanceId);
+                    res40.WriteUInt32(client.character.instanceId);
                     res40.WriteInt32(0 /*client.Character.UnionId*/);
                     res40.WriteCString("");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_chara_notify_union_data, res40, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_chara_notify_union_data, res40, ServerType.Area);
 
-                    client.Character.unionId = 0;
+                    client.character.unionId = 0;
 
                     break;
 
                 case "open":
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_union_open_window, res36, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_union_open_window, res36, ServerType.Area);
                     break;
 
                 case "storage":
@@ -87,44 +88,44 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer res35 = BufferProvider.Provide();
                     res35.WriteInt32(0);
                     res35.WriteByte(0);
-                    Router.Send(client, (ushort)AreaPacketId.recv_event_start, res35, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_start, res35, ServerType.Area);
                     //Open union storage
-                    res36.WriteUInt64(client.Soul.WarehouseGold); //todo make union gold variable
+                    res36.WriteUInt64(client.soul.warehouseGold); //todo make union gold variable
                     res36.WriteInt64(500); //??
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_union_storage_open, res36,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_union_storage_open, res36,
                         ServerType.Area);
                     break;
 
                 case "establish":
                     res36.WriteInt32(0); //error check
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_union_request_establish_r, res36,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_union_request_establish_r, res36,
                         ServerType.Area);
                     break;
 
                 case "rename":
                     res36.WriteCString("YouDidIt");
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_union_rename_open, res36, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_union_rename_open, res36, ServerType.Area);
 
                     IBuffer res38 = BufferProvider.Provide();
                     res38.WriteInt32(0); //error check
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_union_request_rename_r, res38, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_union_request_rename_r, res38, ServerType.Area);
                     break;
                 case "resetid":
-                    client.Character.unionId = 0;
+                    client.character.unionId = 0;
                     break;
 
                 case "growth":
                     res36.WriteInt32(0); //error check
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_union_request_growth_result, res36,
+                    router.Send(client.map, (ushort)AreaPacketId.recv_union_request_growth_result, res36,
                         ServerType.Area);
                     IBuffer res39 = BufferProvider.Provide();
                     res39.WriteInt16(3); //sets union current exp
-                    Router.Send(client.Map, (ushort) MsgPacketId.recv_union_notify_growth, res39, ServerType.Msg);
+                    router.Send(client.map, (ushort)MsgPacketId.recv_union_notify_growth, res39, ServerType.Msg);
                     break;
 
                 case "display":
                     res36.WriteInt32(333); //error check
-                    Router.Send(client.Map, (ushort) AreaPacketId.recv_quest_display_r, res36, ServerType.Area);
+                    router.Send(client.map, (ushort)AreaPacketId.recv_quest_display_r, res36, ServerType.Area);
                     break;
 
                 case "order":
@@ -132,7 +133,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res2.WriteInt32(0); // 0 = normal 1 = cinematic
                     res2.WriteByte(0);
 
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_start, res2, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_start, res2, ServerType.Area);
                     IBuffer res = BufferProvider.Provide();
                     res.WriteInt32(1999);
                     res.WriteByte(1);
@@ -193,7 +194,7 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res4.WriteInt32(1); // 0 = normal 1 = cinematic
                     res4.WriteInt32(1); // 0 = normal 1 = cinematic
 
-                    Router.Send(client, (ushort) AreaPacketId.recv_quest_get_mission_quest_works_r, res4,
+                    router.Send(client, (ushort)AreaPacketId.recv_quest_get_mission_quest_works_r, res4,
                         ServerType.Area);
                     break;
 
@@ -202,8 +203,8 @@ namespace Necromancy.Server.Chat.Command.Commands
                     res5.WriteInt32(0); // 0 = normal 1 = cinematic
                     res5.WriteByte(0);
 
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_start, res5, ServerType.Area);
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_quest_report_list_begin, res36,
+                    router.Send(client, (ushort)AreaPacketId.recv_event_start, res5, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_quest_report_list_begin, res36,
                         ServerType.Area);
                     break;
                 case "start":
@@ -211,29 +212,25 @@ namespace Necromancy.Server.Chat.Command.Commands
                     IBuffer res21 = BufferProvider.Provide();
                     res21.WriteInt32(1); // 0 = normal 1 = cinematic
                     res21.WriteByte(255);
-                    Router.Send(client, (ushort) AreaPacketId.recv_event_start, res21, ServerType.Area);
+                    router.Send(client, (ushort)AreaPacketId.recv_event_start, res21, ServerType.Area);
 
-                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("tutorial/tutorial_soul", client.Character.InstanceId);
-                    Router.Send(recvEventScriptPlay, client);
+                    RecvEventScriptPlay recvEventScriptPlay = new RecvEventScriptPlay("tutorial/tutorial_soul", client.character.instanceId);
+                    router.Send(recvEventScriptPlay, client);
 
                     break;
 
                 default:
-                    Logger.Error($"There is no recv of type : {command[0]} ");
-                    Task.Delay(TimeSpan.FromMilliseconds((int) (10 * 1000))).ContinueWith
+                    _Logger.Error($"There is no recv of type : {command[0]} ");
+                    Task.Delay(TimeSpan.FromMilliseconds(10 * 1000)).ContinueWith
                     (t1 =>
                         {
                             IBuffer res = BufferProvider.Provide();
                             res.WriteByte(0);
-                            Router.Send(client, (ushort) AreaPacketId.recv_event_end, res, ServerType.Area);
+                            router.Send(client, (ushort)AreaPacketId.recv_event_end, res, ServerType.Area);
                         }
                     );
                     break;
             }
         }
-
-        public override AccountStateType AccountState => AccountStateType.Admin;
-        public override string Key => "union";
-        public override string HelpText => "usage: `/union [command]` - Does something Union related.";
     }
 }

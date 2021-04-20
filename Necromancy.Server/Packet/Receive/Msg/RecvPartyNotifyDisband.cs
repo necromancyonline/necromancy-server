@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvPartyNotifyDisband : PacketResponse
     {
         public RecvPartyNotifyDisband()
-            : base((ushort) MsgPacketId.recv_party_notify_disband, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_party_notify_disband, ServerType.Msg)
         {
         }
 

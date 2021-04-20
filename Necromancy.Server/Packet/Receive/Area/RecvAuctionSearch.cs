@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvAuctionSearch : PacketResponse
     {
         public RecvAuctionSearch()
-            : base((ushort) AreaPacketId.recv_auction_search_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_auction_search_r, ServerType.Area)
         {
         }
 
@@ -32,6 +32,7 @@ namespace Necromancy.Server.Packet.Receive.Area
                 res.WriteInt16(0);
                 res.WriteInt32(0);
             }
+
             return res;
         }
     }

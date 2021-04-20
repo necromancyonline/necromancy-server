@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCashShopNotifyItem : PacketResponse
     {
         public RecvCashShopNotifyItem()
-            : base((ushort) AreaPacketId.recv_cash_shop_notify_item, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_cash_shop_notify_item, ServerType.Area)
         {
         }
 

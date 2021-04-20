@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvXigncodePacketCl : PacketResponse
     {
         public RecvXigncodePacketCl()
-            : base((ushort) MsgPacketId.recv_xigncode_packet_cl, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_xigncode_packet_cl, ServerType.Msg)
         {
         }
 

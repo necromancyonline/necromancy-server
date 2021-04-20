@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvDbgSelectRaise : PacketResponse
     {
         public RecvDbgSelectRaise()
-            : base((ushort) AreaPacketId.recv_dbg_select_raise_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_dbg_select_raise_r, ServerType.Area)
         {
         }
 

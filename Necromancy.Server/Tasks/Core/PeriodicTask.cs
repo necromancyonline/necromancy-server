@@ -7,22 +7,22 @@ namespace Necromancy.Server.Tasks.Core
 {
     public abstract class PeriodicTask
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(PeriodicTask));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(PeriodicTask));
 
         private CancellationTokenSource _cancellationTokenSource;
         private Task _task;
 
-        public abstract string TaskName { get; }
-        public abstract TimeSpan TaskTimeSpan { get; }
+        public abstract string taskName { get; }
+        public abstract TimeSpan taskTimeSpan { get; }
+        protected abstract bool taskRunAtStart { get; }
 
         protected abstract void Execute();
-        protected abstract bool TaskRunAtStart { get; }
 
         public void Start()
         {
             if (_task != null)
             {
-                Logger.Error($"Task {TaskName} already started");
+                _Logger.Error($"Task {taskName} already started");
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace Necromancy.Server.Tasks.Core
         {
             if (_task == null)
             {
-                Logger.Error($"Task {TaskName} already stopped");
+                _Logger.Error($"Task {taskName} already stopped");
                 return;
             }
 
@@ -46,34 +46,34 @@ namespace Necromancy.Server.Tasks.Core
 
         private async void Run()
         {
-            Logger.Debug($"Task {TaskName} started");
-            if (TaskRunAtStart)
+            _Logger.Debug($"Task {taskName} started");
+            if (taskRunAtStart)
             {
-                Logger.Trace($"Task {TaskName} run");
+                _Logger.Trace($"Task {taskName} run");
                 ExecuteUserCode();
-                Logger.Trace($"Task {TaskName} completed");
+                _Logger.Trace($"Task {taskName} completed");
             }
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
-                    await Task.Delay(TaskTimeSpan, _cancellationTokenSource.Token);
+                    await Task.Delay(taskTimeSpan, _cancellationTokenSource.Token);
                 }
                 catch (OperationCanceledException)
                 {
-                    Logger.Debug($"Task {TaskName} canceled");
+                    _Logger.Debug($"Task {taskName} canceled");
                 }
 
                 if (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
-                    Logger.Trace($"Task {TaskName} run");
+                    _Logger.Trace($"Task {taskName} run");
                     ExecuteUserCode();
-                    Logger.Trace($"Task {TaskName} completed");
+                    _Logger.Trace($"Task {taskName} completed");
                 }
             }
 
-            Logger.Debug($"Task {TaskName} ended");
+            _Logger.Debug($"Task {taskName} ended");
         }
 
         private void ExecuteUserCode()
@@ -84,8 +84,8 @@ namespace Necromancy.Server.Tasks.Core
             }
             catch (Exception ex)
             {
-                Logger.Error($"Task {TaskName} crashed.  Stopping Task");
-                Logger.Exception(ex);
+                _Logger.Error($"Task {taskName} crashed.  Stopping Task");
+                _Logger.Exception(ex);
                 Stop();
             }
         }

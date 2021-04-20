@@ -8,11 +8,12 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTempleNotifyOpen : PacketResponse
     {
         /// <summary>
-        /// Opens a shop.  2 is the remove curse tab
+        ///     Opens a shop.  2 is the remove curse tab
         /// </summary>
-        private byte _unknown;
+        private readonly byte _unknown;
+
         public RecvTempleNotifyOpen(byte unknown)
-            : base((ushort) AreaPacketId.recv_temple_notify_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_temple_notify_open, ServerType.Area)
         {
             _unknown = unknown;
         }

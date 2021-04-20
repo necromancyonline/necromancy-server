@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvCharaUpdateApCostDiff : PacketResponse
     {
         public RecvCharaUpdateApCostDiff()
-            : base((ushort) AreaPacketId.recv_chara_update_ap_cost_diff, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_ap_cost_diff, ServerType.Area)
         {
         }
 

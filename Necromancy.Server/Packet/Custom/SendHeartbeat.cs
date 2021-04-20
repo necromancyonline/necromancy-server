@@ -11,24 +11,24 @@ namespace Necromancy.Server.Packet.Custom
         {
         }
 
-        public override ushort Id => (ushort) CustomPacketId.SendHeartbeat;
+        public override ushort id => (ushort)CustomPacketId.SendHeartbeat;
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            uint time = packet.Data.ReadUInt32();
+            uint time = packet.data.ReadUInt32();
 
             IBuffer buffer = BufferProvider.Provide();
             buffer.WriteInt32(0);
             buffer.WriteInt32(0);
 
             NecPacket response = new NecPacket(
-                (ushort) CustomPacketId.RecvHeartbeat,
+                (ushort)CustomPacketId.RecvHeartbeat,
                 buffer,
-                packet.ServerType,
+                packet.serverType,
                 PacketType.HeartBeat
             );
 
-            Router.Send(client, response);
+            router.Send(client, response);
         }
     }
 }

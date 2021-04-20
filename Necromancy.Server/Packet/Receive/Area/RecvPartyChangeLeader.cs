@@ -7,9 +7,10 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvPartyChangeLeader : PacketResponse
     {
-        private uint _charaInstanceId;
+        private readonly uint _charaInstanceId;
+
         public RecvPartyChangeLeader(uint charaInstanceId)
-            : base((ushort) AreaPacketId.recv_party_change_leader_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_change_leader_r, ServerType.Area)
         {
             _charaInstanceId = charaInstanceId;
         }

@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Arrowgene.Logging;
-using Necromancy.Server.Logging;
 using Necromancy.Server.Model;
 
 namespace Necromancy.Server.Chat

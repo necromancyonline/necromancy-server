@@ -2,14 +2,11 @@ namespace Necromancy.Server.Data.Setting
 {
     public class HonorCsvReader : CsvReader<HonorSetting>
     {
-        protected override int NumExpectedItems => 3;
+        protected override int numExpectedItems => 3;
 
         protected override HonorSetting CreateInstance(string[] properties)
         {
-            if (!int.TryParse(properties[0], out int id))
-            {
-                return null;
-            }
+            if (!int.TryParse(properties[0], out int id)) return null;
 
             string name = properties[1];
             string condition = properties[2];
@@ -36,9 +33,9 @@ namespace Necromancy.Server.Data.Setting
 
             return new HonorSetting
             {
-                Id = id,
-                Name = name,
-                Condition = condition,
+                id = id,
+                name = name,
+                condition = condition
                 //EffectId = effectId,
                 //HiddenTitle = hiddenTitle,
                 //AlwaysDisplayTitle = alwaysDisplayTitle,

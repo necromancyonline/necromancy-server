@@ -10,7 +10,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         private readonly NecClient _client;
 
         public RecvEventSoulStorageOpen(NecClient client)
-            : base((ushort) AreaPacketId.recv_event_soul_storage_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_soul_storage_open, ServerType.Area)
         {
             _client = client;
         }
@@ -18,16 +18,17 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteUInt64(_client.Soul.WarehouseGold); // Gold in the storage
+            res.WriteUInt64(_client.soul.warehouseGold); // Gold in the storage
             int numEntries = 0x1A;
-            res.WriteInt32(numEntries);//Less than or equal to 0x1A; new
+            res.WriteInt32(numEntries); //Less than or equal to 0x1A; new
             for (int i = 0; i < numEntries; i++)
             {
                 for (int j = 0; j < 0x19; j++)
-                    res.WriteByte(0);//new
-                res.WriteByte(0);//new
+                    res.WriteByte(0); //new
+                res.WriteByte(0); //new
             }
-            res.WriteByte(0);//Bool; new
+
+            res.WriteByte(0); //Bool; new
             return res;
         }
     }

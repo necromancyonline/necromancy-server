@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTalkRingCreateMasterRing : PacketResponse
     {
         public RecvTalkRingCreateMasterRing()
-            : base((ushort) AreaPacketId.recv_talkring_create_masterring_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_talkring_create_masterring_r, ServerType.Area)
         {
         }
 

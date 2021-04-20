@@ -1,54 +1,52 @@
-using System.Collections.Generic;
-
 namespace Necromancy.Server.Data.Setting
 {
     public class SkillBaseSetting : ISettingRepositoryItem
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        public int LogId { get; set; }
-        public bool LogBlockEnemy { get; set; }
-        public int CastLogId { get; set; }
-        public int HitLogId { get; set; }
-        public string EffectType { get; set; }
-        public int OccupationEffectType { get; set; }
-        public float CastingTime { get; set; }
-        public float CastingCooldown { get; set; }
-        public int ChangeByMapId { get; set; }
-        public int RigidityTime { get; set; }
-        public int NoSword { get; set; }
-        public int NecessaryLevel { get; set; }
-        public int HpUsed { get; set; }
-        public int MpUsed { get; set; }
-        public int ApUsed { get; set; }
-        public int AcUsed { get; set; }
-        public int DurabilityUsed { get; set; }
-        public int Item1Id { get; set; }
-        public int Item1Count { get; set; }
-        public int Item2Id { get; set; }
-        public int Item2Count { get; set; }
-        public int Item3Id { get; set; }
-        public int Item3Count { get; set; }
-        public int Item4Id { get; set; }
-        public int Item4Count { get; set; }
-        public int CastScriptId { get; set; }
-        public int ActivatedScriptId { get; set; }
-        public int ActivatedEffect1Id { get; set; }
-        public int ActivatedEffect2Id { get; set; }
-        public int EquipmentScriptChange { get; set; }
-        public bool EffectOnSelf { get; set; }
-        public string ObjectFaction { get; set; }
-        public int AutomaticCombo { get; set; }
-        public int HitEffect2 { get; set; }
-        public int ScriptParameter1 { get; set; }
-        public int ScriptParameter2 { get; set; }
-        public string ScanType { get; set; }
-        public int Unknown1 { get; set; }
-        public int Unknown2 { get; set; }
-        public int Unknown3 { get; set; }
-        public int Unknown4 { get; set; }
-        public string DisplayName { get; set; }
-        public int EffectTime { get; set; }
+        public int logId { get; set; }
+        public bool logBlockEnemy { get; set; }
+        public int castLogId { get; set; }
+        public int hitLogId { get; set; }
+        public string effectType { get; set; }
+        public int occupationEffectType { get; set; }
+        public float castingTime { get; set; }
+        public float castingCooldown { get; set; }
+        public int changeByMapId { get; set; }
+        public int rigidityTime { get; set; }
+        public int noSword { get; set; }
+        public int necessaryLevel { get; set; }
+        public int hpUsed { get; set; }
+        public int mpUsed { get; set; }
+        public int apUsed { get; set; }
+        public int acUsed { get; set; }
+        public int durabilityUsed { get; set; }
+        public int item1Id { get; set; }
+        public int item1Count { get; set; }
+        public int item2Id { get; set; }
+        public int item2Count { get; set; }
+        public int item3Id { get; set; }
+        public int item3Count { get; set; }
+        public int item4Id { get; set; }
+        public int item4Count { get; set; }
+        public int castScriptId { get; set; }
+        public int activatedScriptId { get; set; }
+        public int activatedEffect1Id { get; set; }
+        public int activatedEffect2Id { get; set; }
+        public int equipmentScriptChange { get; set; }
+        public bool effectOnSelf { get; set; }
+        public string objectFaction { get; set; }
+        public int automaticCombo { get; set; }
+        public int hitEffect2 { get; set; }
+        public int scriptParameter1 { get; set; }
+        public int scriptParameter2 { get; set; }
+        public string scanType { get; set; }
+        public int unknown1 { get; set; }
+        public int unknown2 { get; set; }
+        public int unknown3 { get; set; }
+        public int unknown4 { get; set; }
+        public string displayName { get; set; }
+        public int effectTime { get; set; }
+        public int id { get; set; }
     }
 }

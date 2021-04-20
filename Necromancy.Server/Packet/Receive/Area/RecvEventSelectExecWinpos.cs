@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventSelectExecWinpos : PacketResponse
     {
         public RecvEventSelectExecWinpos()
-            : base((ushort) AreaPacketId.recv_event_select_exec_winpos, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_select_exec_winpos, ServerType.Area)
         {
         }
 

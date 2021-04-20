@@ -6,61 +6,59 @@ namespace Necromancy.Server.Common.Instance
 {
     public class DatabaseInstanceIdPool : IInstanceIdPool
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(DatabaseInstanceIdPool));
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(DatabaseInstanceIdPool));
 
         private readonly ConcurrentDictionary<uint, uint> _idPool;
 
         public DatabaseInstanceIdPool(string name, uint lowerBound, uint size)
         {
             _idPool = new ConcurrentDictionary<uint, uint>();
-            Name = name;
-            LowerBound = lowerBound;
-            Size = size;
-            UpperBound = LowerBound + Size;
+            this.name = name;
+            this.lowerBound = lowerBound;
+            this.size = size;
+            upperBound = this.lowerBound + this.size;
         }
 
-        public uint Used => (uint) _idPool.Count;
-        public uint LowerBound { get; }
-        public uint UpperBound { get; }
-        public uint Size { get; }
-        public string Name { get; }
+        public uint used => (uint)_idPool.Count;
+        public uint lowerBound { get; }
+        public uint upperBound { get; }
+        public uint size { get; }
+        public string name { get; }
 
         public uint GetInstanceId(uint dbId)
         {
-            return dbId + LowerBound;
+            return dbId + lowerBound;
         }
 
         public int GetDatabaseId(uint instanceId)
         {
-            if (instanceId < LowerBound || instanceId > UpperBound)
+            if (instanceId < lowerBound || instanceId > upperBound)
             {
-                Logger.Error($"InstanceId: {instanceId} does not belong to pool {Name} ({LowerBound}-{UpperBound})");
-                return IDatabase.InvalidDatabaseId;
+                _Logger.Error($"InstanceId: {instanceId} does not belong to pool {name} ({lowerBound}-{upperBound})");
+                return IDatabase.INVALID_DATABASE_ID;
             }
 
-            return (int) (instanceId - LowerBound);
+            return (int)(instanceId - lowerBound);
         }
 
         public bool TryAssign(uint dbId, out uint instanceId)
         {
-            if (dbId > Size)
+            if (dbId > size)
             {
-                Logger.Error($"Exhausted pool {Name} size of {Size} for dbId: {dbId}");
-                instanceId = InstanceGenerator.InvalidInstanceId;
+                _Logger.Error($"Exhausted pool {name} size of {size} for dbId: {dbId}");
+                instanceId = InstanceGenerator.INVALID_INSTANCE_ID;
                 return false;
             }
 
             instanceId = GetInstanceId(dbId);
             if (_idPool.ContainsKey(instanceId))
-            {
                 // Instance already recorded
                 return false;
-            }
 
             if (!_idPool.TryAdd(instanceId, dbId))
             {
-                Logger.Error($"DbId: {dbId} already assigned to instanceId: {instanceId} for pool {Name}");
-                instanceId = InstanceGenerator.InvalidInstanceId;
+                _Logger.Error($"DbId: {dbId} already assigned to instanceId: {instanceId} for pool {name}");
+                instanceId = InstanceGenerator.INVALID_INSTANCE_ID;
                 return false;
             }
 

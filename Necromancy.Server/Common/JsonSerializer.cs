@@ -21,14 +21,14 @@ namespace Necromancy.Server.Common
         {
             CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            T obj = default(T);
+            T obj = default;
             try
             {
-                using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+                using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
                 {
                     DataContractJsonSerializer serializer =
                         new DataContractJsonSerializer(typeof(T), Settings);
-                    obj = (T) serializer.ReadObject(stream);
+                    obj = (T)serializer.ReadObject(stream);
                     stream.Close();
                     Thread.CurrentThread.CurrentCulture = currentCulture;
                 }

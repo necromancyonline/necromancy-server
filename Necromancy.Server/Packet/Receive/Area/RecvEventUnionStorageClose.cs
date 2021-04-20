@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventUnionStorageClose : PacketResponse
     {
         public RecvEventUnionStorageClose()
-            : base((ushort) AreaPacketId.recv_event_union_storage_close_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_union_storage_close_r, ServerType.Area)
         {
         }
 

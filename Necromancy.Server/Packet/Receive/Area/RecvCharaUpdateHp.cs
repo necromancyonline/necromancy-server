@@ -10,17 +10,14 @@ namespace Necromancy.Server.Packet.Receive.Area
         private int _currentHp;
 
         public RecvCharaUpdateHp(int currentHp)
-            : base((ushort) AreaPacketId.recv_chara_update_hp, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_chara_update_hp, ServerType.Area)
         {
             _currentHp = currentHp;
         }
 
         protected override IBuffer ToBuffer()
         {
-            if (_currentHp < 0)
-            {
-                _currentHp = 0;
-            }
+            if (_currentHp < 0) _currentHp = 0;
 
             IBuffer res7 = BufferProvider.Provide();
             res7.WriteInt32(_currentHp);

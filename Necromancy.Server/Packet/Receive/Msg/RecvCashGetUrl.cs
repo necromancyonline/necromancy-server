@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvCashGetUrl : PacketResponse
     {
         public RecvCashGetUrl()
-            : base((ushort) MsgPacketId.recv_cash_get_url_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_cash_get_url_r, ServerType.Msg)
         {
         }
 

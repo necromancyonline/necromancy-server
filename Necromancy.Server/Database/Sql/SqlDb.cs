@@ -6,20 +6,15 @@ using Arrowgene.Logging;
 namespace Necromancy.Server.Database.Sql
 {
     /// <summary>
-    /// Operations for SQL type databases.
+    ///     Operations for SQL type databases.
     /// </summary>
     public abstract class SqlDb<TCon, TCom>
         where TCon : DbConnection
         where TCom : DbCommand
     {
-        private static readonly ILogger Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
-
-        public const int NoRowsAffected = 0;
-        public const long NoAutoIncrement = 0;
-
-        public SqlDb()
-        {
-        }
+        public const int NO_ROWS_AFFECTED = 0;
+        public const long NO_AUTO_INCREMENT = 0;
+        private static readonly ILogger _Logger = LogProvider.Logger(typeof(SqlDb<TCon, TCom>));
 
         protected abstract TCon Connection();
         protected abstract TCom Command(string query, TCon connection);
@@ -44,9 +39,9 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
-                return NoRowsAffected;
+                return NO_ROWS_AFFECTED;
             }
         }
 
@@ -67,10 +62,10 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
-                autoIncrement = NoAutoIncrement;
-                return NoRowsAffected;
+                autoIncrement = NO_AUTO_INCREMENT;
+                return NO_ROWS_AFFECTED;
             }
         }
 
@@ -92,7 +87,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
             }
         }
@@ -114,7 +109,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
             }
         }
@@ -133,7 +128,7 @@ namespace Necromancy.Server.Database.Sql
             }
             catch (Exception ex)
             {
-                Logger.Error($"Query: {query}");
+                _Logger.Error($"Query: {query}");
                 Exception(ex);
             }
         }
@@ -157,7 +152,7 @@ namespace Necromancy.Server.Database.Sql
         protected virtual void Exception(Exception ex)
         {
             //throw ex;
-            Logger.Exception(ex);
+            _Logger.Exception(ex);
         }
 
         protected DbParameter Parameter(TCom command, string name, object value, DbType type)
@@ -185,7 +180,7 @@ namespace Necromancy.Server.Database.Sql
             AddParameter(command, name, value, DbType.String);
         }
 
-        protected void AddParameter(TCom command, string name, Int32 value)
+        protected void AddParameter(TCom command, string name, int value)
         {
             AddParameter(command, name, value, DbType.Int32);
         }
@@ -200,14 +195,14 @@ namespace Necromancy.Server.Database.Sql
             AddParameter(command, name, value, DbType.Byte);
         }
 
-        protected void AddParameter(TCom command, string name, UInt32 value)
+        protected void AddParameter(TCom command, string name, uint value)
         {
             AddParameter(command, name, value, DbType.UInt32);
         }
 
         protected void AddParameterEnumInt32<T>(TCom command, string name, T value) where T : Enum
         {
-            AddParameter(command, name, (Int32) (object) value, DbType.Int32);
+            AddParameter(command, name, (int)(object)value, DbType.Int32);
         }
 
         protected void AddParameter(TCom command, string name, DateTime? value)
@@ -227,20 +222,14 @@ namespace Necromancy.Server.Database.Sql
 
         protected DateTime? GetDateTimeNullable(DbDataReader reader, int ordinal)
         {
-            if (reader.IsDBNull(ordinal))
-            {
-                return null;
-            }
+            if (reader.IsDBNull(ordinal)) return null;
 
             return reader.GetDateTime(ordinal);
         }
 
         protected string GetStringNullable(DbDataReader reader, int ordinal)
         {
-            if (reader.IsDBNull(ordinal))
-            {
-                return null;
-            }
+            if (reader.IsDBNull(ordinal)) return null;
 
             return reader.GetString(ordinal);
         }
@@ -252,7 +241,7 @@ namespace Necromancy.Server.Database.Sql
 
         protected uint GetUInt32(DbDataReader reader, string column)
         {
-            return (uint) GetInt32(reader, column);
+            return (uint)GetInt32(reader, column);
         }
 
         protected long GetInt64(DbDataReader reader, string column)

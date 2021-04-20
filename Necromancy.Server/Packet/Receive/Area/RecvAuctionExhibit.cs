@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvAuctionExhibit : PacketResponse
     {
         public RecvAuctionExhibit()
-            : base((ushort) AreaPacketId.recv_auction_exhibit_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_auction_exhibit_r, ServerType.Area)
         {
         }
 

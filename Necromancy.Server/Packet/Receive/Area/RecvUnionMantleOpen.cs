@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvUnionMantleOpen : PacketResponse
     {
         public RecvUnionMantleOpen()
-            : base((ushort) AreaPacketId.recv_union_mantle_open, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_union_mantle_open, ServerType.Area)
         {
         }
 
@@ -16,10 +16,7 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteInt32(0);
-            for (int i = 0; i < 0x10; i++)
-            {
-                res.WriteByte(0);
-            }
+            for (int i = 0; i < 0x10; i++) res.WriteByte(0);
             return res;
         }
     }

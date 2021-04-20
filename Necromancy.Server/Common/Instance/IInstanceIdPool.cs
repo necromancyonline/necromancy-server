@@ -2,10 +2,10 @@ namespace Necromancy.Server.Common.Instance
 {
     public interface IInstanceIdPool
     {
-        uint Used { get; }
-        uint LowerBound { get; }
-        uint UpperBound { get; }
-        uint Size { get; }
-        string Name { get; }
+        uint used { get; }
+        uint lowerBound { get; }
+        uint upperBound { get; }
+        uint size { get; }
+        string name { get; }
     }
 }

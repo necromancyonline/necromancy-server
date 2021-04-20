@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvUnionRequestSecede : PacketResponse
     {
         public RecvUnionRequestSecede()
-            : base((ushort) MsgPacketId.recv_union_request_secede_r, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_union_request_secede_r, ServerType.Msg)
         {
         }
 

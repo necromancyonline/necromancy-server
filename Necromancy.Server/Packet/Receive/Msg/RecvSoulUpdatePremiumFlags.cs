@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Msg
     public class RecvSoulUpdatePremiumFlags : PacketResponse
     {
         public RecvSoulUpdatePremiumFlags()
-            : base((ushort) MsgPacketId.recv_soul_update_premium_flags, ServerType.Msg)
+            : base((ushort)MsgPacketId.recv_soul_update_premium_flags, ServerType.Msg)
         {
         }
 

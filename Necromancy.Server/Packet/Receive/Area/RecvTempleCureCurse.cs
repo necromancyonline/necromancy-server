@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvTempleCureCurse : PacketResponse
     {
         public RecvTempleCureCurse()
-            : base((ushort) AreaPacketId.recv_temple_cure_curse_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_temple_cure_curse_r, ServerType.Area)
         {
         }
 

@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvEventBlockMessageNoObject : PacketResponse
     {
         public RecvEventBlockMessageNoObject()
-            : base((ushort) AreaPacketId.recv_event_block_message_no_object, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_event_block_message_no_object, ServerType.Area)
         {
         }
 

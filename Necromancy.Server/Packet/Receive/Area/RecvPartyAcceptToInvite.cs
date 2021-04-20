@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvPartyAcceptToInvite : PacketResponse
     {
         public RecvPartyAcceptToInvite()
-            : base((ushort) AreaPacketId.recv_party_accept_to_invite_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_party_accept_to_invite_r, ServerType.Area)
         {
         }
 

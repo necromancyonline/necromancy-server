@@ -8,7 +8,7 @@ namespace Necromancy.Server.Packet.Receive.Area
     public class RecvAuctionRegistSearchEquipmentCondR : PacketResponse
     {
         public RecvAuctionRegistSearchEquipmentCondR()
-            : base((ushort) AreaPacketId.recv_auction_regist_search_equipment_cond_r, ServerType.Area)
+            : base((ushort)AreaPacketId.recv_auction_regist_search_equipment_cond_r, ServerType.Area)
         {
         }
 

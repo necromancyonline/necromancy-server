@@ -17,27 +17,26 @@ namespace Necromancy.Server.Tasks
 
     public class MapTransitionTask : PeriodicTask
     {
-        private static readonly NecLogger Logger = LogProvider.Logger<NecLogger>(typeof(MapTransitionTask));
-        private NecServer _server { get; }
-        private Vector3 _transitionPos1;
-        private Vector3 _transitionPos2;
-        private Vector3 _referencePos;
-        private int _refDistance;
-        private MapPosition _toPos;
+        private static readonly NecLogger _Logger = LogProvider.Logger<NecLogger>(typeof(MapTransitionTask));
+        private readonly int _id;
+        private readonly uint _instanceId;
+        private readonly bool _invertedTransition;
 
-        private Map _map;
-        private uint _instanceId;
+        private readonly Map _map;
+        private readonly int _refDistance;
+        private readonly Vector3 _referencePos;
+        private readonly int _tickTime;
+        private readonly MapPosition _toPos;
+        private readonly int _transitionMapId;
+        private readonly Vector3 _transitionPos1;
+        private readonly Vector3 _transitionPos2;
         private bool _taskActive;
-        private bool _invertedTransition;
-        private int _tickTime;
-        private int _transitionMapId;
-        private int _id;
 
         public MapTransitionTask(NecServer server, Map map, int transitionMapId, Vector3 referencePos, int refDistance,
             Vector3 transitionPos1, Vector3 transitionPos2, uint instanceId, bool invertedTransition, MapPosition toPos,
             int id)
         {
-            _server = server;
+            this.server = server;
             _map = map;
             _transitionPos1 = transitionPos1;
             _transitionPos2 = transitionPos2;
@@ -52,9 +51,11 @@ namespace Necromancy.Server.Tasks
             _id = id;
         }
 
-        public override string TaskName => $"MapTransitionTask : {_map.Id}";
-        public override TimeSpan TaskTimeSpan { get; }
-        protected override bool TaskRunAtStart =>  false;
+        private NecServer server { get; }
+
+        public override string taskName => $"MapTransitionTask : {_map.id}";
+        public override TimeSpan taskTimeSpan { get; }
+        protected override bool taskRunAtStart => false;
 
 
         protected override void Execute()
@@ -66,40 +67,34 @@ namespace Necromancy.Server.Tasks
                 List<Character> characters = _map.GetCharactersRange(_referencePos, _refDistance);
                 foreach (Character character in characters)
                 {
-                    if (character.mapChange)
-                    {
-                        continue;
-                    }
+                    if (character.mapChange) continue;
 
-                    Vector3 characterPos = new Vector3(character.X, character.Y, character.Z);
+                    Vector3 characterPos = new Vector3(character.x, character.y, character.z);
                     bool transition = TransitionCheck(characterPos);
                     if (transition)
                     {
-                        if (!_server.Maps.TryGet(_transitionMapId, out Map transitionMap))
-                        {
-                            return;
-                        }
+                        if (!server.maps.TryGet(_transitionMapId, out Map transitionMap)) return;
 
-                        NecClient client = _map.ClientLookup.GetByCharacterInstanceId(character.InstanceId);
-                        client.Character.mapChange = true;
+                        NecClient client = _map.clientLookup.GetByCharacterInstanceId(character.instanceId);
+                        client.character.mapChange = true;
                         transitionMap.EnterForce(client, _toPos);
                     }
 
-                    Logger.Debug(
-                        $"{character.Name} in range [transition] id {this._id} Instance {this._instanceId} to destination {this._transitionMapId}[{transition}].");
+                    _Logger.Debug(
+                        $"{character.name} in range [transition] id {_id} Instance {_instanceId} to destination {_transitionMapId}[{transition}].");
                 }
 
                 Thread.Sleep(_tickTime);
             }
 
-            this.Stop();
+            Stop();
         }
 
         private bool TransitionCheck(Vector3 characterPos)
         {
             bool trasition = false;
-            trasition = ((characterPos.X - _transitionPos1.X) * (_transitionPos2.Y - _transitionPos1.Y)) -
-                        ((characterPos.Y - _transitionPos1.Y) * (_transitionPos2.X - _transitionPos1.X)) <= 0;
+            trasition = (characterPos.X - _transitionPos1.X) * (_transitionPos2.Y - _transitionPos1.Y) -
+                (characterPos.Y - _transitionPos1.Y) * (_transitionPos2.X - _transitionPos1.X) <= 0;
             return trasition != _invertedTransition;
         }
     }
