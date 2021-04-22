@@ -20,9 +20,7 @@ namespace Necromancy.Server.Packet.Area
             RecvReviveExecute reviveExecute = new RecvReviveExecute();
             router.Send(reviveExecute, client);
 
-            RecvCharaUpdateHp updateHp = new RecvCharaUpdateHp(-1);
-            router.Send(updateHp, client);
-
+            client.character.hp.SetCurrent(client.character.hp.max);
         }
     }
 }
