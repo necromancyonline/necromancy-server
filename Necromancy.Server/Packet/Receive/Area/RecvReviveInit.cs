@@ -15,9 +15,9 @@ namespace Necromancy.Server.Packet.Receive.Area
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteInt32(0);
-            res.WriteInt32(0);
+            res.WriteInt32(0);//One of these represents the cost of RG/SC it cost to revive.
+            res.WriteInt32(50);//Your current station cash (we should name these nec coins.)
+            res.WriteInt32(25);//Cost of station cash to revive.
             return res;
         }
     }
