@@ -20,12 +20,16 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            RecvReviveExecute reviveExecute = new RecvReviveExecute();
-            router.Send(reviveExecute, client);
+
 
             client.character.hp.SetCurrent(client.character.hp.max);
-            client.character.deadType = 0; //Is this needed?
-            if (!server.database.UpdateCharacter(client.character)) _Logger.Error("Could not update character after revive.");
+            client.character.LoginCheckDead();
+            client.character.state = Model.CharacterModel.CharacterState.NormalForm;
+            client.map = server.maps.Get(client.character.mapId);
+
+            RecvReviveExecute reviveExecute = new RecvReviveExecute();
+            router.Send(client, reviveExecute.ToPacket());
+
 
             if (client.map != null && client.map.deadBodies.ContainsKey(client.character.deadBodyInstanceId))//Don't have access to last map on a reset of client, this fails.
             {
@@ -33,6 +37,15 @@ namespace Necromancy.Server.Packet.Area
                 router.Send(client.map, recvObjectDisappearNotify.ToPacket(), client);
                 client.map.deadBodies.Remove(client.character.deadBodyInstanceId);
             }
+
+            client.character.mapId = (1001001);//ilfalo port, main city, temple building.
+            client.character.x = -3175;
+            client.character.y = -1749;
+            client.character.z = 6;
+            client.character.heading = 141;
+
+            if (!server.database.UpdateCharacter(client.character)) _Logger.Error("Could not update character after revive.");
+
         }
     }
 }
