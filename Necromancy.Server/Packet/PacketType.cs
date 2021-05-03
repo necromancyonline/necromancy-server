@@ -7,7 +7,7 @@ namespace Necromancy.Server.Packet
         UInt24 = 2,
         UInt32 = 3,
         HeartBeat = 16,
-        Unknown1 = 32,
+        HeartBeat2 = 32,
         Disconnect = 48
     }
 }
