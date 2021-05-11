@@ -23,10 +23,8 @@ namespace Necromancy.Server.Packet.Custom
             uint a = packet.data.ReadUInt32();
             uint time = packet.data.ReadUInt32();
             client.heartBeat = time;
-            // Logger.Info(client, $"Unknown1 A:{a / 1000}");
-            // Logger.Info(client, $"Unknown1 B:{b / 1000}");
-            _Logger.Debug($"Time since client executable start in seconds {time/1000}");
-            _Logger.Debug($" if another heartbeat is not received in 600 seconds the client will be disconnected at {(time / 1000) + 600} : {DateTime.Now.AddSeconds(600)}");
+            //_Logger.Debug($"Time since client executable start in seconds {time/1000}");
+            //_Logger.Debug($" if another heartbeat is not received in 600 seconds the client will be disconnected at {(time / 1000) + 600} : {DateTime.Now.AddSeconds(600)}");
 
 
             IBuffer buffer = BufferProvider.Provide();

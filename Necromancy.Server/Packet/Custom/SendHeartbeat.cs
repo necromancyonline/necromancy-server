@@ -21,7 +21,7 @@ namespace Necromancy.Server.Packet.Custom
         {
             uint time = packet.data.ReadUInt32();
             client.heartBeat = time;
-            _Logger.Debug($"Time since client executable start in milliseconds {time}");
+            //_Logger.Debug($"Time since client executable start in milliseconds {time}");
 
             //TODO :  if (client.heartBeat != client.heartBeat2) { "SomeBody is glitching the matrix. stop them!"}
 
