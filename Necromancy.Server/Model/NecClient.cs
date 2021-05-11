@@ -32,6 +32,8 @@ namespace Necromancy.Server.Model
         public NecConnection authConnection { get; set; }
         public NecConnection msgConnection { get; set; }
         public NecConnection areaConnection { get; set; }
+        public uint heartBeat { get; set; }
+
         public Dictionary<uint, NecClient> bodyCollection { get; set; }
 
         public void Send(NecPacket packet)

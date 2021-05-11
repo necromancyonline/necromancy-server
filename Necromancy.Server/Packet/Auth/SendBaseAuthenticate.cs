@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -57,6 +59,19 @@ namespace Necromancy.Server.Packet.Auth
             server.clients.Add(client);
 
             SendResponse(connection, account);
+
+            //if client did not send a hardbeat within 75 seconds, something went wrong. remove the client. Thats enough time for 4 heartbeats.
+            Task.Delay(TimeSpan.FromSeconds(75)).ContinueWith
+            (t1 =>
+                {
+                    if (client != null)
+                        if (client.heartBeat == 0)
+                        {
+                            server.clients.Remove(client);
+                            _Logger.Error($"Initial heartbeat missed. disconnecting client. Server.clientCount is now {server.clients.GetCount()}");
+                        }
+                }
+            );
         }
 
         private void SendResponse(NecConnection connection, Account account)
