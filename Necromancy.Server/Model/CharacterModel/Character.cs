@@ -245,9 +245,8 @@ namespace Necromancy.Server.Model
                 deadType = 1;
             }
 
-            if (hp.current == -1)
-                deadType = 4;
-            else if (hp.current < -1) deadType = 5;
+            //if (hp.current == -1)     deadType = 4;
+            //else if (hp.current < -1) deadType = 5; //5 = lost
         }
     }
 }
