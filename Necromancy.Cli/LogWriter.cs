@@ -299,6 +299,9 @@ namespace Necromancy.Cli
                     case NecLogType.PacketUnhandled:
                         consoleColor = ConsoleColor.Red;
                         break;
+                    case NecLogType.PacketError:
+                        consoleColor = ConsoleColor.Yellow;
+                        break;
                     default:
                         consoleColor = ConsoleColor.Gray;
                         break;

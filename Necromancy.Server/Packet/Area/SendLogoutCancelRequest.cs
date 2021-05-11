@@ -16,11 +16,15 @@ namespace Necromancy.Server.Packet.Area
 
         public override void Handle(NecClient client, NecPacket packet)
         {
-            client.character.characterTask.Logout(DateTime.MinValue, 0);
+            client.logoutCancelationCheck = true;
+            //client.character.characterTask.Logout(DateTime.MinValue, 0);
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0); //Ready to discover
+            router.Send(client, (ushort)AreaPacketId.recv_logout_cancel, res, ServerType.Area);
 
-            //Router.Send(client, (ushort) AreaPacketId.recv_logout_cancel_request_r, res, ServerType.Area);
+
+            res = BufferProvider.Provide();
+            res.WriteInt32(0); //Result.  0 = success.  failed to cancel = 1
+            router.Send(client, (ushort) AreaPacketId.recv_logout_cancel_request_r, res, ServerType.Area);
         }
     }
 }

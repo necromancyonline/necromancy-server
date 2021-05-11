@@ -50,9 +50,9 @@ namespace Necromancy.Server.Tasks
             if (_client == null) Stop(); //crash/disconnect handling
             while (_client.character.characterActive)
             {
-                if (_logoutTime != DateTime.MinValue)
-                    if (DateTime.Now >= _logoutTime)
-                        LogOutRequest();
+                //if (_logoutTime != DateTime.MinValue)
+                  //  if (DateTime.Now >= _logoutTime)
+                    //    LogOutRequest();
 
                 if (_client.character.hp.depleted && !_playerDied)
                     PlayerDead();
@@ -248,28 +248,19 @@ namespace Necromancy.Server.Tasks
             _Logger.Debug($"_logoutType [{_logoutType}]");
             if (_logoutType == 0x00) // Return to Title   also   Exit Game
             {
-                res = null;
                 res = BufferProvider.Provide();
-                //res.WriteInt64(1);
-                //res.WriteInt16(1);
+                res.WriteInt32(10);
                 _server.router.Send(_client, (ushort)AreaPacketId.recv_escape_start, res, ServerType.Area);
-
-
-                //IBuffer buffer = BufferProvider.Provide();
-                //buffer.WriteInt32(0);
-                //NecPacket response = new NecPacket((ushort)CustomPacketId.RecvDisconnect,buffer,ServerType.Msg,PacketType.Disconnect);
-
-                //_server.Router.Send(_client, response);
             }
 
-            if (_logoutType == 0x01) // Return to Character Select
+            if (_logoutType == 0x01) // Return to soul Select
             {
                 res.WriteInt32(0);
                 _server.router.Send(_client, (ushort)MsgPacketId.recv_chara_select_back_soul_select_r, res,
                     ServerType.Msg);
             }
 
-            if (_logoutType == 0x02)
+            if (_logoutType == 0x02) //return to character select
             {
                 res.WriteInt32(0);
                 _server.router.Send(_client, (ushort)MsgPacketId.recv_chara_select_back_r, res, ServerType.Msg);

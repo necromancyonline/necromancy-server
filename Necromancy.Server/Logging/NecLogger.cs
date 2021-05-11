@@ -108,6 +108,7 @@ namespace Necromancy.Server.Logging
             if (_setting.logIncomingPackets)
             {
                 NecLogPacket logPacket = new NecLogPacket(client.identity, packet, NecLogType.PacketIn, serverType);
+                if (packet.id == 0xFFFA) logPacket = new NecLogPacket(client.identity, packet, NecLogType.PacketError, serverType);
                 WritePacket(logPacket);
             }
         }
