@@ -49,8 +49,8 @@ namespace Necromancy.Server.Packet
                     buffer.WriteByte((byte)packetType);
                     buffer.WriteBytes(data);
                     break;
-                case PacketType.Unknown1:
-                    packetType = PacketType.Unknown1;
+                case PacketType.HeartBeat2:
+                    packetType = PacketType.HeartBeat2;
                     buffer.WriteByte((byte)packetType);
                     buffer.WriteBytes(data);
                     break;
@@ -172,10 +172,10 @@ namespace Necromancy.Server.Packet
                                 _readHeader = true;
                                 break;
                             }
-                        case PacketType.Unknown1:
+                        case PacketType.HeartBeat2:
                             {
                                 _dataSize = UNKNOWN1_PACKET_BODY_SIZE;
-                                _id = (ushort)CustomPacketId.SendUnknown1;
+                                _id = (ushort)CustomPacketId.SendHeartbeat2;
                                 _readHeader = true;
                                 break;
                             }
@@ -239,7 +239,7 @@ namespace Necromancy.Server.Packet
                     {
                         return PACKET_LENGTH_TYPE_SIZE;
                     }
-                case PacketType.Unknown1:
+                case PacketType.HeartBeat2:
                     {
                         return PACKET_LENGTH_TYPE_SIZE;
                     }

@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Arrowgene.Buffers;
 using Arrowgene.Logging;
 using Necromancy.Server.Common;
@@ -34,6 +36,14 @@ namespace Necromancy.Server.Packet.Custom
             );
 
             router.Send(client, response);
+
+            Task.Delay(TimeSpan.FromSeconds(60)).ContinueWith
+            (t1 =>
+                {
+                    if (client == null) return;
+                    clients.Remove(client);
+                }
+            );
         }
     }
 }
