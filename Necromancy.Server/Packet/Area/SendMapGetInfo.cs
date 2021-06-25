@@ -51,7 +51,7 @@ namespace Necromancy.Server.Packet.Area
                 }
 
                 foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
-                    if (npcSpawn.visibility == 2) //2 is the magic number for soul state only.  make it an Enum some day
+                    if (npcSpawn.visibility == 2 | npcSpawn.visibility == 3) //2 is the magic number for soul state only.  make it an Enum some day
                     {
                         RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
                         router.Send(npcData, client);
@@ -84,7 +84,7 @@ namespace Necromancy.Server.Packet.Area
                 }
 
                 foreach (NpcSpawn npcSpawn in client.map.npcSpawns.Values)
-                    if (npcSpawn.visibility != 2) //2 is the magic number for soul state only.  make it an Enum some day
+                    if (npcSpawn.visibility == 1 | npcSpawn.visibility == 3) //2 is the magic number for soul state only.  make it an Enum some day
                     {
                         RecvDataNotifyNpcData npcData = new RecvDataNotifyNpcData(npcSpawn);
                         router.Send(npcData, client);
