@@ -19,7 +19,7 @@ namespace Necromancy.Server.Packet.Receive.Area
 
         protected override IBuffer ToBuffer()
         {
-            IBuffer res = BufferProvider.Provide();
+            IBuffer res = BufferProvider.Provide();//re gather this structure. its wrong.
             res.WriteUInt32(_instanceId);
             res.WriteInt32(_damage);
             return res;

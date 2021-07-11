@@ -80,6 +80,7 @@ namespace Necromancy.Server.Model.Skills
             Character character = null;
             float perHp = 0;
             int damage = Util.GetRandomNumber(70, 90);
+
             IInstance target = _server.instances.GetInstance(_targetInstanceId);
             switch (target)
             {
@@ -125,6 +126,9 @@ namespace Necromancy.Server.Model.Skills
                 _Logger.Error($"Could not get SkillBaseSetting for skillId : {_skillId}");
                 return;
             }
+            _Logger.Error($"type = {skillBaseSetting.characteristicEffectType}");
+            if (skillBaseSetting.characteristicEffectType == "HEAL")
+            { damage = Util.GetRandomNumber(-50, -10); }
 
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
@@ -155,16 +159,26 @@ namespace Necromancy.Server.Model.Skills
             _server.router.Send(_client.map, eoTriggerData);
 
             RecvBattleReportDamageHp brHp = new RecvBattleReportDamageHp(_targetInstanceId, damage);
+            RecvBattleReportNoactNotifyHealLife recvBattleReportNoactNotifyHealLife = new RecvBattleReportNoactNotifyHealLife(_targetInstanceId, damage);
             RecvObjectHpPerUpdateNotify oHpUpdate = new RecvObjectHpPerUpdateNotify(_targetInstanceId, perHp);
             RecvBattleReportNotifyHitEffect brHit = new RecvBattleReportNotifyHitEffect(_targetInstanceId);
 
             brList.Add(brStart);
+            //if (damage > 0) brList.Add(brHp); else brList.Add(recvBattleReportNoactNotifyHealLife);
             brList.Add(brHp);
             brList.Add(oHpUpdate);
             brList.Add(brHit);
             brList.Add(brEnd);
             brList.Add(oHpUpdate);
             _server.router.Send(_client.map, brList);
+
+            NecClient targetClient = _server.clients.GetByCharacterInstanceId(_targetInstanceId);
+            targetClient.character.hp.Modify(-damage, _client.character.instanceId);
+            perHp = (float)targetClient.character.hp.current / targetClient.character.hp.max * 100;
+            _Logger.Debug(
+                $"CurrentHp [{targetClient.character.hp.current}] MaxHp[{targetClient.character.hp.max}] perHp[{perHp}]");
+            RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(targetClient.character.hp.current);
+            _server.router.Send(targetClient, cHpUpdate.ToPacket());
         }
     }
 }

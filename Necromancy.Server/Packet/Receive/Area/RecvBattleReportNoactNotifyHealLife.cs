@@ -7,16 +7,20 @@ namespace Necromancy.Server.Packet.Receive.Area
 {
     public class RecvBattleReportNoactNotifyHealLife : PacketResponse
     {
-        public RecvBattleReportNoactNotifyHealLife()
+        private readonly int _damage;
+        private readonly uint _instanceId;
+        public RecvBattleReportNoactNotifyHealLife(uint instanceId, int damage)
             : base((ushort)AreaPacketId.recv_battle_report_noact_notify_heal_life, ServerType.Area)
         {
+            _instanceId = instanceId;
+            _damage = damage;
         }
 
         protected override IBuffer ToBuffer()
         {
             IBuffer res = BufferProvider.Provide();
-            res.WriteInt32(0);
-            res.WriteInt32(0);
+            res.WriteUInt32(_instanceId);
+            res.WriteInt32(_damage);
             return res;
         }
     }

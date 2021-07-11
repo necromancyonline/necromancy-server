@@ -48,5 +48,7 @@ namespace Necromancy.Server.Data.Setting
         public string displayName { get; set; }
         public int effectTime { get; set; }
         public int id { get; set; }
+        public string characteristicEffectType { get; set; }
+
     }
 }

@@ -112,7 +112,8 @@ namespace Necromancy.Server.Data.Setting
                 scanType = properties[38],
                 unknown2 = unknown2,
                 unknown3 = unknown3,
-                effectTime = effectTime
+                effectTime = effectTime,
+                characteristicEffectType = properties[55]
             };
         }
     }
