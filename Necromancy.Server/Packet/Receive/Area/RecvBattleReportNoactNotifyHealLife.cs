@@ -20,7 +20,8 @@ namespace Necromancy.Server.Packet.Receive.Area
         {
             IBuffer res = BufferProvider.Provide();
             res.WriteUInt32(_instanceId);
-            res.WriteInt32(_damage);
+            res.WriteInt32(System.Math.Abs(_damage));
+            res.WriteByte(0);
             return res;
         }
     }

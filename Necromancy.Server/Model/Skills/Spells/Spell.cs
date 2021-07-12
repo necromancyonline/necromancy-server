@@ -60,8 +60,10 @@ namespace Necromancy.Server.Model.Skills
 
             float castTime = skillBaseSetting.castingTime;
             _Logger.Debug($"Start casting Skill [{_skillId}] cast time is [{castTime}]");
+
             RecvSkillStartCastR spell = new RecvSkillStartCastR(0, castTime);
             _server.router.Send(spell, _client);
+
             List<PacketResponse> brList = new List<PacketResponse>();
             RecvBattleReportStartNotify brStart = new RecvBattleReportStartNotify(_client.character.instanceId);
             RecvBattleReportEndNotify brEnd = new RecvBattleReportEndNotify();
@@ -143,19 +145,16 @@ namespace Necromancy.Server.Model.Skills
 
             trgCoord.Z += 10;
             _Logger.Debug($"skillid [{_skillId}] effectId [{effectId}]");
-            RecvDataNotifyEoData eoData =
-                new RecvDataNotifyEoData(instanceId, _targetInstanceId, effectId, trgCoord, 2, 2);
+            RecvDataNotifyEoData eoData = new RecvDataNotifyEoData(instanceId, _targetInstanceId, effectId, trgCoord, 2, 2);
             _server.router.Send(_client.map, eoData);
             RecvEoNotifyDisappearSchedule eoDisappear = new RecvEoNotifyDisappearSchedule(instanceId, 2.0F);
             _server.router.Send(_client.map, eoDisappear);
 
             Vector3 srcCoord = new Vector3(_client.character.x, _client.character.y, _client.character.z);
-            Recv8D92 effectMove = new Recv8D92(srcCoord, trgCoord, instanceId, _client.character.skillStartCast, 3000,
-                2, 2); // ToDo need real velocities
+            Recv8D92 effectMove = new Recv8D92(srcCoord, trgCoord, instanceId, _client.character.skillStartCast, 3000, 2, 2); // ToDo need real velocities
             _server.router.Send(_client.map, effectMove);
 
-            RecvDataNotifyEoData eoTriggerData = new RecvDataNotifyEoData(_client.character.instanceId,
-                _targetInstanceId, effectId, srcCoord, 2, 2);
+            RecvDataNotifyEoData eoTriggerData = new RecvDataNotifyEoData(_client.character.instanceId, _targetInstanceId, effectId, srcCoord, 2, 2);
             _server.router.Send(_client.map, eoTriggerData);
 
             RecvBattleReportDamageHp brHp = new RecvBattleReportDamageHp(_targetInstanceId, damage);
@@ -164,8 +163,8 @@ namespace Necromancy.Server.Model.Skills
             RecvBattleReportNotifyHitEffect brHit = new RecvBattleReportNotifyHitEffect(_targetInstanceId);
 
             brList.Add(brStart);
-            //if (damage > 0) brList.Add(brHp); else brList.Add(recvBattleReportNoactNotifyHealLife);
-            brList.Add(brHp);
+            if (damage > 0) brList.Add(brHp); else brList.Add(recvBattleReportNoactNotifyHealLife);
+            //brList.Add(brHp);
             brList.Add(oHpUpdate);
             brList.Add(brHit);
             brList.Add(brEnd);
@@ -173,10 +172,9 @@ namespace Necromancy.Server.Model.Skills
             _server.router.Send(_client.map, brList);
 
             NecClient targetClient = _server.clients.GetByCharacterInstanceId(_targetInstanceId);
-            targetClient.character.hp.Modify(-damage, _client.character.instanceId);
+            targetClient.character.hp.Modify(-damage, target.instanceId);
             perHp = (float)targetClient.character.hp.current / targetClient.character.hp.max * 100;
-            _Logger.Debug(
-                $"CurrentHp [{targetClient.character.hp.current}] MaxHp[{targetClient.character.hp.max}] perHp[{perHp}]");
+            _Logger.Debug($"CurrentHp [{targetClient.character.hp.current}] MaxHp[{targetClient.character.hp.max}] perHp[{perHp}]");
             RecvCharaUpdateHp cHpUpdate = new RecvCharaUpdateHp(targetClient.character.hp.current);
             _server.router.Send(targetClient, cHpUpdate.ToPacket());
         }
